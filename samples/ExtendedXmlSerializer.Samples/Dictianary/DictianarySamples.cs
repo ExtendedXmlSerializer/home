@@ -13,10 +13,10 @@ namespace ExtendedXmlSerializer.Samples.Dictianary
 		{
 			Program.PrintHeader("Serialization");
 
-			var serializer = new ConfigurationContainer().Create();
+			IExtendedXmlSerializer serializer = new ConfigurationContainer().Create();
 // InitDictionary
 
-var obj = new TestClass
+TestClass obj = new TestClass
 {
 	Dictionary = new Dictionary<int, string>
 	{
@@ -26,7 +26,7 @@ var obj = new TestClass
 	}
 };
 // EndInitDictionary
-			var xml = serializer.Serialize(new XmlWriterSettings {Indent = true}, obj);
+			string xml = serializer.Serialize(new XmlWriterSettings {Indent = true}, obj);
 			File.WriteAllText("bin\\DictianarySamples.xml", xml);
 			Console.WriteLine(xml);
 

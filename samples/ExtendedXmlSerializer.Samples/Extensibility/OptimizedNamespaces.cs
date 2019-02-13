@@ -17,23 +17,23 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 		{
 // Example
 
-var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
+IExtendedXmlSerializer serializer = new ConfigurationContainer().UseOptimizedNamespaces()
 											 .Create();
-var subject = new List<object>
+List<object> subject = new List<object>
 			    {
 				    new Subject {Message = "First"},
 				    new Subject {Message = "Second"},
 				    new Subject {Message = "Third"}
 			    };
-var contents = serializer.Serialize(subject);
+string contents = serializer.Serialize(subject);
 // ...
 // EndExample
 
-			var @default = new ConfigurationContainer().Create()
+			string @default = new ConfigurationContainer().Create()
 													   .Serialize(new XmlWriterSettings {Indent = true}, subject);
 			File.WriteAllText(@"bin\Extensibility.OptimizedNamepsaces.Default.xml", @default);
 
-			var data = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
+			string data = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
 			File.WriteAllText(@"bin\Extensibility.OptimizedNamepsaces.Optimized.xml", data);
 		}
 	}

@@ -38,7 +38,7 @@ namespace ExtendedXmlSerializer.Samples.ObjectReference
 
 // Configure
 
-var serializer = new ConfigurationContainer().ConfigureType<Person>()
+IExtendedXmlSerializer serializer = new ConfigurationContainer().ConfigureType<Person>()
                                              .EnableReferences(p => p.Id)
                                              .Create();
 // EndConfigure
@@ -62,11 +62,11 @@ var serializer = new ConfigurationContainer().ConfigureType<Person>()
 		{
 // CreateObject
 
-var boss = new Person {Id = 1, Name = "John"};
+Person boss = new Person {Id = 1, Name = "John"};
 boss.Boss = boss; //himself boss
-var worker = new Person {Id = 2, Name = "Oliver"};
+Person worker = new Person {Id = 2, Name = "Oliver"};
 worker.Boss = boss;
-var obj = new Company
+Company obj = new Company
 {
 	Employees = new List<Person>
 	{
@@ -75,12 +75,12 @@ var obj = new Company
 	}
 };
 // EndCreateObject
-		    var xml = serializer.Serialize(new XmlWriterSettings {Indent = true}, obj);
+		    string xml = serializer.Serialize(new XmlWriterSettings {Indent = true}, obj);
 
             File.WriteAllText("bin\\ObjectReferenceSamples.xml", xml);
             Console.WriteLine(xml);
 
-			var obj2 = serializer.Deserialize<Company>(xml);
+			Company obj2 = serializer.Deserialize<Company>(xml);
 			Console.WriteLine("Employees count = " + obj2.Employees.Count);
 		}
 	}

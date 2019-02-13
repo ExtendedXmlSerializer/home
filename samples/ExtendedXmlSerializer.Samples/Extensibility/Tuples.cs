@@ -17,17 +17,17 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 		public void Execute(object parameter)
 		{
 // Example
-var serializer = new ConfigurationContainer().EnableParameterizedContent()
+IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableParameterizedContent()
                                              .Type<Tuple<string>>()
                                              .Member(x => x.Item1)
                                              .Name("Message")
                                              .Create();
-var subject = Tuple.Create("Hello World!");
-var contents = serializer.Serialize(subject);
+Tuple<string> subject = Tuple.Create("Hello World!");
+string contents = serializer.Serialize(subject);
 // ...
 // EndExample
 
-			var data = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
+			string data = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
 			File.WriteAllText(@"bin\Extensibility.Tuples.xml", data);
 		}
 	}

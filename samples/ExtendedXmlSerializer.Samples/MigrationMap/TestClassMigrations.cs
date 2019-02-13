@@ -29,13 +29,13 @@ using System.Xml.Linq;
 
 namespace ExtendedXmlSerializer.Samples.MigrationMap
 {
-// TestClassMigrations
+	// TestClassMigrations
 
-public class TestClassMigrations : IEnumerable<Action<XElement>>
+	public class TestClassMigrations : IEnumerable<Action<XElement>>
 {
 	public static void MigrationV0(XElement node)
 	{
-		var typeElement = node.Member("Type");
+		XElement typeElement = node.Member("Type");
 		// Add new node
 		node.Add(new XElement("Name", typeElement.Value));
 		// Remove old node

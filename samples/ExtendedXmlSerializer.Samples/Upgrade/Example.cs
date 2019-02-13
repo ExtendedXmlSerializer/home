@@ -15,7 +15,7 @@ namespace ExtendedXmlSerializer.Samples.Upgrade
 
 		public void Execute(object parameter)
 		{
-			var legacy = new List<Subject>
+			List<Subject> legacy = new List<Subject>
 			              {
 				              new Subject {Message = "First"},
 				              new Subject {Message = "Second"},
@@ -27,13 +27,13 @@ namespace ExtendedXmlSerializer.Samples.Upgrade
 
 // Example
 
-var legacySerializer = new ExtendedXmlSerialization.ExtendedXmlSerializer();
-var content = File.ReadAllText(@"bin\Upgrade.Example.v1.xml"); // Path to your legacy xml file.
-var subject = legacySerializer.Deserialize<List<Subject>>(content);
+ExtendedXmlSerialization.ExtendedXmlSerializer legacySerializer = new ExtendedXmlSerialization.ExtendedXmlSerializer();
+string content = File.ReadAllText(@"bin\Upgrade.Example.v1.xml"); // Path to your legacy xml file.
+List<Subject> subject = legacySerializer.Deserialize<List<Subject>>(content);
 
 // Upgrade:
-var serializer = new ConfigurationContainer().Create();
-var contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
+IExtendedXmlSerializer serializer = new ConfigurationContainer().Create();
+string contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
 File.WriteAllText(@"bin\Upgrade.Example.v2.xml", contents);
 // ...
 // EndExample

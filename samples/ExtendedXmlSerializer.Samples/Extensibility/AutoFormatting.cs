@@ -17,18 +17,18 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 		{
 // Example
 
-var serializer = new ConfigurationContainer().UseAutoFormatting()
+IExtendedXmlSerializer serializer = new ConfigurationContainer().UseAutoFormatting()
 											 .Create();
-var subject = new SubjectWithThreeProperties{ Message = "Hello World!", Number = 123, Time = DateTime.Now };
-var contents = serializer.Serialize(subject);
+SubjectWithThreeProperties subject = new SubjectWithThreeProperties{ Message = "Hello World!", Number = 123, Time = DateTime.Now };
+string contents = serializer.Serialize(subject);
 // ...
 // EndExample
 
-			var @default = new ConfigurationContainer().Create()
+			string @default = new ConfigurationContainer().Create()
 													   .Serialize(new XmlWriterSettings {Indent = true}, subject);
 			File.WriteAllText(@"bin\Extensibility.AutoFormatting.Default.xml", @default);
 
-			var data = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
+			string data = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
 			File.WriteAllText(@"bin\Extensibility.AutoFormatting.Enabled.xml", data);
 		}
 	}

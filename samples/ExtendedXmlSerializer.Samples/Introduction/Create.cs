@@ -14,13 +14,13 @@ namespace ExtendedXmlSerializer.Samples.Introduction
 		public void Execute(object parameter)
 		{
 // Create
-var serializer = new ConfigurationContainer()
+IExtendedXmlSerializer serializer = new ConfigurationContainer()
 											// Configure...
 											.Create();
 // EndCreate
 
-			var subject = new Subject{ Count = 6776, Message = "Hello World!" };
-			var contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
+			Subject subject = new Subject{ Count = 6776, Message = "Hello World!" };
+			string contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
 			File.WriteAllText(@"bin\Introduction.xml", contents);
 		}
 	}

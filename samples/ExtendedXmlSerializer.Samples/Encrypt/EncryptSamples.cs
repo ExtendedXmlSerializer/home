@@ -39,7 +39,7 @@ namespace ExtendedXmlSerializer.Samples.Encrypt
 
 // Configuration
 
-var serializer = new ConfigurationContainer().UseEncryptionAlgorithm(new CustomEncryption())
+IExtendedXmlSerializer serializer = new ConfigurationContainer().UseEncryptionAlgorithm(new CustomEncryption())
                                              .ConfigureType<Person>()
                                              .Member(p => p.Password)
                                              .Encrypt()
@@ -65,16 +65,16 @@ var serializer = new ConfigurationContainer().UseEncryptionAlgorithm(new CustomE
 
 		static void Run(IExtendedXmlSerializer serializer)
 		{
-			var list = new List<Person>
+			List<Person> list = new List<Person>
 					   {
 						   new Person {Name = "John", Password = "Ab238ds2"},
 						   new Person {Name = "Oliver", Password = "df89nmXhdf"}
 					   };
 
-			var xml = serializer.Serialize(list);
+			string xml = serializer.Serialize(list);
 			Console.WriteLine(xml);
 
-			var obj2 = serializer.Deserialize<List<Person>>(xml);
+			List<Person> obj2 = serializer.Deserialize<List<Person>>(xml);
 			Console.WriteLine("Employees count = " + obj2.Count + " - passwords " +
 							  string.Join(", ", obj2.Select(p => p.Password)));
 		}

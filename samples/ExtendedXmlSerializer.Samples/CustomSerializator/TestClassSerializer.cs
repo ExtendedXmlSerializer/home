@@ -29,19 +29,19 @@ using System.Xml.Linq;
 
 namespace ExtendedXmlSerializer.Samples.CustomSerializator
 {
-// TestClassSerializer
+	// TestClassSerializer
 
-public class TestClassSerializer : IExtendedXmlCustomSerializer<TestClass>
+	public class TestClassSerializer : IExtendedXmlCustomSerializer<TestClass>
 {
     public TestClass Deserialize(XElement element)
     {
-        var xElement = element.Member("String");
-        var xElement1 = element.Member("Int");
+        XElement xElement = element.Member("String");
+        XElement xElement1 = element.Member("Int");
         if (xElement != null && xElement1 != null)
         {
-            var strValue = xElement.Value;
+            string strValue = xElement.Value;
 
-            var intValue = Convert.ToInt32(xElement1.Value);
+            int intValue = Convert.ToInt32(xElement1.Value);
             return new TestClass(strValue, intValue);
         }
         throw new InvalidOperationException("Invalid xml for class TestClassWithSerializer");

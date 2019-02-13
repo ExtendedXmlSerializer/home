@@ -35,7 +35,7 @@ namespace ExtendedXmlSerializer.Samples.CustomSerializator
 
 // AddCustomSerializerToConfiguration
 
-var serializer = new ConfigurationContainer().Type<TestClass>()
+IExtendedXmlSerializer serializer = new ConfigurationContainer().Type<TestClass>()
 											 .CustomSerializer(new TestClassSerializer())
 											 .Create();
 // EndAddCustomSerializerToConfiguration
@@ -58,11 +58,11 @@ var serializer = new ConfigurationContainer().Type<TestClass>()
 
 		static void Run(IExtendedXmlSerializer serializer)
 		{
-			var obj = new TestClass("Value", 1);
-			var xml = serializer.Serialize(obj);
+			TestClass obj = new TestClass("Value", 1);
+			string xml = serializer.Serialize(obj);
 			Console.WriteLine(xml);
 
-			var obj2 = serializer.Deserialize<TestClass>(xml);
+			TestClass obj2 = serializer.Deserialize<TestClass>(xml);
 			Console.WriteLine("Obiect PropStr = " + obj2.PropStr);
 			Console.WriteLine("Obiect PropStr = " + obj2.PropInt);
 		}

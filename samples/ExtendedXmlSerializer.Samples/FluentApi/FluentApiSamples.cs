@@ -17,7 +17,7 @@ namespace ExtendedXmlSerializer.Samples.FluentApi
 		    Program.PrintHeader("Serialization reference object");
 
 // FluentAPI
-		    var serializer = new ConfigurationContainer()
+		    IExtendedXmlSerializer serializer = new ConfigurationContainer()
 				.UseEncryptionAlgorithm(new CustomEncryption())
 			    .Type<Person>() // Configuration of Person class
 					.Member(p => p.Password) // First member
@@ -35,16 +35,16 @@ namespace ExtendedXmlSerializer.Samples.FluentApi
 
 	    static void Run(IExtendedXmlSerializer serializer)
 	    {
-		    var list = new List<Person>
+		    List<Person> list = new List<Person>
 			               {
 				               new Person {Name = "John", Password = "Ab238ds2"},
 				               new Person {Name = "Oliver", Password = "df89nmXhdf"}
 			               };
 
-		    var xml = serializer.Serialize(list);
+		    string xml = serializer.Serialize(list);
 		    Console.WriteLine(xml);
 
-		    var obj2 = serializer.Deserialize<List<Person>>(xml);
+		    List<Person> obj2 = serializer.Deserialize<List<Person>>(xml);
 		    Console.WriteLine("Employees count = " + obj2.Count + " - passwords " +
 		    string.Join(", ", obj2.Select(p => p.Password)));
 	    }

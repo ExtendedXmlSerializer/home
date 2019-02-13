@@ -17,14 +17,14 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 		public void Execute(object parameter)
 		{
 // Example
-var serializer = new ConfigurationContainer().EnableParameterizedContent()
+IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableParameterizedContent()
 											 .Create();
-var subject = new ParameterizedSubject("Hello World!", 123, DateTime.Now);
-var contents = serializer.Serialize(subject);
+ParameterizedSubject subject = new ParameterizedSubject("Hello World!", 123, DateTime.Now);
+string contents = serializer.Serialize(subject);
 // ...
 // EndExample
 
-			var data = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
+			string data = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
 			File.WriteAllText(@"bin\Extensibility.ParameterizedContent.xml", data);
 		}
 	}

@@ -3,9 +3,9 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.Samples.Extensibility
 {
-// CustomConverter
+	// CustomConverter
 
-public sealed class CustomStructConverter : IConverter<CustomStruct>
+	public sealed class CustomStructConverter : IConverter<CustomStruct>
 {
 	public static CustomStructConverter Default { get; } = new CustomStructConverter();
 	CustomStructConverter() {}
@@ -14,7 +14,7 @@ public sealed class CustomStructConverter : IConverter<CustomStruct>
 	                                                                     .IsAssignableFrom(parameter);
 
 	public CustomStruct Parse(string data) =>
-		int.TryParse(data, out var number) ? new CustomStruct(number) : CustomStruct.Default;
+		int.TryParse(data, out int number) ? new CustomStruct(number) : CustomStruct.Default;
 
 	public string Format(CustomStruct instance) => instance.Number.ToString();
 }

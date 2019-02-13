@@ -34,16 +34,16 @@ namespace ExtendedXmlSerializer.Samples.Simple
 			Program.PrintHeader("Serialization");
 // Serialization
 
-var serializer = new ConfigurationContainer().Create();
-var obj = new TestClass();
-var xml = serializer.Serialize(obj);
+IExtendedXmlSerializer serializer = new ConfigurationContainer().Create();
+TestClass obj = new TestClass();
+string xml = serializer.Serialize(obj);
 // EndSerialization
 			Console.WriteLine(xml);
 
 			Program.PrintHeader("Deserialization");
 // Deserialization
 
-var obj2 = serializer.Deserialize<TestClass>(xml);
+TestClass obj2 = serializer.Deserialize<TestClass>(xml);
 // EndDeserialization
 			Console.WriteLine("Obiect id = " + obj2.Id);
 		}

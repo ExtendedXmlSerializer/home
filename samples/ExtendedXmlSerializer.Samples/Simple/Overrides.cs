@@ -19,11 +19,11 @@ namespace ExtendedXmlSerializer.Samples.Simple
 			Program.PrintHeader("Serialization with Settings Override");
 // Serialization
 
-			var serializer = new ConfigurationContainer().Create();
-			var instance   = new TestClass();
-			var stream     = new MemoryStream();
+			IExtendedXmlSerializer serializer = new ConfigurationContainer().Create();
+			TestClass instance   = new TestClass();
+			MemoryStream stream     = new MemoryStream();
 
-			var contents = serializer.Serialize(new XmlWriterSettings { /* ... */ }, stream, instance);
+			string contents = serializer.Serialize(new XmlWriterSettings { /* ... */ }, stream, instance);
 
 // EndSerialization
 
@@ -32,8 +32,8 @@ namespace ExtendedXmlSerializer.Samples.Simple
 			Program.PrintHeader("Deserialization with Settings Override");
 // Deserialization
 
-			var contentStream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
-			var deserialized = serializer.Deserialize<TestClass>(new XmlReaderSettings{ /* ... */ }, contentStream);
+			MemoryStream contentStream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
+			TestClass deserialized = serializer.Deserialize<TestClass>(new XmlReaderSettings{ /* ... */ }, contentStream);
 
 // EndDeserialization
 			Console.WriteLine($"Object id = {deserialized.Id}");

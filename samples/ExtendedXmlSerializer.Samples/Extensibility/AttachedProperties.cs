@@ -16,18 +16,18 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 		public void Execute(object parameter)
 		{
 // Example
-var serializer = new ConfigurationContainer().EnableAttachedProperties(NameProperty.Default,
+IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableAttachedProperties(NameProperty.Default,
                                                                        NumberProperty.Default)
 											 .Create();
-var subject = new Subject {Message = "Hello World!"};
+Subject subject = new Subject {Message = "Hello World!"};
 subject.Set(NameProperty.Default, "Hello World from Attached Properties!");
 subject.Set(NumberProperty.Default, 123);
 
-var contents = serializer.Serialize(subject);
+string contents = serializer.Serialize(subject);
 // ...
 // EndExample
 
-			var data = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
+			string data = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
 			File.WriteAllText(@"bin\Extensibility.AttachedProperties.xml", data);
 		}
 	}

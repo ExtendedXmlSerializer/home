@@ -36,7 +36,7 @@ namespace ExtendedXmlSerializer.Samples.MigrationMap
 			Program.PrintHeader("Deserialization old version of xml");
 // MigrationsConfiguration
 
-var serializer = new ConfigurationContainer().ConfigureType<TestClass>()
+IExtendedXmlSerializer serializer = new ConfigurationContainer().ConfigureType<TestClass>()
                                              .AddMigration(new TestClassMigrations())
                                              .Create();
 // EndMigrationsConfiguration
@@ -58,21 +58,21 @@ var serializer = new ConfigurationContainer().ConfigureType<TestClass>()
 
 		static void Run(IExtendedXmlSerializer serializer)
 		{
-			var xml =
+			string xml =
 				@"<?xml version=""1.0"" encoding=""utf-8""?>
 <TestClass xmlns=""clr-namespace:ExtendedXmlSerializer.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples"">
 <Id>1</Id>
 <Type>Type</Type>
 </TestClass>";
 			Console.WriteLine(xml);
-			var obj = serializer.Deserialize<TestClass>(xml);
+			TestClass obj = serializer.Deserialize<TestClass>(xml);
 
 			Console.WriteLine("Obiect Id = " + obj.Id);
 			Console.WriteLine("Obiect Name = " + obj.Name);
 			Console.WriteLine("Obiect Value = " + obj.Value);
 
 			Console.WriteLine("Serialization to new version");
-		    var xml2 = serializer.Serialize(new XmlWriterSettings {Indent = true}, obj);
+		    string xml2 = serializer.Serialize(new XmlWriterSettings {Indent = true}, obj);
 
             File.WriteAllText("bin\\XmlLastVersion.xml", xml2);
             Console.WriteLine(xml2);

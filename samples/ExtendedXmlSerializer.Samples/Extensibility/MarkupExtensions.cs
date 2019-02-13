@@ -14,13 +14,13 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 		public void Execute(object parameter)
 		{
 // Example
-var contents =
+string contents =
 	@"<?xml version=""1.0"" encoding=""utf-8""?>
 		<Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples""
 		Message=""{Extension 'PRETTY COOL HUH!!!'}"" />";
-var serializer = new ConfigurationContainer().EnableMarkupExtensions()
+IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableMarkupExtensions()
 											 .Create();
-var subject = serializer.Deserialize<Subject>(contents);
+Subject subject = serializer.Deserialize<Subject>(contents);
 Console.WriteLine(subject.Message); // "Hello World from Markup Extension! Your message is: PRETTY COOL HUH!!!"
 // EndExample
 		}

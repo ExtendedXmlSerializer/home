@@ -16,16 +16,16 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 		public void Execute(object parameter)
 		{
 // Example
-var serializer = new ConfigurationContainer().Type<Subject>()
+IExtendedXmlSerializer serializer = new ConfigurationContainer().Type<Subject>()
 			                                    .Member(x => x.Message)
 			                                    .Verbatim()
 			                                    .Create();
-var subject = new Subject {Message = @"<{""Ilegal characters and such""}>"};
-var contents = serializer.Serialize(subject);
+Subject subject = new Subject {Message = @"<{""Ilegal characters and such""}>"};
+string contents = serializer.Serialize(subject);
 // ...
 // EndExample
 
-			var @default = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
+			string @default = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
 			File.WriteAllText(@"bin\Extensibility.VerbatimContent.xml", @default);
 		}
 	}

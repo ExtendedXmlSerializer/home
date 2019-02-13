@@ -11,14 +11,14 @@ namespace ExtendedXmlSerializer.Samples.Introduction
 		public void Execute(object parameter)
 		{
 // Write
-var subject = new Subject{ Count = 6776, Message = "Hello World!" };
-var serializer = new ConfigurationContainer().Create();
-var contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
+Subject subject = new Subject{ Count = 6776, Message = "Hello World!" };
+IExtendedXmlSerializer serializer = new ConfigurationContainer().Create();
+string contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
 // ...
 // EndWrite
 
 // Read
-var instance = serializer.Deserialize<Subject>(new XmlReaderSettings{IgnoreWhitespace = false}, contents);
+Subject instance = serializer.Deserialize<Subject>(new XmlReaderSettings{IgnoreWhitespace = false}, contents);
 // ...
 // EndRead
 		}

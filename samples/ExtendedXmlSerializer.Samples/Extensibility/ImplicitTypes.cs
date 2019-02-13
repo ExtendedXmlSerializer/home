@@ -15,14 +15,14 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 		public void Execute(object parameter)
 		{
 // Example
-var serializer = new ConfigurationContainer().EnableImplicitTyping(typeof(Subject))
+IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableImplicitTyping(typeof(Subject))
 											 .Create();
-var subject = new Subject{ Message = "Hello World!  No namespaces, yay!" };
-var contents = serializer.Serialize(subject);
+Subject subject = new Subject{ Message = "Hello World!  No namespaces, yay!" };
+string contents = serializer.Serialize(subject);
 // ...
 // EndExample
 
-			var data = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
+			string data = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
 			File.WriteAllText(@"bin\Extensibility.ImplicitTypes.xml", data);
 		}
 	}
