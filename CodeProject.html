@@ -54,7 +54,7 @@
 <p>Everything in <code>ExtendedXmlSerializer</code> begins with a configuration container, from which you can use to configure the serializer and ultimately create it:</p>
 
 <pre lang="cs">
-    var serializer = new ConfigurationContainer()
+    IExtendedXmlSerializer serializer = new ConfigurationContainer()
                                                 // Configure...
                                                 .Create();
 </pre>
@@ -83,7 +83,7 @@
 <p>We can take this a step further by configuring the <code>Subject</code>'s Type and Member properties, which will effect how its Xml is emitted.  Here is an example of configuring the <code>Subject</code>'s name to emit as <code>ModifiedSubject</code>:</p>
 
 <pre lang="cs">
-    var serializer = new ConfigurationContainer().ConfigureType&lt;Subject&gt;()
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().ConfigureType&lt;Subject&gt;()
                                                  .Name(&quot;ModifiedSubject&quot;)
                                                  .Create();
 </pre>
@@ -100,7 +100,7 @@
 <p>Diving a bit further, we can also configure the type's member information. For example, configuring <code>Subject.Message</code> to emit as <code>Text</code> instead:</p>
 
 <pre lang="cs">
-    var serializer = new ConfigurationContainer().ConfigureType&lt;Subject&gt;()
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().ConfigureType&lt;Subject&gt;()
                                                  .Member(x =&gt; x.Message)
                                                  .Name(&quot;Text&quot;)
                                                  .Create();
@@ -120,16 +120,16 @@
 <p>In case you want to configure the XML write and read settings via <code>XmlWriterSettings</code> and <code>XmlReaderSettings</code> respectively, you can do that via extension methods created for you to do so:</p>
 
 <pre lang="cs">
-    var subject = new Subject{ Count = 6776, Message = &quot;Hello World!&quot; };
-    var serializer = new ConfigurationContainer().Create();
-    var contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
+    Subject subject = new Subject{ Count = 6776, Message = &quot;Hello World!&quot; };
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().Create();
+    string contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
     // ...
 </pre>
 
 <p>And for reading:</p>
 
 <pre lang="cs">
-    var instance = serializer.Deserialize&lt;Subject&gt;(new XmlReaderSettings{IgnoreWhitespace = false}, contents);
+    Subject instance = serializer.Deserialize&lt;Subject&gt;(new XmlReaderSettings{IgnoreWhitespace = false}, contents);
     // ...
 </pre>
 
@@ -140,9 +140,9 @@
 <pre lang="cs">
     
     
-    var serializer = new ConfigurationContainer().Create();
-    var obj = new TestClass();
-    var xml = serializer.Serialize(obj);
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().Create();
+    TestClass obj = new TestClass();
+    string xml = serializer.Serialize(obj);
 </pre>
 
 <h2>Deserialization</h2>
@@ -151,7 +151,7 @@
 <pre lang="cs">
     
     
-    var obj2 = serializer.Deserialize&lt;TestClass&gt;(xml);
+    TestClass obj2 = serializer.Deserialize&lt;TestClass&gt;(xml);
 </pre>
 
 <h2>Classic Serialization/Deserialization</h2>
@@ -161,17 +161,17 @@
 <pre lang="cs">
     
     
-                var serializer = new ConfigurationContainer().Create();
-                var instance   = new TestClass();
-                var stream     = new MemoryStream();
-                using (var writer = XmlWriter.Create(stream))
+                IExtendedXmlSerializer serializer = new ConfigurationContainer().Create();
+                TestClass instance   = new TestClass();
+                MemoryStream stream     = new MemoryStream();
+                using (XmlWriter writer = XmlWriter.Create(stream))
                 {
                     serializer.Serialize(writer, instance);
                     writer.Flush();
                 }
     
                 stream.Seek(0, SeekOrigin.Begin);
-                var contents = new StreamReader(stream).ReadToEnd();
+                string contents = new StreamReader(stream).ReadToEnd();
     
 </pre>
 
@@ -181,8 +181,8 @@
     
     
                 TestClass deserialized;
-                var contentStream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
-                using (var reader = XmlReader.Create(contentStream))
+                MemoryStream contentStream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
+                using (XmlReader reader = XmlReader.Create(contentStream))
                 {
                     deserialized = (TestClass)serializer.Deserialize(reader);
                 }
@@ -196,11 +196,11 @@
 <pre lang="cs">
     
     
-                var serializer = new ConfigurationContainer().Create();
-                var instance   = new TestClass();
-                var stream     = new MemoryStream();
+                IExtendedXmlSerializer serializer = new ConfigurationContainer().Create();
+                TestClass instance   = new TestClass();
+                MemoryStream stream     = new MemoryStream();
     
-                var contents = serializer.Serialize(new XmlWriterSettings { /* ... */ }, stream, instance);
+                string contents = serializer.Serialize(new XmlWriterSettings { /* ... */ }, stream, instance);
     
 </pre>
 
@@ -209,8 +209,8 @@
 <pre lang="cs">
     
     
-                var contentStream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
-                var deserialized = serializer.Deserialize&lt;TestClass&gt;(new XmlReaderSettings{ /* ... */ }, contentStream);
+                MemoryStream contentStream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
+                TestClass deserialized = serializer.Deserialize&lt;TestClass&gt;(new XmlReaderSettings{ /* ... */ }, contentStream);
     
 </pre>
 
@@ -220,7 +220,7 @@
 
 <pre lang="cs">
     
-                var serializer = new ConfigurationContainer()
+                IExtendedXmlSerializer serializer = new ConfigurationContainer()
                     .UseEncryptionAlgorithm(new CustomEncryption())
                     .Type&lt;Person&gt;() // Configuration of Person class
                         .Member(p =&gt; p.Password) // First member
@@ -248,7 +248,7 @@
 
 <pre lang="cs">
     
-    var obj = new TestClass
+    TestClass obj = new TestClass
     {
         Dictionary = new Dictionary&lt;int, string&gt;
         {
@@ -328,17 +328,17 @@
 <pre lang="cs">
     
     
-    public class TestClassSerializer : IExtendedXmlCustomSerializer&lt;TestClass&gt;
+        public class TestClassSerializer : IExtendedXmlCustomSerializer&lt;TestClass&gt;
     {
         public TestClass Deserialize(XElement element)
         {
-            var xElement = element.Member(&quot;String&quot;);
-            var xElement1 = element.Member(&quot;Int&quot;);
+            XElement xElement = element.Member(&quot;String&quot;);
+            XElement xElement1 = element.Member(&quot;Int&quot;);
             if (xElement != null &amp;&amp; xElement1 != null)
             {
-                var strValue = xElement.Value;
+                string strValue = xElement.Value;
     
-                var intValue = Convert.ToInt32(xElement1.Value);
+                int intValue = Convert.ToInt32(xElement1.Value);
                 return new TestClass(strValue, intValue);
             }
             throw new InvalidOperationException(&quot;Invalid xml for class TestClassWithSerializer&quot;);
@@ -357,7 +357,7 @@
 <pre lang="cs">
     
     
-    var serializer = new ConfigurationContainer().Type&lt;TestClass&gt;()
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().Type&lt;TestClass&gt;()
                                                  .CustomSerializer(new TestClassSerializer())
                                                  .Create();
 </pre>
@@ -438,11 +438,11 @@
 <pre lang="cs">
     
     
-    public class TestClassMigrations : IEnumerable&lt;Action&lt;XElement&gt;&gt;
+        public class TestClassMigrations : IEnumerable&lt;Action&lt;XElement&gt;&gt;
     {
         public static void MigrationV0(XElement node)
         {
-            var typeElement = node.Member(&quot;Type&quot;);
+            XElement typeElement = node.Member(&quot;Type&quot;);
             // Add new node
             node.Add(new XElement(&quot;Name&quot;, typeElement.Value));
             // Remove old node
@@ -470,7 +470,7 @@
 <pre lang="cs">
     
     
-    var serializer = new ConfigurationContainer().ConfigureType&lt;TestClass&gt;()
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().ConfigureType&lt;TestClass&gt;()
                                                  .AddMigration(new TestClassMigrations())
                                                  .Create();
 </pre>
@@ -505,11 +505,11 @@
 <pre lang="cs">
     
     
-    var boss = new Person {Id = 1, Name = &quot;John&quot;};
+    Person boss = new Person {Id = 1, Name = &quot;John&quot;};
     boss.Boss = boss; //himself boss
-    var worker = new Person {Id = 2, Name = &quot;Oliver&quot;};
+    Person worker = new Person {Id = 2, Name = &quot;Oliver&quot;};
     worker.Boss = boss;
-    var obj = new Company
+    Company obj = new Company
     {
         Employees = new List&lt;Person&gt;
         {
@@ -524,7 +524,7 @@
 <pre lang="cs">
     
     
-    var serializer = new ConfigurationContainer().ConfigureType&lt;Person&gt;()
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().ConfigureType&lt;Person&gt;()
                                                  .EnableReferences(p =&gt; p.Id)
                                                  .Create();
 </pre>
@@ -582,7 +582,7 @@
 <pre lang="cs">
     
     
-    var serializer = new ConfigurationContainer().UseEncryptionAlgorithm(new CustomEncryption())
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().UseEncryptionAlgorithm(new CustomEncryption())
                                                  .ConfigureType&lt;Person&gt;()
                                                  .Member(p =&gt; p.Password)
                                                  .Encrypt()
@@ -598,7 +598,7 @@
 <pre lang="cs">
     
     
-    public sealed class CustomStructConverter : IConverter&lt;CustomStruct&gt;
+        public sealed class CustomStructConverter : IConverter&lt;CustomStruct&gt;
     {
         public static CustomStructConverter Default { get; } = new CustomStructConverter();
         CustomStructConverter() {}
@@ -607,7 +607,7 @@
                                                                              .IsAssignableFrom(parameter);
     
         public CustomStruct Parse(string data) =&gt;
-            int.TryParse(data, out var number) ? new CustomStruct(number) : CustomStruct.Default;
+            int.TryParse(data, out int number) ? new CustomStruct(number) : CustomStruct.Default;
     
         public string Format(CustomStruct instance) =&gt; instance.Number.ToString();
     }
@@ -628,9 +628,9 @@
 
 <pre lang="cs">
     
-    var serializer = new ConfigurationContainer().Register(CustomStructConverter.Default).Create();
-    var subject = new CustomStruct(123);
-    var contents = serializer.Serialize(subject);
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().Register(CustomStructConverter.Default).Create();
+    CustomStruct subject = new CustomStruct(123);
+    string contents = serializer.Serialize(subject);
     // ...
 </pre>
 
@@ -665,15 +665,15 @@
 <pre lang="cs">
     
     
-    var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().UseOptimizedNamespaces()
                                                  .Create();
-    var subject = new List&lt;object&gt;
+    List&lt;object&gt; subject = new List&lt;object&gt;
                     {
                         new Subject {Message = &quot;First&quot;},
                         new Subject {Message = &quot;Second&quot;},
                         new Subject {Message = &quot;Third&quot;}
                     };
-    var contents = serializer.Serialize(subject);
+    string contents = serializer.Serialize(subject);
     // ...
 </pre>
 
@@ -699,10 +699,10 @@
 <p>If you don't like namespaces at all, you can register types so that they do not emit namespaces when they are rendered into a document:</p>
 
 <pre lang="cs">
-    var serializer = new ConfigurationContainer().EnableImplicitTyping(typeof(Subject))
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableImplicitTyping(typeof(Subject))
                                                  .Create();
-    var subject = new Subject{ Message = &quot;Hello World!  No namespaces, yay!&quot; };
-    var contents = serializer.Serialize(subject);
+    Subject subject = new Subject{ Message = &quot;Hello World!  No namespaces, yay!&quot; };
+    string contents = serializer.Serialize(subject);
     // ...
 </pre>
 
@@ -721,15 +721,15 @@
 <pre lang="cs">
     
     
-    var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().UseOptimizedNamespaces()
                                                  .Create();
-    var subject = new List&lt;object&gt;
+    List&lt;object&gt; subject = new List&lt;object&gt;
                     {
                         new Subject {Message = &quot;First&quot;},
                         new Subject {Message = &quot;Second&quot;},
                         new Subject {Message = &quot;Third&quot;}
                     };
-    var contents = serializer.Serialize(subject);
+    string contents = serializer.Serialize(subject);
     // ...
 </pre>
 
@@ -756,12 +756,12 @@
 
 <pre lang="cs">
     
-    var serializer = new ConfigurationContainer().Type&lt;Subject&gt;()
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().Type&lt;Subject&gt;()
                                                     .Member(x =&gt; x.Message)
                                                     .Verbatim()
                                                     .Create();
-    var subject = new Subject {Message = @&quot;&lt;{&quot;&quot;Ilegal characters and such&quot;&quot;}&gt;&quot;};
-    var contents = serializer.Serialize(subject);
+    Subject subject = new Subject {Message = @&quot;&lt;{&quot;&quot;Ilegal characters and such&quot;&quot;}&gt;&quot;};
+    string contents = serializer.Serialize(subject);
     // ...
 </pre>
 
@@ -803,10 +803,10 @@
 
 
 <pre lang="cs">
-    var serializer = new ConfigurationContainer().EnableAllConstructors()
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableAllConstructors()
                                                  .Create();
-    var subject = SubjectByFactory.Create(&quot;Hello World!&quot;);
-    var contents = serializer.Serialize(subject);
+    SubjectByFactory subject = SubjectByFactory.Create(&quot;Hello World!&quot;);
+    string contents = serializer.Serialize(subject);
     // ...
 </pre>
 
@@ -840,10 +840,10 @@
 
 
 <pre lang="cs">
-    var serializer = new ConfigurationContainer().EnableParameterizedContent()
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableParameterizedContent()
                                                  .Create();
-    var subject = new ParameterizedSubject(&quot;Hello World!&quot;, 123, DateTime.Now);
-    var contents = serializer.Serialize(subject);
+    ParameterizedSubject subject = new ParameterizedSubject(&quot;Hello World!&quot;, 123, DateTime.Now);
+    string contents = serializer.Serialize(subject);
     // ...
 </pre>
 
@@ -862,13 +862,13 @@
 <p>By enabling parameterized content, it opens up a lot of possibilities, like being able to serialize Tuples. Of course, serializable Tuples were introduced recently with the latest version of C#. Here, however, you can couple this with our member-naming funtionality and provide better naming for your tuple properties:</p>
 
 <pre lang="cs">
-    var serializer = new ConfigurationContainer().EnableParameterizedContent()
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableParameterizedContent()
                                                  .Type&lt;Tuple&lt;string&gt;&gt;()
                                                  .Member(x =&gt; x.Item1)
                                                  .Name(&quot;Message&quot;)
                                                  .Create();
-    var subject = Tuple.Create(&quot;Hello World!&quot;);
-    var contents = serializer.Serialize(subject);
+    Tuple&lt;string&gt; subject = Tuple.Create(&quot;Hello World!&quot;);
+    string contents = serializer.Serialize(subject);
     // ...
 </pre>
 
@@ -905,14 +905,14 @@
 
 
 <pre lang="cs">
-    var serializer = new ConfigurationContainer().EnableAttachedProperties(NameProperty.Default,
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableAttachedProperties(NameProperty.Default,
                                                                            NumberProperty.Default)
                                                  .Create();
-    var subject = new Subject {Message = &quot;Hello World!&quot;};
+    Subject subject = new Subject {Message = &quot;Hello World!&quot;};
     subject.Set(NameProperty.Default, &quot;Hello World from Attached Properties!&quot;);
     subject.Set(NumberProperty.Default, 123);
     
-    var contents = serializer.Serialize(subject);
+    string contents = serializer.Serialize(subject);
     // ...
 </pre>
 
@@ -952,13 +952,13 @@
 
 
 <pre lang="cs">
-    var contents =
+    string contents =
         @&quot;&lt;?xml version=&quot;&quot;1.0&quot;&quot; encoding=&quot;&quot;utf-8&quot;&quot;?&gt;
             &lt;Subject xmlns=&quot;&quot;clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples&quot;&quot;
             Message=&quot;&quot;{Extension &#39;PRETTY COOL HUH!!!&#39;}&quot;&quot; /&gt;&quot;;
-    var serializer = new ConfigurationContainer().EnableMarkupExtensions()
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableMarkupExtensions()
                                                  .Create();
-    var subject = serializer.Deserialize&lt;Subject&gt;(contents);
+    Subject subject = serializer.Deserialize&lt;Subject&gt;(contents);
     Console.WriteLine(subject.Message); // &quot;Hello World from Markup Extension! Your message is: PRETTY COOL HUH!!!&quot;
 </pre>
 
@@ -975,13 +975,13 @@
 
 <pre lang="cs">
     
-    var legacySerializer = new ExtendedXmlSerialization.ExtendedXmlSerializer();
-    var content = File.ReadAllText(@&quot;bin\Upgrade.Example.v1.xml&quot;); // Path to your legacy xml file.
-    var subject = legacySerializer.Deserialize&lt;List&lt;Subject&gt;&gt;(content);
+    ExtendedXmlSerialization.ExtendedXmlSerializer legacySerializer = new ExtendedXmlSerialization.ExtendedXmlSerializer();
+    string content = File.ReadAllText(@&quot;bin\Upgrade.Example.v1.xml&quot;); // Path to your legacy xml file.
+    List&lt;Subject&gt; subject = legacySerializer.Deserialize&lt;List&lt;Subject&gt;&gt;(content);
     
     // Upgrade:
-    var serializer = new ConfigurationContainer().Create();
-    var contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().Create();
+    string contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
     File.WriteAllText(@&quot;bin\Upgrade.Example.v2.xml&quot;, contents);
     // ...
 </pre>
