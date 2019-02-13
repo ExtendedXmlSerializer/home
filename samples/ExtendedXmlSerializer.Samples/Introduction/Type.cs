@@ -15,8 +15,8 @@ namespace ExtendedXmlSerializer.Samples.Introduction
 		{
 // Type
 IExtendedXmlSerializer serializer = new ConfigurationContainer().ConfigureType<Subject>()
-											 .Name("ModifiedSubject")
-											 .Create();
+                                                                .Name("ModifiedSubject")
+                                                                .Create();
 // EndType
 
 			Subject subject = new Subject{ Count = 6776, Message = "Hello World!" };

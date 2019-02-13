@@ -40,10 +40,10 @@ namespace ExtendedXmlSerializer.Samples.Encrypt
 // Configuration
 
 IExtendedXmlSerializer serializer = new ConfigurationContainer().UseEncryptionAlgorithm(new CustomEncryption())
-                                             .ConfigureType<Person>()
-                                             .Member(p => p.Password)
-                                             .Encrypt()
-                                             .Create();
+																.ConfigureType<Person>()
+																.Member(p => p.Password)
+																.Encrypt()
+																.Create();
 // EndConfiguration
 
 			Run(serializer);

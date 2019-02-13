@@ -18,7 +18,7 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 		{
 // Example
 IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableParameterizedContent()
-											 .Create();
+                                                                .Create();
 ParameterizedSubject subject = new ParameterizedSubject("Hello World!", 123, DateTime.Now);
 string contents = serializer.Serialize(subject);
 // ...

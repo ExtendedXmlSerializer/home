@@ -36,8 +36,8 @@ namespace ExtendedXmlSerializer.Samples.CustomSerializator
 // AddCustomSerializerToConfiguration
 
 IExtendedXmlSerializer serializer = new ConfigurationContainer().Type<TestClass>()
-											 .CustomSerializer(new TestClassSerializer())
-											 .Create();
+                                                                .CustomSerializer(new TestClassSerializer())
+                                                                .Create();
 // EndAddCustomSerializerToConfiguration
 
 			Run(serializer);

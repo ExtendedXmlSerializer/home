@@ -39,8 +39,8 @@ namespace ExtendedXmlSerializer.Samples.ObjectReference
 // Configure
 
 IExtendedXmlSerializer serializer = new ConfigurationContainer().ConfigureType<Person>()
-                                             .EnableReferences(p => p.Id)
-                                             .Create();
+                                                                .EnableReferences(p => p.Id)
+                                                                .Create();
 // EndConfigure
             Run(serializer);
 		}

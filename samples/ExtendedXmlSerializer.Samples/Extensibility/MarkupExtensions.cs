@@ -19,7 +19,7 @@ string contents =
 		<Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples""
 		Message=""{Extension 'PRETTY COOL HUH!!!'}"" />";
 IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableMarkupExtensions()
-											 .Create();
+                                                                .Create();
 Subject subject = serializer.Deserialize<Subject>(contents);
 Console.WriteLine(subject.Message); // "Hello World from Markup Extension! Your message is: PRETTY COOL HUH!!!"
 // EndExample

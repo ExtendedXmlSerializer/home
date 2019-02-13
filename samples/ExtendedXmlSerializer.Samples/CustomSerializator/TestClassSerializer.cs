@@ -31,7 +31,7 @@ namespace ExtendedXmlSerializer.Samples.CustomSerializator
 {
 	// TestClassSerializer
 
-	public class TestClassSerializer : IExtendedXmlCustomSerializer<TestClass>
+public class TestClassSerializer : IExtendedXmlCustomSerializer<TestClass>
 {
     public TestClass Deserialize(XElement element)
     {

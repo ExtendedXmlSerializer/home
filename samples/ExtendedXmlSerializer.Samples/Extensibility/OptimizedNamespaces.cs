@@ -18,7 +18,7 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 // Example
 
 IExtendedXmlSerializer serializer = new ConfigurationContainer().UseOptimizedNamespaces()
-											 .Create();
+																.Create();
 List<object> subject = new List<object>
 			    {
 				    new Subject {Message = "First"},

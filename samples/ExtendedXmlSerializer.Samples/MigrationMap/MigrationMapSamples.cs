@@ -37,8 +37,8 @@ namespace ExtendedXmlSerializer.Samples.MigrationMap
 // MigrationsConfiguration
 
 IExtendedXmlSerializer serializer = new ConfigurationContainer().ConfigureType<TestClass>()
-                                             .AddMigration(new TestClassMigrations())
-                                             .Create();
+																.AddMigration(new TestClassMigrations())
+																.Create();
 // EndMigrationsConfiguration
             Run(serializer);
 		}

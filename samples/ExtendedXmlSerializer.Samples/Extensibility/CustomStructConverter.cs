@@ -5,7 +5,7 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 {
 	// CustomConverter
 
-	public sealed class CustomStructConverter : IConverter<CustomStruct>
+public sealed class CustomStructConverter : IConverter<CustomStruct>
 {
 	public static CustomStructConverter Default { get; } = new CustomStructConverter();
 	CustomStructConverter() {}

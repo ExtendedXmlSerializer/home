@@ -31,7 +31,7 @@ namespace ExtendedXmlSerializer.Samples.MigrationMap
 {
 	// TestClassMigrations
 
-	public class TestClassMigrations : IEnumerable<Action<XElement>>
+public class TestClassMigrations : IEnumerable<Action<XElement>>
 {
 	public static void MigrationV0(XElement node)
 	{

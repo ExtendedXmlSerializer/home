@@ -20,8 +20,8 @@ namespace ExtendedXmlSerializer.Samples.Simple
 // Serialization
 
 			IExtendedXmlSerializer serializer = new ConfigurationContainer().Create();
-			TestClass instance   = new TestClass();
-			MemoryStream stream     = new MemoryStream();
+			TestClass              instance   = new TestClass();
+			MemoryStream           stream     = new MemoryStream();
 
 			string contents = serializer.Serialize(new XmlWriterSettings { /* ... */ }, stream, instance);
 

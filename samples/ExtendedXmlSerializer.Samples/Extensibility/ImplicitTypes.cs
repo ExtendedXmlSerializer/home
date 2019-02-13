@@ -16,7 +16,7 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 		{
 // Example
 IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableImplicitTyping(typeof(Subject))
-											 .Create();
+                                                                .Create();
 Subject subject = new Subject{ Message = "Hello World!  No namespaces, yay!" };
 string contents = serializer.Serialize(subject);
 // ...

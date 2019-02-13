@@ -17,9 +17,9 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 		{
 // Example
 IExtendedXmlSerializer serializer = new ConfigurationContainer().Type<Subject>()
-			                                    .Member(x => x.Message)
-			                                    .Verbatim()
-			                                    .Create();
+                                                                .Member(x => x.Message)
+                                                                .Verbatim()
+                                                                .Create();
 Subject subject = new Subject {Message = @"<{""Ilegal characters and such""}>"};
 string contents = serializer.Serialize(subject);
 // ...

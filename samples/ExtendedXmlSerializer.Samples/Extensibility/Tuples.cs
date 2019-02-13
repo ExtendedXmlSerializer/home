@@ -18,10 +18,10 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 		{
 // Example
 IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableParameterizedContent()
-                                             .Type<Tuple<string>>()
-                                             .Member(x => x.Item1)
-                                             .Name("Message")
-                                             .Create();
+                                                                .Type<Tuple<string>>()
+                                                                .Member(x => x.Item1)
+                                                                .Name("Message")
+																.Create();
 Tuple<string> subject = Tuple.Create("Hello World!");
 string contents = serializer.Serialize(subject);
 // ...
