@@ -59,7 +59,7 @@ namespace ExtendedXmlSerializer.Samples.MigrationMap
 
 	// LastVersion
 
-	public class TestClass
+public class TestClass
 {
 	public int Id { get; set; }
 	public string Name { get; set; }

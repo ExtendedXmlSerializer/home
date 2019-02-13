@@ -162,8 +162,8 @@
     
     
                 IExtendedXmlSerializer serializer = new ConfigurationContainer().Create();
-                TestClass instance   = new TestClass();
-                MemoryStream stream     = new MemoryStream();
+                TestClass              instance   = new TestClass();
+                MemoryStream           stream     = new MemoryStream();
                 using (XmlWriter writer = XmlWriter.Create(stream))
                 {
                     serializer.Serialize(writer, instance);
@@ -414,7 +414,7 @@
 <pre lang="cs">
     
     
-        public class TestClass
+    public class TestClass
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -804,7 +804,7 @@
 
 <pre lang="cs">
     IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableAllConstructors()
-                                                 .Create();
+                                                                    .Create();
     SubjectByFactory subject = SubjectByFactory.Create(&quot;Hello World!&quot;);
     string contents = serializer.Serialize(subject);
     // ...

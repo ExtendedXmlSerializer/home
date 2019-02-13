@@ -17,7 +17,7 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 		{
 // Example
 IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableAllConstructors()
-											 .Create();
+                                                                .Create();
 SubjectByFactory subject = SubjectByFactory.Create("Hello World!");
 string contents = serializer.Serialize(subject);
 // ...

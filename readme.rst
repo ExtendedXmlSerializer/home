@@ -171,8 +171,8 @@ Most of the code examples that you see in this documentation make use of useful 
 .. sourcecode:: csharp
 
                 IExtendedXmlSerializer serializer = new ConfigurationContainer().Create();
-                TestClass instance   = new TestClass();
-                MemoryStream stream     = new MemoryStream();
+                TestClass              instance   = new TestClass();
+                MemoryStream           stream     = new MemoryStream();
                 using (XmlWriter writer = XmlWriter.Create(stream))
                 {
                     serializer.Serialize(writer, instance);
@@ -407,7 +407,7 @@ Then, you added new property and you wanted to calculate a new value during dese
 
 .. sourcecode:: csharp
 
-        public class TestClass
+    public class TestClass
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -781,7 +781,7 @@ One of the limitations of the classic `XmlSerializer` is that it does not suppor
 .. sourcecode:: csharp
 
     IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableAllConstructors()
-                                                 .Create();
+                                                                    .Create();
     SubjectByFactory subject = SubjectByFactory.Create("Hello World!");
     string contents = serializer.Serialize(subject);
     // ...
