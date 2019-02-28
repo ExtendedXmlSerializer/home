@@ -26,6 +26,7 @@ using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
@@ -71,8 +72,13 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		IMemberSerializer Content(IMember profile, IMemberAccess access)
 		{
-			var body   = _content.Get(profile);
-			var start  = new Identity<object>(profile).Adapt();
+			var body     = _content.Get(profile);
+			var identity = new Identity<object>(profile);
+			var composite = CollectionItemTypeLocator.Default.Get(profile.MemberType)
+			                                         ?.Name == profile.Name
+				                ? (IWriter<object>)new MemberPropertyWriter(identity)
+				                : identity;
+			var start  = composite.Adapt();
 			var writer = Wrap(access, new Enclosure(start, body));
 			var result = new MemberSerializer(profile, access, body, writer);
 			return result;

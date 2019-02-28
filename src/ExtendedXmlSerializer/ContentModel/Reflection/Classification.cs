@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Properties;
@@ -34,44 +35,50 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 	sealed class Classification : IClassification
 	{
 		readonly IFormattedContentSpecification _specification;
-		readonly IIdentityStore _identities;
-		readonly IGenericTypes _generic;
-		readonly ITypes _types;
+		readonly IIdentityStore                 _identities;
+		readonly IGenericTypes                  _generic;
+		readonly ITypes                         _types;
 
-		public Classification(IFormattedContentSpecification specification, IIdentityStore identities, IGenericTypes generic,
+		public Classification(IFormattedContentSpecification specification, IIdentityStore identities,
+		                      IGenericTypes generic,
 		                      ITypes types)
 		{
 			_specification = specification;
-			_identities = identities;
-			_generic = generic;
-			_types = types;
+			_identities    = identities;
+			_generic       = generic;
+			_types         = types;
 		}
 
 		public TypeInfo Get(IFormatReader parameter)
-			=> FromAttributes(parameter) ?? _types.Get(_identities.Get(parameter.Name, parameter.Identifier));
+			=> FromAttributes(parameter) ??
+			   (!parameter.IsSatisfiedBy(MemberIdentity.Default)
+				    ? _types.Get(_identities.Get(parameter.Name, parameter.Identifier))
+				    : null);
 
 		TypeInfo FromAttributes(IFormatReader parameter)
 			=> _specification.IsSatisfiedBy(parameter)
-				? ExplicitTypeProperty.Default.Get(parameter) ?? ItemTypeProperty.Default.Get(parameter) ?? Generic(parameter)
-				: null;
+				   ? ExplicitTypeProperty.Default.Get(parameter) ??
+				     ItemTypeProperty.Default.Get(parameter) ?? Generic(parameter)
+				   : null;
 
 		TypeInfo Generic(IFormatReader parameter)
 		{
 			var arguments = ArgumentsTypeProperty.Default.Get(parameter);
-			var result = !arguments.IsDefault ? Generic(parameter, arguments) : null;
+			var result    = !arguments.IsDefault ? Generic(parameter, arguments) : null;
 			return result;
 		}
 
 		TypeInfo Generic(IIdentity parameter, ImmutableArray<Type> arguments)
 		{
 			var candidates = _generic.Get(_identities.Get(parameter.Name, parameter.Identifier));
-			var target = arguments.Length;
+			var target     = arguments.Length;
 
 			var length = candidates.Length;
 			for (var i = 0; i < length; i++)
 			{
 				var candidate = candidates[i];
-				if (candidate.GetGenericArguments().Length == target)
+				if (candidate.GetGenericArguments()
+				             .Length == target)
 				{
 					return candidate.MakeGenericType(arguments.ToArray())
 					                .GetTypeInfo();
