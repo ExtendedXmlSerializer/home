@@ -20,9 +20,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				}
 			};
 
-			var serialization = new ConfigurationContainer().Create().ForTesting();
-
-			serialization.Cycle(instance).ShouldBeEquivalentTo(instance);
+			new ConfigurationContainer().Create()
+			                            .ForTesting()
+			                            .Cycle(instance)
+			                            .ShouldBeEquivalentTo(instance);
 		}
 	}
 }
