@@ -281,11 +281,8 @@ namespace ExtendedXmlSerializer.DocGenerator
 			         + "    :target: https://ci.appveyor.com/project/wojtpl2/extendedxmlserializer\n" + Environment.NewLine + Environment.NewLine
 					 + ".. raw:: html" + Environment.NewLine + Environment.NewLine
 			         + "    <img src=\"https://extendedxmlserializer.github.io/img/logoBig.png\" height=\"200px\">" + Environment.NewLine + Environment.NewLine
-
-					 + "ExtendedXmlSerializer v2 is proudly developed and maintained with ReSharper Ultimate" + Environment.NewLine + Environment.NewLine
-					 + ".. image:: https://superdotnet.run/images/ReSharper.png" + Environment.NewLine
-					 + "    :scale: 10%" + Environment.NewLine
-					 + "    :target: https://www.jetbrains.com/resharper/download/" + Environment.NewLine + Environment.NewLine
+					 + "    ExtendedXmlSerializer v2 is proudly developed and maintained with ReSharper Ultimate" + Environment.NewLine
+					 + "    <a href=\"https://www.jetbrains.com/resharper/download/\"><img src=\"https://superdotnet.run/images/ReSharper.png\" height=\"200px\"></a>"
 			         + Environment.NewLine + Environment.NewLine + result;
 
 			File.WriteAllText("..\\..\\..\\..\\readme.rst", result);

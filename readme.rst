@@ -11,13 +11,8 @@ ExtendedXmlSerializer
 
     <img src="https://extendedxmlserializer.github.io/img/logoBig.png" height="200px">
 
-ExtendedXmlSerializer v2 is proudly developed and maintained with ReSharper Ultimate
-
-.. image:: https://superdotnet.run/images/ReSharper.png
-    :scale: 10%
-    :target: https://www.jetbrains.com/resharper/download/
-
-
+    ExtendedXmlSerializer v2 is proudly developed and maintained with ReSharper Ultimate
+    <a href="https://www.jetbrains.com/resharper/download/"><img src="https://superdotnet.run/images/ReSharper.png" height="200px"></a>
 
 Welcome!
 ========
