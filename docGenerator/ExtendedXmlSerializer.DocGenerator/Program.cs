@@ -282,7 +282,7 @@ namespace ExtendedXmlSerializer.DocGenerator
 					 + ".. raw:: html" + Environment.NewLine + Environment.NewLine
 			         + "    <img src=\"https://extendedxmlserializer.github.io/img/logoBig.png\" height=\"200px\">" + Environment.NewLine + Environment.NewLine
 
-					 + "ExtendedXmlSerializer v2 is proudly developed and maintained with ReSharper Ultimate" + Environment.NewLine
+					 + "ExtendedXmlSerializer v2 is proudly developed and maintained with ReSharper Ultimate" + Environment.NewLine + Environment.NewLine
 					 + ".. image:: https://ci.appveyor.com/api/projects/status/9u1w8cyyr22kbcwi?svg=true" + Environment.NewLine
 					 + "    :target: https://superdotnet.run/images/ReSharper.png" + Environment.NewLine + Environment.NewLine
 			         + Environment.NewLine + Environment.NewLine + result;
