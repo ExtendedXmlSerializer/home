@@ -38,7 +38,7 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.AddList(".NET 4.5", ".NET Standard 2.0");
 			doc.Add("Support features:");
 			doc.AddList(
-				"Deserialization xml from standard `XMLSerializer`",
+				"Deserialization xml from standard `XMLSerializer` (mostly, see: https://github.com/wojtpl2/ExtendedXmlSerializer/issues/240)",
 				"Serialization class, struct, generic class, primitive type, generic list and dictionary, array, enum",
 				"Serialization class with property interface",
 				"Serialization circular reference and reference Id",
@@ -278,9 +278,13 @@ namespace ExtendedXmlSerializer.DocGenerator
 					 + ".. image:: https://img.shields.io/nuget/v/ExtendedXmlSerializer.svg" + Environment.NewLine
 			         + "    :target: https://www.nuget.org/packages/ExtendedXmlSerializer/" + Environment.NewLine
 			         + ".. image:: https://ci.appveyor.com/api/projects/status/9u1w8cyyr22kbcwi?svg=true" + Environment.NewLine
-			         + "    :target: https://ci.appveyor.com/project/wojtpl2/extendedxmlserializer\n" + Environment.NewLine
-			         + Environment.NewLine + ".. raw:: html" + Environment.NewLine + Environment.NewLine
-			         + "    <img src=\"https://extendedxmlserializer.github.io/img/logoBig.png\" height=\"200px\">"
+			         + "    :target: https://ci.appveyor.com/project/wojtpl2/extendedxmlserializer\n" + Environment.NewLine + Environment.NewLine
+					 + ".. raw:: html" + Environment.NewLine + Environment.NewLine
+			         + "    <img src=\"https://extendedxmlserializer.github.io/img/logoBig.png\" height=\"200px\">" + Environment.NewLine + Environment.NewLine
+
+					 + "ExtendedXmlSerializer v2 is proudly developed and maintained with ReSharper Ultimate" + Environment.NewLine
+					 + ".. image:: https://ci.appveyor.com/api/projects/status/9u1w8cyyr22kbcwi?svg=true" + Environment.NewLine
+					 + "    :target: https://superdotnet.run/images/ReSharper.png" + Environment.NewLine + Environment.NewLine
 			         + Environment.NewLine + Environment.NewLine + result;
 
 			File.WriteAllText("..\\..\\..\\..\\readme.rst", result);

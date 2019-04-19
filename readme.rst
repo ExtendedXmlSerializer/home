@@ -11,6 +11,12 @@ ExtendedXmlSerializer
 
     <img src="https://extendedxmlserializer.github.io/img/logoBig.png" height="200px">
 
+ExtendedXmlSerializer v2 is proudly developed and maintained with ReSharper Ultimate
+.. image:: https://ci.appveyor.com/api/projects/status/9u1w8cyyr22kbcwi?svg=true
+    :target: https://superdotnet.run/images/ReSharper.png
+
+
+
 Welcome!
 ========
 
@@ -36,7 +42,7 @@ Support platforms:
 
 Support features:
 
-* Deserialization xml from standard `XMLSerializer`
+* Deserialization xml from standard `XMLSerializer` (mostly, see: https://github.com/wojtpl2/ExtendedXmlSerializer/issues/240)
 * Serialization class, struct, generic class, primitive type, generic list and dictionary, array, enum
 * Serialization class with property interface
 * Serialization circular reference and reference Id

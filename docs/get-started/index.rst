@@ -23,7 +23,7 @@ Support platforms:
 
 Support features:
 
-* Deserialization xml from standard `XMLSerializer`
+* Deserialization xml from standard `XMLSerializer` (mostly, see: https://github.com/wojtpl2/ExtendedXmlSerializer/issues/240)
 * Serialization class, struct, generic class, primitive type, generic list and dictionary, array, enum
 * Serialization class with property interface
 * Serialization circular reference and reference Id
