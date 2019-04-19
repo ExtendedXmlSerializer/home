@@ -284,8 +284,7 @@ namespace ExtendedXmlSerializer.DocGenerator
 
 					 + "ExtendedXmlSerializer v2 is proudly developed and maintained with ReSharper Ultimate" + Environment.NewLine + Environment.NewLine
 					 + ".. image:: https://superdotnet.run/images/ReSharper.png" + Environment.NewLine
-					 + "    :width: 100px" + Environment.NewLine
-					 + "    :height: 100px" + Environment.NewLine
+					 + "    :scale: 10%" + Environment.NewLine
 					 + "    :target: https://www.jetbrains.com/resharper/download/" + Environment.NewLine + Environment.NewLine
 			         + Environment.NewLine + Environment.NewLine + result;
 

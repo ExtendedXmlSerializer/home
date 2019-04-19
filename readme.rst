@@ -14,8 +14,7 @@ ExtendedXmlSerializer
 ExtendedXmlSerializer v2 is proudly developed and maintained with ReSharper Ultimate
 
 .. image:: https://superdotnet.run/images/ReSharper.png
-    :width: 100px
-    :height: 100px
+    :scale: 10%
     :target: https://www.jetbrains.com/resharper/download/
 
 
