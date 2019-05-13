@@ -35,44 +35,35 @@
 [module: System.Diagnostics.CodeAnalysis.SuppressMessage("MaintainabilityRules", "SA1403", Justification = "One source file")]
 [module: System.Diagnostics.CodeAnalysis.SuppressMessage("DocumentationRules", "SA1649", Justification = "One source file")]
 
-namespace System.Diagnostics.CodeAnalysis
-{
-	/// <summary>Specifies that the attributed code should be excluded from code coverage information. </summary>
-	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Event, AllowMultiple = false, Inherited = false)]
-	public sealed class ExcludeFromCodeCoverageAttribute : Attribute
-	{
-	}
-}
-
 namespace ExtendedXmlSerializer.Core.LightInject
 {
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+	using System;
+	using System.Collections.Concurrent;
+	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
 #if NET45 || NETSTANDARD11 || NETSTANDARD13 || NETSTANDARD16 || NET46
-using System.IO;
+	using System.IO;
 #endif
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
+	using System.Linq;
+	using System.Linq.Expressions;
+	using System.Reflection;
 #if NET45 || NETSTANDARD11 || NETSTANDARD13 || NETSTANDARD16 || NET46
-using System.Reflection.Emit;
+	using System.Reflection.Emit;
 #endif
-using System.Runtime.CompilerServices;
+	using System.Runtime.CompilerServices;
 #if NET45
     using System.Runtime.Remoting.Messaging;
 #endif
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
+	using System.Text;
+	using System.Text.RegularExpressions;
+	using System.Threading;
 
-/// <summary>
-/// A delegate that represent the dynamic method compiled to resolved service instances.
-/// </summary>
-/// <param name="args">The arguments used by the dynamic method that this delegate represents.</param>
-/// <returns>A service instance.</returns>
-internal delegate object GetInstanceDelegate(object[] args);
+	/// <summary>
+	/// A delegate that represent the dynamic method compiled to resolved service instances.
+	/// </summary>
+	/// <param name="args">The arguments used by the dynamic method that this delegate represents.</param>
+	/// <returns>A service instance.</returns>
+	internal delegate object GetInstanceDelegate(object[] args);
 
 /// <summary>
 /// Describes the logging level/severity.
