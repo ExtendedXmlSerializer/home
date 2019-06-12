@@ -36,6 +36,26 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		}
 
 		[Fact]
+		void VerifyDefaultValue()
+		{
+			new ConfigurationContainer().EnableImplicitTyping(typeof(Subject))
+			                            .Emit(EmitBehaviors.Assigned)
+			                            .Create()
+			                            .ForTesting()
+			                            .Assert(new Subject(),
+			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><Issue246Tests-Subject />");
+		}
+
+		public class Subject
+		{
+			public Subject() : this(string.Empty) {}
+
+			public Subject(string name) => Name = name;
+
+			public string Name { get; set; }
+		}
+
+		[Fact]
 		void VerifyClosedTagsOnEmpty()
 		{
 			new ConfigurationContainer().Extend(Extension.Default)
@@ -117,5 +137,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			public string Name { get; set; }
 		}
+
+
 	}
 }
