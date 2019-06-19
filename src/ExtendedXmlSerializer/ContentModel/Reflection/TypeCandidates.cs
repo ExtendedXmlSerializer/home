@@ -45,6 +45,10 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 		}
 
 		public ImmutableArray<TypeInfo> Get(IIdentity parameter)
-			=> _identities.GetAny(parameter) ?? _reflection.Get(parameter);
+		{
+			var immutableArray = _identities.GetAny(parameter);
+			var typeInfos = _reflection.Get(parameter);
+			return immutableArray ?? typeInfos;
+		}
 	}
 }
