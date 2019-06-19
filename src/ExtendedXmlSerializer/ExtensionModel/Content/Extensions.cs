@@ -57,7 +57,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public static IConfigurationContainer EnableReaderContext(this IConfigurationContainer @this)
 			=> @this.Extend(ReaderContextExtension.Default);
 
-		public static IConfigurationContainer Emit(this IConfigurationContainer @this, IEmitBehavior behavior) =>
+        public static IConfigurationContainer EnableAllPublicPropertiesAndParameterizedContent(this IConfigurationContainer @this)
+            => @this.Extend(AllParameterizedMembersExtension.Default);
+
+        public static IConfigurationContainer Emit(this IConfigurationContainer @this, IEmitBehavior behavior) =>
 			behavior.Get(@this);
 
 		public static IMemberConfiguration<T, TMember> EmitWhen<T, TMember>(this IMemberConfiguration<T, TMember> @this,

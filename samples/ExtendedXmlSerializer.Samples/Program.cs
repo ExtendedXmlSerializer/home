@@ -33,7 +33,9 @@ using System;
 
 namespace ExtendedXmlSerializer.Samples
 {
-	using FluentApi;
+    using ExtendedXmlSerializer.Samples.Generics;
+    using ExtendedXmlSerializer.Samples.Parametrized;
+    using FluentApi;
 
 	public class Program
 	{
@@ -46,6 +48,9 @@ namespace ExtendedXmlSerializer.Samples
 
 		public static void Main(string[] args)
 		{
+            ParametrizedConstructors.SerializeAndDeserialize();
+            GenericSerializer.SerializeAndDeserialize();
+
 			FluentApiSamples.Run();
 
 			Introduction.Run.Default.Execute(null);
