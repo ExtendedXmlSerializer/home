@@ -55,18 +55,21 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 				// might want to pretty this up at some point.
 			{
 				var source = parameter.GetParameters();
-				var result = source.Select(x => x.Name)
-				                   .Select(_locator.Get(type)
-				                                   .Get)
-				                   .Where(x => x.HasValue)
-				                   .Select(x => x.Value)
-				                   .Select(_members.Get)
-				                   .Where(_member)
-				                   .Select(x => new ParameterizedMember(x))
-				                   .ToImmutableArray<IMember>();
-				if (result.Length == source.Length)
+				if (source.Length > 0 || IsCollectionTypeSpecification.Default.IsSatisfiedBy(type)) // Turning into a game of Jenga here.
 				{
-					return result;
+					var result = source.Select(x => x.Name)
+					                   .Select(_locator.Get(type)
+					                                   .Get)
+					                   .Where(x => x.HasValue)
+					                   .Select(x => x.Value)
+					                   .Select(_members.Get)
+					                   .Where(_member)
+					                   .Select(x => new ParameterizedMember(x))
+					                   .ToImmutableArray<IMember>();
+					if (result.Length == source.Length)
+					{
+						return result;
+					}
 				}
 			}
 
