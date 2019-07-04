@@ -48,9 +48,6 @@ namespace ExtendedXmlSerializer.Samples
 
 		public static void Main(string[] args)
 		{
-            ParametrizedConstructors.SerializeAndDeserialize();
-            GenericSerializer.SerializeAndDeserialize();
-
 			FluentApiSamples.Run();
 
 			Introduction.Run.Default.Execute(null);
@@ -79,9 +76,12 @@ namespace ExtendedXmlSerializer.Samples
 			ObjectReferenceSamples.RunSimpleConfig();
 			// ObjectReferenceSamples.RunAutofacConfig();
 			EncryptSamples.RunSimpleConfig();
-			//EncryptSamples.RunAutofacConfig();
+            //EncryptSamples.RunAutofacConfig();
 
-			Console.WriteLine("Press any key...");
+            ParametrizedConstructors.SerializeAndDeserialize();
+            GenericSerializer.SerializeAndDeserialize();
+
+            Console.WriteLine("Press any key...");
 			Console.ReadKey();
 		}
 	}

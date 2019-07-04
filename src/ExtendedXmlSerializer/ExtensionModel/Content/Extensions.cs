@@ -54,11 +54,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public static IConfigurationContainer EnableParameterizedContent(this IConfigurationContainer @this)
 			=> @this.Extend(ParameterizedMembersExtension.Default);
 
-		public static IConfigurationContainer EnableReaderContext(this IConfigurationContainer @this)
-			=> @this.Extend(ReaderContextExtension.Default);
-
-        public static IConfigurationContainer EnableAllPublicPropertiesAndParameterizedContent(this IConfigurationContainer @this)
+        public static IConfigurationContainer EnableParameterizedContentWithPropertyAssignments(this IConfigurationContainer @this)
             => @this.Extend(AllParameterizedMembersExtension.Default);
+
+        public static IConfigurationContainer EnableReaderContext(this IConfigurationContainer @this)
+			=> @this.Extend(ReaderContextExtension.Default);
 
         public static IConfigurationContainer Emit(this IConfigurationContainer @this, IEmitBehavior behavior) =>
 			behavior.Get(@this);

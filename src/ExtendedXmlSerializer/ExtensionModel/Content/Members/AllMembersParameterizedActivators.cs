@@ -57,10 +57,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 			var typeInfo = parameter.GetTypeInfo();
 			var constructor = _constructors.Get(typeInfo);
 			var members = constructor != null ? _members.Get(constructor) : null;
-            var typeMembers = _typeMembers.Get(typeInfo);
 
 			var result = members != null
-				? Activator(constructor, typeMembers)
+				? Activator(constructor, _typeMembers.Get(typeInfo))
 				: _activators.Get(typeInfo);
 			return result;
 		}

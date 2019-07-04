@@ -12,7 +12,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		void Verify()
 		{
-			var support = new ConfigurationContainer().EnableAllPublicPropertiesAndParameterizedContent()
+			var support = new ConfigurationContainer().EnableParameterizedContentWithPropertyAssignments()
 			                                          .Create()
 			                                          .ForTesting();
 

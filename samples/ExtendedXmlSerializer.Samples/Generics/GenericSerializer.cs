@@ -17,7 +17,7 @@ namespace ExtendedXmlSerializer.Samples.Generics
         {
             serializer = new ConfigurationContainer()
                                             .EnableAllConstructors()
-                                            .EnableAllPublicPropertiesAndParameterizedContent()
+                                            .EnableParameterizedContentWithPropertyAssignments()
                                             .UseOptimizedNamespaces()
                                             .EnableReferences()
                                             .UseOptimizedNamespaces()
@@ -38,7 +38,7 @@ namespace ExtendedXmlSerializer.Samples.Generics
         {
             var srl = new GenericSerializer();
             var prj = new Project("test project", 2);
-            
+
             var cls = new SpecificClass();
             cls.FirstRecipe = new FirstRecipe();
             cls.Context.Value = "asfr";
@@ -48,133 +48,134 @@ namespace ExtendedXmlSerializer.Samples.Generics
             cls.SecondRecipe.ActivityParametersList.Add(new MySecondActivityParameters());
             prj.Sites.Add(cls);
             prj.Name = "custom name";
-            
+
 
             var data = srl.SerializeProject(prj);
             var obj = srl.DeserializeProject<IProject>(data);
-        }        
-    }
-
-    public interface IProject
-    {
-        string Name { get; }
-        string Path { get; }
-        IList<ISite<IContext>> Sites { get; }
-    }
-
-    public interface ISite<out TSiteContext> where TSiteContext : class, IContext
-    {
-        string Name { get; set; }
-        string UserDescription { get; set; }
-
-        TSiteContext Context { get; }
-    }
-
-    public interface IContext
-    {
-        string Value { get; }
-    }
-
-    public class Project : IProject
-    {
-        public Project(string name, int id)
-        {
-            Name = name;
-            Id = id;
-        }
-
-        public string Name { get; set; } = "MY project";
-        public int Id { get; }
-        public string Path => @"C:/my/fake/path";
-
-        public IList<ISite<IContext>> Sites { get; } = new List<ISite<IContext>>();
-    }
-
-    public class SpecificClass : SiteBase<Context>
-    {
-        public SpecificClass()
-        {
-            this.Name = "Specific class";
-            this.UserDescription = "Class description";
-            this.Context = new Context();
         }
 
 
-        public override Context Context { get; set; }
-
-        public FirstRecipe FirstRecipe { get; set; } = new FirstRecipe();
-        public SecondRecipe SecondRecipe { get; set; } = new SecondRecipe();
-    }
-
-    public abstract class SiteBase<TSiteContext> : ISite<TSiteContext> where TSiteContext : class, IContext
-    {
-        public string Name { get; set; }
-        public string UserDescription { get; set; }
-        public abstract TSiteContext Context { get; set; }
-    }
-
-    public class Context : IContext
-    {
-        public string Value { get; set; } = "My context";
-    }
-
-    public interface IRecipe
-    {
-        string Name { get; }
-        IEnumerable<IActivityParameters> ActivityParameters { get; }
-    }
-
-    public abstract class RecipeBase: IRecipe
-    {
-        public abstract string Name { get; }
-        public IEnumerable<IActivityParameters> ActivityParameters => ActivityParametersList;
-        public List<IActivityParameters> ActivityParametersList { get; } = new List<IActivityParameters>();
-    }
-
-    public class FirstRecipe:RecipeBase
-    {
-        public override string Name => nameof(FirstRecipe);
-
-        public double Lenght { get; set; } = 23;
-
-        public FirstRecipe()
+        public interface IProject
         {
-        }
-    }
-
-    public class SecondRecipe : RecipeBase
-    {
-        public override string Name => nameof(SecondRecipe);
-
-        public double Thickness { get; set; } = 100;
-
-        public SecondRecipe()
-        {
-        }
-    }
-
-    public interface IActivityParameters
-    {
-        bool IsEnabled { get; set; }
-    }
-
-    public class MyActivityParameters :IActivityParameters
-    {
-        public MyActivityParameters(int propA)
-        {
-            PropA = propA;
-            MyProperty = propA;
+            string Name { get; }
+            string Path { get; }
+            IList<ISite<IContext>> Sites { get; }
         }
 
-        public int PropA { get; }
+        public interface ISite<out TSiteContext> where TSiteContext : class, IContext
+        {
+            string Name { get; set; }
+            string UserDescription { get; set; }
 
-        public int MyProperty { get; set; }
-        public bool IsEnabled { get; set; }
-    }
+            TSiteContext Context { get; }
+        }
 
-    public class MySecondActivityParameters : IActivityParameters
-    {
-        public int MyProperty2 { get; set; }
-        public bool IsEnabled { get; set; }
+        public interface IContext
+        {
+            string Value { get; }
+        }
+
+        public class Project : IProject
+        {
+            public Project(string name, int id)
+            {
+                Name = name;
+                Id = id;
+            }
+
+            public string Name { get; set; } = "MY project";
+            public int Id { get; }
+            public string Path => @"C:/my/fake/path";
+
+            public IList<ISite<IContext>> Sites { get; } = new List<ISite<IContext>>();
+        }
+
+        public class SpecificClass : SiteBase<Context>
+        {
+            public SpecificClass()
+            {
+                this.Name = "Specific class";
+                this.UserDescription = "Class description";
+                this.Context = new Context();
+            }
+
+
+            public override Context Context { get; set; }
+
+            public FirstRecipe FirstRecipe { get; set; } = new FirstRecipe();
+            public SecondRecipe SecondRecipe { get; set; } = new SecondRecipe();
+        }
+
+        public abstract class SiteBase<TSiteContext> : ISite<TSiteContext> where TSiteContext : class, IContext
+        {
+            public string Name { get; set; }
+            public string UserDescription { get; set; }
+            public abstract TSiteContext Context { get; set; }
+        }
+
+        public class Context : IContext
+        {
+            public string Value { get; set; } = "My context";
+        }
+
+        public interface IRecipe
+        {
+            string Name { get; }
+            IEnumerable<IActivityParameters> ActivityParameters { get; }
+        }
+
+        public abstract class RecipeBase : IRecipe
+        {
+            public abstract string Name { get; }
+            public IEnumerable<IActivityParameters> ActivityParameters => ActivityParametersList;
+            public List<IActivityParameters> ActivityParametersList { get; } = new List<IActivityParameters>();
+        }
+
+        public class FirstRecipe : RecipeBase
+        {
+            public override string Name => nameof(FirstRecipe);
+
+            public double Lenght { get; set; } = 23;
+
+            public FirstRecipe()
+            {
+            }
+        }
+
+        public class SecondRecipe : RecipeBase
+        {
+            public override string Name => nameof(SecondRecipe);
+
+            public double Thickness { get; set; } = 100;
+
+            public SecondRecipe()
+            {
+            }
+        }
+
+        public interface IActivityParameters
+        {
+            bool IsEnabled { get; set; }
+        }
+
+        public class MyActivityParameters : IActivityParameters
+        {
+            public MyActivityParameters(int propA)
+            {
+                PropA = propA;
+                MyProperty = propA;
+            }
+
+            public int PropA { get; }
+
+            public int MyProperty { get; set; }
+            public bool IsEnabled { get; set; }
+        }
+
+        public class MySecondActivityParameters : IActivityParameters
+        {
+            public int MyProperty2 { get; set; }
+            public bool IsEnabled { get; set; }
+        }
     }
 }
