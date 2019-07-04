@@ -15,11 +15,11 @@ namespace ExtendedXmlSerializer.Samples.Parametrized
         public static void SerializeAndDeserialize()
         {
             var srl = new ConfigurationContainer()
-                                            .EnableAllPublicPropertiesAndParameterizedContent()
+                                            .EnableParameterizedContentWithPropertyAssignments()
                                             .Create();
 
             var dsrl = new ConfigurationContainer()
-                                            .EnableAllPublicPropertiesAndParameterizedContent()
+                                            .EnableParameterizedContentWithPropertyAssignments()
                                             .Create();
 
             var dt = new DataHolder(11);

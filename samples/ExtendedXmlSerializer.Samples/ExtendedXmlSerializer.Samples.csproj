@@ -3,7 +3,7 @@
   <Import Project="../dir.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net462</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;net462</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer.Samples</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>ExtendedXmlSerializer.Samples</PackageId>
