@@ -37,6 +37,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 	{
 		readonly IMemberAccessors                       _accessors;
 		readonly ImmutableArray<IMember>                _members;
+		readonly ITableSource<string, IMember>          _table;
 		readonly Func<Func<string, object>, IActivator> _activator;
 
 		public ActivationContexts(IMemberAccessors accessors, ImmutableArray<IMember> members, IActivator activator)
@@ -44,9 +45,18 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 		public ActivationContexts(IMemberAccessors accessors, ImmutableArray<IMember> members,
 		                          Func<Func<string, object>, IActivator> activator)
+			: this(accessors, members,
+			       new TableSource<string, IMember>(members.ToDictionary(x => x.Name,
+			                                                             StringComparer.InvariantCultureIgnoreCase)),
+			       activator) {}
+
+		public ActivationContexts(IMemberAccessors accessors, ImmutableArray<IMember> members,
+		                          ITableSource<string, IMember> table,
+		                          Func<Func<string, object>, IActivator> activator)
 		{
 			_accessors = accessors;
 			_members   = members;
+			_table     = table;
 			_activator = activator;
 		}
 
@@ -57,9 +67,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			var command = new CompositeCommand<object>(new ApplyMemberValuesCommand(_accessors, _members, source),
 			                                           new AddItemsCommand(list));
 			var alteration = new ConfiguringAlteration<object>(command);
-			var members    = _members.ToDictionary(x => x.Name, StringComparer.InvariantCultureIgnoreCase);
-			var store      = new Store(source, new TableSource<string, IMember>(members));
-			var activator  = new AlteringActivator(alteration, _activator.Invoke(store.Get));
+			var activator  = new AlteringActivator(alteration, _activator(new Store(source, _table).Get));
 			var result = new ActivationContext(source, activator.Singleton()
 			                                                    .Get, list);
 			return result;
