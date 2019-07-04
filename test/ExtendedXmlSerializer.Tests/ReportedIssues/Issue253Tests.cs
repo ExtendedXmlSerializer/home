@@ -16,12 +16,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		void Verify()
 		{
-			var instance = new ClassWithEncodingProperty{ Encoding = Encoding.ASCII };
-
 			var serializer = new ConfigurationContainer().Register<Encoding, EncodingSerializer>()
 			                                             .Create()
 			                                             .ForTesting();
-			serializer.Cycle(instance).ShouldBeEquivalentTo(instance);
+
+			var instance = new ClassWithEncodingProperty{ Encoding = Encoding.ASCII };
+			var classWithEncodingProperty = serializer.Cycle(instance);
+			classWithEncodingProperty.ShouldBeEquivalentTo(instance);
 		}
 
 		[Fact]
@@ -34,6 +35,32 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .Create()
 			                                             .ForTesting();
 			serializer.Cycle(instance).ShouldBeEquivalentTo(instance);
+		}
+
+		[Fact]
+		void VerifyAdvanced()
+		{
+			var instance = new Settings{ DbSettings = new DBVCSV {Encoding = Encoding.ASCII}};
+			var serializer = new ConfigurationContainer().Type<Encoding>()
+			                                             .Register(typeof(EncodingSerializer))
+			                                             .Create()
+			                                             .ForTesting();
+			serializer.Cycle(instance).ShouldBeEquivalentTo(instance);
+		}
+
+		public class Settings
+		{
+			public DbSettings DbSettings { get; set; }
+		}
+
+		public class DbSettings
+		{
+			public Encoding Encoding { get; set; }
+		}
+
+		public class DBVCSV : DbSettings
+		{
+
 		}
 
 		public class ClassWithEncodingProperty
