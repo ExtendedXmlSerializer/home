@@ -24,6 +24,18 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			serializer.Cycle(instance).ShouldBeEquivalentTo(instance);
 		}
 
+		[Fact]
+		void VerifyAlternativeRegister()
+		{
+			var instance = new ClassWithEncodingProperty{ Encoding = Encoding.ASCII };
+
+			var serializer = new ConfigurationContainer().Type<Encoding>()
+			                                             .Register(typeof(EncodingSerializer))
+			                                             .Create()
+			                                             .ForTesting();
+			serializer.Cycle(instance).ShouldBeEquivalentTo(instance);
+		}
+
 		public class ClassWithEncodingProperty
 		{
 			public ClassWithEncodingProperty() => Encoding = Encoding.Default;
