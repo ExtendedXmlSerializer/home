@@ -22,8 +22,10 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using ExtendedXmlSerializer.ExtensionModel.Instances;
+using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
@@ -40,6 +42,10 @@ namespace ExtendedXmlSerializer.ExtensionModel
 
 		public static IConfigurationContainer EnableMemberExceptionHandling(this IConfigurationContainer @this)
 			=> @this.Extend(MemberExceptionHandlingExtension.Default);
+
+		public static IConfigurationContainer EnableMissingMemberHandling(this IConfigurationContainer @this,
+		                                                                  Action<IFormatReader> onMissing)
+			=> @this.Extend(new MissingMemberHandlingExtension(onMissing));
 
 		public static T EnableRootInstances<T>(this T @this) where T : IRootContext
 		{

@@ -22,8 +22,10 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ReflectionModel;
+using System;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
@@ -32,13 +34,15 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 		readonly IInstanceMemberSerializations _instances;
 		readonly IEnumerators                  _enumerators;
 		readonly IInnerContentServices         _contents;
+		readonly Action<IFormatReader> _missing;
 
 		public CollectionContents(IInstanceMemberSerializations instances, IEnumerators enumerators,
-		                          IInnerContentServices contents)
+		                          IInnerContentServices contents, Action<IFormatReader> missing)
 		{
 			_instances   = instances;
 			_enumerators = enumerators;
 			_contents    = contents;
+			_missing = missing;
 		}
 
 		public ISerializer Get(CollectionContentInput parameter)
@@ -47,7 +51,8 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 			var handler = new CollectionWithMembersInnerContentHandler(_contents,
 			                                                           new
 				                                                           MemberInnerContentHandler(serialization,
-				                                                                                     _contents, _contents),
+				                                                                                     _contents, _contents, 
+				                                                                                     _missing),
 			                                                           new CollectionInnerContentHandler(parameter.Item,
 			                                                                                             _contents));
 			var reader = _contents.Create(parameter.Classification, handler);

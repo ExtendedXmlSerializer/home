@@ -21,8 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
+using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
@@ -46,7 +48,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 			         .Register<IMemberContents, MemberContents>()
 			         .Register<IMemberSerializers, MemberSerializers>()
 			         .Register<IMemberSerializations, MemberSerializations>()
-			         .Register<IInstanceMemberSerializations, InstanceMemberSerializations>();
+			         .Register<IInstanceMemberSerializations, InstanceMemberSerializations>()
+			         .RegisterInstance<Action<IFormatReader>>(reader => {});
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

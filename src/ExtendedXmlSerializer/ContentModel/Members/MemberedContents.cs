@@ -22,6 +22,8 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Format;
+using System;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
@@ -30,18 +32,20 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 	{
 		readonly IInstanceMemberSerializations _instances;
 		readonly IInnerContentServices         _services;
+		readonly Action<IFormatReader> _missing;
 
-		public MemberedContents(IInstanceMemberSerializations instances, IInnerContentServices services)
+		public MemberedContents(IInstanceMemberSerializations instances, IInnerContentServices services, Action<IFormatReader> missing)
 		{
 			_instances = instances;
 			_services  = services;
+			_missing = missing;
 		}
 
 		public ISerializer Get(TypeInfo parameter)
 		{
 			var members = _instances.Get(parameter);
 			var reader =
-				_services.Create(parameter, new MemberInnerContentHandler(_instances.Get(parameter), _services, _services));
+				_services.Create(parameter, new MemberInnerContentHandler(_instances.Get(parameter), _services, _services, _missing));
 			var result = new Serializer(reader, new MemberListWriter(members));
 			return result;
 		}
