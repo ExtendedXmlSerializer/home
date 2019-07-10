@@ -72,7 +72,37 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 
 			public MemberSerializers(IMemberSerializers serializers) => _serializers = serializers;
 
-			public IMemberSerializer Get(IMember parameter) => new MemberSerializer(_serializers.Get(parameter));
+			public IMemberSerializer Get(IMember parameter)
+			{
+				var origin     = _serializers.Get(parameter);
+				var serializer = new MemberSerializer(origin);
+				var result = origin is PropertyMemberSerializer property
+					             ? new PropertyMemberSerializer(property)
+					             : origin is IRuntimeSerializer runtime
+						             ? (IMemberSerializer)new RuntimeSerializer(runtime)
+						             : serializer;
+				return result;
+			}
+		}
+
+		sealed class RuntimeSerializer : IRuntimeSerializer
+		{
+			readonly IRuntimeSerializer _serializer;
+
+			public RuntimeSerializer(IRuntimeSerializer serializer) => _serializer = serializer;
+
+			public object Get(IFormatReader parameter) => _serializer.Get(parameter);
+
+			public void Write(IFormatWriter writer, object instance)
+			{
+				_serializer.Write(writer, instance);
+			}
+
+			public IMember Profile => _serializer.Profile;
+
+			public IMemberAccess Access => _serializer.Access;
+
+			public IMemberSerializer Get(object parameter) => _serializer.Get(parameter);
 		}
 
 		sealed class MemberSerializer : IMemberSerializer
