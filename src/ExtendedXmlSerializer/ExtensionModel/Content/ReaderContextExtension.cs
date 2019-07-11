@@ -61,12 +61,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 					_handler = handler;
 				}
 
-				public void Execute(IInnerContent parameter)
+				public bool IsSatisfiedBy(IInnerContent parameter)
 				{
 					var contexts = _contexts.Get(parameter.Get());
 					contexts.Push(parameter);
-					_handler.Execute(parameter);
+					var result = _handler.IsSatisfiedBy(parameter);
 					contexts.Pop();
+					return result;
 				}
 			}
 		}

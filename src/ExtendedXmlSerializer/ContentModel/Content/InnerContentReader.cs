@@ -43,7 +43,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			var adapter = _activator.Get(parameter);
 			while (adapter?.MoveNext() ?? false)
 			{
-				_content.Execute(adapter);
+				_content.IsSatisfiedBy(adapter);
 			}
 			var result = adapter != null ? _result.Get(adapter) : null;
 			return result;

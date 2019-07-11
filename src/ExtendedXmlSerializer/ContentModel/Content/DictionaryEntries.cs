@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
@@ -48,17 +47,15 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 		readonly IMemberSerializers                                         _serializers;
 		readonly IWriter                                                    _element;
 		readonly IDictionaryPairTypesLocator                                _locator;
-		readonly Action<IFormatReader> _missing;
 
 		[UsedImplicitly]
 		public DictionaryEntries(IInnerContentServices contents, Element element, IMembers members,
-		                         IMemberSerializers serializers, Action<IFormatReader> missing)
-			: this(MemberSerializationBuilder.Default.Get, contents, serializers, members, element.Get(Type), Pairs, 
-			       missing) {}
+		                         IMemberSerializers serializers)
+			: this(MemberSerializationBuilder.Default.Get, contents, serializers, members, element.Get(Type), Pairs) {}
 
 		public DictionaryEntries(Func<IEnumerable<IMemberSerializer>, IMemberSerialization> builder,
 		                         IInnerContentServices contents, IMemberSerializers serializers, IMembers members,
-		                         IWriter element, IDictionaryPairTypesLocator locator, Action<IFormatReader> missing)
+		                         IWriter element, IDictionaryPairTypesLocator locator)
 		{
 			_builder     = builder;
 			_contents    = contents;
@@ -66,7 +63,6 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			_serializers = serializers;
 			_element     = element;
 			_locator     = locator;
-			_missing = missing;
 		}
 
 		IMemberSerializer Create(PropertyInfo metadata, TypeInfo classification)
@@ -78,7 +74,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			var serializers   = new[] {Create(Key, pair.KeyType), Create(Value, pair.ValueType)};
 			var serialization = new FixedInstanceMemberSerialization(_builder(serializers));
 
-			var reader = _contents.Create(Type, new MemberInnerContentHandler(serialization, _contents, _contents, _missing));
+			var reader = _contents.Create(Type, new MemberInnerContentHandler(serialization, _contents, _contents));
 
 			var converter = new Serializer(reader, new MemberListWriter(serialization));
 			var result    = new Container<object>(_element, converter);

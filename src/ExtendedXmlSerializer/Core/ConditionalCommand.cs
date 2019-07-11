@@ -25,7 +25,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.Core
 {
-	sealed class ConditionalCommand<T> : ICommand<T>
+	class ConditionalCommand<T> : ICommand<T>
 	{
 		readonly ISpecification<T> _specification;
 		readonly ICommand<T> _command;

@@ -36,6 +36,10 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 			_handler = handler;
 		}
 
-		public void Execute(IInnerContent parameter) => _handler.Handle((IListInnerContent) parameter, _item);
+		public bool IsSatisfiedBy(IInnerContent parameter)
+		{
+			_handler.Handle((IListInnerContent)parameter, _item);
+			return true;
+		}
 	}
 }

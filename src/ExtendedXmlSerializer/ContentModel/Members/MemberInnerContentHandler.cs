@@ -24,7 +24,6 @@
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core.Specifications;
-using System;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
@@ -33,15 +32,13 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		readonly IInstanceMemberSerialization _serialization;
 		readonly IMemberHandler               _handler;
 		readonly IReaderFormatter             _formatter;
-		readonly Action<IFormatReader>        _missing;
 
 		public MemberInnerContentHandler(IInstanceMemberSerialization serialization, IMemberHandler handler,
-		                                 IReaderFormatter formatter, Action<IFormatReader> missing)
+		                                 IReaderFormatter formatter)
 		{
 			_serialization = serialization;
 			_handler       = handler;
 			_formatter     = formatter;
-			_missing       = missing;
 		}
 
 		public bool IsSatisfiedBy(IInnerContent parameter)
@@ -54,10 +51,6 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			if (result)
 			{
 				_handler.Handle(parameter, member);
-			}
-			else
-			{
-				_missing(content);
 			}
 
 			return result;

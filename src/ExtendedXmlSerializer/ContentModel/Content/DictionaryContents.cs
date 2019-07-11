@@ -22,10 +22,8 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Collections;
-using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ReflectionModel;
-using System;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
@@ -36,16 +34,14 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 		readonly IDictionaryEnumerators        _enumerators;
 		readonly IDictionaryEntries            _entries;
 		readonly IInnerContentServices         _contents;
-		readonly Action<IFormatReader> _missing;
-
+		
 		public DictionaryContents(IInstanceMemberSerializations instances, IDictionaryEnumerators enumerators,
-		                          IDictionaryEntries entries, IInnerContentServices contents, Action<IFormatReader> missing)
+		                          IDictionaryEntries entries, IInnerContentServices contents)
 		{
 			_instances   = instances;
 			_enumerators = enumerators;
 			_entries     = entries;
 			_contents    = contents;
-			_missing = missing;
 		}
 
 		public ISerializer Get(TypeInfo parameter)
@@ -55,7 +51,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 
 			var handler = new CollectionWithMembersInnerContentHandler(_contents,
 			                                                           new MemberInnerContentHandler(_instances.Get(parameter),
-			                                                                                         _contents, _contents, _missing),
+			                                                                                         _contents, _contents),
 			                                                           new CollectionInnerContentHandler(entry, _contents));
 			var reader = _contents.Create(parameter, handler);
 			var writer =

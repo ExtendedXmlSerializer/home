@@ -23,17 +23,26 @@
 
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class CollectionWithMembersInnerContentHandler : SelectedCommand<IInnerContent>, IInnerContentHandler
+	sealed class CollectionWithMembersInnerContentHandler : IInnerContentHandler
 	{
-		readonly static ICommand<IInnerContent> Empty = EmptyCommand<IInnerContent>.Default;
+		readonly IListContentsSpecification    _specification;
+		readonly MemberInnerContentHandler     _members;
+		readonly CollectionInnerContentHandler _collection;
 
-		public CollectionWithMembersInnerContentHandler(IListContentsSpecification specification, MemberInnerContentHandler members,
-		                                  CollectionInnerContentHandler collection)
-			: base(collection.If(specification).Let(members, Empty)) {}
+		public CollectionWithMembersInnerContentHandler(IListContentsSpecification specification,
+		                                                MemberInnerContentHandler members,
+		                                                CollectionInnerContentHandler collection)
+		{
+			_specification = specification;
+			_members       = members;
+			_collection    = collection;
+		}
+
+		public bool IsSatisfiedBy(IInnerContent parameter)
+			=> _members.IsSatisfiedBy(parameter) ||
+			   _specification.IsSatisfiedBy(parameter) && _collection.IsSatisfiedBy(parameter);
 	}
 }

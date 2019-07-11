@@ -14,15 +14,15 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void Verify()
 		{
 			var subject = new ConfigurationContainer().EnableMemberExceptionHandling()
-			                                          .ConfigureType<Subject>()
-			                                          .Member(re => re.Version)
-			                                          .Attribute()
-			                                          .Create()
-			                                          .ForTesting();
+													  .ConfigureType<Subject>()
+													  .Member(re => re.Version)
+													  .Attribute()
+													  .Create()
+													  .ForTesting();
 
-			var instance = new Subject {Bar = "Hello", Version = "1"};
+			var instance = new Subject { Bar = "Hello", Version = "1" };
 			subject.Cycle(instance)
-			       .ShouldBeEquivalentTo(instance);
+				   .ShouldBeEquivalentTo(instance);
 		}
 
 		sealed class Subject

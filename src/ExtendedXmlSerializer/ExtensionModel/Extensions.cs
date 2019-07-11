@@ -43,9 +43,9 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		public static IConfigurationContainer EnableMemberExceptionHandling(this IConfigurationContainer @this)
 			=> @this.Extend(MemberExceptionHandlingExtension.Default);
 
-		public static IConfigurationContainer EnableMissingMemberHandling(this IConfigurationContainer @this,
-		                                                                  Action<IFormatReader> onMissing)
-			=> @this.Extend(new MissingMemberHandlingExtension(onMissing));
+		public static IConfigurationContainer EnableUnknownContentHandling(this IConfigurationContainer @this,
+		                                                                   Action<IFormatReader> onMissing)
+			=> @this.Extend(new UnknownContentHandlingExtension(onMissing));
 
 		public static T EnableRootInstances<T>(this T @this) where T : IRootContext
 		{

@@ -21,27 +21,26 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var names = new List<string>();
 			var data =
 				@"<?xml version=""1.0"" encoding=""utf-8""?><Issue256Tests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Invalid>Hello World!</Invalid><Message>Hello World!</Message></Issue256Tests-Subject>";
-			new ConfigurationContainer().EnableMissingMemberHandling(reader =>
+			new ConfigurationContainer().EnableUnknownContentHandling(reader =>
 				                                                         names.Add(IdentityFormatter
 				                                                                   .Default.Get(reader)))
 			                            .Create()
 			                            .Deserialize<Subject>(data);
 			names.Should()
-			     .HaveCount(2)
+			     .HaveCount(1)
 			     .And.Subject.Should()
-			     .Contain("http://www.w3.org/2000/xmlns/:xmlns",
-			              "clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests:Invalid");
+			     .Contain("clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests:Invalid");
 		}
 
 		[Fact]
 		void VerifyContinue()
 		{
+			const string data = @"<?xml version=""1.0"" encoding=""utf-8""?><Issue256Tests-SubjectContinue xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Foo>Doesn't Exist!</Foo><Bar>Hello World!</Bar></Issue256Tests-SubjectContinue>";
+
 			var command = new Command();
-			var data =
-				@"<?xml version=""1.0"" encoding=""utf-8""?><Issue256Tests-SubjectContinue xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Foo>Doesn't Exist!</Foo><Bar>Hello World!</Bar></Issue256Tests-SubjectContinue>";
 
 			new ConfigurationContainer().EnableReaderContext()
-			                            .EnableMissingMemberHandling(command.Execute)
+			                            .EnableUnknownContentHandling(command.Execute)
 			                            .Create()
 			                            .Deserialize<SubjectContinue>(data).Bar.Should().Be("Hello World!");
 			command.Captured.Name.Should()
@@ -54,7 +53,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			       .Be(typeof(SubjectContinue));
 		}
 
-		public struct CapturedInfo
+		readonly struct CapturedInfo
 		{
 			public CapturedInfo(string name, uint line, uint position, Type type)
 			{
@@ -83,10 +82,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				var lineInfo = parameter.Get().To<IXmlLineInfo>();
 				Captured = new CapturedInfo(IdentityFormatter.Default.Get(parameter), (uint)lineInfo.LineNumber,
 				                            (uint)lineInfo.LinePosition, content.Current.GetType());
-				if (parameter.Identifier != "http://www.w3.org/2000/xmlns/")
-				{
-					parameter.Content();
-				}
+				parameter.Content();
 			}
 		}
 
