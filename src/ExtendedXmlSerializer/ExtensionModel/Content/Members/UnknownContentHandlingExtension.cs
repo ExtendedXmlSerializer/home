@@ -113,9 +113,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 				if (!result)
 				{
 					var reader = parameter.Get();
-					if (reader.Identifier != "http://www.w3.org/2000/xmlns/")
+					switch (reader.Identifier)
 					{
-						_command(reader);
+						case "http://www.w3.org/2000/xmlns/":
+						case "https://extendedxmlserializer.github.io/v2":
+							break;
+						default:
+							_command(reader);
+							break;
 					}
 				}
 

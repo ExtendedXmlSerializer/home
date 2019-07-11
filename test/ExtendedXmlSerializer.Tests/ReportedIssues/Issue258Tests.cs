@@ -40,7 +40,26 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			       .Be(typeof(Subject));
 		}
 
-		readonly struct CapturedInfo
+		[Fact]
+		void VerifyWithoutInvalid()
+		{
+			const string data =
+				@"<?xml version=""1.0"" encoding=""utf-8""?><List xmlns:ns1=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""ns1:Issue258Tests-Subject"" xmlns=""https://extendedxmlserializer.github.io/system""><Capacity>4</Capacity><ns1:Issue258Tests-Subject><Message>Hello World!</Message></ns1:Issue258Tests-Subject></List>";
+
+			var command = new Command();
+
+			new ConfigurationContainer().EnableReaderContext()
+			                            .EnableUnknownContentHandling(command.Execute)
+			                            .Create()
+			                            .Deserialize<List<Subject>>(data)
+			                            .Only()
+			                            .Message.Should()
+			                            .Be("Hello World!");
+			command.Captured.Should()
+			       .BeNull();
+		}
+
+		sealed class CapturedInfo
 		{
 			public CapturedInfo(string name, uint line, uint position, Type type)
 			{
