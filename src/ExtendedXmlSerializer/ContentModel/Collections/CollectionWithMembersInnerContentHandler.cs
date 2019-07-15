@@ -28,21 +28,17 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 {
 	sealed class CollectionWithMembersInnerContentHandler : IInnerContentHandler
 	{
-		readonly IListContentsSpecification    _specification;
 		readonly MemberInnerContentHandler     _members;
 		readonly CollectionInnerContentHandler _collection;
 
-		public CollectionWithMembersInnerContentHandler(IListContentsSpecification specification,
-		                                                MemberInnerContentHandler members,
+		public CollectionWithMembersInnerContentHandler(MemberInnerContentHandler members,
 		                                                CollectionInnerContentHandler collection)
 		{
-			_specification = specification;
 			_members       = members;
 			_collection    = collection;
 		}
 
 		public bool IsSatisfiedBy(IInnerContent parameter)
-			=> _members.IsSatisfiedBy(parameter) ||
-			   _specification.IsSatisfiedBy(parameter) && _collection.IsSatisfiedBy(parameter);
+			=> _members.IsSatisfiedBy(parameter) || _collection.IsSatisfiedBy(parameter);
 	}
 }

@@ -40,13 +40,6 @@ namespace ExtendedXmlSerializer.ContentModel
 
 	static class Extensions
 	{
-		//public static ISerializer<T> Adapt<T>(this ISerializer @this) => new SerializerAdapter<T>(@this);
-
-		/*		public static IWriter<T> Adapt<T>(this IWriter @this) => new WriterAdapter<T>(@this);
-
-		public static IReader Adapt<T>(this IReader<T> @this) => new GenericReaderAdapter<T>(@this);
-		public static IReader<T> Adapt<T>(this IReader @this) => new ReaderAdapter<T>(@this);*/
-
 		public static IReader<T> CreateContents<T>(this IInnerContentServices @this, IInnerContentHandler parameter)
 			=> new ReaderAdapter<T>(@this.Create(Support<T>.Key, parameter));
 

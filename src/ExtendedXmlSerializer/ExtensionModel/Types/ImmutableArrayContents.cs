@@ -21,14 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
+using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
@@ -61,10 +61,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 			[UsedImplicitly]
 			public Reader(IInnerContentServices services, IReader item)
-				: this(services.CreateContents<Collection<T>>(new ConditionalInnerContentHandler(services,
-				                                                                                 new
-					                                                                                 CollectionInnerContentHandler(item,
-					                                                                                                               services)))) {}
+				: this(services.CreateContents<Collection<T>>(new CollectionInnerContentHandler(item, services))) {}
 
 			Reader(IReader<Collection<T>> reader) => _reader = reader;
 

@@ -28,14 +28,15 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 	sealed class InnerContentReader : IReader
 	{
 		readonly IInnerContentActivator _activator;
-		readonly IInnerContentHandler _content;
-		readonly IInnerContentResult _result;
+		readonly IInnerContentHandler   _content;
+		readonly IInnerContentResult    _result;
 
-		public InnerContentReader(IInnerContentActivator activator, IInnerContentHandler content, IInnerContentResult result)
+		public InnerContentReader(IInnerContentActivator activator, IInnerContentHandler content,
+		                          IInnerContentResult result)
 		{
 			_activator = activator;
-			_content = content;
-			_result = result;
+			_content   = content;
+			_result    = result;
 		}
 
 		public object Get(IFormatReader parameter)
@@ -45,6 +46,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			{
 				_content.IsSatisfiedBy(adapter);
 			}
+
 			var result = adapter != null ? _result.Get(adapter) : null;
 			return result;
 		}

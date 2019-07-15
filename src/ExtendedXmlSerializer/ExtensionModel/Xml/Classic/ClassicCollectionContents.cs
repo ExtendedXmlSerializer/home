@@ -41,10 +41,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 
 		public ISerializer Get(CollectionContentInput parameter)
 			=> new Serializer(_contents.Create(parameter.Classification,
-			                                   new ConditionalInnerContentHandler(_contents,
-			                                                                      new
-				                                                                      CollectionInnerContentHandler(parameter.Item,
-				                                                                                                    _contents))),
+			                                   new CollectionInnerContentHandler(parameter.Item, _contents)),
 			                  new EnumerableWriter(_enumerators, parameter.Item).Adapt());
 	}
 }

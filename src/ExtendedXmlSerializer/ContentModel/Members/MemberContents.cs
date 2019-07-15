@@ -30,9 +30,9 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 	{
 		readonly static ISpecification<IMember> Specification = VariableTypeMemberSpecifications.Default.IfAssigned();
 
-		public MemberContents(RegisteredMemberContents registered, VariableTypeMemberContents variable,
-		                      DefaultMemberContents contents)
-			: base(contents.Let(Specification, variable)
+		public MemberContents(DefaultMemberContents @default, VariableTypeMemberContents variable,
+		                      RegisteredMemberContents registered)
+			: base(@default.Let(Specification, variable)
 			               .Let(registered, registered)) {}
 	}
 }

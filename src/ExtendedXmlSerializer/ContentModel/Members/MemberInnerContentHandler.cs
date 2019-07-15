@@ -23,11 +23,10 @@
 
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	sealed class MemberInnerContentHandler : IInnerContentHandler, ISpecification<IInnerContent>
+	sealed class MemberInnerContentHandler : IInnerContentHandler
 	{
 		readonly IInstanceMemberSerialization _serialization;
 		readonly IMemberHandler               _handler;
@@ -50,12 +49,10 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			var result = member != null;
 			if (result)
 			{
-				_handler.Handle(parameter, member);
+				_handler.Handle(parameter, member);	
 			}
 
 			return result;
 		}
-
-		public void Execute(IInnerContent parameter) => IsSatisfiedBy(parameter);
 	}
 }

@@ -49,8 +49,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			var members = _instances.Get(parameter);
 			var entry   = _entries.Get(parameter);
 
-			var handler = new CollectionWithMembersInnerContentHandler(_contents,
-			                                                           new MemberInnerContentHandler(_instances.Get(parameter),
+			var handler = new CollectionWithMembersInnerContentHandler(new MemberInnerContentHandler(_instances.Get(parameter),
 			                                                                                         _contents, _contents),
 			                                                           new CollectionInnerContentHandler(entry, _contents));
 			var reader = _contents.Create(parameter, handler);
