@@ -25,7 +25,29 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			      .BeSameAs(cycled.Bar.Foos.Only());
 
 			cycled.Bar.Should()
-			      .BeSameAs(cycled.Bar.Foos.Only().Bar);
+			      .BeSameAs(cycled.Bar.Foos.Only()
+			                      .Bar);
+		}
+
+		[Fact]
+		void VerifyList()
+		{
+			var instance = new Foo {Bar = new Bar()};
+			instance.Bar.Foos.Add(instance);
+
+			var serializer = new ConfigurationContainer().EnableReferences()
+			                                             .Create();
+
+			var list = new List<Foo> {instance};
+
+			var cycled = serializer.Cycle(list).Only();
+
+
+			cycled.Should()
+			    .BeSameAs(cycled.Bar.Foos.Only());
+
+			cycled.Bar.Should()
+			    .BeSameAs(cycled.Bar.Foos.Only().Bar);
 		}
 
 		public class Foo
