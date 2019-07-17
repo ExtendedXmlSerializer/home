@@ -33,15 +33,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 	sealed class DeferredReferenceMap : IReferenceMap
 	{
 		readonly ICollection<IDeferredCommand> _commands;
-		readonly Stack<IInnerContent> _contexts;
-		readonly IReferenceMap _map;
+		readonly Stack<IInnerContent>          _contexts;
+		readonly IReferenceMap                 _map;
 
 		public DeferredReferenceMap(ICollection<IDeferredCommand> commands, Stack<IInnerContent> contexts,
 		                            IReferenceMap map)
 		{
 			_commands = commands;
 			_contexts = contexts;
-			_map = map;
+			_map      = map;
 		}
 
 		public bool IsSatisfiedBy(ReferenceIdentity parameter) => _map.IsSatisfiedBy(parameter);
@@ -51,29 +51,25 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			var result = _map.Get(parameter);
 			if (result == null)
 			{
-				var source = _map.Fix(parameter);
+				var source  = _map.Fix(parameter);
 				var current = _contexts.Peek();
-				var command = Command(current, source);
+				var command = current is IListInnerContent list
+					              ? new DeferredCollectionAssignmentCommand(list.List, source)
+					              : Member(current, source);
 				_commands.Add(command);
 			}
-			return result;
-		}
 
-		static IDeferredCommand Command(IInnerContent current, ISource<object> source)
-		{
-			var list = current as IListInnerContent;
-			var result = list != null
-				? new DeferredCollectionAssignmentCommand(list.List, source)
-				: Member(current, source);
 			return result;
 		}
 
 		static IDeferredCommand Member(IInnerContent current, ISource<object> source)
-			=>
-				new DeferredMemberAssignmentCommand(current.Current, ContentsContext.Default.Get(current).AsValid<IMemberAccess>(),
-				                                    source);
+			=> new DeferredMemberAssignmentCommand(current.Current,
+			                                       ContentsContext.Default.Get(current)
+			                                                      .AsValid<IMemberAccess>(),
+			                                       source);
 
 		public void Assign(ReferenceIdentity key, object value) => _map.Assign(key, value);
+
 		public bool Remove(ReferenceIdentity key) => _map.Remove(key);
 	}
 }

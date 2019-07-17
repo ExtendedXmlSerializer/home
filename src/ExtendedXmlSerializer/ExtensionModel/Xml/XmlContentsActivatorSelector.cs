@@ -32,10 +32,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 	{
 		public static XmlContentsActivatorSelector Default { get; } = new XmlContentsActivatorSelector();
 
-		XmlContentsActivatorSelector() : base(
-		    DefaultXmlContentsActivator.Default
-		                               .Let(IsCollectionTypeSpecification.Default, XmlListContentsActivator.Default)
-		                               .Let(IsDictionaryTypeSpecification.Default, new XmlListContentsActivator(new Lists(DictionaryAddDelegates.Default)))
-			) {}
+		XmlContentsActivatorSelector()
+			: this(XmlListContentsActivator.Default,
+			       new XmlListContentsActivator(new Lists(DictionaryAddDelegates.Default))) {}
+
+		public XmlContentsActivatorSelector(IXmlContentsActivator collection, IXmlContentsActivator dictionary)
+			: base(DefaultXmlContentsActivator.Default
+			                                  .Let(IsCollectionTypeSpecification.Default, collection)
+			                                  .Let(IsDictionaryTypeSpecification.Default, dictionary)) {}
 	}
 }

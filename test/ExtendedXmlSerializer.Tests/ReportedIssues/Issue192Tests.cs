@@ -69,6 +69,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .ForTesting();
 
 			var instance = new ClassWithMixedContent {Value = new List<object>{ 123, 345 }};
+
+			serializer.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><Issue192Tests-ClassWithMixedContent xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><int xmlns=""https://extendedxmlserializer.github.io/system"">123</int><int xmlns=""https://extendedxmlserializer.github.io/system"">345</int></Issue192Tests-ClassWithMixedContent>");
+
 			serializer.Cycle(instance)
 			          .ShouldBeEquivalentTo(instance);
 

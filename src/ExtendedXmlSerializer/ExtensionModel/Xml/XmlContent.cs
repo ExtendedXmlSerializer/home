@@ -23,23 +23,23 @@
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	struct XmlContent
+	readonly struct XmlContent
 	{
 		readonly XmlAttributes? _attributes;
-		readonly XmlElements? _elements;
+		readonly XmlElements?   _elements;
 
 		public XmlContent(XmlAttributes? attributes, XmlElements? elements)
 		{
 			_attributes = attributes;
-			_elements = elements;
+			_elements   = elements;
 		}
 
 		public bool MoveNext()
 		{
 			var attributes = _attributes;
-			var content = _elements;
-			var moveNext = (attributes?.MoveNext() ?? false) || (content?.MoveNext() ?? false);
-			return moveNext;
+			var content    = _elements;
+			var result     = (attributes?.MoveNext() ?? false) || (content?.MoveNext() ?? false);
+			return result;
 		}
 
 		public object Current => null;

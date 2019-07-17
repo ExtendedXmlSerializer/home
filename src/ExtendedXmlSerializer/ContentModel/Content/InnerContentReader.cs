@@ -41,14 +41,19 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 
 		public object Get(IFormatReader parameter)
 		{
-			var adapter = _activator.Get(parameter);
-			while (adapter?.MoveNext() ?? false)
+			var content = _activator.Get(parameter);
+			if (content != null)
 			{
-				_content.IsSatisfiedBy(adapter);
+				while (content.MoveNext())
+				{
+					_content.IsSatisfiedBy(content);
+				}
+
+				var result = _result.Get(content);
+				return result;
 			}
 
-			var result = adapter != null ? _result.Get(adapter) : null;
-			return result;
+			return null;
 		}
 	}
 }

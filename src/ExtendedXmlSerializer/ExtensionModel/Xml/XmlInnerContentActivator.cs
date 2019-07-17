@@ -52,7 +52,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			var attributes = reader.HasAttributes ? new XmlAttributes(reader) : (XmlAttributes?)null;
 			var depth      = XmlDepth.Default.Get(reader);
 			var content    = depth.HasValue ? new XmlElements(reader, depth.Value) : (XmlElements?)null;
-			return new XmlContent(attributes, content);
+			var result     = new XmlContent(attributes, content);
+			return result;
 		}
 	}
 }

@@ -58,40 +58,57 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		sealed class MemberSerializations : IMemberSerializations
 		{
-			readonly ISpecification<string> _true;
-			readonly ISpecification<string> _false;
-			readonly IMemberSerializations  _serialization;
-			readonly IContentMembers        _members;
+			readonly ISpecifications       _specifications;
+			readonly IMemberSerializations _serialization;
+			readonly IContentMembers       _content;
 
 			public MemberSerializations(IMemberSerializations serialization, IContentMembers members)
-				: this(AlwaysSpecification<string>.Default, new DelegatedSpecification<string>(string.IsNullOrEmpty),
-				       serialization, members) {}
+				: this(Specifications.Instance, serialization, members) {}
 
-			public MemberSerializations(ISpecification<string> @true, ISpecification<string> @false,
-			                            IMemberSerializations serialization, IContentMembers members)
+			public MemberSerializations(ISpecifications specifications, IMemberSerializations serialization,
+			                            IContentMembers content)
 			{
-				_true          = @true;
-				_false         = @false;
-				_serialization = serialization;
-				_members       = members;
+				_specifications = specifications;
+				_serialization  = serialization;
+				_content        = content;
 			}
 
 			public IMemberSerialization Get(TypeInfo parameter)
 			{
 				var serialization = _serialization.Get(parameter);
-				var member        = _members.Get(serialization);
-				var result        = member != null ? Create(serialization, member) : serialization;
+				var content       = _content.Get(serialization);
+				var result = content != null
+					             ? new MemberSerialization(_specifications.Get(content.Profile.MemberType),
+					                                       serialization, content)
+					             : serialization;
 				return result;
+			}
+		}
+
+		interface ISpecifications : IParameterizedSource<TypeInfo, ISpecification<string>> {}
+
+		sealed class Specifications : ISpecifications
+		{
+			readonly static ISpecification<string> True  = AlwaysSpecification<string>.Default,
+			                                       False = new DelegatedSpecification<string>(string.IsNullOrEmpty);
+
+			public static Specifications Instance { get; } = new Specifications();
+
+			Specifications() : this(IsCollectionTypeSpecification.Default, True, False) {}
+
+			readonly ISpecification<TypeInfo> _specification;
+			readonly ISpecification<string>   _true, _false;
+
+			public Specifications(ISpecification<TypeInfo> specification, ISpecification<string> @true,
+			                      ISpecification<string> @false)
+			{
+				_specification = specification;
+				_true          = @true;
+				_false         = @false;
 			}
 
-			MemberSerialization Create(IMemberSerialization serialization, IMemberSerializer member)
-			{
-				var specification = IsCollectionTypeSpecification.Default.IsSatisfiedBy(member.Profile.MemberType)
-					                    ? _true
-					                    : _false;
-				var result = new MemberSerialization(specification, serialization, member);
-				return result;
-			}
+			public ISpecification<string> Get(TypeInfo parameter)
+				=> _specification.IsSatisfiedBy(parameter) ? _true : _false;
 		}
 
 		sealed class MemberSerialization : IMemberSerialization
@@ -119,17 +136,18 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		sealed class MemberSerializers : IMemberSerializers
 		{
-			readonly ISpecification<MemberInfo> _content;
-			readonly ISerializer                _serializer;
-			readonly IIdentities                _identities;
-			readonly ISerializers               _serializers;
-			readonly IMemberSerializers         _members;
 			readonly IConverters                _converters;
-			readonly IContentMember               _member;
+			readonly IContentMember             _member;
+			readonly IIdentities                _identities;
+			readonly IMemberSerializers         _members;
+			readonly ISerializers               _serializers;
+			readonly ISerializer                _serializer;
+			readonly ISpecification<MemberInfo> _content;
 
 			public MemberSerializers(ISerializer serializer, IIdentities identities, ISerializers serializers,
 			                         IMemberSerializers members, IConverters converters, IContentMember member)
-				: this(IsContent.Instance, serializer, identities, serializers, members, converters, member) {}
+				: this(IsDefinedSpecification<XmlTextAttribute>.Default, serializer, identities, serializers, members,
+				       converters, member) {}
 
 			public MemberSerializers(ISpecification<MemberInfo> content, ISerializer serializer, IIdentities identities,
 			                         ISerializers serializers, IMemberSerializers members, IConverters converters,
@@ -141,7 +159,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 				_serializers = serializers;
 				_members     = members;
 				_converters  = converters;
-				_member        = member;
+				_member      = member;
 			}
 
 			public IMemberSerializer Get(IMember parameter)
@@ -155,27 +173,19 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 			IMemberSerializer Create(IMemberSerializer serializer, Type owner)
 			{
-				var item     = CollectionItemTypeLocator.Default.Get(serializer.Profile.MemberType);
-				var itemType = _member.Get(owner).Item1;
-				var member   = (IMemberSerializer)new MemberSerializer(serializer, _converters.Get(itemType));
+				var item = CollectionItemTypeLocator.Default.Get(serializer.Profile.MemberType);
+				var itemType = _member.Get(owner)
+				                      .Item1;
+				var member = (IMemberSerializer)new MemberSerializer(serializer, _converters.Get(itemType));
 				var result = item != null
 					             ? new ListSerializer(_serializer, _serializers, serializer, member,
-					                                  _identities.Get(owner),
-					                                  Generic.Instance.Get(item)
-					                                         .Invoke(), item)
+					                                  _identities.Get(owner), item)
 					             : member;
 				return result;
 			}
 		}
 
 		interface ILists : IParameterizedSource<ArrayList, IList> {}
-
-		sealed class Generic : Generic<ILists>
-		{
-			public static Generic Instance { get; } = new Generic();
-
-			Generic() : base(typeof(GenericList<>)) {}
-		}
 
 		sealed class GenericList<T> : ILists
 		{
@@ -189,6 +199,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		sealed class ListSerializer : IMemberSerializer
 		{
+			readonly static Generic<ILists> Lists = new Generic<ILists>(typeof(GenericList<>));
+
 			readonly ISerializer                            _serializer;
 			readonly ISerializers                           _serializers;
 			readonly IMemberSerializer                      _default;
@@ -196,6 +208,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			readonly IIdentity                              _identity;
 			readonly IParameterizedSource<ArrayList, IList> _lists;
 			readonly TypeInfo                               _type;
+
+			public ListSerializer(ISerializer serializer, ISerializers serializers, IMemberSerializer @default,
+			                      IMemberSerializer item, IIdentity identity, TypeInfo type)
+				: this(serializer, serializers, @default, item, identity, Lists.Get(type)(), type) {}
 
 			public ListSerializer(ISerializer serializer, ISerializers serializers, IMemberSerializer @default,
 			                      IMemberSerializer item, IIdentity identity, ILists lists, TypeInfo type)
@@ -247,8 +263,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 					{
 						var info = item.GetType()
 						               .GetTypeInfo();
-						var emitter = info == _type ? _item : _serializers.Get(info);
-						emitter.Write(writer, item);
+						var serializer = info == _type ? _item : _serializers.Get(info);
+						serializer.Write(writer, item);
 					}
 				}
 			}
@@ -260,22 +276,28 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		sealed class InnerContentActivation : IInnerContentActivation
 		{
-			readonly IInnerContentActivation _activator;
-			readonly IContentMember            _member;
+			readonly ISpecification<TypeInfo> _collection;
+			readonly IInnerContentActivation  _activator;
+			readonly IContentMember           _member;
 
 			public InnerContentActivation(IInnerContentActivation activator, IContentMember member)
+				: this(IsCollectionTypeSpecification.Default, activator, member) {}
+
+			public InnerContentActivation(ISpecification<TypeInfo> collection, IInnerContentActivation activator,
+			                              IContentMember member)
 			{
-				_activator = activator;
-				_member      = member;
+				_collection = collection;
+				_activator  = activator;
+				_member     = member;
 			}
 
 			public IInnerContentActivator Get(TypeInfo parameter)
 			{
-				var content  = _activator.Get(parameter);
-				var typeInfo = _member.Get(parameter)?.Item2.MemberType;
+				var content = _activator.Get(parameter);
+				var typeInfo = _member.Get(parameter)
+				                      ?.Item2.MemberType;
 				var result = typeInfo != null
-					             ? new InnerContentActivator(content,
-					                                         IsCollectionTypeSpecification.Default.IsSatisfiedBy(typeInfo))
+					             ? new InnerContentActivator(content, _collection.IsSatisfiedBy(typeInfo))
 					             : content;
 				return result;
 			}
@@ -292,7 +314,40 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 				_apply     = apply;
 			}
 
-			public IInnerContent Get(IFormatReader parameter) => new InnerContent(_activator.Get(parameter), _apply);
+			public IInnerContent Get(IFormatReader parameter)
+			{
+				var monitor = new ConditionMonitor();
+				if (_apply)
+				{
+					monitor.Apply();
+				}
+
+				var result = new InnerContent(_activator.Get(parameter), monitor);
+				return result;
+			}
+		}
+
+		sealed class InnerContent : IInnerContent
+		{
+			readonly IInnerContent    _content;
+			readonly ConditionMonitor _monitor;
+
+			public InnerContent(IInnerContent content, ConditionMonitor monitor)
+			{
+				_content = content;
+				_monitor = monitor;
+			}
+
+			public IFormatReader Get() => _content.Get();
+
+			public bool MoveNext() => _content.MoveNext() || _monitor.Apply();
+
+			public void Reset()
+			{
+				_content.Reset();
+			}
+
+			public object Current => _content.Current;
 		}
 
 		interface IContentMembers : IParameterizedSource<IMemberSerialization, IMemberSerializer> {}
@@ -301,7 +356,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		{
 			public static ContentMembers Instance { get; } = new ContentMembers();
 
-			ContentMembers() : this(IsContent.Instance.IsSatisfiedBy) {}
+			ContentMembers() : this(IsDefinedSpecification<XmlTextAttribute>.Default.IsSatisfiedBy) {}
 
 			readonly Func<MemberInfo, bool> _specification;
 
@@ -323,26 +378,24 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			}
 		}
 
-		sealed class IsContent : DecoratedSpecification<MemberInfo>
-		{
-			public static IsContent Instance { get; } = new IsContent();
-
-			IsContent() : base(IsDefinedSpecification<XmlTextAttribute>.Default) {}
-		}
-
 		interface IContentMember : IParameterizedSource<TypeInfo, Tuple<TypeInfo, IMember>> {}
 
 		sealed class ContentMember : ReferenceCacheBase<TypeInfo, Tuple<TypeInfo, IMember>>, IContentMember
 		{
-			readonly static Func<MemberInfo, bool> Specification = IsContent.Instance.IsSatisfiedBy;
+			readonly static Func<MemberInfo, bool> Specification
+				= IsDefinedSpecification<XmlTextAttribute>.Default.IsSatisfiedBy;
 
-			readonly Func<MemberInfo, bool> _specification;
-			readonly ITypeMembers           _members;
+			readonly ISpecification<TypeInfo> _collection;
+			readonly Func<MemberInfo, bool>   _specification;
+			readonly ITypeMembers             _members;
 
-			public ContentMember(ITypeMembers members) : this(Specification, members) {}
+			public ContentMember(ITypeMembers members)
+				: this(IsCollectionTypeSpecification.Default, Specification, members) {}
 
-			public ContentMember(Func<MemberInfo, bool> specification, ITypeMembers members)
+			public ContentMember(ISpecification<TypeInfo> collection, Func<MemberInfo, bool> specification,
+			                     ITypeMembers members)
 			{
+				_collection    = collection;
 				_specification = specification;
 				_members       = members;
 			}
@@ -355,45 +408,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 					var member = members[i];
 					if (_specification(member.Metadata))
 					{
-						var type = IsCollectionTypeSpecification.Default.IsSatisfiedBy(member.MemberType)
-							             ? member.Metadata.GetCustomAttribute<XmlTextAttribute>()
-							                     ?.Type?.GetTypeInfo() ?? member.MemberType
-							             : member.MemberType;
+						var type = _collection.IsSatisfiedBy(member.MemberType)
+							           ? member.Metadata.GetCustomAttribute<XmlTextAttribute>()
+							                   ?.Type.GetTypeInfo() ?? member.MemberType
+							           : member.MemberType;
 						return Tuple.Create(type, member);
 					}
 				}
 
 				return null;
 			}
-		}
-
-		sealed class InnerContent : IInnerContent
-		{
-			readonly IInnerContent    _content;
-			readonly ConditionMonitor _monitor;
-
-			public InnerContent(IInnerContent content, bool apply)  : this(content, new ConditionMonitor(), apply) {}
-
-			public InnerContent(IInnerContent content, ConditionMonitor monitor, bool apply)
-			{
-				_content = content;
-				_monitor = monitor;
-				if (apply)
-				{
-					monitor.Apply();
-				}
-			}
-
-			public IFormatReader Get() => _content.Get();
-
-			public bool MoveNext() => _content.MoveNext() || _monitor.Apply();
-
-			public void Reset()
-			{
-				_content.Reset();
-			}
-
-			public object Current => _content.Current;
 		}
 
 		sealed class MemberSerializer : IMemberSerializer
