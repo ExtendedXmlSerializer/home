@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	struct XmlElements
+	readonly struct XmlElements
 	{
 		readonly System.Xml.XmlReader _reader;
 		readonly int _depth;
@@ -34,7 +34,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			_depth = depth;
 		}
 
-		public bool MoveNext() => _reader.Read() && _reader.IsStartElement() && _reader.Depth == _depth;
+		public bool MoveNext()
+		{
+			var isStartElement = _reader.Read() && _reader.IsStartElement() && _reader.Depth == _depth;
+			return isStartElement;
+		}
 
 		public object Current => _reader;
 	}

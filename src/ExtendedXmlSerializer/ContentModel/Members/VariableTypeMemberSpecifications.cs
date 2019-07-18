@@ -43,7 +43,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		protected override IVariableTypeSpecification Create(IMember parameter)
 			=> _specification.IsSatisfiedBy(parameter)
-				   ? Reflection.VariableTypeSpecification.Defaults.Get(parameter.MemberType.AsType())
+				   ? Reflection.VariableTypeSpecification.Defaults.Get(parameter.MemberType)
 				   : null;
 	}
 }

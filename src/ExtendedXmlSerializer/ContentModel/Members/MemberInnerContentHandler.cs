@@ -49,7 +49,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			var result = member != null;
 			if (result)
 			{
-				_handler.Handle(parameter, member);	
+				_handler.Handle(parameter, member);
 			}
 
 			return result;

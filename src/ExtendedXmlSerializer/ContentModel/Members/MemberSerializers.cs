@@ -23,7 +23,6 @@
 
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion;
-using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
@@ -48,20 +47,17 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		public IMemberSerializer Get(IMember parameter)
 		{
-			var converter  = _converters.Get(parameter);
-			var access     = _accessors.Get(parameter);
-			var alteration = new DelegatedAlteration<object>(access.Get);
-			var result = converter != null
-				             ? Property(alteration, converter, parameter, access)
-				             : Content(parameter, access);
+			var converter = _converters.Get(parameter);
+			var access    = _accessors.Get(parameter);
+			var result    = converter != null ? Property(converter, parameter, access) : Content(parameter, access);
 			return result;
 		}
 
-		IMemberSerializer Property(IAlteration<object> alteration, IConverter converter, IMember profile,
-		                           IMemberAccess access)
+		IMemberSerializer Property(IConverter converter, IMember profile, IMemberAccess access)
 		{
+			var alteration = new DelegatedAlteration<object>(access.Get);
 			var serializer = new ConverterProperty<object>(converter, profile).Adapt();
-			var member     = new MemberSerializer(profile, access, serializer, new Writer(access, serializer));
+			var member     = new MemberSerializer(profile, access, serializer, new MemberWriter(access, serializer));
 			var runtime    = _runtime.Get(profile.Metadata);
 			var property   = (IMemberSerializer)new PropertyMemberSerializer(member);
 			return runtime != null
@@ -72,40 +68,16 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		IMemberSerializer Content(IMember profile, IMemberAccess access)
 		{
-			var body     = _content.Get(profile);
 			var identity = new Identity<object>(profile);
 			var composite = CollectionItemTypeLocator.Default.Get(profile.MemberType)
 			                                         ?.Name == profile.Name
 				                ? (IWriter<object>)new MemberPropertyWriter(identity)
 				                : identity;
 			var start  = composite.Adapt();
-			var writer = new Writer(access, new Enclosure(start, body));
+			var body   = _content.Get(profile);
+			var writer = new MemberWriter(access, new Enclosure(start, body));
 			var result = new MemberSerializer(profile, access, body, writer);
 			return result;
-		}
-
-		sealed class Writer : IWriter
-		{
-			readonly IMemberAccess   _access;
-			readonly IWriter<object> _writer;
-
-			public Writer(IMemberAccess access, IWriter<object> writer)
-			{
-				_access = access;
-				_writer = writer;
-			}
-
-			public void Write(IFormatWriter writer, object instance)
-			{
-				if (_access.Instance.IsSatisfiedBy(instance))
-				{
-					var member = _access.Get(instance);
-					if (_access.IsSatisfiedBy(member))
-					{
-						_writer.Write(writer, member);
-					}
-				}
-			}
 		}
 	}
 }

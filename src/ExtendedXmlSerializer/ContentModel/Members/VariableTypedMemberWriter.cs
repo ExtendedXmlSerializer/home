@@ -26,6 +26,7 @@ using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.Core.Specifications;
 using System;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
@@ -36,8 +37,11 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		readonly IWriter              _body;
 		readonly IProperty<TypeInfo>  _property;
 
-		/*public VariableTypedMemberWriter(ISpecification<Type> type, ISerializer runtime, IWriter body)
-			: this(type, runtime, body, ExplicitTypeProperty.Default) {}*/
+		public VariableTypedMemberWriter(Type type, ISerializer runtime, IWriter body)
+			: this(VariableTypeSpecification.Defaults.Get(type), runtime, body) {}
+
+		public VariableTypedMemberWriter(ISpecification<Type> type, ISerializer runtime, IWriter body)
+			: this(type, runtime, body, ExplicitTypeProperty.Default) {}
 
 		public VariableTypedMemberWriter(ISpecification<Type> type, ISerializer runtime, IWriter body,
 		                                 IProperty<TypeInfo> property)
