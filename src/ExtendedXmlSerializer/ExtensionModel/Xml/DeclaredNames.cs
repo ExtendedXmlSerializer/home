@@ -36,7 +36,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public string Get(TypeInfo parameter) => parameter.GetCustomAttribute<XmlRootAttribute>()
 		                                                  ?
 		                                                  .ElementName
-		                                                  .NullIfEmpty() ?? parameter.GetCustomAttribute<XmlTypeAttribute>()
+		                                                  .NullIfEmpty() ?? parameter.GetCustomAttribute<XmlTypeAttribute>(false)
 		                                                                             ?
 		                                                                             .TypeName
 		                                                                             .NullIfEmpty();

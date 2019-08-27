@@ -21,22 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
-	sealed class TypedParsingReader : IReader<TypeInfo>
+	class TypedParsingReader : IReader<TypeInfo>
 	{
 		readonly IReader<MemberInfo> _reader;
-		public TypedParsingReader(IIdentity identity) : this(new ParsedReader<MemberInfo>(x => x, identity)) {}
+		public TypedParsingReader(IIdentity identity) : this(new MemberParsedReader(identity)) {}
 
-		public TypedParsingReader(IReader<MemberInfo> reader)
-		{
-			_reader = reader;
-		}
+		public TypedParsingReader(IReader<MemberInfo> reader) => _reader = reader;
 
 		public TypeInfo Get(IFormatReader parameter) => _reader.Get(parameter)?.AsValid<TypeInfo>();
 	}
