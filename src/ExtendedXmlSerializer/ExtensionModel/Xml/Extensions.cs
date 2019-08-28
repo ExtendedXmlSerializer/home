@@ -218,6 +218,20 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			=> @this.Emit(EmitBehaviors.Classic)
 			        .Extend(ClassicExtension.Default);
 
+		/// <summary>
+		/// Enables the xsi:type for legacy deserialization purposes.
+		/// https://github.com/wojtpl2/ExtendedXmlSerializer/issues/261
+		/// </summary>
+		/// <param name="this"></param>
+		/// <returns></returns>
+		public static IConfigurationContainer EnableClassicSchemaTyping(this IConfigurationContainer @this)
+			=> @this.Extend(SchemaTypeExtension.Default);
+
+		/// <summary>
+		/// Enables `ArrayOfT` and `ListOfT` naming conventions for arrays and lists, respectively.
+		/// </summary>
+		/// <param name="this"></param>
+		/// <returns></returns>
 		public static IConfigurationContainer EnableClassicListNaming(this IConfigurationContainer @this)
 			=> @this.Extend(ClassicListNamingExtension.Default);
 

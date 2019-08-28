@@ -1,15 +1,10 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Xml.Serialization;
 using Xunit;
 
@@ -21,7 +16,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void VerifyProperty()
 		{
 			var container = new ConfigurationContainer().EnableImplicitTypingFromNested<Issue261Tests>()
-			                                            .Extend(Extension.Default)
+			                                            .EnableClassicSchemaTyping()
 			                                            .Create()
 			                                            .ForTesting();
 
@@ -34,7 +29,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void VerifyElement()
 		{
 			var container = new ConfigurationContainer().EnableImplicitTypingFromNested<Issue261Tests>()
-			                                            .Extend(Extension.Default)
+			                                            .EnableClassicSchemaTyping()
 			                                            .Create()
 			                                            .ForTesting();
 			var content =
@@ -51,7 +46,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[XmlType("ModelObject")]
 		class Entity
 		{
-			List<Entity> Children { get; } = new List<Entity>();
+			public IList<Entity> Children { get; set;  } = new List<Entity>();
 		}
 
 		class Reference : Entity
@@ -64,49 +59,5 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		[Serializable]
 		class AnotherModelClass : Entity {}
-
-		sealed class SchemaType : ExtendedXmlSerializer.ContentModel.Identification.Identity
-		{
-			public static SchemaType Default { get; } = new SchemaType();
-
-			SchemaType() : base("type", "http://www.w3.org/2001/XMLSchema-instance") {}
-		}
-
-		sealed class Reader : TypedParsingReader
-		{
-			public static Reader Default { get; } = new Reader();
-
-			Reader() : base(SchemaType.Default) {}
-		}
-
-		sealed class Extension : ISerializerExtension
-		{
-			public static Extension Default { get; } = new Extension();
-
-			Extension() {}
-
-			public IServiceRepository Get(IServiceRepository parameter)
-				=> parameter.Decorate<IClassification, Classification>();
-
-			void ICommand<IServices>.Execute(IServices parameter) {}
-
-			sealed class Classification : IClassification
-			{
-				readonly IClassification   _classification;
-				readonly IReader<TypeInfo> _reader;
-
-				public Classification(IClassification classification) : this(classification, Reader.Default) {}
-
-				public Classification(IClassification classification, IReader<TypeInfo> reader)
-				{
-					_classification = classification;
-					_reader         = reader;
-				}
-
-				public TypeInfo Get(IFormatReader parameter) => parameter.IsSatisfiedBy(SchemaType.Default)
-					                                                ? _reader.Get(parameter)
-					                                                : _classification.Get(parameter);
-			}
-		}
 	}
 }
