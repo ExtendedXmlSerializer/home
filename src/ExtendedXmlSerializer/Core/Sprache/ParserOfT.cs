@@ -2,13 +2,13 @@
 
 namespace ExtendedXmlSerializer.Core.Sprache
 {
-    /// <summary>
-    /// Represents a parser.
-    /// </summary>
-    /// <typeparam name="T">The type of the result.</typeparam>
-    /// <param name="input">The input to parse.</param>
-    /// <returns>The result of the parser.</returns>
-    public delegate IResult<T> Parser<out T>(IInput input);
+	/// <summary>
+	/// Represents a parser.
+	/// </summary>
+	/// <typeparam name="T">The type of the result.</typeparam>
+	/// <param name="input">The input to parse.</param>
+	/// <returns>The result of the parser.</returns>
+	public delegate IResult<T> Parser<out T>(IInput input);
 
     /// <summary>
     /// Contains some extension methods for <see cref="Parser&lt;T&gt;" />.
@@ -44,11 +44,11 @@ namespace ExtendedXmlSerializer.Core.Sprache
             if (input == null) throw new ArgumentNullException(nameof(input));
 
             var result = parser.TryParse(input);
-            
+
             if(result.WasSuccessful)
                 return result.Value;
 
-            throw new ParseException(result.ToString());
+            throw new ParseException($"Could not parse '{input}': {result}");
         }
     }
 }
