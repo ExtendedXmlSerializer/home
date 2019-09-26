@@ -19,8 +19,8 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" />
-    <PackageReference Include="BenchmarkDotNet" Version="0.10.12" />
-    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Condition="'$(TargetFramework)' == 'net462'" Version="0.10.12" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.11.5" />
+    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Condition="'$(TargetFramework)' == 'net462'" Version="0.11.5" />
     <PackageReference Include="ExtendedXmlSerializer.Legacy" Version="2.0.0" />
   </ItemGroup>
 
