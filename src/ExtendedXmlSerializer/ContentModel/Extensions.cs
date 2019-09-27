@@ -33,13 +33,9 @@ namespace ExtendedXmlSerializer.ContentModel
 {
 	public static class WellKnownExtensions
 	{
-		public static ISerializer<T> For<T>(this ISerializer @this) => @this as ISerializer<T> ??
-		                                                               new GeneralSerializerAdapter<T>(@this);
+		public static ISerializer Adapt<T>(this ISerializer<T> @this) => new GenericSerializerAdapter<T>(@this);
 
-		public static ISerializer Adapt<T>(this ISerializer<T> @this) => @this as ISerializer ??
-		                                                                 new GenericSerializerAdapter<T>(@this);
-
-		public static IWriter Adapt<T>(this IWriter<T> @this) => @this as IWriter ?? new GenericWriterAdapter<T>(@this);
+		public static IWriter Adapt<T>(this IWriter<T> @this) => new GenericWriterAdapter<T>(@this);
 	}
 
 	static class Extensions

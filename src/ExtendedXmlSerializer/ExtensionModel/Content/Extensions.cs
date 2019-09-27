@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Members;
@@ -31,7 +30,6 @@ using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
-using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -40,23 +38,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
 	public static class Extensions
 	{
-		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
-		                                                                  Func<ISerializer<T>, ISerializer<T>> compose)
-			=> @this.RegisterContentComposition(new SerializerComposer<T>(compose).Get);
-
-		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
-		                                                                  Func<ISerializer, ISerializer> compose)
-			=> @this.RegisterContentComposition(new SerializerComposer(compose));
-
-		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
-		                                                                  ISerializerComposer composer)
-		{
-			@this.Root.With<RegisteredCompositionExtension>().Assign(Support<T>.Key, composer);
-			return @this;
-		}
-
-		public static IServiceRepository Decorate<T>(this IServiceRepository @this,
-		                                             ISpecification<TypeInfo> specification)
+		public static IServiceRepository Decorate<T>(this IServiceRepository @this, ISpecification<TypeInfo> specification)
 			where T : IElement
 			=> new ConditionalElementDecoration<T>(specification).Get(@this);
 
@@ -72,14 +54,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public static IConfigurationContainer EnableParameterizedContent(this IConfigurationContainer @this)
 			=> @this.Extend(ParameterizedMembersExtension.Default);
 
-		public static IConfigurationContainer EnableParameterizedContentWithPropertyAssignments(
-			this IConfigurationContainer @this)
-			=> @this.Extend(AllParameterizedMembersExtension.Default);
+        public static IConfigurationContainer EnableParameterizedContentWithPropertyAssignments(this IConfigurationContainer @this)
+            => @this.Extend(AllParameterizedMembersExtension.Default);
 
-		public static IConfigurationContainer EnableReaderContext(this IConfigurationContainer @this)
+        public static IConfigurationContainer EnableReaderContext(this IConfigurationContainer @this)
 			=> @this.Extend(ReaderContextExtension.Default);
 
-		public static IConfigurationContainer Emit(this IConfigurationContainer @this, IEmitBehavior behavior) =>
+        public static IConfigurationContainer Emit(this IConfigurationContainer @this, IEmitBehavior behavior) =>
 			behavior.Get(@this);
 
 		public static IMemberConfiguration<T, TMember> EmitWhen<T, TMember>(this IMemberConfiguration<T, TMember> @this,
@@ -157,8 +138,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			return @this;
 		}
 
-		public static IConfigurationContainer Alter(this IConfigurationContainer @this,
-		                                            IAlteration<IConverter> alteration)
+		public static IConfigurationContainer Alter(this IConfigurationContainer @this, IAlteration<IConverter> alteration)
 		{
 			@this.Root.With<ConverterAlterationsExtension>()
 			     .Alterations.Add(alteration);

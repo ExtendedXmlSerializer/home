@@ -25,20 +25,6 @@ using ExtendedXmlSerializer.ContentModel.Format;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	sealed class GeneralSerializerAdapter<T> : ISerializer<T>
-	{
-		readonly ISerializer _serializer;
-
-		public GeneralSerializerAdapter(ISerializer serializer) => _serializer = serializer;
-
-		public T Get(IFormatReader parameter) => (T)_serializer.Get(parameter);
-
-		public void Write(IFormatWriter writer, T instance)
-		{
-			_serializer.Write(writer, instance);
-		}
-	}
-
 	sealed class GenericSerializerAdapter<T> : ISerializer
 	{
 		readonly ISerializer<T> _serializer;

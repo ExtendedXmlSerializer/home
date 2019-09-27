@@ -25,7 +25,7 @@ using System;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	class DelegatedAlteration<T> : IAlteration<T>
+	sealed class DelegatedAlteration<T> : IAlteration<T>
 	{
 		readonly Func<T, T> _alteration;
 
