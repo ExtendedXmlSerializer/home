@@ -22,24 +22,9 @@ deploy:
   on:
     branch: master
 - provider: NuGet
-  server: https://www.myget.org/F/wojtpl2/api/v2/package
-  api_key:
-    secure: BsmciYCnU/C8uSfDOl1UfCHBEGydgoeDHR0BBqhrdMHGxevM44GP7CsgSt8fUTCx
-  skip_symbols: true
-  on:
-    branch: v2.0.0
-- provider: NuGet
   name: production
   api_key:
-    secure: BZXq18P7QWYeR9cShPTVYtgO0REK+wycTxcdayBx+Cu8hJC1P7b+vXKmcaEpHmE6
+    secure: kExW39+W8VRwk3UMReJiT7h2ySKqC9ZpbSPJ87zFNn8uTSLMsZNMCVn/VMrY+7Q7
   on:
     branch: master
     appveyor_repo_tag: true
-- provider: NuGet
-  name: production
-  api_key:
-    secure: BZXq18P7QWYeR9cShPTVYtgO0REK+wycTxcdayBx+Cu8hJC1P7b+vXKmcaEpHmE6
-  on:
-    branch: v2.0.0
-    appveyor_repo_tag: true    
-    
