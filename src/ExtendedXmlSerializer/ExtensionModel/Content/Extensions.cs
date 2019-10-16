@@ -30,6 +30,7 @@ using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
+using ExtendedXmlSerializer.ExtensionModel.Instances;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
@@ -54,6 +55,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			@this.Root.With<RegisteredCompositionExtension>().Assign(Support<T>.Key, composer);
 			return @this;
 		}
+
+		public static IConfigurationContainer EnableAwareness(this IConfigurationContainer @this,
+		                                                      IDeserializationAware aware)
+			=> @this.Extend(new ActivationAwarenessExtension(aware));
 
 		public static IServiceRepository Decorate<T>(this IServiceRepository @this,
 		                                             ISpecification<TypeInfo> specification)

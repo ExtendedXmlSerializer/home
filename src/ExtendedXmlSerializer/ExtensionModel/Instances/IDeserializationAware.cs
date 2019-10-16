@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 //
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,9 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Format;
+using System.Reflection;
 
-namespace ExtendedXmlSerializer.ReflectionModel
+namespace ExtendedXmlSerializer.ExtensionModel.Instances
 {
-	interface IActivator : ISource<object> {}
+	public interface IDeserializationAware
+	{
+		void OnActivating(TypeInfo activating, IFormatReader reader);
+
+		void OnActivated(object instance);
+
+		void OnDeserialized(object instance, IFormatReader reader);
+	}
 }
