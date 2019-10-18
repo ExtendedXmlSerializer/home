@@ -56,9 +56,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			return @this;
 		}
 
-		public static IConfigurationContainer EnableAwareness(this IConfigurationContainer @this,
-		                                                      IDeserializationAware aware)
-			=> @this.Extend(new ActivationAwarenessExtension(aware));
+		public static IConfigurationContainer WithMonitor(this IConfigurationContainer @this,
+		                                                      ISerializationMonitor aware)
+			=> @this.Extend(new SerializationMonitorExtension(aware));
 
 		public static IServiceRepository Decorate<T>(this IServiceRepository @this,
 		                                             ISpecification<TypeInfo> specification)

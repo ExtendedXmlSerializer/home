@@ -26,12 +26,16 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Instances
 {
-	public interface IDeserializationAware
+	public interface ISerializationMonitor
 	{
-		void OnActivating(TypeInfo activating, IFormatReader reader);
+		void OnSerializing(IFormatWriter writer, object instance);
+
+		void OnSerialized(IFormatWriter writer, object instance);
+
+		void OnActivating(IFormatReader reader, TypeInfo activating);
 
 		void OnActivated(object instance);
 
-		void OnDeserialized(object instance, IFormatReader reader);
+		void OnDeserialized(IFormatReader reader, object instance);
 	}
 }

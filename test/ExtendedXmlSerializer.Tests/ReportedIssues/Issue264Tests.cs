@@ -26,22 +26,44 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		}
 
 		[Fact]
-		void VerifyAwareness()
+		void VerifyMonitorSerialization()
 		{
-			var list = new List<(Stages, object)>();
-			var serializer = new ConfigurationContainer().EnableAwareness(new Awareness(list))
+			var list = new List<(SerializationStages, object)>();
+			var serializer = new ConfigurationContainer().WithMonitor(new SerializationMonitor(list))
 			                                             .Create();
 			list.Should()
 			    .BeEmpty();
-			var instance = new Subject{ Message = "Hello World!"};
-			var cycled = serializer.Cycle(instance);
+			var instance = new Subject {Message = "Hello World!"};
+			var cycled   = serializer.Cycle(instance);
 			cycled.ShouldBeEquivalentTo(instance);
 			list.Select(x => x.Item1)
 			    .Should()
-			    .Equal(Stages.OnActivating, Stages.OnActivated, Stages.OnDeserialized);
-			list.Last()
-			    .Item2.Should()
-			    .BeSameAs(cycled);
+			    .Equal(SerializationStages.OnSerializing, SerializationStages.OnSerializing,
+			           SerializationStages.OnSerialized, SerializationStages.OnSerialized);
+
+			list.Select(x => x.Item2)
+			    .Should()
+			    .Equal(instance, instance.Message, instance.Message, instance);
+		}
+
+		[Fact]
+		void VerifyMonitorDeserialization()
+		{
+			var list = new List<(DeserializationStages, object)>();
+			var serializer = new ConfigurationContainer().WithMonitor(new DeserializationMonitor(list))
+			                                             .Create();
+			list.Should()
+			    .BeEmpty();
+			var instance = new Subject {Message = "Hello World!"};
+			var cycled   = serializer.Cycle(instance);
+			cycled.ShouldBeEquivalentTo(instance);
+			list.Select(x => x.Item1)
+			    .Should()
+			    .Equal(DeserializationStages.OnActivating, DeserializationStages.OnActivated,
+			           DeserializationStages.OnDeserialized, DeserializationStages.OnDeserialized);
+			list.Select(x => x.Item2)
+			    .Should()
+			    .Equal(cycled.GetType(), cycled, cycled.Message, cycled);
 		}
 
 		sealed class Subject
@@ -49,32 +71,65 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			public string Message { get; set; }
 		}
 
-		enum Stages
+		enum SerializationStages
+		{
+			OnSerializing,
+			OnSerialized
+		}
+
+		enum DeserializationStages
 		{
 			OnActivating,
 			OnActivated,
 			OnDeserialized
 		}
 
-		sealed class Awareness : IDeserializationAware
+		sealed class SerializationMonitor : ISerializationMonitor
 		{
-			readonly List<(Stages, object)> _stages;
+			readonly List<(SerializationStages, object)> _stages;
 
-			public Awareness(List<(Stages, object)> stages) => _stages = stages;
+			public SerializationMonitor(List<(SerializationStages, object)> stages) => _stages = stages;
 
-			public void OnActivating(TypeInfo activating, IFormatReader reader)
+			public void OnSerializing(IFormatWriter writer, object instance)
 			{
-				_stages.Add((Stages.OnActivating, activating));
+				_stages.Add((SerializationStages.OnSerializing, instance));
+			}
+
+			public void OnSerialized(IFormatWriter writer, object instance)
+			{
+				_stages.Add((SerializationStages.OnSerialized, instance));
+			}
+
+			public void OnActivating(IFormatReader reader, TypeInfo activating) {}
+
+			public void OnActivated(object parameter) {}
+
+			public void OnDeserialized(IFormatReader reader, object instance) {}
+		}
+
+		sealed class DeserializationMonitor : ISerializationMonitor
+		{
+			readonly List<(DeserializationStages, object)> _stages;
+
+			public DeserializationMonitor(List<(DeserializationStages, object)> stages) => _stages = stages;
+
+			public void OnSerializing(IFormatWriter writer, object instance) {}
+
+			public void OnSerialized(IFormatWriter writer, object instance) {}
+
+			public void OnActivating(IFormatReader reader, TypeInfo activating)
+			{
+				_stages.Add((DeserializationStages.OnActivating, activating));
 			}
 
 			public void OnActivated(object parameter)
 			{
-				_stages.Add((Stages.OnActivated, parameter));
+				_stages.Add((DeserializationStages.OnActivated, parameter));
 			}
 
-			public void OnDeserialized(object instance, IFormatReader reader)
+			public void OnDeserialized(IFormatReader reader, object instance)
 			{
-				_stages.Add((Stages.OnDeserialized, instance));
+				_stages.Add((DeserializationStages.OnDeserialized, instance));
 			}
 		}
 
