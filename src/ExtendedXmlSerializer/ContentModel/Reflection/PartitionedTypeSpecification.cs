@@ -34,7 +34,7 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 	}
 
 	sealed class NotHappy : ISpecification<TypeInfo>
-		// HACK: This is a bit of a hack -- ok a total hack, to pass a test for .NET Framework under special conditions: https://github.com/wojtpl2/ExtendedXmlSerializer/issues/248
+		// HACK: This is a bit of a hack -- ok a total hack, to pass a test for .NET Framework under special conditions: https://github.com/WojciechNagorski/ExtendedXmlSerializer/issues/248
 		// This doesn't occur for .NET Core, but we will have to do better for v3 in any case.
 	{
 		public static NotHappy Default { get; } = new NotHappy();

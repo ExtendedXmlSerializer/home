@@ -21,13 +21,13 @@ namespace ExtendedXmlSerializer.DocGenerator
 
 			doc.AddHeader("Welcome!");
 			doc.Add("Welcome to ExtendedXmlSerializer's source repository, our little home on the webternets for ExtendedXmlSerializer.  Please have a look around.  If you have a question about our serializer, please do not hesitate to post a question in our issues:");
-			doc.Add("https://github.com/wojtpl2/ExtendedXmlSerializer/issues/new/");
+			doc.Add("https://github.com/WojciechNagorski/ExtendedXmlSerializer/issues/new/");
 			doc.Add(string.Empty);
 			doc.Add("We will mark it as a question/discussion and talk it through with you using sample code.  This process is currently being used to fill in the gaps with our documentation, which could use a little love.");
 			doc.Add(string.Empty);
 			doc.Add("Additionally, please make use of our documentation tag seen here:");
 			doc.Add(string.Empty);
-			doc.Add("https://github.com/wojtpl2/ExtendedXmlSerializer/issues?q=is%3Aissue+label%3ADocumentation");
+			doc.Add("https://github.com/WojciechNagorski/ExtendedXmlSerializer/issues?q=is%3Aissue+label%3ADocumentation");
 			doc.Add(string.Empty);
 			doc.Add("You can see the history of questions asked that we feel could eventually be added to our documentation.  We'll eventually get to it, we swear. 😆");
 			doc.Add(string.Empty);
@@ -38,7 +38,7 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.AddList(".NET 4.5", ".NET Standard 2.0");
 			doc.Add("Support features:");
 			doc.AddList(
-				"Deserialization xml from standard `XMLSerializer` (mostly, see: https://github.com/wojtpl2/ExtendedXmlSerializer/issues/240)",
+				"Deserialization xml from standard `XMLSerializer` (mostly, see: https://github.com/WojciechNagorski/ExtendedXmlSerializer/issues/240)",
 				"Serialization class, struct, generic class, primitive type, generic list and dictionary, array, enum",
 				"Serialization class with property interface",
 				"Serialization circular reference and reference Id",
@@ -264,7 +264,7 @@ namespace ExtendedXmlSerializer.DocGenerator
 
 			doc.AddHeader("Authors");
 			doc.AddList(
-				"`Wojciech Nagórski <https://github.com/wojtpl2>`__",
+				"`Wojciech Nagórski <https://github.com/WojciechNagorski>`__",
 				"`Mike-EEE <https://github.com/Mike-EEE>`__"
 			);
 
@@ -278,7 +278,7 @@ namespace ExtendedXmlSerializer.DocGenerator
 					 + ".. image:: https://img.shields.io/nuget/v/ExtendedXmlSerializer.svg" + Environment.NewLine
 			         + "    :target: https://www.nuget.org/packages/ExtendedXmlSerializer/" + Environment.NewLine
 			         + ".. image:: https://ci.appveyor.com/api/projects/status/9u1w8cyyr22kbcwi?svg=true" + Environment.NewLine
-			         + "    :target: https://ci.appveyor.com/project/wojtpl2/extendedxmlserializer\n" + Environment.NewLine + Environment.NewLine
+			         + "    :target: https://ci.appveyor.com/project/WojciechNagorski/extendedxmlserializer\n" + Environment.NewLine + Environment.NewLine
 					 + ".. raw:: html" + Environment.NewLine + Environment.NewLine
 			         + "    <img src=\"https://extendedxmlserializer.github.io/img/logoBig.png\" height=\"200px\">" + Environment.NewLine + Environment.NewLine
 					 + "    <p>ExtendedXmlSerializer v2 is proudly developed and maintained with ReSharper Ultimate</p>" + Environment.NewLine

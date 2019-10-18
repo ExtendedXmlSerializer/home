@@ -51,7 +51,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 		{
 			var type = parameter.DeclaringType.GetTypeInfo();
 			if (!IsGenericDictionarySpecification.Default.IsSatisfiedBy(type))
-				// A bit of a hack to circumvent https://github.com/wojtpl2/ExtendedXmlSerializer/issues/134
+				// A bit of a hack to circumvent https://github.com/WojciechNagorski/ExtendedXmlSerializer/issues/134
 				// might want to pretty this up at some point.
 			{
 				var source = parameter.GetParameters();

@@ -13,10 +13,10 @@
     <AssemblyName>ExtendedXmlSerializer</AssemblyName>
     <PackageId>ExtendedXmlSerializer</PackageId>
     <PackageTags>xmlserializer;xmlserialization;serialization;ExtendedXmlSerializer;xml</PackageTags>
-    <PackageProjectUrl>https://github.com/wojtpl2/ExtendedXmlSerializer</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/wojtpl2/ExtendedXmlSerializer/blob/master/Licence</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/WojciechNagorski/ExtendedXmlSerializer</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/WojciechNagorski/ExtendedXmlSerializer/blob/master/Licence</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/wojtpl2/ExtendedXmlSerializer</RepositoryUrl>
+    <RepositoryUrl>https://github.com/WojciechNagorski/ExtendedXmlSerializer</RepositoryUrl>
     <!--<NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.6' ">1.6.1</NetStandardImplicitPackageVersion>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
