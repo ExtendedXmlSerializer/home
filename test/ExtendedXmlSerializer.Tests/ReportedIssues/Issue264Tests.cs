@@ -67,7 +67,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		}
 
 		[Fact]
-		void VerifyTypeSpecificRegistration()
+		void VerifyDefaultWithTypeSpecificRegistration()
 		{
 			var @default = new List<(DeserializationStages, object)>();
 			var specific = new List<(DeserializationStages, string)>();
@@ -98,6 +98,25 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			        .Equal(cycled.Message);
 		}
 
+		[Fact]
+		void VerifyTypeSpecificRegistration()
+		{
+			var specific = new List<(DeserializationStages, string)>();
+			var serializer = new ConfigurationContainer().Type<string>()
+			                                             .WithMonitor(new SpecificDeserializationMonitor(specific))
+			                                             .Create();
+			specific.Should()
+			        .BeEmpty();
+			var instance = new Subject {Message = "Hello World!"};
+			var cycled   = serializer.Cycle(instance);
+			cycled.ShouldBeEquivalentTo(instance);
+			specific.Select(x => x.Item1)
+			        .Should()
+			        .Equal(DeserializationStages.OnDeserialized);
+			specific.Select(x => x.Item2)
+			        .Should()
+			        .Equal(cycled.Message);
+		}
 		sealed class Subject
 		{
 			public string Message { get; set; }
