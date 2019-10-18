@@ -52,13 +52,22 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
 		                                                                  ISerializerComposer composer)
 		{
-			@this.Root.With<RegisteredCompositionExtension>().Assign(Support<T>.Key, composer);
+			@this.Root.With<RegisteredCompositionExtension>()
+			     .Assign(Support<T>.Key, composer);
 			return @this;
 		}
 
-		public static IConfigurationContainer WithMonitor(this IConfigurationContainer @this,
-		                                                      ISerializationMonitor aware)
-			=> @this.Extend(new SerializationMonitorExtension(aware));
+		public static IConfigurationContainer WithDefaultMonitor(this IConfigurationContainer @this,
+		                                                         ISerializationMonitor monitor)
+			=> @this.Extend(new SerializationMonitorExtension(monitor));
+
+		public static ITypeConfiguration<T> WithMonitor<T>(this ITypeConfiguration<T> @this,
+		                                                   ISerializationMonitor<T> monitor)
+		{
+			@this.Root.With<SerializationMonitorExtension>()
+			     .Assign(Support<T>.Key, new SerializationMonitor<T>(monitor));
+			return @this;
+		}
 
 		public static IServiceRepository Decorate<T>(this IServiceRepository @this,
 		                                             ISpecification<TypeInfo> specification)

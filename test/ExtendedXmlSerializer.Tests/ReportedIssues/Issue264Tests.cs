@@ -29,7 +29,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void VerifyMonitorSerialization()
 		{
 			var list = new List<(SerializationStages, object)>();
-			var serializer = new ConfigurationContainer().WithMonitor(new SerializationMonitor(list))
+			var serializer = new ConfigurationContainer().WithDefaultMonitor(new SerializationMonitor(list))
 			                                             .Create();
 			list.Should()
 			    .BeEmpty();
@@ -50,7 +50,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void VerifyMonitorDeserialization()
 		{
 			var list = new List<(DeserializationStages, object)>();
-			var serializer = new ConfigurationContainer().WithMonitor(new DeserializationMonitor(list))
+			var serializer = new ConfigurationContainer().WithDefaultMonitor(new DeserializationMonitor(list))
 			                                             .Create();
 			list.Should()
 			    .BeEmpty();
@@ -64,6 +64,38 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			list.Select(x => x.Item2)
 			    .Should()
 			    .Equal(cycled.GetType(), cycled, cycled.Message, cycled);
+		}
+
+		[Fact]
+		void VerifyTypeSpecificRegistration()
+		{
+			var @default = new List<(DeserializationStages, object)>();
+			var specific = new List<(DeserializationStages, string)>();
+			var serializer = new ConfigurationContainer().WithDefaultMonitor(new DeserializationMonitor(@default))
+			                                             .Type<string>()
+			                                             .WithMonitor(new SpecificDeserializationMonitor(specific))
+			                                             .Create();
+			@default.Should()
+			        .BeEmpty();
+			specific.Should()
+			        .BeEmpty();
+			var instance = new Subject {Message = "Hello World!"};
+			var cycled   = serializer.Cycle(instance);
+			cycled.ShouldBeEquivalentTo(instance);
+			@default.Select(x => x.Item1)
+			        .Should()
+			        .Equal(DeserializationStages.OnActivating, DeserializationStages.OnActivated,
+			               DeserializationStages.OnDeserialized);
+			@default.Select(x => x.Item2)
+			        .Should()
+			        .Equal(cycled.GetType(), cycled, cycled);
+
+			specific.Select(x => x.Item1)
+			        .Should()
+			        .Equal(DeserializationStages.OnDeserialized);
+			specific.Select(x => x.Item2)
+			        .Should()
+			        .Equal(cycled.Message);
 		}
 
 		sealed class Subject
@@ -128,6 +160,26 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			}
 
 			public void OnDeserialized(IFormatReader reader, object instance)
+			{
+				_stages.Add((DeserializationStages.OnDeserialized, instance));
+			}
+		}
+
+		sealed class SpecificDeserializationMonitor : ISerializationMonitor<string>
+		{
+			readonly List<(DeserializationStages, string)> _stages;
+
+			public SpecificDeserializationMonitor(List<(DeserializationStages, string)> stages) => _stages = stages;
+
+			public void OnSerializing(IFormatWriter writer, string instance) {}
+
+			public void OnSerialized(IFormatWriter writer, string instance) {}
+
+			public void OnActivating(IFormatReader reader, TypeInfo activating) {}
+
+			public void OnActivated(string parameter) {}
+
+			public void OnDeserialized(IFormatReader reader, string instance)
 			{
 				_stages.Add((DeserializationStages.OnDeserialized, instance));
 			}

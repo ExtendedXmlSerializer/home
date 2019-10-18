@@ -26,15 +26,18 @@ using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Instances
 {
-	sealed class SerializationMonitorExtension : ISerializerExtension
+	sealed class SerializationMonitorExtension : ISerializerExtension, IAssignable<TypeInfo, ISerializationMonitor>
 	{
 		readonly ITypedTable<ISerializationMonitor> _registrations;
+
+		public SerializationMonitorExtension() : this(DefaultSerializationMonitor.Default) {}
 
 		public SerializationMonitorExtension(ISerializationMonitor @default) : this(new Monitors(@default)) {}
 
@@ -213,6 +216,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Instances
 				var result = _reader.Get(parameter);
 				return result;
 			}
+		}
+
+		public void Assign(TypeInfo key, ISerializationMonitor value)
+		{
+			_registrations.Assign(key, value);
 		}
 	}
 }

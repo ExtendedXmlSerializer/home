@@ -26,18 +26,52 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Instances
 {
-	public interface ISerializationMonitor : ISerializationMonitor<object> {}
-
-	public interface ISerializationMonitor<in T>
+	sealed class DefaultSerializationMonitor : ISerializationMonitor
 	{
-		void OnSerializing(IFormatWriter writer, T instance);
+		public static DefaultSerializationMonitor Default { get; } = new DefaultSerializationMonitor();
 
-		void OnSerialized(IFormatWriter writer, T instance);
+		DefaultSerializationMonitor() {}
 
-		void OnActivating(IFormatReader reader, TypeInfo activating);
+		public void OnSerializing(IFormatWriter writer, object instance) {}
 
-		void OnActivated(T instance);
+		public void OnSerialized(IFormatWriter writer, object instance) {}
 
-		void OnDeserialized(IFormatReader reader, T instance);
+		public void OnActivating(IFormatReader reader, TypeInfo activating) {}
+
+		public void OnActivated(object instance) {}
+
+		public void OnDeserialized(IFormatReader reader, object instance) {}
+	}
+
+	sealed class SerializationMonitor<T> : ISerializationMonitor
+	{
+		readonly ISerializationMonitor<T> _monitor;
+
+		public SerializationMonitor(ISerializationMonitor<T> monitor) => _monitor = monitor;
+
+		public void OnSerializing(IFormatWriter writer, object instance)
+		{
+			_monitor.OnSerializing(writer, (T)instance);
+		}
+
+		public void OnSerialized(IFormatWriter writer, object instance)
+		{
+			_monitor.OnSerialized(writer, (T)instance);
+		}
+
+		public void OnActivating(IFormatReader reader, TypeInfo activating)
+		{
+			_monitor.OnActivating(reader, activating);
+		}
+
+		public void OnActivated(object instance)
+		{
+			_monitor.OnActivated((T)instance);
+		}
+
+		public void OnDeserialized(IFormatReader reader, object instance)
+		{
+			_monitor.OnDeserialized(reader, (T)instance);
+		}
 	}
 }
