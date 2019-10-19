@@ -34,11 +34,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Instances
 
 		void OnSerialized(IFormatWriter writer, T instance);
 
+		void OnDeserializing(IFormatReader reader, Type instanceType);
+
 		void OnActivating(IFormatReader reader, Type instanceType);
 
 		void OnActivated(T instance);
-
-		void OnDeserializing(IFormatReader reader, Type instanceType);
 
 		void OnDeserialized(IFormatReader reader, T instance);
 	}
