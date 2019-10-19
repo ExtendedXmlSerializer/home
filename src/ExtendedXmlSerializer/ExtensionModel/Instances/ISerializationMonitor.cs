@@ -26,6 +26,9 @@ using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Instances
 {
+	/// <summary>
+	/// https://github.com/WojciechNagorski/ExtendedXmlSerializer/issues/264#issuecomment-544104668
+	/// </summary>
 	public interface ISerializationMonitor : ISerializationMonitor<object> {}
 
 	public interface ISerializationMonitor<in T>
