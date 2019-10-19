@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Format;
-using System.Reflection;
+using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Instances
 {
@@ -34,9 +34,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Instances
 
 		void OnSerialized(IFormatWriter writer, T instance);
 
-		void OnActivating(IFormatReader reader, TypeInfo activating);
+		void OnActivating(IFormatReader reader, Type instanceType);
 
 		void OnActivated(T instance);
+
+		void OnDeserializing(IFormatReader reader, Type instanceType);
 
 		void OnDeserialized(IFormatReader reader, T instance);
 	}

@@ -5,9 +5,9 @@ using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Instances;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -59,11 +59,14 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			cycled.ShouldBeEquivalentTo(instance);
 			list.Select(x => x.Item1)
 			    .Should()
-			    .Equal(DeserializationStages.OnActivating, DeserializationStages.OnActivated,
-			           DeserializationStages.OnDeserialized, DeserializationStages.OnDeserialized);
-			list.Select(x => x.Item2)
-			    .Should()
-			    .Equal(cycled.GetType(), cycled, cycled.Message, cycled);
+			    .Equal(DeserializationStages.OnDeserializing,
+			           DeserializationStages.OnActivating, DeserializationStages.OnActivated,
+			           DeserializationStages.OnDeserializing, DeserializationStages.OnDeserialized,
+			           DeserializationStages.OnDeserialized);
+			var objects = list.Select(x => x.Item2)
+			                  .ToArray();
+			objects.Should()
+			       .Equal(cycled.GetType(), cycled.GetType(), cycled, typeof(string), cycled.Message, cycled);
 		}
 
 		[Fact]
@@ -84,11 +87,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			cycled.ShouldBeEquivalentTo(instance);
 			@default.Select(x => x.Item1)
 			        .Should()
-			        .Equal(DeserializationStages.OnActivating, DeserializationStages.OnActivated,
+			        .Equal(DeserializationStages.OnDeserializing,
+			               DeserializationStages.OnActivating, DeserializationStages.OnActivated,
 			               DeserializationStages.OnDeserialized);
 			@default.Select(x => x.Item2)
 			        .Should()
-			        .Equal(cycled.GetType(), cycled, cycled);
+			        .Equal(cycled.GetType(), cycled.GetType(), cycled, cycled);
 
 			specific.Select(x => x.Item1)
 			        .Should()
@@ -117,6 +121,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			        .Should()
 			        .Equal(cycled.Message);
 		}
+
 		sealed class Subject
 		{
 			public string Message { get; set; }
@@ -132,6 +137,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			OnActivating,
 			OnActivated,
+			OnDeserializing,
 			OnDeserialized
 		}
 
@@ -151,9 +157,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				_stages.Add((SerializationStages.OnSerialized, instance));
 			}
 
-			public void OnActivating(IFormatReader reader, TypeInfo activating) {}
+			public void OnActivating(IFormatReader reader, Type instanceType) {}
 
 			public void OnActivated(object parameter) {}
+
+			public void OnDeserializing(IFormatReader reader, Type instanceType) {}
 
 			public void OnDeserialized(IFormatReader reader, object instance) {}
 		}
@@ -168,14 +176,19 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			public void OnSerialized(IFormatWriter writer, object instance) {}
 
-			public void OnActivating(IFormatReader reader, TypeInfo activating)
+			public void OnActivating(IFormatReader reader, Type instanceType)
 			{
-				_stages.Add((DeserializationStages.OnActivating, activating));
+				_stages.Add((DeserializationStages.OnActivating, instanceType));
 			}
 
 			public void OnActivated(object parameter)
 			{
 				_stages.Add((DeserializationStages.OnActivated, parameter));
+			}
+
+			public void OnDeserializing(IFormatReader reader, Type instanceType)
+			{
+				_stages.Add((DeserializationStages.OnDeserializing, instanceType));
 			}
 
 			public void OnDeserialized(IFormatReader reader, object instance)
@@ -194,9 +207,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			public void OnSerialized(IFormatWriter writer, string instance) {}
 
-			public void OnActivating(IFormatReader reader, TypeInfo activating) {}
+			public void OnActivating(IFormatReader reader, Type instanceType) {}
 
 			public void OnActivated(string parameter) {}
+
+			public void OnDeserializing(IFormatReader reader, Type instanceType) {}
 
 			public void OnDeserialized(IFormatReader reader, string instance)
 			{

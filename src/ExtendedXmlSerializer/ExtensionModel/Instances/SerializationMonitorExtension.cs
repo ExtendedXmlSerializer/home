@@ -80,7 +80,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Instances
 			Serializer Create(TypeInfo parameter, ISerializer previous)
 			{
 				var monitor = _monitors.Get(parameter);
-				var result = new Serializer(new Reader(monitor, previous), new Writer(monitor, previous));
+				var result = new Serializer(new Reader(parameter, monitor, previous), new Writer(monitor, previous));
 				return result;
 			}
 		}
@@ -180,17 +180,20 @@ namespace ExtendedXmlSerializer.ExtensionModel.Instances
 
 		sealed class Reader : IReader
 		{
+			readonly Type _instanceType;
 			readonly ISerializationMonitor _monitor;
 			readonly IReader               _reader;
 
-			public Reader(ISerializationMonitor monitor, IReader reader)
+			public Reader(Type instanceType, ISerializationMonitor monitor, IReader reader)
 			{
+				_instanceType = instanceType;
 				_monitor = monitor;
 				_reader  = reader;
 			}
 
 			public object Get(IFormatReader parameter)
 			{
+				_monitor.OnDeserializing(parameter, _instanceType);
 				var result = _reader.Get(parameter);
 				_monitor.OnDeserialized(parameter, result);
 				return result;
