@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.ReflectionModel
@@ -32,6 +31,6 @@ namespace ExtendedXmlSerializer.ReflectionModel
 		public static Fields Default { get; } = new Fields();
 		Fields() {}
 
-		public IEnumerable<FieldInfo> Get(TypeInfo parameter) => parameter.DeclaredFields.Union(parameter.GetFields());
+		public IEnumerable<FieldInfo> Get(TypeInfo parameter) => parameter.GetRuntimeFields();
 	}
 }
