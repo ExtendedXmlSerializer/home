@@ -38,6 +38,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -77,9 +78,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			=> @this.Register(new ActivatedSerializer(serializerType, Support<T>.Key));
 
 		public static ITypeConfiguration<T> UseClassicSerialization<T>(this ITypeConfiguration<T> @this)
+			where T : ISerializable
 			=> @this.Register(Support<ClassicSerializationAdapter<T>>.Key);
 
-		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, Func<T, T> write) 
+		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, Func<T, T> write)
 			=> Alter(@this, Self<T>.Default.Get, write);
 
 		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, Func<T, T> read,
