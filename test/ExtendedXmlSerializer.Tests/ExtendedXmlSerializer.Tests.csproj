@@ -38,6 +38,9 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' != 'netcoreapp2.1' ">
     <Reference Include="WindowsBase" />
+    <Reference Include="System.Data" Version="4.0.0">
+      <HintPath>C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Data.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">

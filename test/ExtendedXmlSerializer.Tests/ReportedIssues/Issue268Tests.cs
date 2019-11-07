@@ -5,7 +5,7 @@ using FluentAssertions;
 using System.Data;
 using Xunit;
 
-namespace ExtendedXmlSerializer.Tests
+namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {
 	public sealed class Issue268Tests
 	{
