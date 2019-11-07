@@ -76,8 +76,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, Type serializerType)
 			=> @this.Register(new ActivatedSerializer(serializerType, Support<T>.Key));
 
-		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, Func<T, T> write) =>
-			Alter(@this, Self<T>.Default.Get, write);
+		public static ITypeConfiguration<T> UseClassicSerialization<T>(this ITypeConfiguration<T> @this)
+			=> @this.Register(Support<ClassicSerializationAdapter<T>>.Key);
+
+		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, Func<T, T> write) 
+			=> Alter(@this, Self<T>.Default.Get, write);
 
 		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, Func<T, T> read,
 		                                             Func<T, T> write)
