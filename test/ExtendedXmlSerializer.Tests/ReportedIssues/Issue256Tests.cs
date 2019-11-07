@@ -21,9 +21,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var names = new List<string>();
 			var data =
 				@"<?xml version=""1.0"" encoding=""utf-8""?><Issue256Tests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Invalid>Hello World!</Invalid><Message>Hello World!</Message></Issue256Tests-Subject>";
-			new ConfigurationContainer().EnableUnknownContentHandling(reader =>
-				                                                         names.Add(IdentityFormatter
-				                                                                   .Default.Get(reader)))
+			new ConfigurationContainer().WithUnknownContent()
+			                            .Call(reader => names.Add(IdentityFormatter.Default.Get(reader)))
 			                            .Create()
 			                            .Deserialize<Subject>(data);
 			names.Should()
@@ -35,14 +34,18 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		void VerifyContinue()
 		{
-			const string data = @"<?xml version=""1.0"" encoding=""utf-8""?><Issue256Tests-SubjectContinue xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Foo>Doesn't Exist!</Foo><Bar>Hello World!</Bar></Issue256Tests-SubjectContinue>";
+			const string data =
+				@"<?xml version=""1.0"" encoding=""utf-8""?><Issue256Tests-SubjectContinue xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Foo>Doesn't Exist!</Foo><Bar>Hello World!</Bar></Issue256Tests-SubjectContinue>";
 
 			var command = new Command();
 
 			new ConfigurationContainer().EnableReaderContext()
-			                            .EnableUnknownContentHandling(command.Execute)
+			                            .WithUnknownContent()
+			                            .Call(command.Execute)
 			                            .Create()
-			                            .Deserialize<SubjectContinue>(data).Bar.Should().Be("Hello World!");
+			                            .Deserialize<SubjectContinue>(data)
+			                            .Bar.Should()
+			                            .Be("Hello World!");
 			command.Captured.Name.Should()
 			       .Be("clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests:Foo");
 			command.Captured.Line.Should()
@@ -58,9 +61,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			public CapturedInfo(string name, uint line, uint position, Type type)
 			{
 				Name     = name;
-				Line = line;
+				Line     = line;
 				Position = position;
-				Type = type;
+				Type     = type;
 			}
 
 			public string Name { get; }
@@ -76,10 +79,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			public void Execute(IFormatReader parameter)
 			{
 				var content =
-				ContentsHistory.Default.Get(parameter)
-				               .Peek();
+					ContentsHistory.Default.Get(parameter)
+					               .Peek();
 
-				var lineInfo = parameter.Get().To<IXmlLineInfo>();
+				var lineInfo = parameter.Get()
+				                        .To<IXmlLineInfo>();
 				Captured = new CapturedInfo(IdentityFormatter.Default.Get(parameter), (uint)lineInfo.LineNumber,
 				                            (uint)lineInfo.LinePosition, content.Current.GetType());
 				parameter.Content();

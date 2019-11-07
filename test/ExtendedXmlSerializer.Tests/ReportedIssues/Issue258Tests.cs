@@ -24,7 +24,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var command = new Command();
 
 			new ConfigurationContainer().EnableReaderContext()
-			                            .EnableUnknownContentHandling(command.Execute)
+			                            .WithUnknownContent()
+			                            .Call(command.Execute)
 			                            .Create()
 			                            .Deserialize<List<Subject>>(data)
 			                            .Only()
@@ -49,7 +50,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var command = new Command();
 
 			new ConfigurationContainer().EnableReaderContext()
-			                            .EnableUnknownContentHandling(command.Execute)
+			                            .WithUnknownContent()
+			                            .Call(command.Execute)
 			                            .Create()
 			                            .Deserialize<List<Subject>>(data)
 			                            .Only()
