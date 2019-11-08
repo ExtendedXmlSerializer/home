@@ -1,9 +1,9 @@
-<#  
+<#
 .SYNOPSIS
     You can add this to you build script to ensure that psbuild is available before calling
     Invoke-MSBuild. If psbuild is not available locally it will be downloaded automatically.
 #>
-function EnsurePsbuildInstalled{  
+function EnsurePsbuildInstalled{
     [cmdletbinding()]
     param(
         [string]$psbuildInstallUri = 'https://raw.githubusercontent.com/ligershark/psbuild/master/src/GetPSBuild.ps1'
@@ -26,7 +26,7 @@ function EnsurePsbuildInstalled{
 
 # Taken from psake https://github.com/psake/psake
 
-<#  
+<#
 .SYNOPSIS
   This is a helper function that runs a scriptblock and checks the PS variable $lastexitcode
   to see if an error occcured. If an error is detected then an exception is thrown.
@@ -35,7 +35,7 @@ function EnsurePsbuildInstalled{
 .EXAMPLE
   exec { svn info $repository_trunk } "Error executing SVN. Please verify SVN command-line client is installed"
 #>
-function Exec  
+function Exec
 {
     [CmdletBinding()]
     param(
@@ -59,17 +59,30 @@ exec { & dotnet build .\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj -
 exec { & dotnet build .\test\ExtendedXmlSerializer.Tests\ExtendedXmlSerializer.Tests.csproj -c Release }
 
 #Set-MsBuild "C:\Program Files (x86)\MSBuild\14.0\bin\msbuild.exe"
-#Invoke-MSBuild .\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj -configuration Release 
-#Invoke-MSBuild .\src\ExtendedXmlSerializer.Legacy\ExtendedXmlSerializer.Legacy.csproj -configuration Release 
-#Invoke-MSBuild .\test\ExtendedXmlSerializer.Tests\ExtendedXmlSerializer.Tests.csproj -configuration Release 
-#Invoke-MSBuild .\test\ExtendedXmlSerializer.Tests.Legacy\ExtendedXmlSerializer.Tests.Legacy.csproj -configuration Release 
+#Invoke-MSBuild .\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj -configuration Release
+#Invoke-MSBuild .\src\ExtendedXmlSerializer.Legacy\ExtendedXmlSerializer.Legacy.csproj -configuration Release
+#Invoke-MSBuild .\test\ExtendedXmlSerializer.Tests\ExtendedXmlSerializer.Tests.csproj -configuration Release
+#Invoke-MSBuild .\test\ExtendedXmlSerializer.Tests.Legacy\ExtendedXmlSerializer.Tests.Legacy.csproj -configuration Release
 
-$revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
-$revision = "{0:D4}" -f [convert]::ToInt32($revision, 10)
+#$revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
+#$revision = "{0:D4}" -f [convert]::ToInt32($revision, 10)
 
-exec { & dotnet test .\test\ExtendedXmlSerializer.Tests\ExtendedXmlSerializer.Tests.csproj -c Release }
+# exec { & dotnet test .\test\ExtendedXmlSerializer.Tests\ExtendedXmlSerializer.Tests.csproj -c Release }
 
-exec { & dotnet pack .\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj -c Release -o .\..\..\artifacts --version-suffix=$revision }  
-# exec { & dotnet pack .\src\ExtendedXmlSerializer.Autofac -c Release -o .\artifacts --version-suffix=$revision }  
-# exec { & dotnet pack .\src\ExtendedXmlSerializer.AspCore -c Release -o .\artifacts --version-suffix=$revision}
-# exec { & dotnet pack .\src\ExtendedXmlSerializer.WebApi -c Release -o .\artifacts --version-suffix=$revision}
+$release = $env:APPVEYOR_REPO_TAG -eq "true" -and $env:APPVEYOR_REPO_TAG_NAME;
+
+$suffix = @{ $true = ""; $false = "preview" }[$release];
+exec { & dotnet pack .\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj -c Release -o .\..\..\artifacts --version-suffix=$suffix }
+
+if ($release) {
+    $headers = @{
+        "Authorization" = "Bearer $env:APPVEYOR_TOKEN"
+        "Content-type" = "application/json"
+        "Accept" = "application/json"
+    }
+    $build = @{
+        nextBuildNumber = 1
+    }
+    $json = $build | ConvertTo-Json
+    Invoke-RestMethod -Method Put "https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/settings/build-number" -Body $json -Headers $headers
+}

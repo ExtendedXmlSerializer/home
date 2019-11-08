@@ -1,7 +1,6 @@
 <Project>
   <PropertyGroup>
-    <Version>2.1.25</Version>
-    <VersionPrefix>$(Version)</VersionPrefix>
+    <VersionPrefix>2.1.0.0</VersionPrefix>
     <PackageReleaseNotes>
 Features addressed in this release (where applicable):
 https://github.com/WojciechNagorski/ExtendedXmlSerializer/issues?q=is%3Aissue+sort%3Aupdated-desc+milestone%3A$(Version)+label%3Aenhancement

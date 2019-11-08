@@ -1,26 +1,28 @@
-version: '{build}'  
-pull_requests:  
+version: '2.1.25.{build}'
+environment:
+  APPVEYOR_TOKEN:
+    secure: O4H8KTYEOFxEgsFVxL+Alhj+5LHFzPG8Q8Yi+QpB1yY=
+pull_requests:
   do_not_increment_build_number: true
-branches:  
+branches:
   only:
   - master
   - /v\d*\.\d*\.\d*/
-nuget:  
+nuget:
+  project_feed: true
   disable_publish_on_pr: true
-build_script:  
+
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj;**\*.props'
+  version_prefix: '{version}'
+build_script:
 - ps: .\Build.ps1
-test: off  
-artifacts:  
+# test: off
+artifacts:
 - path: .\artifacts\**\*.nupkg
   name: NuGet
-deploy:  
-- provider: NuGet
-  server: https://www.myget.org/F/wojtpl2/api/v2/package
-  api_key:
-    secure: BsmciYCnU/C8uSfDOl1UfCHBEGydgoeDHR0BBqhrdMHGxevM44GP7CsgSt8fUTCx
-  skip_symbols: true
-  on:
-    branch: master
+deploy:
 - provider: NuGet
   name: production
   api_key:
@@ -28,4 +30,3 @@ deploy:
   on:
     branch: master
     appveyor_repo_tag: true
-    
