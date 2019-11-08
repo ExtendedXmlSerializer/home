@@ -55,7 +55,7 @@
     <EmbeddedResource Remove="Generics\**" />
     <None Remove="ConfigurationOld\**" />
     <None Remove="Generics\**" />
-    <None Include="..\..\LICENSE" Pack="true" PackagePath="$(PackageLicenseFile)"/>
+    <None Include="..\..\LICENSE" Pack="true" Visible="false" PackagePath=""/>
   </ItemGroup>
 
   <ItemGroup>
