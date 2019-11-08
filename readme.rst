@@ -4,7 +4,7 @@ ExtendedXmlSerializer
 .. image:: https://img.shields.io/nuget/v/ExtendedXmlSerializer.svg
     :target: https://www.nuget.org/packages/ExtendedXmlSerializer/
 .. image:: https://ci.appveyor.com/api/projects/status/9u1w8cyyr22kbcwi?svg=true
-    :target: https://ci.appveyor.com/project/wojtpl2/extendedxmlserializer
+    :target: https://ci.appveyor.com/project/ExtendedXmlSerializer/extendedxmlserializer
 
 
 .. raw:: html
