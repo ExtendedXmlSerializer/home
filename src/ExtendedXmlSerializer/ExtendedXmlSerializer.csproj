@@ -13,8 +13,8 @@
     <AssemblyName>ExtendedXmlSerializer</AssemblyName>
     <PackageId>ExtendedXmlSerializer</PackageId>
     <PackageTags>xmlserializer;xmlserialization;serialization;ExtendedXmlSerializer;xml</PackageTags>
-    <PackageProjectUrl>https://github.com/WojciechNagorski/ExtendedXmlSerializer</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/WojciechNagorski/ExtendedXmlSerializer/blob/master/Licence</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer</PackageProjectUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/WojciechNagorski/ExtendedXmlSerializer</RepositoryUrl>
     <!--<NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.6' ">1.6.1</NetStandardImplicitPackageVersion>
@@ -55,6 +55,7 @@
     <EmbeddedResource Remove="Generics\**" />
     <None Remove="ConfigurationOld\**" />
     <None Remove="Generics\**" />
+    <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)"/>
   </ItemGroup>
 
   <ItemGroup>

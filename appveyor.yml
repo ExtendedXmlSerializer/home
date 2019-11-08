@@ -7,7 +7,6 @@ pull_requests:
 branches:
   only:
   - master
-  - /v\d*\.\d*\.\d*/
 nuget:
   project_feed: true
   disable_publish_on_pr: true
