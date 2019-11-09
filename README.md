@@ -41,7 +41,7 @@ You can consider this serializer a hybrid of the `System.Xml.XmlSerializer` and 
 
 **I can do *xyz* with the classic `System.Xml.XmlSerializer`.  Can I do the same with ExtendedXmlSerializer?**
 
-Maybe?  The primary intended purpose of ExtendedXMLSerializer is to work with .NET object graphs, not to parse XML documents or to work with legacy XML functionality.
+"Maybe."™  The primary intended purpose of ExtendedXMLSerializer is to work with .NET object graphs, not to parse XML documents or to work with legacy XML functionality.
 
 That stated, we do support a lot of classic functionality, but it isn't a focus.  There is a lot to be desired about how the classic serializer handles .NET object graphs and activation, and rectifying these rough spots was the main motivation for making ExtendedXMLSerializer.
 
@@ -61,7 +61,7 @@ That's exactly what we did. :)  Along the way, we introduced a highly adaptable 
 
 **I would like a legacy feature that is not currently supported with ExtendedXMLSerializer.  Can I submit a PR for this feature?**
 
-Yes. :)  We will certainly accept any PRs for our project, having to do with implementing missing legacy functionality and otherwise.  Feel free to fire one up and we will meet you there. 👍
+Yes. :)  We certainly welcome any PRs for our project, having to do with implementing missing legacy functionality and otherwise.  Feel free to fire one up and we will meet you there. 👍
 
 Information
 ===========
