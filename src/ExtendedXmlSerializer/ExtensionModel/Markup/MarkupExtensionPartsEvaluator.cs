@@ -5,7 +5,7 @@ using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Parsing;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Sprache;
+using Sprache;
 using ExtendedXmlSerializer.ExtensionModel.Expressions;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ReflectionModel;

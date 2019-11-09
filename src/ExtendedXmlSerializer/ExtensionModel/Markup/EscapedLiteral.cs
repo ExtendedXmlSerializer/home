@@ -1,6 +1,6 @@
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Parsing;
-using ExtendedXmlSerializer.Core.Sprache;
+using Sprache;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {

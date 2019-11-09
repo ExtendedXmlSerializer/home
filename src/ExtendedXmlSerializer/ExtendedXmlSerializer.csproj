@@ -61,6 +61,8 @@ https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/new?labels
     <PackageReference Include="LightInject" Version="6.2.0" />
     <!--<PackageReference Include="LightInject.Source" Version="5.1.2" PrivateAssets="All" />-->
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19554-01" PrivateAssets="All" />
+    <PackageReference Include="NReco.LambdaParser" Version="1.0.10" />
+    <PackageReference Include="Sprache" Version="2.2.0" />
     <PackageReference Include="System.Interactive" Version="4.0.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.6.0" />
     <PackageReference Include="System.Collections.Immutable" Version="1.6.0" />

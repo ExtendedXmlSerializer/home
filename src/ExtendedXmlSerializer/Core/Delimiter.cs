@@ -1,6 +1,6 @@
-﻿using System.Collections.Immutable;
+﻿using Sprache;
+using System.Collections.Immutable;
 using System.Linq;
-using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.Core
 {

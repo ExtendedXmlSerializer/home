@@ -1,5 +1,5 @@
+using NReco.Linq;
 using System.Collections.Generic;
-using ExtendedXmlSerializer.Core.NReco.LambdaParser.Linq;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 {

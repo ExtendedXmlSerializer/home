@@ -4,7 +4,7 @@ using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Sprache;
+using Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {

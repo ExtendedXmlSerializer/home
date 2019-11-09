@@ -1,4 +1,4 @@
-using ExtendedXmlSerializer.Core.Sprache;
+using Sprache;
 
 namespace ExtendedXmlSerializer.Core.Parsing
 {

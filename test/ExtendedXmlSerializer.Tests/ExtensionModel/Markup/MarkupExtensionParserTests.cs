@@ -5,7 +5,7 @@ using System.Linq;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Parsing;
-using ExtendedXmlSerializer.Core.Sprache;
+using Sprache;
 using ExtendedXmlSerializer.ExtensionModel.Expressions;
 using ExtendedXmlSerializer.ExtensionModel.Markup;
 using FluentAssertions;

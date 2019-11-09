@@ -2,7 +2,7 @@
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core.Parsing;
-using ExtendedXmlSerializer.Core.Sprache;
+using Sprache;
 using FluentAssertions;
 using System.Collections.Generic;
 using System.Collections.Immutable;

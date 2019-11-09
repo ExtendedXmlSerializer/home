@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using ExtendedXmlSerializer.Core.Sprache;
+using Sprache;
 
 namespace ExtendedXmlSerializer.Core.Parsing
 {

@@ -6,7 +6,7 @@ using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Sprache;
+using Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Properties
 {
