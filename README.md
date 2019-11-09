@@ -41,13 +41,15 @@ You can consider this serializer a hybrid of the `System.Xml.XmlSerializer` and 
 
 **I can do *xyz* with the classic `System.Xml.XmlSerializer`.  Can I do the same with ExtendedXmlSerializer?**
 
-"Maybe."™  The primary intended purpose of ExtendedXMLSerializer is to work with .NET object graphs, not to parse XML documents or to work with legacy XML functionality.
+*Maybe*.™  The primary intended purpose of ExtendedXMLSerializer is to work with .NET object graphs, not to parse XML documents or to work with legacy XML functionality.
 
-That stated, we do support a lot of classic functionality, but it isn't a focus.  There is a lot to be desired about how the classic serializer handles .NET object graphs and activation, and rectifying these rough spots was the main motivation for making ExtendedXMLSerializer.
+That stated, we do support a lot of classic functionality, but it isn't a focus.  There is a lot to be desired about how the classic serializer handles .NET object graphs and subsequent activation.  Rectifying these rough spots was the main motivation for making ExtendedXMLSerializer.
+
+If you would like to talk about support of a classic feature that does not appear to be supported, please do a [search through our issues list first](https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues?utf8=%E2%9C%93&q=is%3Aissue+sort%3Aupdated-desc+), and if it has not been discussed, [open a new issue](https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/new) and we'll meet you there. 👍
 
 **I have documents that were serialized with the classic `System.Xml.XmlSerializer`.  Can they be read with ExtendedXMLSerializer?**
 
-Typically, yes.  But some features are not yet supported.  For instance, lists serialized with an element name configured with the `ElementAttributeAttribute` [don't do so well with ExtendedXmlSerializer](https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/240).  `XmlTextAttribute` also [gets a little grumpy](https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/242).
+Typically, yes.  But some features are not supported -- either because they have not yet been brought to our attention or we cannot due to current designs.  For instance, lists serialized with an element name configured via the `ElementAttributeAttribute` [don't do so well with ExtendedXmlSerializer](https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/240).  `XmlTextAttribute` also [gets a little grumpy](https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/242).
 
 If you find that you run into an incompatibility, our recommendation is to:
 
@@ -61,7 +63,7 @@ That's exactly what we did. :)  Along the way, we introduced a highly adaptable 
 
 **I would like a legacy feature that is not currently supported with ExtendedXMLSerializer.  Can I submit a PR for this feature?**
 
-Yes. :)  We certainly welcome any PRs for our project, having to do with implementing missing legacy functionality and otherwise.  Feel free to fire one up and we will meet you there. 👍
+Yes. :)  We certainly welcome any PRs for our project, having to do with implementing missing legacy functionality and/or otherwise.  Feel free to fire one up and we will meet you there. 👍
 
 Information
 ===========
