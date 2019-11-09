@@ -3,11 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AE37E1DA-5619-45C0-A086-2F2619503BCA}"
-	ProjectSection(SolutionItems) = preProject
-		src\dir.props = src\dir.props
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2859812B-6D27-4A85-AC4A-8D3A55D9E3CD}"
 	ProjectSection(SolutionItems) = preProject
 		appveyor.yml = appveyor.yml
@@ -16,31 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		License = License
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{EBF1CB73-BE8A-4E00-A964-1A3E59503A52}"
-	ProjectSection(SolutionItems) = preProject
-		test\dir.props = test\dir.props
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{A789F6C4-91DE-47A0-BD7E-E59562409BE7}"
-	ProjectSection(SolutionItems) = preProject
-		samples\dir.props = samples\dir.props
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docGenerator", "docGenerator", "{C90F6D79-DAD5-47F4-9638-23F9941C1C86}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{85C5AA66-2D86-43DB-80EE-D48836C0B79C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendedXmlSerializer", "src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj", "{474C8CF3-1FBB-4507-9156-D5DC153F4EB8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendedXmlSerializer.Samples", "samples\ExtendedXmlSerializer.Samples\ExtendedXmlSerializer.Samples.csproj", "{426AF10E-B683-44C4-9849-FF8E14D3A3AD}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendedXmlSerializer.Tests.Performance", "test\ExtendedXmlSerializer.Tests.Performance\ExtendedXmlSerializer.Tests.Performance.csproj", "{CFFDB849-45FE-4D38-BE40-6F015BEC8BCB}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendedXmlSerializer.Tests", "test\ExtendedXmlSerializer.Tests\ExtendedXmlSerializer.Tests.csproj", "{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3}"
-EndProject
-Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "ExtendedXmlSerializer.Documentation", "docGenerator\ExtendedXmlSerializer.Documentation\ExtendedXmlSerializer.Documentation.shfbproj", "{87D0B2DD-15F1-4B62-878E-85A665E2D051}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtendedXmlSerializer.DocGenerator", "docGenerator\ExtendedXmlSerializer.DocGenerator\ExtendedXmlSerializer.DocGenerator.csproj", "{FA14BF96-6303-4F74-8C5F-0C450FEBE72D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,35 +25,13 @@ Global
 		{474C8CF3-1FBB-4507-9156-D5DC153F4EB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{474C8CF3-1FBB-4507-9156-D5DC153F4EB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{474C8CF3-1FBB-4507-9156-D5DC153F4EB8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{426AF10E-B683-44C4-9849-FF8E14D3A3AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{426AF10E-B683-44C4-9849-FF8E14D3A3AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{426AF10E-B683-44C4-9849-FF8E14D3A3AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{426AF10E-B683-44C4-9849-FF8E14D3A3AD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CFFDB849-45FE-4D38-BE40-6F015BEC8BCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CFFDB849-45FE-4D38-BE40-6F015BEC8BCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CFFDB849-45FE-4D38-BE40-6F015BEC8BCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CFFDB849-45FE-4D38-BE40-6F015BEC8BCB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{87D0B2DD-15F1-4B62-878E-85A665E2D051}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{87D0B2DD-15F1-4B62-878E-85A665E2D051}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FA14BF96-6303-4F74-8C5F-0C450FEBE72D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FA14BF96-6303-4F74-8C5F-0C450FEBE72D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FA14BF96-6303-4F74-8C5F-0C450FEBE72D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FA14BF96-6303-4F74-8C5F-0C450FEBE72D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{474C8CF3-1FBB-4507-9156-D5DC153F4EB8} = {AE37E1DA-5619-45C0-A086-2F2619503BCA}
-		{426AF10E-B683-44C4-9849-FF8E14D3A3AD} = {A789F6C4-91DE-47A0-BD7E-E59562409BE7}
-		{CFFDB849-45FE-4D38-BE40-6F015BEC8BCB} = {EBF1CB73-BE8A-4E00-A964-1A3E59503A52}
-		{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3} = {EBF1CB73-BE8A-4E00-A964-1A3E59503A52}
-		{87D0B2DD-15F1-4B62-878E-85A665E2D051} = {C90F6D79-DAD5-47F4-9638-23F9941C1C86}
-		{FA14BF96-6303-4F74-8C5F-0C450FEBE72D} = {C90F6D79-DAD5-47F4-9638-23F9941C1C86}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0980EF53-85ED-482A-8798-690538C3F7A4}

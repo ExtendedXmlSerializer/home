@@ -1,4 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<TestClassTimeSpan type="ExtendedXmlSerializer.Tests.Legacy.TestObject.TestClassTimeSpan">
-  <TimeSpan>PT1.561S</TimeSpan>
-</TestClassTimeSpan>

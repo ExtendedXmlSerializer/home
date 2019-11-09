@@ -52,22 +52,10 @@ if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
 
 EnsurePsbuildInstalled
 
-exec { & dotnet restore .\src\ExtendedXmlSerializer }
-exec { & dotnet restore .\test\ExtendedXmlSerializer.Tests }
+exec { & dotnet restore .\ExtendedXmlSerializer.sln }
+exec { & dotnet build .\ExtendedXmlSerializer.sln -c Release }
 
-exec { & dotnet build .\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj -c Release }
-exec { & dotnet build .\test\ExtendedXmlSerializer.Tests\ExtendedXmlSerializer.Tests.csproj -c Release }
-
-#Set-MsBuild "C:\Program Files (x86)\MSBuild\14.0\bin\msbuild.exe"
-#Invoke-MSBuild .\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj -configuration Release
-#Invoke-MSBuild .\src\ExtendedXmlSerializer.Legacy\ExtendedXmlSerializer.Legacy.csproj -configuration Release
-#Invoke-MSBuild .\test\ExtendedXmlSerializer.Tests\ExtendedXmlSerializer.Tests.csproj -configuration Release
-#Invoke-MSBuild .\test\ExtendedXmlSerializer.Tests.Legacy\ExtendedXmlSerializer.Tests.Legacy.csproj -configuration Release
-
-#$revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
-#$revision = "{0:D4}" -f [convert]::ToInt32($revision, 10)
-
-# exec { & dotnet test .\test\ExtendedXmlSerializer.Tests\ExtendedXmlSerializer.Tests.csproj -c Release }
+# exec { & dotnet test .\ExtendedXmlSerializer.sln -c Release }
 
 $release = $env:APPVEYOR_REPO_TAG -eq "true" -and $env:APPVEYOR_REPO_TAG_NAME;
 
