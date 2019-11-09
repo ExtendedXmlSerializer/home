@@ -42,7 +42,7 @@ Feature overview:
 -   Additional attribute support: `XmlIgnoreAttribute`, `XmlAttributeAttribute`, and `XmlEnumAttribute`
 -   POCO - all configurations (migrations, custom serializer...) are outside the class and not coupled to attributes or arcane conventions
 
-Standard XML Serializer in .NET is very limited:
+Classic `System.Xml.XmlSerializer` poses some challenges:
 
 -   Does not support serialization of class with circular reference or class with interface property
 -   There is no mechanism for reading the old version of XML
