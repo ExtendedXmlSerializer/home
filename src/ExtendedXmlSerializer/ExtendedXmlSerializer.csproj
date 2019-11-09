@@ -1,7 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <Import Project="../dir.props" />
-
   <PropertyGroup>
     <Product>ExtendedXmlSerializer</Product>
     <Company>ExtendedXmlSerializer</Company>
@@ -11,21 +8,36 @@
     <ClassicFrameworkVersion>net45</ClassicFrameworkVersion>
     <TargetFrameworks>netstandard2.0;$(ClassicFrameworkVersion)</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer</AssemblyName>
+    <NoWarn>1701;1702;1705;0436;0628</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration) == 'Release'">
     <PackageId>ExtendedXmlSerializer</PackageId>
     <PackageTags>xmlserializer;xmlserialization;serialization;ExtendedXmlSerializer;xml</PackageTags>
     <PackageProjectUrl>https://extendedxmlserializer.github.io/</PackageProjectUrl>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer.git</RepositoryUrl>
-    <!--<NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.6' ">1.6.1</NetStandardImplicitPackageVersion>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>-->
-    <NoWarn>1701;1702;1705;0436;0628</NoWarn>
     <PackageIconUrl>https://extendedxmlserializer.github.io/img/logoBig.png</PackageIconUrl>
-  </PropertyGroup>
 
-  <PropertyGroup Condition="$(Configuration) == 'Release'">
+    <VersionPrefix>2.1.0.0</VersionPrefix>
+    <PackageReleaseNotes>
+Features addressed in this release (where applicable):
+https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues?q=is%3Aissue+sort%3Aupdated-desc+milestone%3A$(VersionPrefix)+label%3Aenhancement
+
+Bugs addressed in this release:
+https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues?q=is%3Aissue+sort%3Aupdated-desc+milestone%3A$(VersionPrefix)+label%3Abug
+
+To create a new discussion around this release, please feel free to comment on one of the above issues, or visit:
+https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/new?milestone=$(VersionPrefix)&amp;labels=discussion
+
+If you would like to report a new issue altogether, please do so here:
+https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/new?labels=bug
+
+Or if you have a question and/or would like to discuss a topic around ExtendedXmlSerializer:
+https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/new?labels=question
+    </PackageReleaseNotes>
+
     <!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
 
@@ -36,16 +48,8 @@
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <DefineConstants>$(DefineConstants);NETSTANDARD16</DefineConstants>
-  </PropertyGroup>
-
   <PropertyGroup Condition=" '$(TargetFramework)' == '$(ClassicFrameworkVersion)' ">
     <DefineConstants>$(DefineConstants);NET45</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net471' ">
-    <DefineConstants>TRACE;DEBUG;CORE; NET46</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

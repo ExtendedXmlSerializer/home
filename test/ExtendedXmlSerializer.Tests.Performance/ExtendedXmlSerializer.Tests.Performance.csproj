@@ -1,7 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <Import Project="../dir.props" />
-
   <PropertyGroup>
     <TargetFrameworks>net462;netcoreapp2.1</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer.Tests.Performance</AssemblyName>

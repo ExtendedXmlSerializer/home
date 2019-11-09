@@ -55,7 +55,8 @@ EnsurePsbuildInstalled
 exec { & dotnet restore .\ExtendedXmlSerializer.sln }
 exec { & dotnet build .\ExtendedXmlSerializer.sln -c Release }
 
-# exec { & dotnet test .\ExtendedXmlSerializer.sln -c Release }
+# TODO: Remove once AppVeyor properly detects .NET Core test assemblies: https://help.appveyor.com/discussions/problems/25375-automatically-discovered-tests-misses-net-core-testing-assembly
+exec { & dotnet test .\ExtendedXmlSerializer.sln -c Release -f netcoreapp2.1 }
 
 $release = $env:APPVEYOR_REPO_TAG -eq "true" -and $env:APPVEYOR_REPO_TAG_NAME;
 
