@@ -30,39 +30,28 @@ Support platforms:
 
 Feature overview:
 
--   Deserialization xml from standard XMLSerializer (mostly, see:
-    <https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/240>)
+-   Deserialization xml from classic `XmlSerializer` (mostly, see: <https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/240>)
 -   Serialization class, struct, generic class, primitive type, generic
     list and dictionary, array, enum
 -   Serialization class with property interface
 -   Serialization circular reference and reference Id
--   Deserialization of old version of xml
+-   Migrate old XML based on an older schema to a current schema.
 -   Property encryption
 -   Custom serializer
--   Support `XmlElementAttribute`, `XmlRootAttribute`, and `XmlTypeAttribute`
-    for identity resolution.
--   Additional attribute support: `XmlIgnoreAttribute`,
-    `XmlAttributeAttribute`, and `XmlEnumAttribute`.
--   POCO - all configurations (migrations, custom serializer...) are
-    outside the clas
+-   Support `XmlElementAttribute`, `XmlRootAttribute`, and `XmlTypeAttribute` for identity resolution
+-   Additional attribute support: `XmlIgnoreAttribute`, `XmlAttributeAttribute`, and `XmlEnumAttribute`
+-   POCO - all configurations (migrations, custom serializer...) are outside the class and not coupled to attributes or arcane conventions
 
 Standard XML Serializer in .NET is very limited:
 
--   Does not support serialization of class with circular reference or
-    class with interface property.
--   There is no mechanism for reading the old version of XML.
--   Does not support properties that are defined with interface types.
--   Does not support read-only collection properties (like Xaml does).
--   Does not support parameterized constructors.
--   Does not support private constructors.
--   If you want create custom serializer, your class must inherit from
-    `IXmlSerializable`. This takes the "plain" out of [POCO](https://en.wikipedia.org/wiki/Plain_old_CLR_object). 😁
-
-
-How to Upgrade from v1.x to v2
-==============================
-
-
+-   Does not support serialization of class with circular reference or class with interface property
+-   There is no mechanism for reading the old version of XML
+-   Does not support properties that are defined with interface types
+-   Does not support read-only collection properties (like Xaml does)
+-   Does not support parameterized constructors
+-   Does not support private constructors
+-   If you want create custom serializer, your class must inherit from `IXmlSerializable` or `ISerializable`. 
+    This takes the "plain" out of [POCO](https://en.wikipedia.org/wiki/Plain_old_CLR_object). 😁
 
 Authors
 =======
