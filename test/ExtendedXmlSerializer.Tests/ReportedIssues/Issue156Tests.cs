@@ -27,8 +27,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		public void VerifyUnregisterReturnsTrueThenFalse()
 		{
 			var container = new ConfigurationContainer();
-			container.Unregister(DateTimeConverter.Default).Should().BeTrue();
-			container.Unregister(DateTimeConverter.Default).Should().BeFalse();
+			container.Unregister(DateTimeConverter.Default)
+			         .Should()
+			         .BeTrue();
+			container.Unregister(DateTimeConverter.Default)
+			         .Should()
+			         .BeFalse();
 		}
 
 		sealed class Subject
@@ -39,17 +43,21 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		sealed class DateTimeConverter : IConverter<DateTime>
 		{
 			public static DateTimeConverter Default { get; } = new DateTimeConverter();
+
 			DateTimeConverter() : this(new DateTime(1976, 6, 7)) {}
 
 			readonly DateTime _dateTime;
-			readonly string _text;
+			readonly string   _text;
 
-			public DateTimeConverter(DateTime dateTime) : this(dateTime, ExtendedXmlSerializer.ContentModel.Conversion.DateTimeConverter.Default.Format(dateTime)) {}
+			public DateTimeConverter(DateTime dateTime) : this(dateTime,
+			                                                   ExtendedXmlSerializer
+				                                                   .ContentModel.Conversion.DateTimeConverter.Default
+				                                                   .Format(dateTime)) {}
 
 			public DateTimeConverter(DateTime dateTime, string text)
 			{
 				_dateTime = dateTime;
-				_text = text;
+				_text     = text;
 			}
 
 			public bool IsSatisfiedBy(TypeInfo parameter) => parameter.AsType() == typeof(DateTime);
@@ -58,6 +66,5 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			public string Format(DateTime instance) => _text;
 		}
-
 	}
 }

@@ -2,7 +2,6 @@
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using System;
@@ -26,7 +25,6 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                            .ForTesting()
 			                            .Assert(instance,
 			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><Issue242Tests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Value>2019-03-05</Value></Issue242Tests-Subject>");
-
 		}
 
 		sealed class Serializer : ISerializer<DateTime>

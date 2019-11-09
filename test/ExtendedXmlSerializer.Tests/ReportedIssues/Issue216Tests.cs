@@ -2,6 +2,7 @@
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using Xunit;
 
@@ -22,7 +23,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		void VerifyAlways()
 		{
-			var instance = new Foo {Baz = {}};
+			var instance = new Foo();
 			var cycle = new ConfigurationContainer().Emit(EmitBehaviors.Always)
 			                                        .Create()
 			                                        .Cycle(instance);
@@ -36,7 +37,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
 			                            .Create()
 			                            .ForTesting()
-			                            .Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><Issue216Tests-Foo xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Baz><Capacity>4</Capacity><string xmlns=""https://extendedxmlserializer.github.io/system"">hello</string></Baz></Issue216Tests-Foo>");
+			                            .Assert(instance,
+			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><Issue216Tests-Foo xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Baz><Capacity>4</Capacity><string xmlns=""https://extendedxmlserializer.github.io/system"">hello</string></Baz></Issue216Tests-Foo>");
 		}
 
 		[Fact]
@@ -46,7 +48,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
 			                            .Create()
 			                            .ForTesting()
-			                            .Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><Issue216Tests-Foo xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests"" />");
+			                            .Assert(instance,
+			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><Issue216Tests-Foo xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests"" />");
 		}
 
 		[Fact]
@@ -56,19 +59,20 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			new ConfigurationContainer().Emit(EmitBehaviors.Always)
 			                            .Create()
 			                            .ForTesting()
-			                            .Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><Issue216Tests-Foo xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Baz><Capacity>4</Capacity><string xmlns=""https://extendedxmlserializer.github.io/system"">hello</string></Baz></Issue216Tests-Foo>");
+			                            .Assert(instance,
+			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><Issue216Tests-Foo xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Baz><Capacity>4</Capacity><string xmlns=""https://extendedxmlserializer.github.io/system"">hello</string></Baz></Issue216Tests-Foo>");
 		}
 
 		[Fact]
 		void EmitAlwaysEmpty()
 		{
-			var instance = new Foo {Baz = {}};
+			var instance = new Foo();
 			new ConfigurationContainer().Emit(EmitBehaviors.Always)
 			                            .Create()
 			                            .ForTesting()
-			                            .Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><Issue216Tests-Foo xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Baz><Capacity>0</Capacity></Baz></Issue216Tests-Foo>");
+			                            .Assert(instance,
+			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><Issue216Tests-Foo xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Baz><Capacity>0</Capacity></Baz></Issue216Tests-Foo>");
 		}
-
 
 		[Fact]
 		void VerifyReadOnlyDoesNotEmit()
@@ -96,7 +100,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			public string Message
 			{
-				get => _message;
+				[UsedImplicitly] get => _message;
 				set
 				{
 					_message  = value;
@@ -104,11 +108,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				}
 			}
 
-			public string Formatted { get; private set; }
+			public string Formatted { [UsedImplicitly] get; private set; }
 		}
 
 		public class Foo
 		{
+			// ReSharper disable once CollectionNeverQueried.Global
 			public List<string> Baz { get; } = new List<string>();
 		}
 	}

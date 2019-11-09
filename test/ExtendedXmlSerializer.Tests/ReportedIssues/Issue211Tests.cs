@@ -14,7 +14,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			var instance = new Subject {Message = null};
 			new ConfigurationContainer().Create()
-			                            .Cycle(instance).Message
+			                            .Cycle(instance)
+			                            .Message
 			                            .Should()
 			                            .Be(Subject.DefaultValue);
 		}
@@ -35,7 +36,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void VerifyConfigurationWithReferences()
 		{
 			var instance = new Subject {Message = null};
-			new ConfigurationContainer().Emit(EmitBehaviors.Assigned).EnableReferences()
+			new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
+			                            .EnableReferences()
 			                            .Create()
 			                            .Cycle(instance)
 			                            .Message
@@ -49,7 +51,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var instance = new SubjectWithDate {Date = null};
 			new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
 			                            .Create()
-			                            .Cycle(instance).Date
+			                            .Cycle(instance)
+			                            .Date
 			                            .Should()
 			                            .Be(null);
 		}
@@ -64,6 +67,5 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			public DateTime? Date { get; set; } = DateTime.MinValue;
 		}
-
 	}
 }

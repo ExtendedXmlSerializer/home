@@ -2,6 +2,7 @@
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using FluentAssertions;
+using JetBrains.Annotations;
 using System.Linq;
 using System.Reflection;
 using Xunit;
@@ -13,7 +14,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		void Verify()
 		{
-			var key = typeof(Subject).GetMember(nameof(Subject.Message)).Single();
+			var key = typeof(Subject).GetMember(nameof(Subject.Message))
+			                         .Single();
 
 			new ConfigurationContainer().Type<Subject>()
 			                            .MemberBy(key.As<string>())
@@ -25,7 +27,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		sealed class Subject
 		{
-			public string Message { get; set; }
+			public string Message { [UsedImplicitly] get; set; }
 		}
 	}
 }

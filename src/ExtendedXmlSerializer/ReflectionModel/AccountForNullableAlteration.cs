@@ -1,15 +1,16 @@
-﻿using ExtendedXmlSerializer.Core.Sources;
-using System;
+﻿using System;
 using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
 	sealed class AccountForNullableAlteration : IAlteration<TypeInfo>
-    {
-	    public static AccountForNullableAlteration Default { get; } = new AccountForNullableAlteration();
-	    AccountForNullableAlteration() {}
+	{
+		public static AccountForNullableAlteration Default { get; } = new AccountForNullableAlteration();
 
-	    public TypeInfo Get(TypeInfo parameter) => Nullable.GetUnderlyingType(parameter.AsType())
-	                                                       ?.GetTypeInfo() ?? parameter;
-    }
+		AccountForNullableAlteration() {}
+
+		public TypeInfo Get(TypeInfo parameter) => Nullable.GetUnderlyingType(parameter.AsType())
+		                                                   ?.GetTypeInfo() ?? parameter;
+	}
 }

@@ -8,6 +8,8 @@ using System.Text;
 using Xunit;
 using XmlReader = System.Xml.XmlReader;
 
+// ReSharper disable All
+
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {
 	public sealed class Issue181Tests
@@ -20,14 +22,16 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var serializer = new ConfigurationContainer().Create();
 
 			var content = Encoding.UTF8.GetBytes(serializer.Serialize(model));
-			var stream = new MemoryStream(content);
+			var stream  = new MemoryStream(content);
 
 			using (var reader = XmlReader.Create(stream))
 			{
-				serializer.Deserialize(reader).To<Model>().Map.Should().Equal(model.Map);
+				serializer.Deserialize(reader)
+				          .To<Model>()
+				          .Map.Should()
+				          .Equal(model.Map);
 			}
 		}
-
 
 		sealed class Model
 		{
@@ -39,7 +43,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			{
 				Id   = 2;
 				Name = "Parent";
-				Map  = new Dictionary<string, string> { { "test", "test1" }, { "test2", "test2" } };
+				Map  = new Dictionary<string, string> {{"test", "test1"}, {"test2", "test2"}};
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using FluentAssertions;
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -98,10 +99,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 	public class SomeClassMigrations : IEnumerable<Action<XElement>>
 	{
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return GetEnumerator();
-		}
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 		public IEnumerator<Action<XElement>> GetEnumerator()
 		{
@@ -124,20 +122,21 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 	public class Root
 	{
 		public Guid Identifier { get; set; }
-		public List<Node> Children { get; set; }
+
+		// ReSharper disable once CollectionNeverUpdated.Global
+		public List<Node> Children { get; [UsedImplicitly] set; }
 	}
 
 	public class Node
 	{
 		public int Id { get; set; }
-		public SomeClass Blubb { get; set; }
+		public SomeClass Blubb { get; [UsedImplicitly] set; }
 	}
 
 	public class SomeClass
 	{
-		public int Id { get; set; }
+		public int Id { get; [UsedImplicitly] set; }
 
-		//public string SomeString { get; set; }
 		public string RenamedProperty { get; set; }
 	}
 }

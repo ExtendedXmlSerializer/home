@@ -1,8 +1,11 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using FluentAssertions;
+using JetBrains.Annotations;
 using System;
 using Xunit;
+
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {
@@ -11,15 +14,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		void VerifyThrows()
 		{
-
-
 			var action = new Action(() =>
 			                        {
 				                        new ConfigurationContainer().Create()
 				                                                    .Serialize(new TestClass());
 			                        });
 			action.ShouldThrow<Exception>();
-
 		}
 
 		[Fact]
@@ -40,11 +40,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				Test2 = test;
 			}
 
-			public int Id { get; set; }
+			public int Id { [UsedImplicitly] get; set; }
 
-			public TestClass2 Test1 { get; set; }
+			public TestClass2 Test1 { [UsedImplicitly] get; set; }
 
-			public TestClass2 Test2 { get; set; }
+			public TestClass2 Test2 { [UsedImplicitly] get; set; }
 		}
 
 		public class TestClass2

@@ -12,6 +12,7 @@ using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -52,10 +53,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				Messages = new List<string> {"Hello", "World"}
 			};
 
-			var instance = new Container{ Message = "Testing", Subject = inner, UnderSubject = 123 };
+			var instance = new Container {Message = "Testing", Subject = inner, UnderSubject = 123};
 
 			// This *shouldn't* be 0, but is due to the current v2 writing infrastructure.
-			subject.Cycle(instance).UnderSubject.Should().Be(0);
+			subject.Cycle(instance)
+			       .UnderSubject.Should()
+			       .Be(0);
 		}
 
 		[Fact]
@@ -76,7 +79,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		sealed class Subject
 		{
-			public int Number { get; set; }
+			public int Number { [UsedImplicitly] get; set; }
 
 			[XmlElement("Message")]
 			public List<string> Messages { get; set; }
@@ -84,9 +87,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		sealed class Container
 		{
-			public string Message { get; set; }
+			public string Message { [UsedImplicitly] get; set; }
 
-			public Subject Subject { get; set; }
+			public Subject Subject { [UsedImplicitly] get; set; }
 
 			public int UnderSubject { get; set; }
 		}
@@ -122,12 +125,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 					var source = _source.Get(parameter);
 					var name   = _member.Get(parameter);
 					var result = name != null
-						                 ? source
-						                   .Select(x => x.Name == name
-							                                ? new Member(x.Name, int.MaxValue, x.Metadata, x.MemberType,
-							                                             x.IsWritable)
-							                                : x)
-						                 : source;
+						             ? source
+							             .Select(x => x.Name == name
+								                          ? new Member(x.Name, int.MaxValue, x.Metadata, x.MemberType,
+								                                       x.IsWritable)
+								                          : x)
+						             : source;
 					return result;
 				}
 			}
@@ -139,6 +142,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				readonly IElementMemberContents _contents;
 				readonly IElementMember         _member;
 
+				// ReSharper disable once TooManyDependencies
 				public MemberSerializers(IMemberSerializers members, IMemberAccessors accessors,
 				                         IElementMemberContents contents, IElementMember member)
 				{
@@ -175,6 +179,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				readonly ISerializer                _runtime;
 				readonly IContents                  _contents;
 
+				[UsedImplicitly]
 				public DefaultElementMemberContents(ISerializer runtime, IContents contents)
 					: this(CollectionItemTypeLocator.Default, runtime, contents) {}
 
@@ -201,6 +206,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			sealed class GenericList<T> : ILists
 			{
+				[UsedImplicitly]
 				public static GenericList<T> Instance { get; } = new GenericList<T>();
 
 				GenericList() {}
@@ -328,13 +334,15 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 				protected override string Create(TypeInfo parameter)
 				{
-					var members = parameter.GetRuntimeProperties().ToArray();
+					var members = parameter.GetRuntimeProperties()
+					                       .ToArray();
 					for (var i = members.Length - 1; i >= 0; i--)
 					{
 						var member = members[i];
 						if (_specification(member) && _collection.IsSatisfiedBy(member.PropertyType))
 						{
-							return member.GetCustomAttribute<XmlElementAttribute>().ElementName;
+							return member.GetCustomAttribute<XmlElementAttribute>()
+							             .ElementName;
 						}
 					}
 

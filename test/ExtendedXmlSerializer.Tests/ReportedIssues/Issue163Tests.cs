@@ -3,6 +3,7 @@ using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using Xunit;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -16,7 +17,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .Create()
 			                                             .ForTesting();
 
-			var instance = new AnotherSubject { Inner = new Subject { Message = "Hello World!" } };
+			var instance = new AnotherSubject {Inner = new Subject {Message = "Hello World!"}};
 			serializer.Cycle(instance)
 			          .ShouldBeEquivalentTo(instance);
 		}

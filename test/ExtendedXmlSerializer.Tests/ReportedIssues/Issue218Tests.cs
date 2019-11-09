@@ -87,16 +87,14 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			public DefaultReadonlyParent(ICollection<object> objects) => Objects = objects;
 
-			public ICollection<object> Objects { get; }
+			public ICollection<object> Objects { [UsedImplicitly] get; }
 		}
 
 		public class Parent
 		{
-			public Parent()
-			{
-				Childs = new ChildList(this);
-			}
+			public Parent() => Childs = new ChildList(this);
 
+			// ReSharper disable once CollectionNeverQueried.Global
 			public ChildList Childs { get; }
 		}
 
@@ -116,26 +114,24 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		public class ChildList : List<string>
 		{
-			readonly object _owner;
+			[UsedImplicitly] readonly object _owner;
 
-			public ChildList(object owner)
-			{
-				this._owner = owner;
-			}
+			public ChildList(object owner) => _owner = owner;
 		}
 
 		public class MyListImpl<T> : List<T>
 		{
 			public MyListImpl(object owner) => Owner = owner;
 
-			public object Owner { get; }
+			public object Owner { [UsedImplicitly] get; }
 		}
 
 		public class SerializedObject
 		{
 			public SerializedObject() => MyListImpl = new MyListImpl<string>(this) {"Test", "One", "Two"};
 
-			public MyListImpl<string> MyListImpl { get; }
+			// ReSharper disable once MemberHidesStaticFromOuterClass
+			public MyListImpl<string> MyListImpl { [UsedImplicitly] get; }
 		}
 	}
 }

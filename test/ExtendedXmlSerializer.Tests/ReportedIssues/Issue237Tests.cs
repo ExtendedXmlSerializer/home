@@ -3,6 +3,7 @@ using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -23,7 +24,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		sealed class Subject
 		{
-			public int[] Array { get; } = null;
+			[UsedImplicitly]
+			public int[] Array { get; }
 		}
 	}
 }

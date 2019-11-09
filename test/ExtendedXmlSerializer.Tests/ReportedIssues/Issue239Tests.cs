@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using Xunit;
 
+// ReSharper disable All
+
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {
 	public sealed class Issue239Tests
@@ -27,10 +29,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
   </FirstClass>
 </Issue239Tests-Root>";
 			var subject = new ConfigurationContainer().EnableImplicitTypingFromPublicNested<Issue239Tests>()
-													  .Create()
-													  .Deserialize<Root>(content);
+			                                          .Create()
+			                                          .Deserialize<Root>(content);
 			subject.Id.Should()
-				   .Be("ID1234567891234567891234567891234567");
+			       .Be("ID1234567891234567891234567891234567");
 			subject.FirstClass.SecondClass.Only()
 			       .Value4.Should()
 			       .Be(4);

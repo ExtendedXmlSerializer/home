@@ -13,13 +13,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		public void Verify()
 		{
 			var container = new ConfigurationContainer().Type<Subject>()
-														.Member(x => x.Message)
-														.Verbatim()
+			                                            .Member(x => x.Message)
+			                                            .Verbatim()
 			                                            .Create()
 			                                            .ForTesting();
 
-			var message = '\0'.ToString();
-			Action action = () => container.WriteLine(new Subject{ Message = message});
+			var    message = '\0'.ToString();
+			Action action  = () => container.WriteLine(new Subject {Message = message});
 			action.ShouldThrow<ArgumentException>();
 		}
 
@@ -34,11 +34,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                            .ForTesting();
 
 			var message = '\0'.ToString();
-			container.Assert(new Subject {Message = message}, @"<?xml version=""1.0"" encoding=""utf-8""?><Issue167Tests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message><![CDATA[]]></Message></Issue167Tests-Subject>");
-
-
+			container.Assert(new Subject {Message = message},
+			                 @"<?xml version=""1.0"" encoding=""utf-8""?><Issue167Tests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message><![CDATA[]]></Message></Issue167Tests-Subject>");
 		}
-
 
 		sealed class Subject
 		{

@@ -1,6 +1,7 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using Xunit;
 
@@ -56,21 +57,21 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		public class ClassA
 		{
-			public string blah { get; set; }
-			public InterfaceA InterfaceConcreteTypeA { get; set; }
-			public InterfaceA InterfaceConcreteTypeB { get; set; }
+			public string blah { [UsedImplicitly] get; set; }
+			public InterfaceA InterfaceConcreteTypeA { [UsedImplicitly] get; set; }
+			public InterfaceA InterfaceConcreteTypeB { [UsedImplicitly] get; set; }
 		}
 
 		public class ClassB : InterfaceA
 		{
 			public string TestInterfaceProperty { get; set; }
-			public string TestConcretePropertyB { get; set; }
+			public string TestConcretePropertyB { [UsedImplicitly] get; set; }
 		}
 
 		public class ClassC : InterfaceA
 		{
 			public string TestInterfaceProperty { get; set; }
-			public string TestConcretePropertyC { get; set; }
+			public string TestConcretePropertyC { [UsedImplicitly] get; set; }
 		}
 
 		public interface InterfaceA

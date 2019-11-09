@@ -11,12 +11,14 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		public void ShouldPreserveNullValueIfDefaultIsNotNull()
 		{
-			var serializer = new ConfigurationContainer().Emit(EmitBehaviors.Assigned).Create();
+			var serializer = new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
+			                                             .Create();
 
-			var xml = serializer.Serialize(new ClassWithDefaultString { Name = null });
+			var xml          = serializer.Serialize(new ClassWithDefaultString {Name = null});
 			var deserialized = serializer.Deserialize<ClassWithDefaultString>(xml);
 
-			deserialized.Name.Should().BeNull();
+			deserialized.Name.Should()
+			            .BeNull();
 		}
 
 		[Fact]
@@ -26,10 +28,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			config.Emit(EmitBehaviors.Assigned);
 			var serializer = config.Create();
 
-			string xml = serializer.Serialize(new ClassWithDefaultString() { Name = null, SubNode = null });
+			var xml          = serializer.Serialize(new ClassWithDefaultString() {Name = null, SubNode = null});
 			var deserialized = serializer.Deserialize<ClassWithDefaultString>(xml);
 
-			deserialized.Name.Should().BeNull();
+			deserialized.Name.Should()
+			            .BeNull();
 		}
 
 		[Fact]
@@ -39,10 +42,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			config.Emit(EmitBehaviors.Assigned);
 			var serializer = config.Create();
 
-			string xml = serializer.Serialize(new ClassWithDefaultString { Name = null, SubNode = null });
+			var xml          = serializer.Serialize(new ClassWithDefaultString {Name = null, SubNode = null});
 			var deserialized = serializer.Deserialize<ClassWithDefaultString>(xml);
 
-			deserialized.SubNode.Should().BeNull();
+			deserialized.SubNode.Should()
+			            .BeNull();
 		}
 
 		[Fact]
@@ -54,12 +58,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .EmitWhen(x => true)
 			                                             .Create();
 
-			string xml = serializer.Serialize(new ClassWithDefaultString() { Name = null, SubNode = null });
+			var xml          = serializer.Serialize(new ClassWithDefaultString() {Name = null, SubNode = null});
 			var deserialized = serializer.Deserialize<ClassWithDefaultString>(xml);
 
-			deserialized.SubNode.Should().BeNull();
+			deserialized.SubNode.Should()
+			            .BeNull();
 		}
-
 
 		public class ClassWithDefaultString
 		{

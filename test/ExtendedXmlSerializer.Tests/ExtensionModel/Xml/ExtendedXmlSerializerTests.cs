@@ -1,27 +1,4 @@
-﻿// MIT License
-//
-// Copyright (c) 2016-2018 Wojciech Nagórski
-//                    Michael DeMond
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-using ExtendedXmlSerializer.Configuration;
+﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using ExtendedXmlSerializer.Tests.TestObject;
@@ -38,7 +15,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 {
 	public class ExtendedXmlSerializerTests
 	{
-		const string HelloWorld = "Hello World!";
+		const    string                 HelloWorld  = "Hello World!";
 		readonly IExtendedXmlSerializer _serializer = new ConfigurationContainer().Create();
 
 		[Fact]
@@ -58,7 +35,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		public void SimpleInstance()
 		{
 			var instance = new SimpleNestedClass {PropertyName = HelloWorld};
-			var data = _serializer.Serialize(instance);
+			var data     = _serializer.Serialize(instance);
 			Assert.Equal(
 			             @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-SimpleNestedClass xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests""><PropertyName>Hello World!</PropertyName></ExtendedXmlSerializerTests-SimpleNestedClass>",
 			             data);
@@ -70,40 +47,46 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		[Fact]
 		public void ArrayWithBasicNullElement()
 		{
-			var items = new[] {new Subject(), null, new Subject()};
+			var items   = new[] {new Subject(), null, new Subject()};
 			var support = new SerializationSupport(_serializer);
 
-			support.Cycle(items).ShouldBeEquivalentTo(items);
+			support.Cycle(items)
+			       .ShouldBeEquivalentTo(items);
 		}
 
 		[Fact]
 		public void ListWithBasicNullElement()
 		{
-			var items = new[] { new Subject(), null, new Subject() }.ToList();
+			var items   = new[] {new Subject(), null, new Subject()}.ToList();
 			var support = new SerializationSupport(_serializer);
 
-			support.Cycle(items).ShouldBeEquivalentTo(items);
+			support.Cycle(items)
+			       .ShouldBeEquivalentTo(items);
 		}
 
 		public sealed class Subject {}
 
-
 		[Fact]
 		public void ArrayWithNullElement()
 		{
-			var items = new[] { new SubjectWithProperty { Message =  "Hello"}, null, new SubjectWithProperty { Message = "World" } };
+			var items = new[]
+				{new SubjectWithProperty {Message = "Hello"}, null, new SubjectWithProperty {Message = "World"}};
 			var support = new SerializationSupport(_serializer);
 
-			support.Cycle(items).ShouldBeEquivalentTo(items);
+			support.Cycle(items)
+			       .ShouldBeEquivalentTo(items);
 		}
 
 		[Fact]
 		public void ListWithNullElement()
 		{
-			var items = new[] { new SubjectWithProperty { Message = "Hello" }, null, new SubjectWithProperty { Message = "World" } }.ToList();
+			var items = new[]
+					{new SubjectWithProperty {Message = "Hello"}, null, new SubjectWithProperty {Message = "World"}}
+				.ToList();
 			var support = new SerializationSupport(_serializer);
 
-			support.Cycle(items).ShouldBeEquivalentTo(items);
+			support.Cycle(items)
+			       .ShouldBeEquivalentTo(items);
 		}
 
 		public sealed class SubjectWithProperty
@@ -117,7 +100,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			const string expected =
 				@"<?xml version=""1.0"" encoding=""utf-8""?><TestClassOtherClass xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><Other><Test><Id>2</Id><Name>Other Name</Name></Test><Double>7.3453145324</Double></Other><Primitive1><PropString>TestString</PropString><PropInt>-1</PropInt><PropuInt>2234</PropuInt><PropDecimal>3.346</PropDecimal><PropDecimalMinValue>-79228162514264337593543950335</PropDecimalMinValue><PropDecimalMaxValue>79228162514264337593543950335</PropDecimalMaxValue><PropFloat>7.4432</PropFloat><PropFloatNaN>NaN</PropFloatNaN><PropFloatPositiveInfinity>INF</PropFloatPositiveInfinity><PropFloatNegativeInfinity>-INF</PropFloatNegativeInfinity><PropFloatMinValue>-3.40282347E+38</PropFloatMinValue><PropFloatMaxValue>3.40282347E+38</PropFloatMaxValue><PropDouble>3.4234</PropDouble><PropDoubleNaN>NaN</PropDoubleNaN><PropDoublePositiveInfinity>INF</PropDoublePositiveInfinity><PropDoubleNegativeInfinity>-INF</PropDoubleNegativeInfinity><PropDoubleMinValue>-1.7976931348623157E+308</PropDoubleMinValue><PropDoubleMaxValue>1.7976931348623157E+308</PropDoubleMaxValue><PropEnum>EnumValue1</PropEnum><PropLong>234234142</PropLong><PropUlong>2345352534</PropUlong><PropShort>23</PropShort><PropUshort>2344</PropUshort><PropDateTime>2014-01-23T00:00:00</PropDateTime><PropByte>23</PropByte><PropSbyte>33</PropSbyte><PropChar>g</PropChar></Primitive1><Primitive2><PropString>TestString</PropString><PropInt>-1</PropInt><PropuInt>2234</PropuInt><PropDecimal>3.346</PropDecimal><PropDecimalMinValue>-79228162514264337593543950335</PropDecimalMinValue><PropDecimalMaxValue>79228162514264337593543950335</PropDecimalMaxValue><PropFloat>7.4432</PropFloat><PropFloatNaN>NaN</PropFloatNaN><PropFloatPositiveInfinity>INF</PropFloatPositiveInfinity><PropFloatNegativeInfinity>-INF</PropFloatNegativeInfinity><PropFloatMinValue>-3.40282347E+38</PropFloatMinValue><PropFloatMaxValue>3.40282347E+38</PropFloatMaxValue><PropDouble>3.4234</PropDouble><PropDoubleNaN>NaN</PropDoubleNaN><PropDoublePositiveInfinity>INF</PropDoublePositiveInfinity><PropDoubleNegativeInfinity>-INF</PropDoubleNegativeInfinity><PropDoubleMinValue>-1.7976931348623157E+308</PropDoubleMinValue><PropDoubleMaxValue>1.7976931348623157E+308</PropDoubleMaxValue><PropEnum>EnumValue1</PropEnum><PropLong>234234142</PropLong><PropUlong>2345352534</PropUlong><PropShort>23</PropShort><PropUshort>2344</PropUshort><PropDateTime>2014-01-23T00:00:00</PropDateTime><PropByte>23</PropByte><PropSbyte>33</PropSbyte><PropChar>g</PropChar></Primitive2><ListProperty><Capacity>32</Capacity><TestClassItem><Id>0</Id><Name>Name 000</Name></TestClassItem><TestClassItem><Id>1</Id><Name>Name 001</Name></TestClassItem><TestClassItem><Id>2</Id><Name>Name 002</Name></TestClassItem><TestClassItem><Id>3</Id><Name>Name 003</Name></TestClassItem><TestClassItem><Id>4</Id><Name>Name 004</Name></TestClassItem><TestClassItem><Id>5</Id><Name>Name 005</Name></TestClassItem><TestClassItem><Id>6</Id><Name>Name 006</Name></TestClassItem><TestClassItem><Id>7</Id><Name>Name 007</Name></TestClassItem><TestClassItem><Id>8</Id><Name>Name 008</Name></TestClassItem><TestClassItem><Id>9</Id><Name>Name 009</Name></TestClassItem><TestClassItem><Id>10</Id><Name>Name 0010</Name></TestClassItem><TestClassItem><Id>11</Id><Name>Name 0011</Name></TestClassItem><TestClassItem><Id>12</Id><Name>Name 0012</Name></TestClassItem><TestClassItem><Id>13</Id><Name>Name 0013</Name></TestClassItem><TestClassItem><Id>14</Id><Name>Name 0014</Name></TestClassItem><TestClassItem><Id>15</Id><Name>Name 0015</Name></TestClassItem><TestClassItem><Id>16</Id><Name>Name 0016</Name></TestClassItem><TestClassItem><Id>17</Id><Name>Name 0017</Name></TestClassItem><TestClassItem><Id>18</Id><Name>Name 0018</Name></TestClassItem><TestClassItem><Id>19</Id><Name>Name 0019</Name></TestClassItem></ListProperty></TestClassOtherClass>";
 			var instance = TestClassOtherClass.Create();
-			var data = _serializer.Serialize(instance);
+			var data     = _serializer.Serialize(instance);
 
 			Assert.Equal(expected, data);
 			var read = _serializer.Deserialize<TestClassOtherClass>(data);
@@ -129,8 +112,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		public void BasicArray()
 		{
 			var expected = new[] {1, 2, 3, 4, 5};
-			var data = _serializer.Serialize(expected);
-			var actual = _serializer.Deserialize<int[]>(data);
+			var data     = _serializer.Serialize(expected);
+			var actual   = _serializer.Deserialize<int[]>(data);
 			Assert.Equal(expected, actual);
 		}
 
@@ -138,8 +121,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		public void BasicList()
 		{
 			var expected = new List<string> {"Hello", "World", "Hope", "This", "Works!"};
-			var data = _serializer.Serialize(expected);
-			var actual = _serializer.Deserialize<List<string>>(data);
+			var data     = _serializer.Serialize(expected);
+			var actual   = _serializer.Deserialize<List<string>>(data);
 			actual.Capacity.Should()
 			      .Be(8);
 			Assert.Equal(expected, actual);
@@ -149,8 +132,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		public void BasicHashSet()
 		{
 			var expected = new HashSet<string> {"Hello", "World", "Hope", "This", "Works!"};
-			var data = _serializer.Serialize(expected);
-			var actual = _serializer.Deserialize<HashSet<string>>(data);
+			var data     = _serializer.Serialize(expected);
+			var actual   = _serializer.Deserialize<HashSet<string>>(data);
 			Assert.True(actual.SetEquals(expected));
 		}
 
@@ -158,12 +141,12 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		public void Dictionary()
 		{
 			var expected = new Dictionary<int, string>
-			               {
-				               {1, "First"},
-				               {2, "Second"},
-				               {3, "Other"}
-			               };
-			var data = _serializer.Serialize(expected);
+			{
+				{1, "First"},
+				{2, "Second"},
+				{3, "Other"}
+			};
+			var data   = _serializer.Serialize(expected);
 			var actual = _serializer.Deserialize<Dictionary<int, string>>(data);
 			Assert.NotNull(actual);
 			Assert.Equal(expected.Count, actual.Count);
@@ -179,7 +162,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			var expected = new TestClassGenericThree<string, int, TestClassPrimitiveTypes>();
 			expected.Init("StringValue", 1, TestClassPrimitiveTypes.Create());
 
-			var data = _serializer.Serialize(expected);
+			var data   = _serializer.Serialize(expected);
 			var actual = _serializer.Deserialize<TestClassGenericThree<string, int, TestClassPrimitiveTypes>>(data);
 			Assert.NotNull(actual);
 			Assert.Equal(expected.GenericProp, actual.GenericProp);
@@ -196,8 +179,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 
 			var expected = new TestClassPropGeneric() {PropGenric = obj};
 
-
-			var data = _serializer.Serialize(expected);
+			var data   = _serializer.Serialize(expected);
 			var actual = _serializer.Deserialize<TestClassPropGeneric>(data);
 			Assert.NotNull(actual);
 			Assert.Equal(obj.GenericProp, actual.PropGenric.GenericProp);
@@ -205,7 +187,6 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			Assert.Equal(obj.GenericProp3, actual.PropGenric.GenericProp3);
 			Assert.Equal(data, _serializer.Serialize(actual));
 		}
-
 
 		[Fact]
 		public void GenericEnumeration()
@@ -219,9 +200,10 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		public void DifferingProperty()
 		{
 			const string message = "Hello World!  This is a value set in a property with a variable type.";
-			var expected = new ClassWithDifferingPropertyType {Interface = new Implementation {PropertyName = message}};
-			var data = _serializer.Serialize(expected);
-			var actual = _serializer.Deserialize<ClassWithDifferingPropertyType>(data);
+			var expected = new ClassWithDifferingPropertyType
+				{Interface = new Implementation {PropertyName = message}};
+			var data           = _serializer.Serialize(expected);
+			var actual         = _serializer.Deserialize<ClassWithDifferingPropertyType>(data);
 			var implementation = Assert.IsType<Implementation>(actual.Interface);
 			Assert.Equal(message, implementation.PropertyName);
 		}
@@ -235,7 +217,6 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 				                                  @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-NullableSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests""><Number>6776</Number></ExtendedXmlSerializerTests-NullableSubject>");
 			Assert.Equal(expected.Number, actual.Number);
 		}
-
 
 		[Fact]
 		public void NullNullable()
@@ -261,11 +242,11 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		public void PropertyInterfaceOfList()
 		{
 			var expected = new ClassWithPropertyInterfaceOfList
-			               {
-				               List = new List<string> {"Item1"},
-				               Set = new HashSet<string> {"Item2"},
-				               Dictionary = new Dictionary<string, string> {{"Key", "Value"}}
-			               };
+			{
+				List       = new List<string> {"Item1"},
+				Set        = new HashSet<string> {"Item2"},
+				Dictionary = new Dictionary<string, string> {{"Key", "Value"}}
+			};
 
 			const string ns =
 #if CORE
@@ -329,11 +310,11 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		public void ClassWithObjectProperty()
 		{
 			var expected = new List<TestClassWithObjectProperty>
-			               {
-				               new TestClassWithObjectProperty {TestProperty = 1234},
-				               new TestClassWithObjectProperty {TestProperty = "Abc"},
-				               new TestClassWithObjectProperty {TestProperty = new Guid(1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2)}
-			               };
+			{
+				new TestClassWithObjectProperty {TestProperty = 1234},
+				new TestClassWithObjectProperty {TestProperty = "Abc"},
+				new TestClassWithObjectProperty {TestProperty = new Guid(1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2)}
+			};
 			_serializer.Cycle(expected)
 			           .ShouldBeEquivalentTo(expected);
 		}
@@ -423,15 +404,15 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			/// <remarks/>
 			public object Header
 			{
-				get { return this.headerField; }
-				set { this.headerField = value; }
+				get => this.headerField;
+				set => this.headerField = value;
 			}
 
 			/// <remarks/>
 			public EnvelopeBody Body
 			{
-				get { return this.bodyField; }
-				set { this.bodyField = value; }
+				get => this.bodyField;
+				set => this.bodyField = value;
 			}
 		}
 
@@ -449,8 +430,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			[System.Xml.Serialization.XmlElementAttribute(Namespace = "urn:tooling.soap.sforce.com")]
 			public login login
 			{
-				get { return this.loginField; }
-				set { this.loginField = value; }
+				get => this.loginField;
+				set => this.loginField = value;
 			}
 		}
 
@@ -469,15 +450,15 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			/// <remarks/>
 			public string username
 			{
-				get { return this.usernameField; }
-				set { this.usernameField = value; }
+				get => this.usernameField;
+				set => this.usernameField = value;
 			}
 
 			/// <remarks/>
 			public string password
 			{
-				get { return this.passwordField; }
-				set { this.passwordField = value; }
+				get => this.passwordField;
+				set => this.passwordField = value;
 			}
 		}
 #endif

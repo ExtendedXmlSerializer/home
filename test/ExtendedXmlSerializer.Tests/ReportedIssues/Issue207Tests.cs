@@ -5,6 +5,8 @@ using FluentAssertions;
 using System.Collections.Generic;
 using Xunit;
 
+// ReSharper disable All
+
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {
 	public sealed class Issue207Tests
@@ -16,37 +18,34 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                          .Create()
 			                                          .ForTesting();
 
-            var instance = new DataHolder(13);
-            instance.Lenght = 13;
-            instance.Data.Add(new Data(1.23f));
-            instance.Data.Add(new Data(3.27f));
-            instance.Data.Add(new Data(5.14f));
-            instance.Data.Add(new Data(7.29f));
+			var instance = new DataHolder(13);
+			instance.Lenght = 13;
+			instance.Data.Add(new Data(1.23f));
+			instance.Data.Add(new Data(3.27f));
+			instance.Data.Add(new Data(5.14f));
+			instance.Data.Add(new Data(7.29f));
 
-            support.Cycle(instance).ShouldBeEquivalentTo(instance);
+			support.Cycle(instance)
+			       .ShouldBeEquivalentTo(instance);
 		}
 
 		public class DataHolder
 		{
-            public DataHolder(int value)
-            {
-                Value = value;
-                Data = new List<Data>();
-            }
+			public DataHolder(int value) => Value = value;
 
-			public int Value { get; set; } = 5;
-            public double Lenght { get; set; } = 1.57;
-            public List<Data> Data { get; }
-        }
+			public int Value { get; set; }
+			public double Lenght { get; set; } = 1.57;
+			public List<Data> Data { get; } = new List<Data>();
+		}
 
-        public class Data
-        {
-            public Data(float d)
-            {
-                D = d;
-            }
+		public class Data
+		{
+			public Data(float d)
+			{
+				D = d;
+			}
 
-            public float D { get; set; }
-        }
+			public float D { get; set; }
+		}
 	}
 }

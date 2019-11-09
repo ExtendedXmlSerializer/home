@@ -6,6 +6,7 @@ using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using FluentAssertions;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Xml;
@@ -58,6 +59,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		readonly struct CapturedInfo
 		{
+			// ReSharper disable once TooManyDependencies
 			public CapturedInfo(string name, uint line, uint position, Type type)
 			{
 				Name     = name;
@@ -92,12 +94,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		sealed class Subject
 		{
+			[UsedImplicitly]
 			public string Message { get; set; }
 		}
 
 		sealed class SubjectContinue
 		{
-			public string Bar { get; set; }
+			public string Bar { get; [UsedImplicitly] set; }
 		}
 	}
 }

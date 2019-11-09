@@ -6,6 +6,7 @@ using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using Xunit;
+
 // ReSharper disable InconsistentNaming
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -24,14 +25,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			subject.ShouldAllBeEquivalentTo(instance);
 		}
 
-
 		public sealed class Subject : IEnumerable<Subject>
 		{
 			Subject parent;
 
-
-			[XmlElement]
-			readonly List<Subject> children = new List<Subject>();
+			[XmlElement] readonly List<Subject> children = new List<Subject>();
 
 			[XmlIgnore]
 			public ReadOnlyCollection<Subject> Children => children.AsReadOnly();
@@ -45,7 +43,6 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				children.Add(go);
 				go.parent = this;
 			}
-
 
 			public IEnumerator<Subject> GetEnumerator() => Children.GetEnumerator();
 

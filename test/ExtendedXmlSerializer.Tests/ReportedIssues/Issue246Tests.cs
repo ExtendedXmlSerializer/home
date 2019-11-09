@@ -6,6 +6,7 @@ using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
+using JetBrains.Annotations;
 using System.Reflection;
 using Xunit;
 using XmlWriter = System.Xml.XmlWriter;
@@ -52,7 +53,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			public Subject(string name) => Name = name;
 
-			public string Name { get; set; }
+			public string Name { [UsedImplicitly] get; set; }
 		}
 
 		[Fact]
@@ -86,7 +87,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				public IFormatWriter Get(XmlWriter parameter) => new Writer(_writers.Get(parameter));
 			}
 
-			sealed class Writer :  IFormatWriter
+			sealed class Writer : IFormatWriter
 			{
 				readonly IFormatWriter _writer;
 
@@ -137,7 +138,5 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			public string Name { get; set; }
 		}
-
-
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
+using JetBrains.Annotations;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -22,7 +23,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		sealed class Model
 		{
-			public IInterface PropertyWithInterface { get; set; }
+			public IInterface PropertyWithInterface { [UsedImplicitly] get; set; }
 		}
 
 		interface IInterface {}

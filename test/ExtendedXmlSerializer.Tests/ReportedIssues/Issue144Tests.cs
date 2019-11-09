@@ -17,22 +17,22 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                      .Create()
 			                                      .ForTesting();
 
-			var subject = new Subject("Testing", new Amounts{ {"First", 1234 } });
+			var subject = new Subject("Testing", new Amounts {{"First", 1234}});
 
-			sut.Cycle(subject).ShouldBeEquivalentTo(subject);
+			sut.Cycle(subject)
+			   .ShouldBeEquivalentTo(subject);
 		}
 
 		sealed class Subject
 		{
 			public Subject(string name, Amounts amounts, double factor = .95)
 			{
-				Name = name;
+				Name    = name;
 				Amounts = amounts;
-				Factor = factor;
+				Factor  = factor;
 			}
 
 			public string Name { [UsedImplicitly] get; }
-
 
 			public Amounts Amounts { [UsedImplicitly] get; }
 			public double Factor { [UsedImplicitly] get; }

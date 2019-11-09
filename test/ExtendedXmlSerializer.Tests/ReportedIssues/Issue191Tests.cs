@@ -19,8 +19,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><Test Attribute=""aaa"" xmlns=""http://test.org/schema/test""><Element>bbb</Element></Test>");
 		}
 
-		[XmlType(Namespace = "http://test.org/schema/test", TypeName = "Test")]
-		[XmlRoot(Namespace = "http://test.org/schema/test", IsNullable = false)]
+		[XmlType(Namespace = "http://test.org/schema/test", TypeName   = "Test"),
+		 XmlRoot(Namespace = "http://test.org/schema/test", IsNullable = false)]
 		public class Test
 		{
 			[XmlAttribute]

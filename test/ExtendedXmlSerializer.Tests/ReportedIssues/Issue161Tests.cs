@@ -5,6 +5,7 @@ using ExtendedXmlSerializer.Tests.Support;
 using System;
 using System.Runtime.Serialization;
 using Xunit;
+
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
 
@@ -15,10 +16,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		public void Verify()
 		{
-			var serializer = IntegrationExtensions.Register(new ConfigurationContainer(), SerializationSurrogateProvider.Default)
-			                                             .Create()
-			                                             .ForTesting();
-			serializer.Assert(new Subject{ Message = "Surrogates in the hizzy, dawg." }, @"<?xml version=""1.0"" encoding=""utf-8""?><Issue161Tests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message>Hello world from Surrogate: Surrogates in the hizzy, dawg.</Message></Issue161Tests-Subject>");
+			var serializer = IntegrationExtensions
+			                 .Register(new ConfigurationContainer(), SerializationSurrogateProvider.Default)
+			                 .Create()
+			                 .ForTesting();
+			serializer.Assert(new Subject {Message = "Surrogates in the hizzy, dawg."},
+			                  @"<?xml version=""1.0"" encoding=""utf-8""?><Issue161Tests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message>Hello world from Surrogate: Surrogates in the hizzy, dawg.</Message></Issue161Tests-Subject>");
 		}
 
 		sealed class Subject
@@ -34,21 +37,22 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		sealed class SerializationSurrogateProvider : ISerializationSurrogateProvider
 		{
 			public static SerializationSurrogateProvider Default { get; } = new SerializationSurrogateProvider();
+
 			SerializationSurrogateProvider() {}
 
 			public object GetDeserializedObject(object obj, Type targetType)
 			{
 				var message = obj.AsValid<Surrogate>()
 				                 .Message;
-				var result = new Subject{ Message =  message};
+				var result = new Subject {Message = message};
 				return result;
 			}
 
 			public object GetObjectToSerialize(object obj, Type targetType)
 			{
 				var message = obj.AsValid<Subject>()
-				   .Message;
-				var result = new Surrogate { Message = $"Hello world from Surrogate: {message}"};
+				                 .Message;
+				var result = new Surrogate {Message = $"Hello world from Surrogate: {message}"};
 				return result;
 			}
 

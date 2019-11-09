@@ -1,27 +1,4 @@
-﻿// MIT License
-//
-// Copyright (c) 2016-2018 Wojciech Nagórski
-//                    Michael DeMond
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-using ExtendedXmlSerializer.Configuration;
+﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System.Collections.Generic;
 using Xunit;
@@ -30,20 +7,20 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 {
 	public class CollectionWithMembersInnerContentHandlerTests
 	{
-		const string HelloWorld = "Hello World!";
+		const    string                 HelloWorld  = "Hello World!";
 		readonly IExtendedXmlSerializer _serializer = new ConfigurationContainer().Create();
 
 		[Fact]
 		public void BasicAttributes()
 		{
 			var serializer = new ConfigurationContainer()
-				.Type<SimpleSubject>()
-				.Member(x => x.Number, x => x.Attribute())
-				.Create();
+			                 .Type<SimpleSubject>()
+			                 .Member(x => x.Number, x => x.Attribute())
+			                 .Create();
 
 			var expected = new SimpleSubject {Message = "Hello World!", Number = 6776};
-			var data = serializer.Serialize(expected);
-			var actual = serializer.Deserialize<SimpleSubject>(data);
+			var data     = serializer.Serialize(expected);
+			var actual   = serializer.Deserialize<SimpleSubject>(data);
 			Assert.Equal(expected.Message, actual.Message);
 			Assert.Equal(expected.Number, actual.Number);
 		}
@@ -53,8 +30,8 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 		{
 			var expected = new ListWithProperties {"Hello", "World", "Hope", "This", "Works!"};
 			expected.Message = HelloWorld;
-			expected.Number = 6776;
-			var data = _serializer.Serialize(expected);
+			expected.Number  = 6776;
+			var data   = _serializer.Serialize(expected);
 			var actual = _serializer.Deserialize<ListWithProperties>(data);
 			Assert.Equal(expected, actual);
 			Assert.Equal(HelloWorld, actual.Message);
@@ -65,14 +42,14 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 		public void ListAttributes()
 		{
 			var serializer = new ConfigurationContainer()
-				.Type<ListWithProperties>()
-				.Member(x => x.Message, x => x.Attribute())
-				.Create();
+			                 .Type<ListWithProperties>()
+			                 .Member(x => x.Message, x => x.Attribute())
+			                 .Create();
 
 			var expected = new ListWithProperties {"Hello", "World", "Hope", "This", "Works!"};
 			expected.Message = HelloWorld;
-			expected.Number = 6776;
-			var data = serializer.Serialize(expected);
+			expected.Number  = 6776;
+			var data   = serializer.Serialize(expected);
 			var actual = serializer.Deserialize<ListWithProperties>(data);
 			Assert.Equal(expected.Message, actual.Message);
 			Assert.Equal(expected.Number, actual.Number);
@@ -83,8 +60,8 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 		{
 			var expected = new ListWithProperties<string> {"Hello", "World", "Hope", "This", "Works!"};
 			expected.Message = HelloWorld;
-			expected.Number = 6776;
-			var data = _serializer.Serialize(expected);
+			expected.Number  = 6776;
+			var data   = _serializer.Serialize(expected);
 			var actual = _serializer.Deserialize<ListWithProperties<string>>(data);
 			Assert.Equal(expected, actual);
 			Assert.Equal(HelloWorld, actual.Message);
@@ -95,15 +72,15 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 		public void GenericListAttributes()
 		{
 			var serializer = new ConfigurationContainer()
-				.Type<ListWithProperties<string>>()
-				.Member(x => x.Message, x => x.Attribute())
-				.Member(x => x.Number, x => x.Attribute())
-				.Create();
+			                 .Type<ListWithProperties<string>>()
+			                 .Member(x => x.Message, x => x.Attribute())
+			                 .Member(x => x.Number, x => x.Attribute())
+			                 .Create();
 
 			var expected = new ListWithProperties<string> {"Hello", "World", "Hope", "This", "Works!"};
 			expected.Message = HelloWorld;
-			expected.Number = 6776;
-			var data = serializer.Serialize(expected);
+			expected.Number  = 6776;
+			var data   = serializer.Serialize(expected);
 			var actual = serializer.Deserialize<ListWithProperties<string>>(data);
 			Assert.Equal(expected, actual);
 			Assert.Equal(expected.Message, actual.Message);
@@ -115,8 +92,8 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 		{
 			var expected = new HashSetWithProperties {"Hello", "World", "Hope", "This", "Works!"};
 			expected.Message = HelloWorld;
-			expected.Number = 6776;
-			var data = _serializer.Serialize(expected);
+			expected.Number  = 6776;
+			var data   = _serializer.Serialize(expected);
 			var actual = _serializer.Deserialize<HashSetWithProperties>(data);
 			Assert.True(actual.SetEquals(expected));
 			Assert.Equal(HelloWorld, actual.Message);
@@ -127,14 +104,14 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 		public void HashSetAttributes()
 		{
 			var serializer = new ConfigurationContainer()
-				.Type<HashSetWithProperties>()
-				.Member(x => x.Number, x => x.Attribute())
-				.Create();
+			                 .Type<HashSetWithProperties>()
+			                 .Member(x => x.Number, x => x.Attribute())
+			                 .Create();
 
 			var expected = new HashSetWithProperties {"Hello", "World", "Hope", "This", "Works!"};
 			expected.Message = HelloWorld;
-			expected.Number = 6776;
-			var data = serializer.Serialize(expected);
+			expected.Number  = 6776;
+			var data   = serializer.Serialize(expected);
 			var actual = serializer.Deserialize<HashSetWithProperties>(data);
 			Assert.True(actual.SetEquals(expected));
 			Assert.Equal(expected.Message, actual.Message);
@@ -146,8 +123,8 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 		{
 			var expected = new HashSetWithProperties<string> {"Hello", "World", "Hope", "This", "Works!"};
 			expected.Message = HelloWorld;
-			expected.Number = 6776;
-			var data = _serializer.Serialize(expected);
+			expected.Number  = 6776;
+			var data   = _serializer.Serialize(expected);
 			var actual = _serializer.Deserialize<HashSetWithProperties<string>>(data);
 			Assert.True(actual.SetEquals(expected));
 			Assert.Equal(HelloWorld, actual.Message);
@@ -158,14 +135,14 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 		public void GenericHashSetAttributes()
 		{
 			var serializer = new ConfigurationContainer()
-				.Type<SimpleSubject>()
-				.Member(x => x.Number, x => x.Attribute())
-				.Create();
+			                 .Type<SimpleSubject>()
+			                 .Member(x => x.Number, x => x.Attribute())
+			                 .Create();
 
 			var expected = new HashSetWithProperties<string> {"Hello", "World", "Hope", "This", "Works!"};
 			expected.Message = HelloWorld;
-			expected.Number = 6776;
-			var data = serializer.Serialize(expected);
+			expected.Number  = 6776;
+			var data   = serializer.Serialize(expected);
 			var actual = serializer.Deserialize<HashSetWithProperties<string>>(data);
 			Assert.True(actual.SetEquals(expected));
 			Assert.Equal(expected.Message, actual.Message);
@@ -176,15 +153,15 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 		public void DictionaryProperties()
 		{
 			var expected = new DictionaryWithProperties
-			               {
-				               {"First", 1},
-				               {"Second", 2},
-				               {"Other", 3}
-			               };
+			{
+				{"First", 1},
+				{"Second", 2},
+				{"Other", 3}
+			};
 			expected.Message = HelloWorld;
-			expected.Number = 6776;
+			expected.Number  = 6776;
 
-			var data = _serializer.Serialize(expected);
+			var data   = _serializer.Serialize(expected);
 			var actual = _serializer.Deserialize<DictionaryWithProperties>(data);
 			Assert.NotNull(actual);
 			Assert.Equal(HelloWorld, actual.Message);
@@ -200,20 +177,20 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 		public void DictionaryAttributes()
 		{
 			var serializer = new ConfigurationContainer()
-				.Type<SimpleSubject>()
-				.Member(x => x.Number, x => x.Attribute())
-				.Create();
+			                 .Type<SimpleSubject>()
+			                 .Member(x => x.Number, x => x.Attribute())
+			                 .Create();
 
 			var expected = new DictionaryWithProperties
-			               {
-				               {"First", 1},
-				               {"Second", 2},
-				               {"Other", 3}
-			               };
+			{
+				{"First", 1},
+				{"Second", 2},
+				{"Other", 3}
+			};
 			expected.Message = HelloWorld;
-			expected.Number = 6776;
+			expected.Number  = 6776;
 
-			var data = serializer.Serialize(expected);
+			var data   = serializer.Serialize(expected);
 			var actual = serializer.Deserialize<DictionaryWithProperties>(data);
 			Assert.NotNull(actual);
 			Assert.Equal(HelloWorld, actual.Message);
@@ -229,15 +206,15 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 		public void GenericDictionaryProperties()
 		{
 			var expected = new GenericDictionaryWithProperties<int, string>
-			               {
-				               {1, "First"},
-				               {2, "Second"},
-				               {3, "Other"}
-			               };
+			{
+				{1, "First"},
+				{2, "Second"},
+				{3, "Other"}
+			};
 			expected.Message = HelloWorld;
-			expected.Number = 6776;
+			expected.Number  = 6776;
 
-			var data = _serializer.Serialize(expected);
+			var data   = _serializer.Serialize(expected);
 			var actual = _serializer.Deserialize<GenericDictionaryWithProperties<int, string>>(data);
 			Assert.NotNull(actual);
 			Assert.Equal(HelloWorld, actual.Message);
@@ -253,21 +230,21 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 		public void GenericDictionaryAttributes()
 		{
 			var serializer = new ConfigurationContainer()
-				.Type<GenericDictionaryWithProperties<int, string>>()
-				.Member(x => x.Message, x => x.Attribute())
-				.Member(x => x.Number, x => x.Attribute())
-				.Create();
+			                 .Type<GenericDictionaryWithProperties<int, string>>()
+			                 .Member(x => x.Message, x => x.Attribute())
+			                 .Member(x => x.Number, x => x.Attribute())
+			                 .Create();
 
 			var expected = new GenericDictionaryWithProperties<int, string>
-			               {
-				               {1, "First"},
-				               {2, "Second"},
-				               {3, "Other"}
-			               };
+			{
+				{1, "First"},
+				{2, "Second"},
+				{3, "Other"}
+			};
 			expected.Message = HelloWorld;
-			expected.Number = 6776;
+			expected.Number  = 6776;
 
-			var data = serializer.Serialize(expected);
+			var data   = serializer.Serialize(expected);
 			var actual = serializer.Deserialize<GenericDictionaryWithProperties<int, string>>(data);
 			Assert.NotNull(actual);
 			Assert.Equal(HelloWorld, actual.Message);

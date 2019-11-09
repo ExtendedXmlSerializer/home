@@ -25,19 +25,16 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			          .BeNull();
 
 			var items = serializer.Cycle(new Collection<Item>
-			                             {
-				                             new Item {Enabled = true},
-				                             new Item {Enabled = false},
-				                             new Item {Enabled = true}
-			                             });
+			{
+				new Item {Enabled = true},
+				new Item {Enabled = false},
+				new Item {Enabled = true}
+			});
 			items.Should()
 			     .HaveCount(2)
 			     .And.Subject.Should()
 			     .OnlyContain(x => x.Enabled);
 		}
-
-
-
 
 		sealed class Subject
 		{

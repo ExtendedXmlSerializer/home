@@ -1,6 +1,5 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using System.Collections.Generic;
@@ -40,14 +39,15 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var list = new List<Foo> {instance};
 
-			var cycled = serializer.Cycle(list).Only();
-
+			var cycled = serializer.Cycle(list)
+			                       .Only();
 
 			cycled.Should()
-			    .BeSameAs(cycled.Bar.Foos.Only());
+			      .BeSameAs(cycled.Bar.Foos.Only());
 
 			cycled.Bar.Should()
-			    .BeSameAs(cycled.Bar.Foos.Only().Bar);
+			      .BeSameAs(cycled.Bar.Foos.Only()
+			                      .Bar);
 		}
 
 		public class Foo

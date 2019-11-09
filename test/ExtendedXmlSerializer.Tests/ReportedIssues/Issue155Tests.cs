@@ -14,24 +14,24 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var serializer = new ConfigurationContainer().Create()
 			                                             .ForTesting();
 
-			var instance = new Subject {Items = new object[] {"Hello", "World", 6776, new URL(), new TranslatableWebFeatures()}};
+			var instance = new Subject
+				{Items = new object[] {"Hello", "World", 6776, new URL(), new TranslatableWebFeatures()}};
 			serializer.Cycle(instance)
 			          .ShouldBeEquivalentTo(instance);
 		}
 
-
 		public sealed class Subject
 		{
-			[XmlElement("Tenure", typeof(string), DataType = "integer", IsNullable = true)]
-			[XmlElement("Video360", typeof(URL), IsNullable = true)]
-			[XmlElement("VideoUrl", typeof(URL), IsNullable = true)]
-			[XmlElement("WebFeatures", typeof(TranslatableWebFeatures))]
-			[XmlChoiceIdentifier("ItemsElementName")]
+			[XmlElement("Tenure", typeof(string), DataType  = "integer", IsNullable = true),
+			 XmlElement("Video360", typeof(URL), IsNullable = true),
+			 XmlElement("VideoUrl", typeof(URL), IsNullable = true),
+			 XmlElement("WebFeatures", typeof(TranslatableWebFeatures)), XmlChoiceIdentifier("ItemsElementName")]
 			public object[] Items { get; set; }
 		}
 
 		// ReSharper disable once InconsistentNaming
 		sealed class URL {}
+
 		sealed class TranslatableWebFeatures {}
 	}
 }

@@ -15,8 +15,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var serializer = new ConfigurationContainer().EnableImplicitTypingFromNested<Issue153Tests>()
 			                                             .Create()
 			                                             .ForTesting();
-			var subject = new Subject { Message = "Hello World!"};
-			serializer.Assert(subject, @"<?xml version=""1.0"" encoding=""utf-8""?><Issue153Tests-Subject><Message>Hello World!</Message></Issue153Tests-Subject>")
+			var subject = new Subject {Message = "Hello World!"};
+			serializer.Assert(subject,
+			                  @"<?xml version=""1.0"" encoding=""utf-8""?><Issue153Tests-Subject><Message>Hello World!</Message></Issue153Tests-Subject>")
 			          .ShouldBeEquivalentTo(subject);
 		}
 

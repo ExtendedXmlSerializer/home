@@ -112,9 +112,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			public virtual bool Show
 			{
 				get => true;
+				// ReSharper disable once ValueParameterNotUsed
 				set {}
 			}
 
+			// ReSharper disable once CollectionNeverUpdated.Global
 			public List<Entity> Children { get; } = new List<Entity>();
 		}
 

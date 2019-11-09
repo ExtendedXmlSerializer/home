@@ -3,6 +3,7 @@ using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using System.Drawing;
 using Xunit;
 
@@ -26,6 +27,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		sealed class DataHolder
 		{
+			[UsedImplicitly]
 			public Size Size { get; set; } = new Size(100, 200);
 		}
 	}

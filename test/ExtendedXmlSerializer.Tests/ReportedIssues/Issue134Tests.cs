@@ -15,22 +15,17 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			public string Message { get; }
 
-			public SomeKey(string message)
-			{
-				Message = message;
-			}
-
+			public SomeKey(string message) => Message = message;
 		}
 
 		[Fact]
 		public void Fix()
 		{
-
-			var dictionary = new Dictionary<SomeKey, string> { { new SomeKey("Hello"), "World!" } };
+			var dictionary = new Dictionary<SomeKey, string> {{new SomeKey("Hello"), "World!"}};
 			var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
 			                                             .UseAutoFormatting()
 			                                             .EnableParameterizedContent()
-														 .Create();
+			                                             .Create();
 			var contents = new SerializationSupport(serializer).Cycle(dictionary);
 
 			contents.Keys.Single()
@@ -39,7 +34,6 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			contents.Values.Single()
 			        .Should()
 			        .Be("World!");
-
 		}
 	}
 }

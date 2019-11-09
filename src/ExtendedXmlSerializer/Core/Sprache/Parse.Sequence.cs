@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 // ReSharper disable All
 
 namespace ExtendedXmlSerializer.Core.Sprache
@@ -22,11 +23,11 @@ namespace ExtendedXmlSerializer.Core.Sprache
 			if (delimiter == null) throw new ArgumentNullException(nameof(delimiter));
 
 			return from head in parser.Once()
-				   from tail in
-					   (from separator in delimiter
-						from item in parser
-						select item).Many()
-				   select head.Concat(tail);
+			       from tail in
+				       (from separator in delimiter
+				        from item in parser
+				        select item).Many()
+			       select head.Concat(tail);
 		}
 
 		/// <summary>
@@ -44,11 +45,11 @@ namespace ExtendedXmlSerializer.Core.Sprache
 			if (delimiter == null) throw new ArgumentNullException(nameof(delimiter));
 
 			return from head in itemParser.Once()
-				   from tail in
-					   (from separator in delimiter
-						from item in itemParser
-						select item).XMany()
-				   select head.Concat(tail);
+			       from tail in
+				       (from separator in delimiter
+				        from item in itemParser
+				        select item).XMany()
+			       select head.Concat(tail);
 		}
 
 		/// <summary>
@@ -78,36 +79,37 @@ namespace ExtendedXmlSerializer.Core.Sprache
 			if (parser == null) throw new ArgumentNullException(nameof(parser));
 
 			return i =>
-			{
-				var remainder = i;
-				var result = new List<T>();
+			       {
+				       var remainder = i;
+				       var result    = new List<T>();
 
-				for (var n = 0; n < maximumCount; ++n)
-				{
-					var r = parser(remainder);
+				       for (var n = 0; n < maximumCount; ++n)
+				       {
+					       var r = parser(remainder);
 
-					if (!r.WasSuccessful && n < minimumCount)
-					{
-						var what = r.Remainder.AtEnd
-							? "end of input"
-							: r.Remainder.Current.ToString();
+					       if (!r.WasSuccessful && n < minimumCount)
+					       {
+						       var what = r.Remainder.AtEnd
+							                  ? "end of input"
+							                  : r.Remainder.Current.ToString();
 
-						var msg = $"Unexpected '{what}'";
-						var exp = $"'{StringExtensions.Join(", ", r.Expectations)}' between {minimumCount} and {maximumCount} times, but found {n}";
+						       var msg = $"Unexpected '{what}'";
+						       var exp =
+							       $"'{StringExtensions.Join(", ", r.Expectations)}' between {minimumCount} and {maximumCount} times, but found {n}";
 
-						return Result.Failure<IEnumerable<T>>(i, msg, new[] { exp });
-					}
+						       return Result.Failure<IEnumerable<T>>(i, msg, new[] {exp});
+					       }
 
-					if (!ReferenceEquals(remainder, r.Remainder))
-					{
-						result.Add(r.Value);
-					}
+					       if (!ReferenceEquals(remainder, r.Remainder))
+					       {
+						       result.Add(r.Value);
+					       }
 
-					remainder = r.Remainder;
-				}
+					       remainder = r.Remainder;
+				       }
 
-				return Result.Success<IEnumerable<T>>(result, remainder);
-			};
+				       return Result.Success<IEnumerable<T>>(result, remainder);
+			       };
 		}
 
 		/// <summary>
@@ -128,9 +130,9 @@ namespace ExtendedXmlSerializer.Core.Sprache
 			if (close == null) throw new ArgumentNullException(nameof(close));
 
 			return from o in open
-				   from item in parser
-				   from c in close
-				   select item;
+			       from item in parser
+			       from c in close
+			       select item;
 		}
 	}
 }

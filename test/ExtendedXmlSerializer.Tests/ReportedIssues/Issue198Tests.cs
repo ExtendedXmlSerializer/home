@@ -16,11 +16,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                 .Register<Version>(VersionConverter.Default)
 			                 .Create()
 			                 .ForTesting();
-			var version = new Version(1, 2);
-			var instance = new Subject { Version = version };
-			var subject = serializer.Cycle(instance);
+			var version  = new Version(1, 2);
+			var instance = new Subject {Version = version};
+			var subject  = serializer.Cycle(instance);
 			subject.ShouldBeEquivalentTo(instance);
-			version.ToString().Should().Be(subject.Version.ToString());
+			version.ToString()
+			       .Should()
+			       .Be(subject.Version.ToString());
 		}
 
 		sealed class Subject

@@ -1,6 +1,5 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Content;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using Xunit;
 
@@ -20,7 +19,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><Issue245Tests-TestData xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Name>Null ID</Name></Issue245Tests-TestData>");
 		}
 
-		[System.SerializableAttribute()]
+		[System.SerializableAttribute]
 		public class TestData
 		{
 			[System.Xml.Serialization.XmlElementAttribute("Name")]
@@ -29,17 +28,17 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			[System.Xml.Serialization.XmlElementAttribute("Id", DataType = "int")]
 			public int IdValue { get; set; }
 
-			[System.Xml.Serialization.XmlIgnoreAttribute()]
+			[System.Xml.Serialization.XmlIgnoreAttribute]
 			public bool IdValueSpecified { get; set; }
 
-			[System.Xml.Serialization.XmlIgnoreAttribute()]
+			[System.Xml.Serialization.XmlIgnoreAttribute]
 			public System.Nullable<int> Id
 			{
 				get
 				{
-					if (this.IdValueSpecified)
+					if (IdValueSpecified)
 					{
-						return this.IdValue;
+						return IdValue;
 					}
 					else
 					{
@@ -48,8 +47,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				}
 				set
 				{
-					this.IdValue          = value.GetValueOrDefault();
-					this.IdValueSpecified = value.HasValue;
+					IdValue          = value.GetValueOrDefault();
+					IdValueSpecified = value.HasValue;
 				}
 			}
 		}

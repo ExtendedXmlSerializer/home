@@ -5,6 +5,7 @@ using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using System.Reflection;
 using System.Text;
 using Xunit;
@@ -20,7 +21,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .Create()
 			                                             .ForTesting();
 
-			var instance = new ClassWithEncodingProperty{ Encoding = Encoding.ASCII };
+			var instance                  = new ClassWithEncodingProperty {Encoding = Encoding.ASCII};
 			var classWithEncodingProperty = serializer.Cycle(instance);
 			classWithEncodingProperty.ShouldBeEquivalentTo(instance);
 		}
@@ -28,52 +29,52 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		void VerifyAlternativeRegister()
 		{
-			var instance = new ClassWithEncodingProperty{ Encoding = Encoding.ASCII };
+			var instance = new ClassWithEncodingProperty {Encoding = Encoding.ASCII};
 
 			var serializer = new ConfigurationContainer().Type<Encoding>()
 			                                             .Register(typeof(EncodingSerializer))
 			                                             .Create()
 			                                             .ForTesting();
-			serializer.Cycle(instance).ShouldBeEquivalentTo(instance);
+			serializer.Cycle(instance)
+			          .ShouldBeEquivalentTo(instance);
 		}
 
 		[Fact]
 		void VerifyAdvanced()
 		{
-			var instance = new Settings{ DbSettings = new DBVCSV {Encoding = Encoding.ASCII}};
+			var instance = new Settings {DbSettings = new DBVCSV {Encoding = Encoding.ASCII}};
 			var serializer = new ConfigurationContainer().Type<Encoding>()
 			                                             .Register(typeof(EncodingSerializer))
 			                                             .Create()
 			                                             .ForTesting();
-			serializer.Cycle(instance).ShouldBeEquivalentTo(instance);
+			serializer.Cycle(instance)
+			          .ShouldBeEquivalentTo(instance);
 		}
 
 		public class Settings
 		{
-			public DbSettings DbSettings { get; set; }
+			public DbSettings DbSettings { [UsedImplicitly] get; set; }
 		}
 
 		public class DbSettings
 		{
-			public Encoding Encoding { get; set; }
+			public Encoding Encoding { [UsedImplicitly] get; set; }
 		}
 
-		public class DBVCSV : DbSettings
-		{
-
-		}
+		public class DBVCSV : DbSettings {}
 
 		public class ClassWithEncodingProperty
 		{
 			public ClassWithEncodingProperty() => Encoding = Encoding.Default;
 
-			public Encoding Encoding { get; set; }
+			public Encoding Encoding { [UsedImplicitly] get; set; }
 		}
 
 		sealed class EncodingSerializer : ISerializer<Encoding>
 		{
 			readonly ISerializer _serializer;
 
+			[UsedImplicitly]
 			public EncodingSerializer(IContents contents) : this(contents.Get(typeof(int).GetTypeInfo())) {}
 
 			public EncodingSerializer(ISerializer serializer) => _serializer = serializer;
@@ -85,6 +86,5 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				_serializer.Write(writer, instance.CodePage);
 			}
 		}
-
 	}
 }

@@ -1,27 +1,4 @@
-﻿// MIT License
-//
-// Copyright (c) 2016-2018 Wojciech Nagórski
-//                    Michael DeMond
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-using ExtendedXmlSerializer.Configuration;
+﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.AttachedProperties;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
@@ -41,14 +18,20 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties
 			NumberProperty.Default.Assign(subject, 6776);
 
 			var serializer = new SerializationSupport(
-				new ConfigurationContainer().EnableAttachedProperties(NameProperty.Default, NumberProperty.Default)
-			);
+			                                          new ConfigurationContainer()
+				                                          .EnableAttachedProperties(NameProperty.Default,
+				                                                                    NumberProperty.Default)
+			                                         );
 
 			var actual = serializer.Assert(subject,
 			                               @"<?xml version=""1.0"" encoding=""utf-8""?><AttachedPropertiesExtensionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message><AttachedPropertiesExtensionTests-NameProperty.Default>SubjectName</AttachedPropertiesExtensionTests-NameProperty.Default><AttachedPropertiesExtensionTests-NumberProperty.Default>6776</AttachedPropertiesExtensionTests-NumberProperty.Default></AttachedPropertiesExtensionTests-Subject>");
 			actual.ShouldBeEquivalentTo(subject);
-			actual.Get(NameProperty.Default).Should().Be("SubjectName");
-			actual.Get(NumberProperty.Default).Should().Be(6776);
+			actual.Get(NameProperty.Default)
+			      .Should()
+			      .Be("SubjectName");
+			actual.Get(NumberProperty.Default)
+			      .Should()
+			      .Be(6776);
 		}
 
 		[Fact]
@@ -61,12 +44,17 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties
 			var serializer =
 				new SerializationSupport(new ConfigurationContainer().UseAutoFormatting()
 				                                                     .EnableAttachedProperties(NameProperty.Default,
-				                                                                               NumberProperty.Default));
+				                                                                               NumberProperty
+					                                                                               .Default));
 			var actual = serializer.Assert(subject,
 			                               @"<?xml version=""1.0"" encoding=""utf-8""?><AttachedPropertiesExtensionTests-Subject Message=""Hello World!"" AttachedPropertiesExtensionTests-NameProperty.Default=""SubjectName"" AttachedPropertiesExtensionTests-NumberProperty.Default=""6776"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties;assembly=ExtendedXmlSerializer.Tests"" />");
 			actual.ShouldBeEquivalentTo(subject);
-			actual.Get(NameProperty.Default).Should().Be("SubjectName");
-			actual.Get(NumberProperty.Default).Should().Be(6776);
+			actual.Get(NameProperty.Default)
+			      .Should()
+			      .Be("SubjectName");
+			actual.Get(NumberProperty.Default)
+			      .Should()
+			      .Be(6776);
 		}
 
 		[Fact]
@@ -79,7 +67,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties
 			container.UseAutoFormatting()
 			         .Type<NumberProperty>()
 			         .Name("ConfiguredAttachedProperty");
-			
+
 			container.AttachedProperty(() => NumberProperty.Default)
 			         .Name("NewNumberPropertyName");
 			var serializer = new SerializationSupport(container);
@@ -87,7 +75,9 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties
 			var actual = serializer.Assert(subject,
 			                               @"<?xml version=""1.0"" encoding=""utf-8""?><AttachedPropertiesExtensionTests-Subject Message=""Hello World!"" ConfiguredAttachedProperty.NewNumberPropertyName=""6776"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties;assembly=ExtendedXmlSerializer.Tests"" />");
 			actual.ShouldBeEquivalentTo(subject);
-			actual.Get(NumberProperty.Default).Should().Be(6776);
+			actual.Get(NumberProperty.Default)
+			      .Should()
+			      .Be(6776);
 		}
 
 		sealed class Subject
@@ -100,6 +90,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties
 			public const string DefaultMessage = "The Name Has Not Been Set";
 
 			public static NameProperty Default { get; } = new NameProperty();
+
 			NameProperty() : base(() => Default, x => DefaultMessage) {}
 		}
 
@@ -108,6 +99,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties
 			public const int DefaultValue = 123;
 
 			public static NumberProperty Default { get; } = new NumberProperty();
+
 			NumberProperty() : base(() => Default, x => DefaultValue) {}
 		}
 	}

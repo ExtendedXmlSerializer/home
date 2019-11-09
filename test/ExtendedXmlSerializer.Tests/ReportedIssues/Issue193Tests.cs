@@ -10,6 +10,7 @@ using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using System.Reflection;
 using Xunit;
 
@@ -76,6 +77,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				readonly IContents                _contents;
 				readonly ISpecification<TypeInfo> _specification;
 
+				[UsedImplicitly]
 				public Contents(IContents contents) : this(contents, IsAssignableSpecification<RandomType>.Default) {}
 
 				public Contents(IContents contents, ISpecification<TypeInfo> specification)
@@ -137,6 +139,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			readonly ISerializer _subject;
 
+			[UsedImplicitly]
 			public SerializerWithDependencies(IContents contents) : this(contents.Get(typeof(Subject))) {}
 
 			SerializerWithDependencies(ISerializer subject) => _subject = subject;

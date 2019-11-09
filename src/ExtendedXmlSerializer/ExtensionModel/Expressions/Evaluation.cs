@@ -1,30 +1,7 @@
-// MIT License
-// 
-// Copyright (c) 2016-2018 Wojciech Nagórski
-//                    Michael DeMond
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-using System;
-using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Coercion;
+using System;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 {
@@ -43,14 +20,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 		Evaluation(ISource<Exception> exception, IParameterizedSource<TypeInfo, object> implementation)
 			: base(implementation) => _exception = exception;
 
-
 		sealed class Implementation
 			: CacheBase<TypeInfo, Implementation.Result?>,
-			  IParameterizedSource<TypeInfo, object>, ISource<Exception>
+			  IParameterizedSource<TypeInfo, object>,
+			  ISource<Exception>
 		{
 			readonly ICoercers _coercers;
-			readonly string _expression;
-			readonly object _instance;
+			readonly string    _expression;
+			readonly object    _instance;
 			readonly Exception _error;
 
 			public Implementation(ICoercers coercers, string expression, object instance)
@@ -59,12 +36,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 			public Implementation(ICoercers coercers, string expression, Exception error)
 				: this(coercers, expression, null, error) {}
 
+			// ReSharper disable once TooManyDependencies
 			Implementation(ICoercers coercers, string expression, object instance, Exception error = null)
 			{
-				_coercers = coercers;
+				_coercers   = coercers;
 				_expression = expression;
-				_instance = instance;
-				_error = error;
+				_instance   = instance;
+				_error      = error;
 			}
 
 			protected override Result? Create(TypeInfo parameter)
@@ -77,11 +55,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 
 				var coercer = _coercers.Get(instance);
 				var result =
-					(coercer?.IsSatisfiedBy(parameter) ?? false)
+					coercer?.IsSatisfiedBy(parameter) ?? false
 						? new Result(coercer.Get(parameter))
 						: parameter.IsInstanceOfType(_expression)
 							? new Result(_expression)
-							: (Result?) null;
+							: (Result?)null;
 				return result;
 			}
 

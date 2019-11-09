@@ -11,6 +11,8 @@ using System.Xml.Serialization;
 using Xunit;
 using DateTimeConverter = ExtendedXmlSerializer.ContentModel.Conversion.DateTimeConverter;
 
+// ReSharper disable All
+
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {
 	public sealed class Issue206TestsExtensive
@@ -19,10 +21,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void Verify()
 		{
 			var support = new ConfigurationContainer().EnableImplicitTypingFromPublicNested<Issue206TestsExtensive>()
-													  .EnableClassicListNaming()
-													  .Register(DateTimeConverter.Local)
-													  .Create()
-													  .ForTesting();
+			                                          .EnableClassicListNaming()
+			                                          .Register(DateTimeConverter.Local)
+			                                          .Create()
+			                                          .ForTesting();
 
 			var files = support.Deserialize<TravelFile[]>(@"<?xml version=""1.0"" encoding=""UTF-8""?>
 <ArrayOfIssue206TestsExtensive-TravelFile  xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" >

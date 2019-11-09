@@ -1,27 +1,28 @@
 ﻿using System;
+
 // ReSharper disable All
 
 namespace ExtendedXmlSerializer.Core.Sprache
 {
-    internal static class ResultHelper
-    {
-        public static IResult<U> IfSuccess<T, U>(this IResult<T> result, Func<IResult<T>, IResult<U>> next)
-        {
-            if(result == null) throw new ArgumentNullException(nameof(result));
+	internal static class ResultHelper
+	{
+		public static IResult<U> IfSuccess<T, U>(this IResult<T> result, Func<IResult<T>, IResult<U>> next)
+		{
+			if (result == null) throw new ArgumentNullException(nameof(result));
 
-            if (result.WasSuccessful)
-                return next(result);
+			if (result.WasSuccessful)
+				return next(result);
 
-            return Result.Failure<U>(result.Remainder, result.Message, result.Expectations);
-        }
+			return Result.Failure<U>(result.Remainder, result.Message, result.Expectations);
+		}
 
-        public static IResult<T> IfFailure<T>(this IResult<T> result, Func<IResult<T>, IResult<T>> next)
-        {
-            if (result == null) throw new ArgumentNullException(nameof(result));
+		public static IResult<T> IfFailure<T>(this IResult<T> result, Func<IResult<T>, IResult<T>> next)
+		{
+			if (result == null) throw new ArgumentNullException(nameof(result));
 
-            return result.WasSuccessful
-                ? result
-                : next(result);
-        }
-    }
+			return result.WasSuccessful
+				       ? result
+				       : next(result);
+		}
+	}
 }

@@ -16,8 +16,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                    .Create()
 			                                    .ForTesting();
 
-			var subject = new Subject{ Message = "Hello World!" };
-			serializer.Assert(subject, @"<?xml version=""1.0"" encoding=""utf-8""?><ConfiguredSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message></ConfiguredSubject>")
+			var subject = new Subject {Message = "Hello World!"};
+			serializer.Assert(subject,
+			                  @"<?xml version=""1.0"" encoding=""utf-8""?><ConfiguredSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message></ConfiguredSubject>")
 			          .ShouldBeEquivalentTo(subject);
 		}
 
@@ -28,28 +29,28 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                    .Create()
 			                                    .ForTesting();
 
-			var subject = new Subject{ Message = "Hello World!" };
-			serializer.Assert(subject, @"<?xml version=""1.0"" encoding=""utf-8""?><ConfiguredSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests"" />")
+			var subject = new Subject {Message = "Hello World!"};
+			serializer.Assert(subject,
+			                  @"<?xml version=""1.0"" encoding=""utf-8""?><ConfiguredSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests"" />")
 			          .Message.Should()
 			          .BeNull();
 		}
-
 
 		[Fact]
 		public void VerifySerializer()
 		{
 			var serializer = new Serializer().ForTesting();
 
-			var subject = new Subject{ Message = "Hello World!" };
-			serializer.Assert(subject, @"<?xml version=""1.0"" encoding=""utf-8""?><ConfiguredSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message></ConfiguredSubject>")
+			var subject = new Subject {Message = "Hello World!"};
+			serializer.Assert(subject,
+			                  @"<?xml version=""1.0"" encoding=""utf-8""?><ConfiguredSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message></ConfiguredSubject>")
 			          .ShouldBeEquivalentTo(subject);
 		}
 
 		sealed class Subject
 		{
-			public string Message { [UsedImplicitly]get; set; }
+			public string Message { [UsedImplicitly] get; set; }
 		}
-
 
 		sealed class Serializer : ConfiguredSerializer<Profile> {}
 
@@ -57,6 +58,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			[UsedImplicitly]
 			public static Profile Default { get; } = new Profile();
+
 			Profile() {}
 
 			public IConfigurationContainer Get(IConfigurationContainer parameter) => parameter.Type<Subject>()
@@ -67,6 +69,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			[UsedImplicitly]
 			public static Ignore Default { get; } = new Ignore();
+
 			Ignore() {}
 
 			public IConfigurationContainer Get(IConfigurationContainer parameter) => parameter.Type<Subject>()
@@ -78,6 +81,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			[UsedImplicitly]
 			public static Combined Default { get; } = new Combined();
+
 			Combined() : base(Profile.Default, Ignore.Default) {}
 		}
 	}

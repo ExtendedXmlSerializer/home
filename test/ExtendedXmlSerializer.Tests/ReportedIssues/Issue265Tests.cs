@@ -1,6 +1,7 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using System.Xml.Serialization;
 using Xunit;
 
@@ -45,6 +46,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		class Inherited : Base
 		{
+			[UsedImplicitly]
 			public Inherited() {}
 
 			public Inherited(string test) : base(test) {}
@@ -54,6 +56,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			[XmlElement] string _message;
 
+			[UsedImplicitly]
 			public Subject() : this("Default Value") {}
 
 			public Subject(string test) => _message = test;

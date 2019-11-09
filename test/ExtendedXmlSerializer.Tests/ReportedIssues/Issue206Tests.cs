@@ -2,6 +2,7 @@
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -15,15 +16,23 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			var support = new ConfigurationContainer().EnableImplicitTypingFromPublicNested<Issue206Tests>()
 			                                          .EnableClassicListNaming()
-													  .Create()
-													  .ForTesting();
+			                                          .Create()
+			                                          .ForTesting();
 
-			var subject = new[] {new TravelFile {Name = "Hello World!", Participants = new[]
+			var subject = new[]
 			{
-				new Participant{ParticipantId = 679556, Name = "xxxx"},
-				new Participant{ParticipantId = 679557, Name = "xxx"}
-			}.ToList()}};
-			support.Deserialize<TravelFile[]>(@"<?xml version=""1.0"" encoding=""utf-8""?><ArrayOfIssue206Tests-TravelFile xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" ><Issue206Tests-TravelFile Name=""Hello World!""><Participants>
+				new TravelFile
+				{
+					Name = "Hello World!", Participants = new[]
+					{
+						new Participant {ParticipantId = 679556, Name = "xxxx"},
+						new Participant {ParticipantId = 679557, Name = "xxx"}
+					}.ToList()
+				}
+			};
+			support
+				.Deserialize<TravelFile[]
+				>(@"<?xml version=""1.0"" encoding=""utf-8""?><ArrayOfIssue206Tests-TravelFile xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" ><Issue206Tests-TravelFile Name=""Hello World!""><Participants>
 		 <Issue206Tests-Participant>
 			<ParticipantId>679556</ParticipantId>
 			<Name>xxxx</Name>
@@ -33,39 +42,43 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			<Name>xxx</Name>
 </Issue206Tests-Participant>
 	  </Participants></Issue206Tests-TravelFile></ArrayOfIssue206Tests-TravelFile>")
-				   .ShouldBeEquivalentTo(subject);
+				.ShouldBeEquivalentTo(subject);
 		}
 
 		[Fact]
 		void VerifyExtension()
 		{
-			var support = new ConfigurationContainer().EnableClassicListNaming().Create()
+			var support = new ConfigurationContainer().EnableClassicListNaming()
+			                                          .Create()
 			                                          .ForTesting();
-			var subject = new[] {new TravelFile {Name = "Hello World!", Participants = new[]
+			var subject = new[]
 			{
-				new Participant{ParticipantId = 679556, Name = "xxxx"},
-				new Participant{ParticipantId = 679557, Name = "xxx"}
-			}.ToList()}};
+				new TravelFile
+				{
+					Name = "Hello World!", Participants = new[]
+					{
+						new Participant {ParticipantId = 679556, Name = "xxxx"},
+						new Participant {ParticipantId = 679557, Name = "xxx"}
+					}.ToList()
+				}
+			};
 
-			support.Cycle(subject).ShouldBeEquivalentTo(subject);
-
+			support.Cycle(subject)
+			       .ShouldBeEquivalentTo(subject);
 		}
 
 		public sealed class TravelFile
 		{
+			public List<Participant> Participants { [UsedImplicitly] get; set; }
 
-			public List<Participant> Participants { get; set; }
-
-			public string Name { get; set; }
+			public string Name { [UsedImplicitly] get; set; }
 		}
 
 		public class Participant
 		{
-			public int ParticipantId { get; set; }
+			public int ParticipantId { [UsedImplicitly] get; set; }
 
-
-			public string Name { get; set; }
+			public string Name { [UsedImplicitly] get; set; }
 		}
-
 	}
 }

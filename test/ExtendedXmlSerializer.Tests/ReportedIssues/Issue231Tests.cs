@@ -1,13 +1,15 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using System.Xml;
-using ExtendedXmlSerializer.Configuration;
+﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using FluentAssertions;
+using System;
+using System.IO;
+using System.Text;
+using System.Xml;
 using Xunit;
 using XmlWriter = System.Xml.XmlWriter;
+
+// ReSharper disable All
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {
@@ -16,7 +18,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		void Verify()
 		{
-			var subject = new Subject { Property = "Hello World" };
+			var subject = new Subject {Property = "Hello World"};
 
 			var serializer = new ConfigurationContainer().EnableImplicitTypingFromPublicNested<Issue231Tests>()
 			                                             .Create();
@@ -46,7 +48,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			{
 				Action action = () => serializer.Serialize(xmlTextWriter, subject);
 
-				action.ShouldThrow<InvalidOperationException>().WithMessage("Nope.");
+				action.ShouldThrow<InvalidOperationException>()
+				      .WithMessage("Nope.");
 			}
 		}
 

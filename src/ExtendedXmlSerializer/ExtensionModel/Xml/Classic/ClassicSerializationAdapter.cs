@@ -1,7 +1,7 @@
-﻿using ExtendedXmlSerializer.ContentModel;
+﻿using System.Xml.Serialization;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
-using System.Xml.Serialization;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {

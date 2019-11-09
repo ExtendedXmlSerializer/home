@@ -1,30 +1,8 @@
-﻿// MIT License
-// 
-// Copyright (c) 2016-2018 Wojciech Nagórski
-//                    Michael DeMond
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+// ReSharper disable All
 
 // ReSharper disable All
 
@@ -85,7 +63,6 @@ namespace ExtendedXmlSerializer.Core.Sprache
 			return Char(ch => c == ch, char.ToString(c));
 		}
 
-
 		/// <summary>
 		/// Parse a single character of any in c
 		/// </summary>
@@ -103,9 +80,9 @@ namespace ExtendedXmlSerializer.Core.Sprache
 		/// <returns></returns>
 		public static Parser<char> Chars(string c)
 		{
-			return Char(c.ToEnumerable().Contains, StringExtensions.Join("|", c.ToEnumerable()));
+			return Char(c.ToEnumerable()
+			             .Contains, StringExtensions.Join("|", c.ToEnumerable()));
 		}
-
 
 		/// <summary>
 		/// Parse a single character except c.
@@ -135,7 +112,8 @@ namespace ExtendedXmlSerializer.Core.Sprache
 		/// <returns></returns>
 		public static Parser<char> CharExcept(string c)
 		{
-			return CharExcept(c.ToEnumerable().Contains, StringExtensions.Join("|", c.ToEnumerable()));
+			return CharExcept(c.ToEnumerable()
+			                   .Contains, StringExtensions.Join("|", c.ToEnumerable()));
 		}
 
 		/// <summary>
@@ -158,11 +136,11 @@ namespace ExtendedXmlSerializer.Core.Sprache
 			if (s == null) throw new ArgumentNullException(nameof(s));
 
 			return s
-				.ToEnumerable()
-				.Select(IgnoreCase)
-				.Aggregate(Return(Enumerable.Empty<char>()),
-				           (a, p) => a.Concat(p.Once()))
-				.Named(s);
+			       .ToEnumerable()
+			       .Select(IgnoreCase)
+			       .Aggregate(Return(Enumerable.Empty<char>()),
+			                  (a, p) => a.Concat(p.Once()))
+			       .Named(s);
 		}
 
 		/// <summary>
@@ -215,11 +193,11 @@ namespace ExtendedXmlSerializer.Core.Sprache
 			if (s == null) throw new ArgumentNullException(nameof(s));
 
 			return s
-				.ToEnumerable()
-				.Select(Char)
-				.Aggregate(Return(Enumerable.Empty<char>()),
-				           (a, p) => a.Concat(p.Once()))
-				.Named(s);
+			       .ToEnumerable()
+			       .Select(Char)
+			       .Aggregate(Return(Enumerable.Empty<char>()),
+			                  (a, p) => a.Concat(p.Once()))
+			       .Named(s);
 		}
 
 		/// <summary>
@@ -243,6 +221,7 @@ namespace ExtendedXmlSerializer.Core.Sprache
 					       var msg = $"`{StringExtensions.Join(", ", result.Expectations)}' was not expected";
 					       return Result.Failure<object>(i, msg, new string[0]);
 				       }
+
 				       return Result.Success<object>(null, i);
 			       };
 		}
@@ -260,7 +239,8 @@ namespace ExtendedXmlSerializer.Core.Sprache
 			if (first == null) throw new ArgumentNullException(nameof(first));
 			if (second == null) throw new ArgumentNullException(nameof(second));
 
-			return i => first(i).IfSuccess(s => second(s.Value)(s.Remainder));
+			return i => first(i)
+				       .IfSuccess(s => second(s.Value)(s.Remainder));
 		}
 
 		/// <summary>
@@ -277,8 +257,8 @@ namespace ExtendedXmlSerializer.Core.Sprache
 			return i =>
 			       {
 				       var remainder = i;
-				       var result = new List<T>();
-				       var r = parser(i);
+				       var result    = new List<T>();
+				       var r         = parser(i);
 
 				       while (r.WasSuccessful)
 				       {
@@ -287,7 +267,7 @@ namespace ExtendedXmlSerializer.Core.Sprache
 
 					       result.Add(r.Value);
 					       remainder = r.Remainder;
-					       r = parser(remainder);
+					       r         = parser(remainder);
 				       }
 
 				       return Result.Success<IEnumerable<T>>(result, remainder);
@@ -309,12 +289,13 @@ namespace ExtendedXmlSerializer.Core.Sprache
 		/// unqualified counterparts.
 		/// </para>
 		/// </remarks>
-		/// <seealso cref="XOr"/>
 		public static Parser<IEnumerable<T>> XMany<T>(this Parser<T> parser)
 		{
 			if (parser == null) throw new ArgumentNullException(nameof(parser));
 
-			return parser.Many().Then(m => parser.Once().XOr(Return(m)));
+			return parser.Many()
+			             .Then(m => parser.Once()
+			                              .XOr(Return(m)));
 		}
 
 		/// <summary>
@@ -327,7 +308,9 @@ namespace ExtendedXmlSerializer.Core.Sprache
 		{
 			if (parser == null) throw new ArgumentNullException(nameof(parser));
 
-			return parser.Once().Then(t1 => parser.Many().Select(ts => t1.Concat(ts)));
+			return parser.Once()
+			             .Then(t1 => parser.Many()
+			                               .Select(ts => t1.Concat(ts)));
 		}
 
 		/// <summary>
@@ -341,7 +324,9 @@ namespace ExtendedXmlSerializer.Core.Sprache
 		{
 			if (parser == null) throw new ArgumentNullException(nameof(parser));
 
-			return parser.Once().Then(t1 => parser.XMany().Select(ts => t1.Concat(ts)));
+			return parser.Once()
+			             .Then(t1 => parser.XMany()
+			                               .Select(ts => t1.Concat(ts)));
 		}
 
 		/// <summary>
@@ -354,13 +339,14 @@ namespace ExtendedXmlSerializer.Core.Sprache
 		{
 			if (parser == null) throw new ArgumentNullException(nameof(parser));
 
-			return i => parser(i).IfSuccess(s =>
-				                                s.Remainder.AtEnd
-					                                ? s
-					                                : Result.Failure<T>(
-						                                s.Remainder,
-						                                string.Format("unexpected '{0}'", s.Remainder.Current),
-						                                new[] {"end of input"}));
+			return i => parser(i)
+				       .IfSuccess(s =>
+					                  s.Remainder.AtEnd
+						                  ? s
+						                  : Result.Failure<T>(
+						                                      s.Remainder,
+						                                      string.Format("unexpected '{0}'", s.Remainder.Current),
+						                                      new[] {"end of input"}));
 		}
 
 		/// <summary>
@@ -413,7 +399,8 @@ namespace ExtendedXmlSerializer.Core.Sprache
 					       p = reference();
 
 				       if (i.Memos.ContainsKey(p))
-					       throw new ParseException(i.Memos[p].ToString());
+					       throw new ParseException(i.Memos[p]
+					                                 .ToString());
 
 				       i.Memos[p] = Result.Failure<T>(i,
 				                                      "Left recursion in the grammar.",
@@ -451,11 +438,13 @@ namespace ExtendedXmlSerializer.Core.Sprache
 				       var fr = first(i);
 				       if (!fr.WasSuccessful)
 				       {
-					       return second(i).IfFailure(sf => DetermineBestError(fr, sf));
+					       return second(i)
+						       .IfFailure(sf => DetermineBestError(fr, sf));
 				       }
 
 				       if (fr.Remainder.Equals(i))
-					       return second(i).IfFailure(sf => fr);
+					       return second(i)
+						       .IfFailure(sf => fr);
 
 				       return fr;
 			       };
@@ -473,9 +462,10 @@ namespace ExtendedXmlSerializer.Core.Sprache
 			if (parser == null) throw new ArgumentNullException(nameof(parser));
 			if (name == null) throw new ArgumentNullException(nameof(name));
 
-			return i => parser(i).IfFailure(f => f.Remainder.Equals(i)
-				                                ? Result.Failure<T>(f.Remainder, f.Message, new[] {name})
-				                                : f);
+			return i => parser(i)
+				       .IfFailure(f => f.Remainder.Equals(i)
+					                       ? Result.Failure<T>(f.Remainder, f.Message, new[] {name})
+					                       : f);
 		}
 
 		/// <summary>
@@ -500,12 +490,14 @@ namespace ExtendedXmlSerializer.Core.Sprache
 					       if (!fr.Remainder.Equals(i))
 						       return fr;
 
-					       return second(i).IfFailure(sf => DetermineBestError(fr, sf));
+					       return second(i)
+						       .IfFailure(sf => DetermineBestError(fr, sf));
 				       }
 
 				       // This handles a zero-length successful application of first.
 				       if (fr.Remainder.Equals(i))
-					       return second(i).IfFailure(sf => fr);
+					       return second(i)
+						       .IfFailure(sf => fr);
 
 				       return fr;
 			       };
@@ -520,9 +512,9 @@ namespace ExtendedXmlSerializer.Core.Sprache
 
 			if (secondFailure.Remainder.Position == firstFailure.Remainder.Position)
 				return Result.Failure<T>(
-					firstFailure.Remainder,
-					firstFailure.Message,
-					firstFailure.Expectations.Union(secondFailure.Expectations));
+				                         firstFailure.Remainder,
+				                         firstFailure.Message,
+				                         firstFailure.Expectations.Union(secondFailure.Expectations));
 
 			return firstFailure;
 		}
@@ -537,7 +529,7 @@ namespace ExtendedXmlSerializer.Core.Sprache
 		{
 			if (parser == null) throw new ArgumentNullException(nameof(parser));
 
-			return parser.Select(r => (IEnumerable<T>) new[] {r});
+			return parser.Select(r => (IEnumerable<T>)new[] {r});
 		}
 
 		/// <summary>
@@ -598,7 +590,8 @@ namespace ExtendedXmlSerializer.Core.Sprache
 			       {
 				       var r = except(i);
 				       if (r.WasSuccessful)
-					       return Result.Failure<T>(i, "Excepted parser succeeded.", new[] {"other than the excepted input"});
+					       return Result.Failure<T>(i, "Excepted parser succeeded.",
+					                                new[] {"other than the excepted input"});
 				       return parser(i);
 			       };
 		}
@@ -614,7 +607,9 @@ namespace ExtendedXmlSerializer.Core.Sprache
 		/// <returns></returns>
 		public static Parser<IEnumerable<T>> Until<T, U>(this Parser<T> parser, Parser<U> until)
 		{
-			return parser.Except(until).Many().Then(r => until.Return(r));
+			return parser.Except(until)
+			             .Many()
+			             .Then(r => until.Return(r));
 		}
 
 		/// <summary>
@@ -629,12 +624,13 @@ namespace ExtendedXmlSerializer.Core.Sprache
 			if (parser == null) throw new ArgumentNullException(nameof(parser));
 			if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
-			return i => parser(i).IfSuccess(s =>
-				                                predicate(s.Value)
-					                                ? s
-					                                : Result.Failure<T>(i,
-					                                                    string.Format("Unexpected {0}.", s.Value),
-					                                                    new string[0]));
+			return i => parser(i)
+				       .IfSuccess(s =>
+					                  predicate(s.Value)
+						                  ? s
+						                  : Result.Failure<T>(i,
+						                                      string.Format("Unexpected {0}.", s.Value),
+						                                      new string[0]));
 		}
 
 		/// <summary>
@@ -656,7 +652,8 @@ namespace ExtendedXmlSerializer.Core.Sprache
 			if (selector == null) throw new ArgumentNullException(nameof(selector));
 			if (projector == null) throw new ArgumentNullException(nameof(projector));
 
-			return parser.Then(t => selector(t).Select(u => projector(t, u)));
+			return parser.Then(t => selector(t)
+				                   .Select(u => projector(t, u)));
 		}
 
 		/// <summary>
@@ -711,7 +708,8 @@ namespace ExtendedXmlSerializer.Core.Sprache
 			if (apply == null) throw new ArgumentNullException(nameof(apply));
 			return or(op.Then(opvalue =>
 				                  operand.Then(operandValue =>
-					                               ChainOperatorRest(apply(opvalue, firstOperand, operandValue), op, operand, apply, or))),
+					                               ChainOperatorRest(apply(opvalue, firstOperand, operandValue), op,
+					                                                 operand, apply, or))),
 			          Return(firstOperand));
 		}
 
@@ -767,37 +765,43 @@ namespace ExtendedXmlSerializer.Core.Sprache
 			if (apply == null) throw new ArgumentNullException(nameof(apply));
 			return or(op.Then(opvalue =>
 				                  operand.Then(operandValue =>
-					                               ChainRightOperatorRest(operandValue, op, operand, apply, or)).Then(r =>
-						                                                                                                  Return(
-							                                                                                                  apply(opvalue,
-							                                                                                                        lastOperand,
-							                                                                                                        r)))),
+					                               ChainRightOperatorRest(operandValue, op, operand, apply, or))
+				                         .Then(r =>
+					                               Return(
+					                                      apply(opvalue,
+					                                            lastOperand,
+					                                            r)))),
 			          Return(lastOperand));
 		}
 
 		/// <summary>
 		/// Parse a number.
 		/// </summary>
-		public static readonly Parser<string> Number = Numeric.AtLeastOnce().Text();
+		public static readonly Parser<string> Number = Numeric.AtLeastOnce()
+		                                                      .Text();
 
 		static Parser<string> DecimalWithoutLeadingDigits(CultureInfo ci = null)
 		{
 			return from nothing in Return("")
 			       // dummy so that CultureInfo.CurrentCulture is evaluated later
-			       from dot in String((ci ?? CultureInfo.CurrentCulture).NumberFormat.NumberDecimalSeparator).Text()
+			       from dot in String((ci ?? CultureInfo.CurrentCulture).NumberFormat.NumberDecimalSeparator)
+				       .Text()
 			       from fraction in Number
 			       select dot + fraction;
 		}
 
 		static Parser<string> DecimalWithLeadingDigits(CultureInfo ci = null)
 		{
-			return Number.Then(n => DecimalWithoutLeadingDigits(ci).XOr(Return("")).Select(f => n + f));
+			return Number.Then(n => DecimalWithoutLeadingDigits(ci)
+			                        .XOr(Return(""))
+			                        .Select(f => n + f));
 		}
 
 		/// <summary>
 		/// Parse a decimal number using the current culture's separator character.
 		/// </summary>
-		public static readonly Parser<string> Decimal = DecimalWithLeadingDigits().XOr(DecimalWithoutLeadingDigits());
+		public static readonly Parser<string> Decimal = DecimalWithLeadingDigits()
+			.XOr(DecimalWithoutLeadingDigits());
 
 		/// <summary>
 		/// Parse a decimal number with separator '.'.

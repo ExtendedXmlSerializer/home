@@ -2,6 +2,7 @@
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -24,7 +25,6 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			snoopy.Friends.Add(charlieBrown); // added twice -- intentional
 
 			var cycled = new ConfigurationContainer()
-
 			             .EnableParameterizedContent()
 			             .EnableReferences()
 			             .Create()
@@ -38,22 +38,6 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			cycled.Friends.First()
 			      .Should()
 			      .Be(cycled.Friends.Last());
-
-			/*var charlieBrown = new Person();
-			var snoopy       = new Person(new List<Person> {charlieBrown, charlieBrown});
-			var cycled = new ConfigurationContainer()
-			             .EnableParameterizedContent()
-			             .EnableReferences()
-			             .Create()
-			             .ForTesting()
-			             .Cycle(snoopy);
-
-
-			cycled.Friends.First()
-			      .Should()
-			      .BeSameAs(cycled.Friends.Last());*/
-			/*cycled.Should()
-			      .ShouldBeEquivalentTo(snoopy)*/;
 		}
 
 		public class Person
@@ -62,16 +46,14 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			public Person(string name, IList<Person> friends)
 			{
-				Name = name;
+				Name    = name;
 				Friends = friends;
 			}
 
-			public string Name { get; }
+			public string Name { [UsedImplicitly] get; }
 			public IList<Person> Friends { get; }
 		}
 
 		/**/
-
-
 	}
 }

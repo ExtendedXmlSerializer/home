@@ -24,7 +24,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				table.Rows.Count.Should()
 				     .Be(instance.Rows.Count);
 
-				for (int i = 0; i < table.Rows.Count; i++)
+				for (var i = 0; i < table.Rows.Count; i++)
 				{
 					table.Rows[i]["Name"]
 					     .Should()
@@ -52,7 +52,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				table.Rows.Count.Should()
 				     .Be(instance.Rows.Count);
 
-				for (int i = 0; i < table.Rows.Count; i++)
+				for (var i = 0; i < table.Rows.Count; i++)
 				{
 					table.Rows[i]["Name"]
 					     .Should()
@@ -79,13 +79,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			return result;
 		}
 
-		static DataRow Row(DataTable table, string name)
+		static void Row(DataTable table, string name)
 		{
 			var result = table.NewRow();
 			result["Name"]  = name;
 			result["Marks"] = "500";
 			table.Rows.Add(result);
-			return result;
 		}
 	}
 }

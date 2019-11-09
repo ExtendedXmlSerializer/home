@@ -1,6 +1,7 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -12,6 +13,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		class FooBar
 		{
+			[UsedImplicitly]
 			public string Foo { get; set; } = "Bar";
 		}
 

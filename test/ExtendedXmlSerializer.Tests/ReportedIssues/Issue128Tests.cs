@@ -24,7 +24,6 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			serializer.Serialize(instance)
 			          .Should()
 			          .Be(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue128Tests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Counts><int xmlns=""https://extendedxmlserializer.github.io/system"">6776</int></Counts></Issue128Tests-Subject>");
-
 		}
 
 		[Fact]
@@ -35,11 +34,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .EmitWhen(x => x.Id != 0)
 			                                             .Create();
 
-			serializer.Serialize(new Container {Dummy = new Dummy { Id = 6 } })
+			serializer.Serialize(new Container {Dummy = new Dummy {Id = 6}})
 			          .Should()
 			          .Be(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue128Tests-Container xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Dummy><Id>6</Id></Dummy></Issue128Tests-Container>");
 
-			serializer.Serialize(new Container { Dummy = new Dummy { Id = 0 } })
+			serializer.Serialize(new Container {Dummy = new Dummy {Id = 0}})
 			          .Should()
 			          .Be(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue128Tests-Container xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests"" />");
 		}
@@ -56,6 +55,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		public class Subject
 		{
+			// ReSharper disable once CollectionNeverQueried.Global
 			public ObservableCollection<int> Counts { get; } = new ObservableCollection<int>();
 		}
 	}

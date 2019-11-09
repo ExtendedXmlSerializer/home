@@ -15,6 +15,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			string Description { get; set; }
 		}
 
+		// ReSharper disable once UnusedTypeParameter
 		class ClassWithGeneric<T> : IDescribable
 		{
 			public string Description { get; set; }
@@ -27,10 +28,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                 .Create()
 			                 .ForTesting();
 
-			ClassWithGeneric<int> singleValue = new ClassWithGeneric<int>();
+			var singleValue = new ClassWithGeneric<int>();
 			singleValue.Description = "testtest123";
 
-			string result = serializer.Serialize(singleValue);
+			var result = serializer.Serialize(singleValue);
 
 			var deserializedValue = serializer.Deserialize<ClassWithGeneric<int>>(result);
 
@@ -45,15 +46,15 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                 .Create()
 			                 .ForTesting();
 
-			ClassWithGeneric<int> singleValue = new ClassWithGeneric<int>();
+			var singleValue = new ClassWithGeneric<int>();
 			singleValue.Description = "testtest345";
 
-			List<IDescribable> list = new List<IDescribable>()
+			var list = new List<IDescribable>()
 			{
 				singleValue
 			};
 
-			string result = serializer.Serialize(list);
+			var result = serializer.Serialize(list);
 
 			var deserializedValue = serializer.Deserialize<List<IDescribable>>(result);
 
@@ -69,13 +70,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                 .Create()
 			                 .ForTesting();
 
-			ClassWithGeneric<int> singleValue = new ClassWithGeneric<int>();
+			var singleValue = new ClassWithGeneric<int>();
 			singleValue.Description = "testtest345";
 
-			LinkedList<IDescribable> list = new LinkedList<IDescribable>();
+			var list = new LinkedList<IDescribable>();
 			list.AddFirst(singleValue);
 
-			string result = serializer.Serialize(list);
+			var result = serializer.Serialize(list);
 
 			var deserializedValue = serializer.Deserialize<LinkedList<IDescribable>>(result);
 
@@ -91,7 +92,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                 .Create()
 			                 .ForTesting();
 
-			ClassWithGeneric<int> singleValue = new ClassWithGeneric<int>();
+			var singleValue = new ClassWithGeneric<int>();
 			singleValue.Description = "testtest345";
 
 			IDictionary<string, IDescribable> list = new Dictionary<string, IDescribable>()
@@ -99,7 +100,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				{"key", singleValue}
 			};
 
-			string result = serializer.Serialize(list);
+			var result = serializer.Serialize(list);
 
 			var deserializedValue = serializer.Deserialize<Dictionary<string, IDescribable>>(result);
 

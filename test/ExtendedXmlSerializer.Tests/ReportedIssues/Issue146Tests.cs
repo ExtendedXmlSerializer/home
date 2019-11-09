@@ -4,6 +4,7 @@ using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using Xunit;
+
 // ReSharper disable All
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -15,8 +16,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			var serializer = new ConfigurationContainer().EnableParameterizedContent()
 			                                             .ConfigureType<Plane>()
-			                                             .Member(x => x.Rows).Ignore()
-			                                             .Member(x => x.Length).Attribute()
+			                                             .Member(x => x.Rows)
+			                                             .Ignore()
+			                                             .Member(x => x.Length)
+			                                             .Attribute()
 			                                             .Create()
 			                                             .ForTesting();
 			var subject = new Plane(4.33);
@@ -34,11 +37,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var serializer = new ConfigurationContainer().EnableParameterizedContent()
 			                                             .ConfigureType<Master>()
 			                                             //.Member(x => x.sub).Include()
-			                                             .Member(x => x.A).Ignore()
+			                                             .Member(x => x.A)
+			                                             .Ignore()
 			                                             .ConfigureType<SubItem>()
-			                                             .Member(x => x.X).Attribute()
-														 .Create()
-														 .ForTesting();
+			                                             .Member(x => x.X)
+			                                             .Attribute()
+			                                             .Create()
+			                                             .ForTesting();
 			serializer.Assert(master,
 			                  @"<?xml version=""1.0"" encoding=""utf-8""?><Issue146Tests-Master xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Sub X=""1"" /></Issue146Tests-Master>");
 		}
@@ -46,6 +51,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		public struct SubItem
 		{
 			public readonly double X;
+
 			public SubItem(double x)
 			{
 				this.X = x;
@@ -67,10 +73,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			public Master(SubItem sub)
 			{
 				Sub = sub;
-				_a = sub.X;
+				_a  = sub.X;
 			}
 		}
-
 
 		public sealed class Plane
 		{
@@ -80,7 +85,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			public Plane(int rows, double Length)
 			{
-				Rows = rows;
+				Rows        = rows;
 				this.Length = Length;
 			}
 

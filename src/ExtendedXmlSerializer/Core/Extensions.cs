@@ -1,35 +1,12 @@
-﻿// MIT License
-//
-// Copyright (c) 2016-2018 Wojciech Nagórski
-//                    Michael DeMond
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.ReflectionModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.Core
 {
@@ -49,7 +26,7 @@ namespace ExtendedXmlSerializer.Core
 			return @this;
 		}
 
-		public static T Alter<T>(this T @this, Func<T, T> action) => @this != null ? action(@this) : default(T);
+		public static T Alter<T>(this T @this, Func<T, T> action) => @this != null ? action(@this) : default;
 
 		public static string Quoted(this string @this) => QuotedAlteration.Default.Get(@this);
 
@@ -58,12 +35,12 @@ namespace ExtendedXmlSerializer.Core
 			IEqualityComparer<TKey> comparer = null)
 			=> @this.ToDictionary(x => x.Key, x => x.Value, comparer);
 
-		public static T Only<T>(this ImmutableArray<T> @this) => @this.Length == 1 ? @this[0] : default(T);
+		public static T Only<T>(this ImmutableArray<T> @this) => @this.Length == 1 ? @this[0] : default;
 
 		public static T Only<T>(this IEnumerable<T> @this)
 		{
 			var items  = @this.ToArray();
-			var result = items.Length == 1 ? items[0] : default(T);
+			var result = items.Length == 1 ? items[0] : default;
 			return result;
 		}
 
@@ -105,7 +82,7 @@ namespace ExtendedXmlSerializer.Core
 		public static TResult AsTo<TSource, TResult>(this object target, Func<TSource, TResult> transform,
 		                                             Func<TResult> resolve = null)
 		{
-			var @default = resolve ?? (() => default(TResult));
+			var @default = resolve ?? (() => default);
 			var result   = target is TSource ? transform((TSource)target) : @default();
 			return result;
 		}
@@ -174,7 +151,7 @@ namespace ExtendedXmlSerializer.Core
 			=> CachingAlteration<TParameter, TResult>.Default.Get(@this);
 
 		public static TValue Get<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> target, TKey key)
-			=> target.TryGetValue(key, out var result) ? result : default(TValue);
+			=> target.TryGetValue(key, out var result) ? result : default;
 
 		public static IEnumerable<TValue> Get<TKey, TValue>(this ILookup<TKey, TValue> target, TKey key) => target[key];
 
@@ -211,7 +188,7 @@ namespace ExtendedXmlSerializer.Core
 			=> @this.YieldTypes()
 			        .ToImmutableArray();
 
-		public static T To<T>(this object @this) => @this is T ? (T)@this : default(T);
+		public static T To<T>(this object @this) => @this is T ? (T)@this : default;
 
 		public static T Get<T>(this IServiceProvider @this)
 			=> @this is T
@@ -246,7 +223,7 @@ namespace ExtendedXmlSerializer.Core
 				                                    $"'{@this.GetType().FullName}' is not of type {typeof(T).FullName}.");
 			}
 
-			return default(T);
+			return default;
 		}
 	}
 }

@@ -24,7 +24,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			      .BeSameAs(cycled.Bar.Foos.Only());
 
 			cycled.Bar.Should()
-			      .BeSameAs(cycled.Bar.Foos.Only().Bar);
+			      .BeSameAs(cycled.Bar.Foos.Only()
+			                      .Bar);
 		}
 
 		public sealed class Foo

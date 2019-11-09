@@ -2,6 +2,7 @@
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -17,12 +18,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var instance = new DataHolder {Lenght = 13};
 
-			support.Cycle(instance).ShouldBeEquivalentTo(instance);
+			support.Cycle(instance)
+			       .ShouldBeEquivalentTo(instance);
 		}
 
 		public class DataHolder
 		{
-			public int Lenght { get; set; } = 5;
+			public int Lenght { [UsedImplicitly] get; set; } = 5;
 		}
 	}
 }

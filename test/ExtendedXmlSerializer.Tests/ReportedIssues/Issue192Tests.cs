@@ -1,30 +1,8 @@
-﻿// MIT License
-//
-// Copyright (c) 2016-2018 Wojciech Nagórski
-//                    Michael DeMond
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-using ExtendedXmlSerializer.Configuration;
+﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -41,22 +19,22 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void Verify()
 		{
 			var serializer = new ConfigurationContainer().EnableXmlText()
-														 .Create()
-														 .ForTesting();
+			                                             .Create()
+			                                             .ForTesting();
 
 			var instance = new Subject {Item = 123};
 			serializer.Cycle(instance)
-					  .ShouldBeEquivalentTo(instance);
+			          .ShouldBeEquivalentTo(instance);
 
 			var second = new SubjectWithMembers {Item = 123, Message = "Message", Time = DateTimeOffset.Now};
 			serializer.Cycle(second)
 			          .ShouldBeEquivalentTo(second);
 
-			var group = new Group2{ Type = GroupType.Large };
+			var group = new Group2 {Type = GroupType.Large};
 			serializer.Cycle(group)
 			          .ShouldBeEquivalentTo(group);
 
-			var group3 = new Group3{ CreationTime = DateTime.Now};
+			var group3 = new Group3 {CreationTime = DateTime.Now};
 			serializer.Cycle(group3)
 			          .ShouldBeEquivalentTo(group3);
 		}
@@ -68,14 +46,15 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .Create()
 			                                             .ForTesting();
 
-			var instance = new ClassWithMixedContent {Value = new List<object>{ 123, 345 }};
+			var instance = new ClassWithMixedContent {Value = new List<object> {123, 345}};
 
-			serializer.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><Issue192Tests-ClassWithMixedContent xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><int xmlns=""https://extendedxmlserializer.github.io/system"">123</int><int xmlns=""https://extendedxmlserializer.github.io/system"">345</int></Issue192Tests-ClassWithMixedContent>");
+			serializer.Assert(instance,
+			                  @"<?xml version=""1.0"" encoding=""utf-8""?><Issue192Tests-ClassWithMixedContent xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><int xmlns=""https://extendedxmlserializer.github.io/system"">123</int><int xmlns=""https://extendedxmlserializer.github.io/system"">345</int></Issue192Tests-ClassWithMixedContent>");
 
 			serializer.Cycle(instance)
 			          .ShouldBeEquivalentTo(instance);
 
-			var second = new ClassWithMixedContent {Value = new List<object>{ 123, "hello world?", 345 }};
+			var second  = new ClassWithMixedContent {Value = new List<object> {123, "hello world?", 345}};
 			var content = serializer.Cycle(second);
 			content.ShouldBeEquivalentTo(second);
 			content.Value.Should()
@@ -92,14 +71,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		public class SubjectWithMembers
 		{
-			public string Message { get; set; }
+			public string Message { [UsedImplicitly] get; set; }
 
 			[XmlText]
 			public int Item { get; set; }
 
-			public DateTimeOffset Time { get; set; }
+			public DateTimeOffset Time { [UsedImplicitly] get; set; }
 		}
-
 
 		public class Group2
 		{
@@ -134,27 +112,27 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			public int id
 			{
-				get { return idField; }
-				set { idField = value; }
+				get => idField;
+				set => idField = value;
 			}
 
 			public string name
 			{
-				get { return nameField; }
-				set { nameField = value; }
+				get => nameField;
+				set => nameField = value;
 			}
 
 			public LinkList next
 			{
-				get { return nextField; }
-				set { nextField = value; }
+				get => nextField;
+				set => nextField = value;
 			}
 
 			[XmlText]
 			public string[] Text
 			{
-				get { return textField; }
-				set { textField = value; }
+				get => textField;
+				set => textField = value;
 			}
 		}
 	}

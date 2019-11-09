@@ -1,27 +1,4 @@
-﻿// MIT License
-// 
-// Copyright (c) 2016-2018 Wojciech Nagórski
-//                    Michael DeMond
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-using ExtendedXmlSerializer.ContentModel;
+﻿using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Properties;
@@ -37,6 +14,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
+// ReSharper disable TooManyDependencies
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -51,7 +29,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		IContents Register(IServiceProvider services, IContents contents)
 			=>
-				new Contents(services.Get<IFormatReaders<System.Xml.XmlReader>>(), services.Get<IClassification>(), this, contents);
+				new Contents(services.Get<IFormatReaders<System.Xml.XmlReader>>(), services.Get<IClassification>(),
+				             this, contents);
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
@@ -70,6 +49,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			readonly ITypedTable<IEnumerable<Action<XElement>>> _migrations;
 			readonly IContents                                  _contents;
 
+			// ReSharper disable once TooManyDependencies
 			public Contents(IFormatReaders<System.Xml.XmlReader> factory, IClassification classification,
 			                ITypedTable<IEnumerable<Action<XElement>>> migrations, IContents contents)
 			{
@@ -84,8 +64,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 				var migrations = _migrations.Get(parameter);
 				var content    = _contents.Get(parameter);
 				var result = migrations != null
-					             ? new Serializer(new Migrator(_factory, parameter, _classification, migrations.ToImmutableArray()),
-					                              content)
+					             ? new
+						             Serializer(new Migrator(_factory, parameter, _classification, migrations.ToImmutableArray()),
+						                        content)
 					             : content;
 				return result;
 			}
@@ -103,11 +84,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 				readonly uint                                 _version;
 				readonly IProperty<uint>                      _property;
 
-				public Migrator(IFormatReaders<System.Xml.XmlReader> factory, TypeInfo type, IClassification classification,
+				public Migrator(IFormatReaders<System.Xml.XmlReader> factory, TypeInfo type,
+				                IClassification classification,
 				                ImmutableArray<Action<XElement>> migrations)
 					: this(factory, type, classification, Identity, migrations, (uint)migrations.Length) {}
 
-				public Migrator(IFormatReaders<System.Xml.XmlReader> factory, TypeInfo type, IClassification classification,
+				public Migrator(IFormatReaders<System.Xml.XmlReader> factory, TypeInfo type,
+				                IClassification classification,
 				                IProperty<uint> property,
 				                ImmutableArray<Action<XElement>> migrations, uint version)
 				{

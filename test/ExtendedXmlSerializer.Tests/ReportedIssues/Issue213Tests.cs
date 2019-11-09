@@ -2,6 +2,7 @@
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -16,13 +17,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                            .Create()
 			                            .Cycle(instance)
 			                            .TestClass2
-			                            .Should().BeNull();
+			                            .Should()
+			                            .BeNull();
 		}
-
 
 		public class TestClass
 		{
-			public TestClass2 TestClass2 { get; set; }
+			public TestClass2 TestClass2 { get; [UsedImplicitly] set; }
 		}
 
 //     vvvvvvvv
@@ -30,6 +31,5 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			public string Foo { get; set; }
 		}
-
 	}
 }

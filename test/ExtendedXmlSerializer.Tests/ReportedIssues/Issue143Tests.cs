@@ -14,12 +14,14 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			var sut = new ConfigurationContainer().EnableParameterizedContent()
 			                                      .Create()
-												  .ForTesting();
+			                                      .ForTesting();
 
-			const string content = @"<?xml version=""1.0"" encoding=""utf-8""?><Issue143Tests-Subject Name=""Testing"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests"" Factor="".5"" />";
+			const string content =
+				@"<?xml version=""1.0"" encoding=""utf-8""?><Issue143Tests-Subject Name=""Testing"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests"" Factor="".5"" />";
 
 			var subject = sut.Deserialize<Subject>(content);
-			subject.Factor.Should().Be(.5);
+			subject.Factor.Should()
+			       .Be(.5);
 		}
 
 		[Fact]
@@ -29,18 +31,19 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                      .Create()
 			                                      .ForTesting();
 
-			const string content = @"<?xml version=""1.0"" encoding=""utf-8""?><Issue143Tests-Subject Name=""Testing"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests"" />";
+			const string content =
+				@"<?xml version=""1.0"" encoding=""utf-8""?><Issue143Tests-Subject Name=""Testing"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests"" />";
 
 			var subject = sut.Deserialize<Subject>(content);
-			subject.Factor.Should().Be(.95);
+			subject.Factor.Should()
+			       .Be(.95);
 		}
-
 
 		sealed class Subject
 		{
 			public Subject(string name, double factor = .95)
 			{
-				Name = name;
+				Name   = name;
 				Factor = factor;
 			}
 

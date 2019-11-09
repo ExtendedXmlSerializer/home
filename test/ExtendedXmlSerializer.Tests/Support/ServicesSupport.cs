@@ -1,27 +1,4 @@
-﻿// MIT License
-//
-// Copyright (c) 2016-2018 Wojciech Nagórski
-//                    Michael DeMond
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-using ExtendedXmlSerializer.Configuration;
+﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel;
 using System;
 using System.Collections.Generic;
@@ -40,10 +17,7 @@ namespace ExtendedXmlSerializer.Tests.Support
 		public ServicesSupport(params ISerializerExtension[] extensions)
 			: this(ServicesFactory.Default.Get(new ConfigurationContainer(extensions).Root)) {}
 
-		public ServicesSupport(IServices services)
-		{
-			_services = services;
-		}
+		public ServicesSupport(IServices services) => _services = services;
 
 		public void Dispose() => _services.Dispose();
 
@@ -58,7 +32,8 @@ namespace ExtendedXmlSerializer.Tests.Support
 		public IServiceRepository Register<TService, TImplementation>() where TImplementation : TService
 			=> _services.Register<TService, TImplementation>();
 
-		public IServiceRepository Register<TService, TImplementation>(string serviceName) where TImplementation : TService
+		public IServiceRepository Register<TService, TImplementation>(string serviceName)
+			where TImplementation : TService
 			=> _services.Register<TService, TImplementation>(serviceName);
 
 		public IServiceRepository Register<TService>() => _services.Register<TService>();
@@ -75,7 +50,9 @@ namespace ExtendedXmlSerializer.Tests.Support
 			=> _services.RegisterInstance(serviceType, instance, serviceName);
 
 		public IServiceRepository Register(Type serviceType) => _services.Register(serviceType);
-		public IServiceRepository Register<TService>(Func<IServiceProvider, TService> factory) => _services.Register(factory);
+
+		public IServiceRepository Register<TService>(Func<IServiceProvider, TService> factory)
+			=> _services.Register(factory);
 
 		public IServiceRepository Register<T, TService>(Func<IServiceProvider, T, TService> factory)
 			=> _services.Register(factory);
@@ -87,7 +64,8 @@ namespace ExtendedXmlSerializer.Tests.Support
 			=> _services.Register(factory);
 
 		public IServiceRepository Register<T1, T2, TService>(Func<IServiceProvider, T1, T2, TService> factory,
-		                                                     string serviceName) => _services.Register(factory, serviceName);
+		                                                     string serviceName)
+			=> _services.Register(factory, serviceName);
 
 		public IServiceRepository Register<T1, T2, T3, TService>(Func<IServiceProvider, T1, T2, T3, TService> factory)
 			=> _services.Register(factory);
@@ -96,11 +74,13 @@ namespace ExtendedXmlSerializer.Tests.Support
 		                                                         string serviceName)
 			=> _services.Register(factory, serviceName);
 
-		public IServiceRepository Register<T1, T2, T3, T4, TService>(Func<IServiceProvider, T1, T2, T3, T4, TService> factory)
+		public IServiceRepository Register<T1, T2, T3, T4, TService>(
+			Func<IServiceProvider, T1, T2, T3, T4, TService> factory)
 			=> _services.Register(factory);
 
-		public IServiceRepository Register<T1, T2, T3, T4, TService>(Func<IServiceProvider, T1, T2, T3, T4, TService> factory,
-		                                                             string serviceName)
+		public IServiceRepository Register<T1, T2, T3, T4, TService>(
+			Func<IServiceProvider, T1, T2, T3, T4, TService> factory,
+			string serviceName)
 			=> _services.Register(factory, serviceName);
 
 		public IServiceRepository Register<TService>(Func<IServiceProvider, TService> factory, string serviceName)
@@ -110,7 +90,8 @@ namespace ExtendedXmlSerializer.Tests.Support
 			=> _services.RegisterFallback(predicate, factory);
 
 		public IServiceRepository RegisterConstructorDependency<TDependency>(
-			Func<IServiceProvider, ParameterInfo, TDependency> factory) => _services.RegisterConstructorDependency(factory);
+			Func<IServiceProvider, ParameterInfo, TDependency> factory)
+			=> _services.RegisterConstructorDependency(factory);
 
 		public IServiceRepository RegisterConstructorDependency<TDependency>(
 			Func<IServiceProvider, ParameterInfo, object[], TDependency> factory)
@@ -127,12 +108,14 @@ namespace ExtendedXmlSerializer.Tests.Support
 
 		public object GetInstance(Type serviceType) => _services.GetInstance(serviceType);
 
-		public object GetInstance(Type serviceType, object[] arguments) => _services.GetInstance(serviceType, arguments);
+		public object GetInstance(Type serviceType, object[] arguments)
+			=> _services.GetInstance(serviceType, arguments);
 
 		public object GetInstance(Type serviceType, string serviceName, object[] arguments)
 			=> _services.GetInstance(serviceType, serviceName, arguments);
 
-		public object GetInstance(Type serviceType, string serviceName) => _services.GetInstance(serviceType, serviceName);
+		public object GetInstance(Type serviceType, string serviceName)
+			=> _services.GetInstance(serviceType, serviceName);
 
 		public object TryGetInstance(Type serviceType) => _services.TryGetInstance(serviceType);
 
@@ -142,6 +125,7 @@ namespace ExtendedXmlSerializer.Tests.Support
 		public IEnumerable<object> GetAllInstances(Type serviceType) => _services.GetAllInstances(serviceType);
 
 		public object Create(Type serviceType) => _services.Create(serviceType);
+
 		public object GetService(Type serviceType) => _services.GetService(serviceType);
 	}
 }

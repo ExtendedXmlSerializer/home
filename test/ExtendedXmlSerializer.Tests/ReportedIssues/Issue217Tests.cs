@@ -1,6 +1,7 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.Tests.Support;
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using Xunit;
 
@@ -24,7 +25,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			public ParentClass()
 				=> Childs = new List<ChildClass> {new ChildClass(), new ChildClass {NeedSerialize = true}};
 
-			public List<ChildClass> Childs { get; set; }
+			public List<ChildClass> Childs { [UsedImplicitly] get; set; }
 		}
 
 		public class ChildClass

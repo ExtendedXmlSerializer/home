@@ -65,7 +65,6 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			serializer.Deserialize<Subject>(serialize)
 			          .Message.Should()
 			          .Be("Hello World from ActivatedSerializer");
-
 		}
 
 		[Fact]
@@ -77,7 +76,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .Create()
 			                                             .ForTesting();
 
-			var subject = new Subject {Message = @"Hello??? (<, &, ', and "")"};
+			var subject   = new Subject {Message = @"Hello??? (<, &, ', and "")"};
 			var serialize = serializer.Serialize(subject);
 			serialize.Should()
 			         .Be(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue150Tests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message><![CDATA[Hello??? (<, &, ', and "")]]></Message></Issue150Tests-Subject>");
@@ -95,8 +94,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .Create()
 			                                             .ForTesting();
 
-			var subject = new Subject {Message = @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang3082{\fonttbl{\f0\fnil Segoe UI;}}\r{\colortbl ;\red0\green0\blue0;}\r{*\generator Riched20 10.0.16299}\viewkind4\uc1\r\pard\tx720\cf1\f0\fs23 Sample Text\par\r}"};
-			serializer.Cycle(subject).ShouldBeEquivalentTo(subject);
+			var subject = new Subject
+			{
+				Message =
+					@"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang3082{\fonttbl{\f0\fnil Segoe UI;}}\r{\colortbl ;\red0\green0\blue0;}\r{*\generator Riched20 10.0.16299}\viewkind4\uc1\r\pard\tx720\cf1\f0\fs23 Sample Text\par\r}"
+			};
+			serializer.Cycle(subject)
+			          .ShouldBeEquivalentTo(subject);
 		}
 
 		[Fact]
@@ -106,7 +110,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .Create()
 			                                             .ForTesting();
 
-			var subject = new SubjectWithAttribute {Message = @"Hello??? (<, &, ', and "")"};
+			var subject   = new SubjectWithAttribute {Message = @"Hello??? (<, &, ', and "")"};
 			var serialize = serializer.Serialize(subject);
 			serialize.Should()
 			         .Be(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue150Tests-SubjectWithAttribute xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message><![CDATA[Hello??? (<, &, ', and "")]]></Message></Issue150Tests-SubjectWithAttribute>");
@@ -129,6 +133,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		sealed class Serializer : ISerializer<string>
 		{
 			public static Serializer Default { get; } = new Serializer();
+
 			Serializer() {}
 
 			public string Get(IFormatReader parameter) => "Hello World!!";
@@ -149,7 +154,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			public void Write(IFormatWriter writer, string instance)
 			{
-				_serializers.Get(typeof(string)).Write(writer, $"Hello world! {instance}");
+				_serializers.Get(typeof(string))
+				            .Write(writer, $"Hello world! {instance}");
 			}
 		}
 	}

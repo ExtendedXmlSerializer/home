@@ -3,6 +3,7 @@ using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
@@ -20,8 +21,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                            .Create()
 			                                            .ForTesting();
 
-			const string content = @"<?xml version=""1.0"" encoding=""utf-8""?><Issue261Tests-Reference xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""><Association xsi:type=""Issue261Tests-Project"" /></Issue261Tests-Reference>";
-			container.Deserialize<Reference>(content).Association.Should()
+			const string content =
+				@"<?xml version=""1.0"" encoding=""utf-8""?><Issue261Tests-Reference xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""><Association xsi:type=""Issue261Tests-Project"" /></Issue261Tests-Reference>";
+			container.Deserialize<Reference>(content)
+			         .Association.Should()
 			         .BeOfType<Project>();
 		}
 
@@ -42,22 +45,22 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			         .BeOfType<Project>();
 		}
 
-		[Serializable]
-		[XmlType("ModelObject")]
+		[Serializable, XmlType("ModelObject")]
 		class Entity
 		{
-			public IList<Entity> Children { get; set;  } = new List<Entity>();
+			[UsedImplicitly]
+			public IList<Entity> Children { get; set; } = new List<Entity>();
 		}
 
 		class Reference : Entity
 		{
-			public Entity Association { get; set; }
+			public Entity Association { get; [UsedImplicitly] set; }
 		}
 
 		[Serializable]
 		class Project : Entity {}
 
-		[Serializable]
+		[Serializable, UsedImplicitly]
 		class AnotherModelClass : Entity {}
 	}
 }

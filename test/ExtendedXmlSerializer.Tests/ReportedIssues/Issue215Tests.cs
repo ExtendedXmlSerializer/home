@@ -2,6 +2,7 @@
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -19,14 +20,16 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var subject = new ConfigurationContainer().Create()
 			                                          .ForTesting()
 			                                          .Deserialize<TestClass>(data);
-			subject.Foo.Should().BeEmpty();
-			subject.Baz.Should().Be("Baz");
+			subject.Foo.Should()
+			       .BeEmpty();
+			subject.Baz.Should()
+			       .Be("Baz");
 		}
 
 		public class TestClass
 		{
-			public string Foo { get; set; }
-			public string Baz { get; set; }
+			public string Foo { get; [UsedImplicitly] set; }
+			public string Baz { get; [UsedImplicitly] set; }
 		}
 	}
 }

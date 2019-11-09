@@ -1,4 +1,6 @@
-﻿using ExtendedXmlSerializer.Configuration;
+﻿// ReSharper disable All
+
+using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;

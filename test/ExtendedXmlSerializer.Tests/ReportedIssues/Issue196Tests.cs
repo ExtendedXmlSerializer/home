@@ -22,7 +22,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .ForTesting();
 
 			var instance = new MutableSubject("Hello World!");
-			var cycle = serializer.Cycle(instance);
+			var cycle    = serializer.Cycle(instance);
 			cycle.ShouldBeEquivalentTo(instance);
 			cycle.Message.Should()
 			     .NotBeNull();
@@ -37,7 +37,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		sealed class WritableParameterizedContentExtension : ISerializerExtension
 		{
-			public static WritableParameterizedContentExtension Default { get; } = new WritableParameterizedContentExtension();
+			public static WritableParameterizedContentExtension Default { get; } =
+				new WritableParameterizedContentExtension();
 
 			WritableParameterizedContentExtension() {}
 
