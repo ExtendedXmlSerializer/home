@@ -28,7 +28,7 @@ Support platforms:
 - .NET Standard 2.0
 - .NET 4.5 ([for now](https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/273))
 
-Classic `System.Xml.XmlSerializer` poses some challenges:
+Why ExtendedXmlSerializer?  Classic `System.Xml.XmlSerializer` poses some challenges:
 
 -   Does not support serialization of class with circular reference or class with interface property
 -   There is no mechanism for reading the old version of XML
