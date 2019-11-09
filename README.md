@@ -30,14 +30,13 @@ Support platforms:
 
 Feature overview:
 
--   Deserialization xml from classic `XmlSerializer` (mostly, see: <https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/240>)
--   Serialization class, struct, generic class, primitive type, generic
-    list and dictionary, array, enum
+-   Deserialization xml from classic `XmlSerializer` (mostly, [details in FAQ](https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/wiki/01.-FAQs#systemxmlserializer-vs-extendedxmlserializer))
+-   Serialization class, struct, generic class, primitive type, generic list and dictionary, array, enum
 -   Serialization class with property interface
 -   Serialization circular reference and reference Id
 -   Migrate old XML based on an older schema to a current schema.
 -   Property encryption
--   Custom serializer
+-   Custom serializer registrationg by type or member
 -   Support `XmlElementAttribute`, `XmlRootAttribute`, and `XmlTypeAttribute` for identity resolution
 -   Additional attribute support: `XmlIgnoreAttribute`, `XmlAttributeAttribute`, and `XmlEnumAttribute`
 -   POCO - all configurations (migrations, custom serializer...) are outside the class and not coupled to attributes or arcane conventions
