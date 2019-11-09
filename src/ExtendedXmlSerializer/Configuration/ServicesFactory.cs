@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.LightInject;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Types;
+using LightInject;
 using System;
 using System.Linq;
 using IServiceProvider = System.IServiceProvider;

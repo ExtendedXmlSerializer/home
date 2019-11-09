@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.LightInject;
+using LightInject;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Linq;
