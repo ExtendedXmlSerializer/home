@@ -16,7 +16,7 @@ Welcome to ExtendedXMLSerializer's GitHub Repository.  Looking to get started?  
 
 Got a question or want to submit a new issue?  Make sure you [read our FAQs, first](https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/wiki/01.-FAQs).
 
-In any case, be sure to check out [our features](https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/wiki/04.-Features) and some [example scenarios](https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/wiki/05.-Example-Scenarios).
+For all other cases of curiosity (and otherwise), be sure to check out [our features](https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/wiki/04.-Features) and some [example scenarios](https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/wiki/05.-Example-Scenarios).
 
 (Looking to upgrade from 1.x?  We got you [covered here](https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/wiki/06.-How-to-Upgrade-from-v1.x-to-v2).)
 
