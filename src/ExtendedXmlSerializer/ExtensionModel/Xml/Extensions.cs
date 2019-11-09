@@ -225,7 +225,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		/// <summary>
 		/// Enables the xsi:type for legacy deserialization purposes.
-		/// https://github.com/WojciechNagorski/ExtendedXmlSerializer/issues/261
+		/// https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/261
 		/// </summary>
 		/// <param name="this"></param>
 		/// <returns></returns>

@@ -50,7 +50,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			=> @this.WithUnknownContent().Call(onMissing);
 
 		/// <summary>
-		/// https://github.com/WojciechNagorski/ExtendedXmlSerializer/issues/271#issuecomment-550976753
+		/// https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/271#issuecomment-550976753
 		/// </summary>
 		/// <param name="this"></param>
 		/// <returns></returns>

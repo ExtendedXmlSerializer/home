@@ -29,7 +29,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Instances
 	public interface ISerializationMonitor : ISerializationMonitor<object> {}
 
 	/// <summary>
-	/// https://github.com/WojciechNagorski/ExtendedXmlSerializer/issues/264#issuecomment-544104668
+	/// https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264#issuecomment-544104668
 	/// </summary>
 	/// <typeparam name="T">The type to monitor.</typeparam>
 	public interface ISerializationMonitor<in T>
