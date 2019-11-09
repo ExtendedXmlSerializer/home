@@ -35,15 +35,15 @@ Some quick questions for those wanting to use ExtendedXMLSerializer or are consi
 
 **What is ExtendedXmlSerializer designed to do?**
 
-The primary vision and purpose of ExtendedXMLSerializer is to serialize a .NET object graph into an XML document, and then be able to read (deserialize) back into memory.
+The primary vision and purpose of ExtendedXMLSerializer is to serialize a .NET object graph into an XML document, and then be able to read (deserialize) back into memory using the same documents created with it.
 
-You can consider this serializer a hybrid of the `System.Xml.XmlSerializer` and the `System.Xaml` serializer.
+You can consider this serializer a hybrid of the `System.Xml.XmlSerializer` and the powerful `System.Xaml` serializer.
 
 **I can do *xyz* with the classic `System.Xml.XmlSerializer`.  Can I do the same with ExtendedXmlSerializer?**
 
-*Maybe*.™  The primary intended purpose of ExtendedXMLSerializer is to work with .NET object graphs, not to parse XML documents or to work with legacy XML functionality.
+*Maybe*.™  The primary intended purpose of ExtendedXMLSerializer is to work with .NET object graphs, not to parse XML documents, manipulate an XML document model, or to work with legacy XML functionality.
 
-That stated, we do support a lot of classic functionality, but it isn't a focus.  There is a lot to be desired about how the classic serializer handles .NET object graphs and subsequent activation.  Rectifying these rough spots was the main motivation for making ExtendedXMLSerializer.
+That stated, we do support a lot of classic functionality, but it isn't a focus.  There is a lot to be desired about how the classic serializer handles .NET object graphs and subsequent activation.  Rectifying these rough spots was the main motivation behind ExtendedXMLSerializer.
 
 If you would like to talk about support of a classic feature that does not appear to be supported, please do a [search through our issues list first](https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues?utf8=%E2%9C%93&q=is%3Aissue+sort%3Aupdated-desc+), and if it has not been discussed, [open a new issue](https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/new) and we'll meet you there. 👍
 
@@ -57,7 +57,7 @@ If you find that you run into an incompatibility, our recommendation is to:
 - Create an XSLT transformation to transform the classically-serialized XML document.
 - Run classic-serialized document through XSLT to create the ExtendedXmlSerializer-friendly document.
 
-**It would seem you focused on serializing .NET object graphs and not on the preserving classic legacy functionality.**
+**It would seem you focused on serializing .NET object graphs and not on preserving classic legacy functionality.**
 
 That's exactly what we did. :)  Along the way, we introduced a highly adaptable extension model to boot.  In fact, most issues submitted to our repository are solved by way of adding a new extension.
 
