@@ -13,7 +13,7 @@ nuget:
 
 dotnet_csproj:
   patch: true
-  file: .\src\**\*.csproj
+  file: .\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj
   version_prefix: '{version}'
 build_script:
 - ps: .\Build.ps1
