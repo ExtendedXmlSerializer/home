@@ -1,7 +1,6 @@
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections.Generic;
@@ -21,7 +20,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 		public TypeIdentityRegistrations(IDiscoveredTypes types, ITypeIdentity identity, IIdentityStore store,
 		                                 INamespaceFormatter formatter)
 			: this(types.To(EnumerableCoercer<TypeInfo>.Default)
-			            .ToDelegate(), identity, store, formatter) {}
+			            .ToSelectionDelegate(), identity, store, formatter) {}
 
 		TypeIdentityRegistrations(Func<TypeInfo, IEnumerable<TypeInfo>> types, ITypeIdentity identity,
 		                          IIdentityStore store,

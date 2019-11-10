@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {

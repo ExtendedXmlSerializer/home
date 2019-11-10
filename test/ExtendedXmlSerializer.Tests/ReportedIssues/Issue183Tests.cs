@@ -1,5 +1,4 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using JetBrains.Annotations;
 using Xunit;

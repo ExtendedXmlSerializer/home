@@ -1,16 +1,19 @@
-﻿using System;
+﻿using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ReflectionModel;
+using System;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.Core.Specifications
+namespace ExtendedXmlSerializer
 {
-	public static class Extensions
+	// ReSharper disable once MismatchedFileName
+	public static partial class ExtensionMethods
 	{
 		public static ISpecification<TParameter> IfAssigned<TParameter, TResult>(
 			this IParameterizedSource<TParameter, TResult> @this)
-			=> @this.ToDelegate()
+			=> @this.ToSelectionDelegate()
 			        .IfAssigned();
 
 		public static ISpecification<TParameter> IfAssigned<TParameter, TResult>(this Func<TParameter, TResult> @this)
@@ -25,8 +28,8 @@ namespace ExtendedXmlSerializer.Core.Specifications
 		                                                                                     .Build(parameter);
 
 		public static Func<bool> Fix<T>(this ISpecification<T> @this, T parameter) => @this.ToDelegate()
-		                                                                                   .Fix(parameter)
-		                                                                                   .ToDelegate();
+		                                                                                   .FixedSelection(parameter)
+		                                                                                   .ToSourceDelegate();
 
 		public static ISpecification<T> Any<T>(this ISpecification<T> @this, params T[] parameters)
 			=> new AnySpecification<T>();

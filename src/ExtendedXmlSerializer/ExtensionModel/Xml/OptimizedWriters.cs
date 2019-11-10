@@ -1,5 +1,4 @@
 using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml

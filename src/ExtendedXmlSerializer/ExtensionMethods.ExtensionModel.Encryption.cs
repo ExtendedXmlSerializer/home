@@ -1,11 +1,13 @@
-﻿using System.Reflection;
-using ExtendedXmlSerializer.Configuration;
+﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Encryption;
+using System.Reflection;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Encryption
+namespace ExtendedXmlSerializer
 {
-	public static class Extensions
+	// ReSharper disable once MismatchedFileName
+	public static partial class ExtensionMethods
 	{
 		public static IMemberConfiguration<T, TMember> Encrypt<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 		{

@@ -1,12 +1,11 @@
-using System.Text;
-using System.Xml;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Text;
+using System.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {

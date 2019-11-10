@@ -3,7 +3,6 @@ using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
 using System;
 using System.Reflection;
 using System.Runtime.Serialization;

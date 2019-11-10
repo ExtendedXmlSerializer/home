@@ -1,6 +1,5 @@
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core.Sources;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;

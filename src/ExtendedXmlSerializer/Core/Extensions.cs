@@ -1,12 +1,12 @@
-﻿using System;
+﻿using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ReflectionModel;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.Core
 {
@@ -18,7 +18,7 @@ namespace ExtendedXmlSerializer.Core
 			=>
 				new DelegatedSource<TParameter, TResult>(
 				                                         ReferenceCachingAlteration<TParameter, TResult>
-					                                         .Default.Get(@this.ToDelegate()));
+					                                         .Default.Get(@this.ToSelectionDelegate()));
 
 		public static T With<T>(this T @this, Action<T> action)
 		{

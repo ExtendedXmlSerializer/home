@@ -1,9 +1,8 @@
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel
 {

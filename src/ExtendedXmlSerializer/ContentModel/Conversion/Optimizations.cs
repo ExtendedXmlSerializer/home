@@ -1,7 +1,7 @@
+using ExtendedXmlSerializer.Core.Sources;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
@@ -20,9 +20,9 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion
 		Func<TParameter, TResult> Create<TParameter, TResult>(Func<TParameter, TResult> source)
 		{
 			var dictionary = new ConcurrentDictionary<TParameter, TResult>();
-			var cache      = new Cache<TParameter, TResult>(source, dictionary);
 			_containers.Add(dictionary.Clear);
-			var result = cache.ToDelegate();
+			var cache = new Cache<TParameter, TResult>(source, dictionary);
+			var result = cache.ToSelectionDelegate();
 			return result;
 		}
 

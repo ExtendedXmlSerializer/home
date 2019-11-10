@@ -1,5 +1,4 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Types.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;

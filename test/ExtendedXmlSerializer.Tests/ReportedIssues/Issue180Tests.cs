@@ -3,7 +3,6 @@ using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ExtensionModel;
-using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ReflectionModel;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;

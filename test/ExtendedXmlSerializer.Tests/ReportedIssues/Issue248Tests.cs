@@ -1,7 +1,4 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Content;
-using ExtendedXmlSerializer.ExtensionModel.Types;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using System.Collections.Generic;

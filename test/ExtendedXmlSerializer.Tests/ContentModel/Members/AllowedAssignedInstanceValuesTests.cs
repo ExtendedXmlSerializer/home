@@ -1,7 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Content;
+﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Tests.Support;
+using System.Diagnostics.CodeAnalysis;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ContentModel.Members

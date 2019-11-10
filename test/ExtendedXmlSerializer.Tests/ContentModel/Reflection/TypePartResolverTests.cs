@@ -1,6 +1,5 @@
 ﻿using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
 using FluentAssertions;
 using System.Reflection;
 using Xunit;

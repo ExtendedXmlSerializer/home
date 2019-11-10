@@ -2,9 +2,7 @@
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using FluentAssertions;
 using JetBrains.Annotations;
 using System;

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Reflection;
-using ExtendedXmlSerializer.Configuration;
+﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Conversion;
-using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using System;
+using System.Reflection;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues

@@ -1,5 +1,4 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Encryption;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System.Xml.Linq;

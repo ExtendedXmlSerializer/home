@@ -3,8 +3,6 @@ using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
-using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
 using System;

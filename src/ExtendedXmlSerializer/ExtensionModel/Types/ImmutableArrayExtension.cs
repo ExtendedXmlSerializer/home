@@ -1,8 +1,7 @@
-﻿using System.Collections.Immutable;
-using ExtendedXmlSerializer.ContentModel.Reflection;
+﻿using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Collections.Immutable;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {

@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using ExtendedXmlSerializer.Configuration;
+﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {

@@ -1,13 +1,16 @@
+﻿using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel;
+using ExtendedXmlSerializer.ExtensionModel.AttachedProperties;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.Core;
 
-namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
+namespace ExtendedXmlSerializer
 {
-	public static class Extensions
+	// ReSharper disable once MismatchedFileName
+	public static partial class ExtensionMethods
 	{
 		public static IConfigurationContainer EnableAttachedProperties(this IConfigurationContainer @this,
 		                                                               params IProperty[] properties)

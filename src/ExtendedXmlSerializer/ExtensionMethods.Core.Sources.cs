@@ -1,4 +1,5 @@
-﻿using ExtendedXmlSerializer.Core.Specifications;
+﻿using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -6,11 +7,12 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-// ReSharper disable TooManyArguments
 
-namespace ExtendedXmlSerializer.Core.Sources
+namespace ExtendedXmlSerializer
 {
-	public static class Extensions
+	// ReSharper disable TooManyArguments
+	// ReSharper disable once MismatchedFileName
+	public static partial class ExtensionMethods
 	{
 		public static IAlteration<object> Adapt<T>(this IAlteration<T> @this) => new AlterationAdapter<T>(@this);
 
@@ -92,29 +94,46 @@ namespace ExtendedXmlSerializer.Core.Sources
 
 		public static Func<TResult> Build<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this,
 		                                                       TParameter parameter)
-			=> @this.ToDelegate()
+			=> @this.ToSelectionDelegate()
 			        .Build(parameter);
 
 		public static Func<TResult> Build<TParameter, TResult>(this Func<TParameter, TResult> @this,
 		                                                       TParameter parameter)
-			=> @this.Fix(parameter)
+			=> @this.FixedSelection(parameter)
 			        .Singleton()
 			        .Get;
 
+		[Obsolete("Use FixedSelection instead.")]
 		public static ISource<TResult> Fix<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this,
 		                                                        TParameter parameter)
-			=> @this.ToDelegate()
-			        .Fix(parameter);
+			=> @this.FixedSelection(parameter);
 
+		[Obsolete("Use FixedSelection instead.")]
 		public static ISource<TResult> Fix<TParameter, TResult>(this Func<TParameter, TResult> @this,
 		                                                        TParameter parameter)
+			=> @this.FixedSelection(parameter);
+
+		public static ISource<TResult> FixedSelection<TParameter, TResult>(
+			this IParameterizedSource<TParameter, TResult> @this,
+			TParameter parameter) => @this.ToSelectionDelegate()
+			                              .FixedSelection(parameter);
+
+		public static ISource<TResult> FixedSelection<TParameter, TResult>(this Func<TParameter, TResult> @this,
+		                                                                   TParameter parameter)
 			=> new FixedSource<TParameter, TResult>(@this, parameter);
 
 		public static ISource<T> Singleton<T>(this ISource<T> @this) => new SingletonSource<T>(@this.Get);
 
+		[Obsolete("Use ToSelectionDelegate instead.")]
 		public static Func<TParameter, TResult> ToDelegate<TParameter, TResult>(
+			this IParameterizedSource<TParameter, TResult> @this) => @this.ToSelectionDelegate();
+
+		public static Func<TParameter, TResult> ToSelectionDelegate<TParameter, TResult>(
 			this IParameterizedSource<TParameter, TResult> @this) => @this.Get;
 
-		public static Func<T> ToDelegate<T>(this ISource<T> @this) => @this.Get;
+		[Obsolete("Use ToSourceDelegate instead.")]
+		public static Func<T> ToDelegate<T>(this ISource<T> @this) => @this.ToSourceDelegate();
+
+		public static Func<T> ToSourceDelegate<T>(this ISource<T> @this) => @this.Get;
 	}
 }

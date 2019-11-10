@@ -1,10 +1,10 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Content;
-using ExtendedXmlSerializer.ExtensionModel.Expressions;
+using ExtendedXmlSerializer.ExtensionModel.Markup;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Markup
+namespace ExtendedXmlSerializer
 {
-	public static class Extensions
+	// ReSharper disable once MismatchedFileName
+	public static partial class ExtensionMethods
 	{
 		public static IConfigurationContainer EnableMarkupExtensions(this IConfigurationContainer @this)
 			=> @this.EnableExpressions()

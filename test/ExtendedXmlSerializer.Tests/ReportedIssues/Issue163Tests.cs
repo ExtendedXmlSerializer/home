@@ -1,5 +1,4 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using Xunit;

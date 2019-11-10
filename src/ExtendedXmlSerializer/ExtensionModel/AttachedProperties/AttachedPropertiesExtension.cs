@@ -1,9 +1,8 @@
-﻿using System.Collections.Immutable;
-using ExtendedXmlSerializer.ContentModel.Format;
+﻿using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
 using JetBrains.Annotations;
+using System.Collections.Immutable;
 
 namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 {

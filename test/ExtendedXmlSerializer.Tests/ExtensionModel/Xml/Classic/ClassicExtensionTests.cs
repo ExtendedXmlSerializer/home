@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
+﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Tests.Support;
 using ExtendedXmlSerializer.Tests.TestObject;
 using FluentAssertions;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml.Classic

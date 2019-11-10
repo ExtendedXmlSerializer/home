@@ -1,7 +1,6 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.Tests.Support;
 using Xunit;
 

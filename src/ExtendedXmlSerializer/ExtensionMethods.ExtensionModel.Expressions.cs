@@ -1,9 +1,11 @@
-using ExtendedXmlSerializer.Configuration;
+﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Coercion;
+using ExtendedXmlSerializer.ExtensionModel.Expressions;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Expressions
+namespace ExtendedXmlSerializer
 {
-	public static class Extensions
+	// ReSharper disable once MismatchedFileName
+	public static partial class ExtensionMethods
 	{
 		public static IConfigurationContainer EnableExpressions(this IConfigurationContainer @this)
 		{

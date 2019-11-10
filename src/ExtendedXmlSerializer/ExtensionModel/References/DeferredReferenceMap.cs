@@ -1,9 +1,9 @@
-using System.Collections.Generic;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -28,7 +28,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			var result = _map.Get(parameter);
 			if (result == null)
 			{
-				var source  = _map.Fix(parameter);
+				var source  = _map.FixedSelection(parameter);
 				var current = _contexts.Peek();
 				var command = current is IListInnerContent list
 					              ? new DeferredCollectionAssignmentCommand(list.List, source)

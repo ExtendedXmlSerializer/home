@@ -1,6 +1,5 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel;
-using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using JetBrains.Annotations;

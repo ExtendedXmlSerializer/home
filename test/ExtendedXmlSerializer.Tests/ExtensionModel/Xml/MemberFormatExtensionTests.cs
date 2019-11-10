@@ -1,8 +1,7 @@
-﻿using System;
-using System.Xml.Serialization;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
-using ExtendedXmlSerializer.Tests.Support;
+﻿using ExtendedXmlSerializer.Tests.Support;
 using JetBrains.Annotations;
+using System;
+using System.Xml.Serialization;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
