@@ -10,10 +10,10 @@ branches:
 nuget:
   project_feed: true
   disable_publish_on_pr: true
-install: dir /s *.csproj
+install: dir /s .\src\*.csproj
 dotnet_csproj:
   patch: true
-  file: .\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj
+  file: .\src\*.csproj
   version_prefix: '{version}'
 build_script:
 - ps: .\Build.ps1
