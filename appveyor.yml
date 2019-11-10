@@ -12,7 +12,7 @@ nuget:
   disable_publish_on_pr: true
 dotnet_csproj:
   patch: true
-  file: 'src\*.csproj'
+  file: 'src\*\*.csproj'
   version_prefix: '{version}'
 build_script:
 - ps: .\Build.ps1
