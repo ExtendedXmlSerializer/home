@@ -13,13 +13,13 @@ nuget:
 
 dotnet_csproj:
   patch: true
-  file: 'C:\projects\extendedxmlserializer\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj'
+  file: .\src\**\*.csproj
   version_prefix: '{version}'
 build_script:
 - ps: .\Build.ps1
 # test: off
 artifacts:
-- path: .\artifacts\**\*.nupkg
+- path: .\artifacts\*.nupkg
   name: NuGet
 deploy:
 - provider: NuGet
