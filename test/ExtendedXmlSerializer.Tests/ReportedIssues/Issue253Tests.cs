@@ -23,7 +23,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var instance                  = new ClassWithEncodingProperty {Encoding = Encoding.ASCII};
 			var classWithEncodingProperty = serializer.Cycle(instance);
-			classWithEncodingProperty.ShouldBeEquivalentTo(instance);
+			classWithEncodingProperty.Should()
+			                         .BeEquivalentTo(instance);
 		}
 
 		[Fact]
@@ -36,7 +37,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .Create()
 			                                             .ForTesting();
 			serializer.Cycle(instance)
-			          .ShouldBeEquivalentTo(instance);
+			          .Should()
+			          .BeEquivalentTo(instance);
 		}
 
 		[Fact]
@@ -48,7 +50,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .Create()
 			                                             .ForTesting();
 			serializer.Cycle(instance)
-			          .ShouldBeEquivalentTo(instance);
+			          .Should()
+			          .BeEquivalentTo(instance);
 		}
 
 		public class Settings

@@ -22,7 +22,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                            .Create()
 			                            .ForTesting()
 			                            .Cycle(instance)
-			                            .ShouldBeEquivalentTo(instance);
+			                            .Should().BeEquivalentTo(instance);
 		}
 
 		sealed class DataHolder

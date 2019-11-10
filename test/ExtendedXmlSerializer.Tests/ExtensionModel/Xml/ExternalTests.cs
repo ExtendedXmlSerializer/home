@@ -19,7 +19,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			var sut  = new Quaternion {Xyz = new Vector3(1f)};
 
 			var cycled = test.Cycle(sut);
-			cycled.ShouldBeEquivalentTo(sut);
+			cycled.Should().BeEquivalentTo(sut);
 		}
 
 		/// <summary>Represents a Quaternion.</summary>

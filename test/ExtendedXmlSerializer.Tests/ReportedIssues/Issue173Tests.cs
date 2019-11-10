@@ -28,9 +28,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var container = new ConfigurationContainer().ForTesting();
 			container.Cycle(orgC)
-			         .ShouldBeEquivalentTo(orgC);
+			         .Should().BeEquivalentTo(orgC);
 			container.Cycle(orgA)
-			         .ShouldBeEquivalentTo(orgA);
+			         .Should().BeEquivalentTo(orgA);
 		}
 
 		public abstract class Person

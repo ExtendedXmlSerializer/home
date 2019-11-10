@@ -19,7 +19,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var version  = new Version(1, 2);
 			var instance = new Subject {Version = version};
 			var subject  = serializer.Cycle(instance);
-			subject.ShouldBeEquivalentTo(instance);
+			subject.Should().BeEquivalentTo(instance);
 			version.ToString()
 			       .Should()
 			       .Be(subject.Version.ToString());

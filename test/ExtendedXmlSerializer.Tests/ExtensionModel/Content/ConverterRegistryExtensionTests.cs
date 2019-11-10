@@ -12,7 +12,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			const bool subject = true;
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .Be(subject);
 		}
 
 		[Fact]
@@ -20,7 +21,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			const char subject = 'x';
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .Be(subject);
 		}
 
 		[Fact]
@@ -28,7 +30,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			const sbyte subject = -7;
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .Be(subject);
 		}
 
 		[Fact]
@@ -36,7 +39,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			var subject = new byte[] {6, 7, 7, 6};
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .BeEquivalentTo(subject);
 		}
 
 		[Fact]
@@ -44,7 +48,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			byte subject = 7;
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .Be(subject);
 		}
 
 		[Fact]
@@ -52,7 +57,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			const ushort subject = 31000;
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .Be(subject);
 		}
 
 		[Fact]
@@ -60,7 +66,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			const short subject = -31000;
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .Be(subject);
 		}
 
 		[Fact]
@@ -68,7 +75,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			const int subject = -6776;
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .Be(subject);
 		}
 
 		[Fact]
@@ -76,7 +84,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			const uint subject = 6776;
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .Be(subject);
 		}
 
 		[Fact]
@@ -84,7 +93,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			const long subject = -6776677667766776;
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .Be(subject);
 		}
 
 		[Fact]
@@ -92,7 +102,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			const ulong subject = 6776677667766776;
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .Be(subject);
 		}
 
 		[Fact]
@@ -100,7 +111,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			const float subject = 1.23456f;
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .Be(subject);
 		}
 
 		[Fact]
@@ -108,7 +120,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			const double subject = 123456789123456789;
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .Be(subject);
 		}
 
 		[Fact]
@@ -116,7 +129,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			const decimal subject = 12345678912345678912;
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .Be(subject);
 		}
 
 		[Fact]
@@ -124,7 +138,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			var subject = new DateTime(2017, 10, 18);
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .Be(subject);
 		}
 
 		[Fact]
@@ -132,7 +147,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			DateTimeOffset subject = new DateTime(2017, 10, 18);
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .Be(subject);
 		}
 
 		[Fact]
@@ -140,7 +156,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			const string subject = "Hello World!";
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .Be(subject);
 		}
 
 		[Fact]
@@ -148,7 +165,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			var subject = System.Guid.NewGuid();
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .Be(subject);
 		}
 
 		[Fact]
@@ -156,7 +174,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			var subject = System.TimeSpan.FromMilliseconds(6776);
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .Be(subject);
 		}
 
 		[Fact]
@@ -164,7 +183,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		{
 			var subject = new Uri("https://extendedxmlserializer.github.io");
 			new SerializationSupport().Cycle(subject)
-			                          .ShouldBeEquivalentTo(subject);
+			                          .Should()
+			                          .BeEquivalentTo(subject);
 		}
 	}
 }

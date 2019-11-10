@@ -18,7 +18,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var subject = new Subject {Message = "Hello World!"};
 			serializer.Assert(subject,
 			                  @"<?xml version=""1.0"" encoding=""utf-8""?><Issue153Tests-Subject><Message>Hello World!</Message></Issue153Tests-Subject>")
-			          .ShouldBeEquivalentTo(subject);
+			          .Should().BeEquivalentTo(subject);
 		}
 
 		sealed class Subject

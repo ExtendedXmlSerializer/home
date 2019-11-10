@@ -19,7 +19,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				                        new ConfigurationContainer().Create()
 				                                                    .Serialize(new TestClass());
 			                        });
-			action.ShouldThrow<Exception>();
+			action.Should().Throw<Exception>();
 		}
 
 		[Fact]

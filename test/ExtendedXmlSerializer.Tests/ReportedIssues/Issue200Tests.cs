@@ -26,7 +26,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var subject = new PrivateSettablePropertySubject("Hello World!");
 			container.Cycle(subject)
-			         .ShouldBeEquivalentTo(subject);
+			         .Should().BeEquivalentTo(subject);
 		}
 
 		sealed class PrivateSettablePropertySubject

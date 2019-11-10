@@ -17,7 +17,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				{FirstName = "John", LastName = string.Empty, Nationality = "British", Married = true};
 			var support = new ConfigurationContainer().ForTesting();
 			support.Cycle(person)
-			       .ShouldBeEquivalentTo(person);
+			       .Should().BeEquivalentTo(person);
 		}
 
 		[Fact]
@@ -35,15 +35,15 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var serializer = new ConfigurationContainer().ForTesting();
 
 			data.Invoking(x => serializer.Deserialize<Person>(x))
-			    .ShouldThrow<InvalidOperationException>();
+			    .Should().Throw<InvalidOperationException>();
 			empty.Invoking(x => serializer.Deserialize<Person>(x))
-			     .ShouldThrow<InvalidOperationException>();
+			     .Should().Throw<InvalidOperationException>();
 
 			classic.Invoking(x => ClassicSerialization<Person>.Default.Get(x))
-			       .ShouldThrow<InvalidOperationException>();
+			       .Should().Throw<InvalidOperationException>();
 
 			classicEmpty.Invoking(x => ClassicSerialization<Person>.Default.Get(x))
-			            .ShouldThrow<InvalidOperationException>();
+			            .Should().Throw<InvalidOperationException>();
 		}
 
 		public class Person

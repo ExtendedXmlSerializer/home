@@ -38,7 +38,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			};
 
 			subject.Cycle(instance)
-			       .ShouldBeEquivalentTo(instance);
+			       .Should().BeEquivalentTo(instance);
 		}
 
 		[Fact]
@@ -72,7 +72,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                       .ForTesting()
 			                                       .Deserialize<Subject>(content);
 			var expected = new Subject {Messages = new List<string> {"Hello", "World"}};
-			read.ShouldBeEquivalentTo(expected);
+			read.Should().BeEquivalentTo(expected);
 			read.Messages.Count.Should()
 			    .Be(2);
 		}

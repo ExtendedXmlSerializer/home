@@ -48,7 +48,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			{
 				Action action = () => serializer.Serialize(xmlTextWriter, subject);
 
-				action.ShouldThrow<InvalidOperationException>()
+				action.Should().Throw<InvalidOperationException>()
 				      .WithMessage("Nope.");
 			}
 		}

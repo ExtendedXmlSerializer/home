@@ -35,7 +35,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 </Issue243Tests-MediaContainer>";
 
 			var result = serializer.Deserialize<MediaContainer>(content);
-			result.ShouldBeEquivalentTo(subject);
+			result.Should().BeEquivalentTo(subject);
 			result.Items.Should()
 			      .HaveCount(2);
 		}

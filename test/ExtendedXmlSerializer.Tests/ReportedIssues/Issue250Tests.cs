@@ -19,7 +19,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var instance = new DataHolder {Lenght = 13};
 
 			support.Cycle(instance)
-			       .ShouldBeEquivalentTo(instance);
+			       .Should()
+			       .BeEquivalentTo(instance);
 		}
 
 		public class DataHolder

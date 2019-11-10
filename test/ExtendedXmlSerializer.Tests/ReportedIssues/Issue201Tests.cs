@@ -18,7 +18,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var testClass = new ConfigurationContainer().Create()
 			                                            .ForTesting()
 			                                            .Cycle(subject);
-			testClass.ShouldBeEquivalentTo(subject);
+			testClass.Should().BeEquivalentTo(subject);
 			testClass.TestProperty.Count.Should()
 			         .Be(5);
 		}

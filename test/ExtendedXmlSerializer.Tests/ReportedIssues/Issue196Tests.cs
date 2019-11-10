@@ -23,7 +23,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var instance = new MutableSubject("Hello World!");
 			var cycle    = serializer.Cycle(instance);
-			cycle.ShouldBeEquivalentTo(instance);
+			cycle.Should().BeEquivalentTo(instance);
 			cycle.Message.Should()
 			     .NotBeNull();
 		}

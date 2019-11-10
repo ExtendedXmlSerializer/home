@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using ExtendedXmlSerializer.ContentModel.Conversion;
+﻿using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Parsing;
-using Sprache;
 using ExtendedXmlSerializer.ExtensionModel.Expressions;
 using ExtendedXmlSerializer.ExtensionModel.Markup;
 using FluentAssertions;
+using Sprache;
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
@@ -20,7 +20,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		{
 			const string text  = "{x:Testing}";
 			var          parts = MarkupExtensionParser.Default.Get(text);
-			parts.Type.ShouldBeEquivalentTo(new TypeParts("Testing", "x"));
+			parts.Type.Should()
+			     .BeEquivalentTo(new TypeParts("Testing", "x"));
 			parts.Arguments.Should()
 			     .BeEmpty();
 		}
@@ -30,7 +31,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		{
 			const string text  = "{x:Testing {x:Type sys:string, TypeName=exs:Another}}";
 			var          parts = MarkupExtensionParser.Default.Get(text);
-			parts.Type.ShouldBeEquivalentTo(new TypeParts("Testing", "x"));
+			parts.Type.Should()
+			     .BeEquivalentTo(new TypeParts("Testing", "x"));
 			parts.Properties.Should()
 			     .BeEmpty();
 
@@ -48,7 +50,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 				                                                                              GeneralExpression("exs:Another"))
 				                                        .Yield()
 				                                        .ToImmutableArray());
-			actual.ShouldBeEquivalentTo(expected);
+			actual.Should()
+			      .BeEquivalentTo(expected);
 			actual.Arguments.Single()
 			      .ToString()
 			      .Should()
@@ -67,7 +70,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 			   .Should()
 			   .BeNull();
 			sut.Invoking(x => x.ParseAsOptional("{x:Partial"))
-			   .ShouldThrow<InvalidOperationException>();
+			   .Should()
+			   .Throw<InvalidOperationException>();
 		}
 
 		[Fact]
@@ -76,7 +80,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 			const string text = "{x:Testing }";
 			var parts = MarkupExtensionParser.Default.ToParser()
 			                                 .Parse(text);
-			parts.Type.ShouldBeEquivalentTo(new TypeParts("Testing", "x"));
+			parts.Type.Should()
+			     .BeEquivalentTo(new TypeParts("Testing", "x"));
 			parts.Arguments.Should()
 			     .BeEmpty();
 		}
@@ -86,7 +91,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		{
 			const string text  = "{x:Testing 'one', 12345, ' two ', '{}This is an escaped {} literal.', 3 * 3}";
 			var          parts = MarkupExtensionParser.Default.Get(text);
-			parts.Type.ShouldBeEquivalentTo(new TypeParts("Testing", "x"));
+			parts.Type.Should()
+			     .BeEquivalentTo(new TypeParts("Testing", "x"));
 			parts.Arguments.Select(x => x.ToString())
 			     .Should()
 			     .HaveCount(5)
@@ -101,11 +107,14 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		{
 			const string text  = "{x:Testing MemberName='Value'}";
 			var          parts = MarkupExtensionParser.Default.Get(text);
-			parts.Type.ShouldBeEquivalentTo(new TypeParts("Testing", "x"));
+			parts.Type.Should()
+			     .BeEquivalentTo(new TypeParts("Testing", "x"));
 			parts.Arguments.Select(x => x.ToString())
 			     .Should()
 			     .BeEmpty();
-			parts.Properties.ShouldBeEquivalentTo(new Dictionary<string, string> {{"MemberName", "Value"}});
+			parts.Properties.ToDictionary(x => x.Key, x => x.Value.ToString())
+			     .Should()
+			     .BeEquivalentTo(new Dictionary<string, string> {{"MemberName", "Value"}});
 		}
 
 		[Fact]
@@ -113,16 +122,19 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		{
 			const string text  = "{x:Testing 'one', 12345, ' two ', MemberName='Value', MemberTwo = 3 + 4}";
 			var          parts = MarkupExtensionParser.Default.Get(text);
-			parts.Type.ShouldBeEquivalentTo(new TypeParts("Testing", "x"));
+			parts.Type.Should()
+			     .BeEquivalentTo(new TypeParts("Testing", "x"));
 			parts.Arguments.Select(x => x.ToString())
 			     .Should()
 			     .HaveCount(3)
 			     .And.BeEquivalentTo("one", "12345", " two ");
-			parts.Properties.ShouldBeEquivalentTo(new Dictionary<string, string>
-			{
-				{"MemberName", "Value"},
-				{"MemberTwo", "3 + 4"}
-			});
+			parts.Properties.ToDictionary(x => x.Key, x => x.Value.ToString())
+			     .Should()
+			     .BeEquivalentTo(new Dictionary<string, string>
+			     {
+				     {"MemberName", "Value"},
+				     {"MemberTwo", "3 + 4"}
+			     });
 		}
 	}
 }

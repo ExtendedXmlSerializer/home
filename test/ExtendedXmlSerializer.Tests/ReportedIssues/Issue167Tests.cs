@@ -20,7 +20,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var    message = '\0'.ToString();
 			Action action  = () => container.WriteLine(new Subject {Message = message});
-			action.ShouldThrow<ArgumentException>();
+			action.Should().Throw<ArgumentException>();
 		}
 
 		[Fact]

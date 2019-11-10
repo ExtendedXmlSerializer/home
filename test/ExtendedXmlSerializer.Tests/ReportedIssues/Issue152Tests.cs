@@ -1,10 +1,10 @@
-﻿using System.Collections;
+﻿using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Tests.Support;
+using FluentAssertions;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Xml.Serialization;
-using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.Tests.Support;
-using FluentAssertions;
 using Xunit;
 
 // ReSharper disable InconsistentNaming
@@ -22,7 +22,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var instance = new Subject();
 			instance.AddChild(new Subject());
 			var subject = serializer.Cycle(instance);
-			subject.ShouldAllBeEquivalentTo(instance);
+			subject.Should().BeEquivalentTo(instance);
 		}
 
 		public sealed class Subject : IEnumerable<Subject>

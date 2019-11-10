@@ -51,8 +51,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var cycled = serializer.Cycle(outList);
 			cycled.Count.Should()
 			      .Be(3);
-			cycled.ShouldBeEquivalentTo(outList);
-			cycled.ShouldAllBeEquivalentTo(outList);
+			cycled.Should().BeEquivalentTo(outList);
 		}
 
 		public class ClassA

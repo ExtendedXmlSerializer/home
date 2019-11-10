@@ -24,7 +24,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .ForTesting();
 			var subject = new Plane(4.33);
 			serializer.Cycle(subject)
-			          .ShouldBeEquivalentTo(subject);
+			          .Should().BeEquivalentTo(subject);
 			serializer.Serialize(subject)
 			          .Should()
 			          .Be(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue146Tests-Plane Length=""4.33"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests"" />");

@@ -43,7 +43,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			RestoreDatabaseObjects.Default.Execute(key);
 
-			owner.ShouldBeEquivalentTo(instance);
+			owner.Should().BeEquivalentTo(instance);
 			owner.Element.Table.Should()
 			     .Be("TableName");
 

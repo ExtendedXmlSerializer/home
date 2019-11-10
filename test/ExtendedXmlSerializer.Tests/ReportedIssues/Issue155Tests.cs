@@ -17,7 +17,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var instance = new Subject
 				{Items = new object[] {"Hello", "World", 6776, new URL(), new TranslatableWebFeatures()}};
 			serializer.Cycle(instance)
-			          .ShouldBeEquivalentTo(instance);
+			          .Should().BeEquivalentTo(instance);
 		}
 
 		public sealed class Subject

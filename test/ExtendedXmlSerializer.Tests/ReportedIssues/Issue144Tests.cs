@@ -20,7 +20,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var subject = new Subject("Testing", new Amounts {{"First", 1234}});
 
 			sut.Cycle(subject)
-			   .ShouldBeEquivalentTo(subject);
+			   .Should().BeEquivalentTo(subject);
 		}
 
 		sealed class Subject

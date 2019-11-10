@@ -41,7 +41,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var support = new ConfigurationContainer().ForTesting();
 
 			support.Cycle(test)
-			       .ShouldBeEquivalentTo(test, options => options.RespectingRuntimeTypes());
+			       .Should().BeEquivalentTo(test, options => options.RespectingRuntimeTypes());
 		}
 
 		[Fact]
@@ -78,7 +78,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			// ShouldBeEquivalentTo doesn't work
 			support.Cycle(test)
-			       .ShouldBeEquivalentTo(test, options => options.RespectingRuntimeTypes());
+			       .Should().BeEquivalentTo(test, options => options.RespectingRuntimeTypes());
 		}
 
 		public class Case

@@ -31,7 +31,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			             .ForTesting()
 			             .Cycle(snoopy);
 
-			snoopy.ShouldBeEquivalentTo(cycled);
+			snoopy.Should().BeEquivalentTo(cycled);
 
 			cycled.Friends.Should()
 			      .HaveCount(4);

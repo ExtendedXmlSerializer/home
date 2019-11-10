@@ -17,7 +17,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var cycle = new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
 			                                        .Create()
 			                                        .Cycle(instance);
-			cycle.ShouldBeEquivalentTo(instance);
+			cycle.Should().BeEquivalentTo(instance);
 		}
 
 		[Fact]
@@ -27,7 +27,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var cycle = new ConfigurationContainer().Emit(EmitBehaviors.Always)
 			                                        .Create()
 			                                        .Cycle(instance);
-			cycle.ShouldBeEquivalentTo(instance);
+			cycle.Should().BeEquivalentTo(instance);
 		}
 
 		[Fact]

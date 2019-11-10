@@ -19,13 +19,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .Create()
 			                                             .ForTesting();
 			serializer.Invoking(x => x.Serialize(new Subject()))
-			          .ShouldThrowExactly<InvalidOperationException>()
+			          .Should().ThrowExactly<InvalidOperationException>()
 			          .WithMessage("An exception was encountered while serializing member 'ExtendedXmlSerializer.Tests.ReportedIssues.Issue214Tests+Subject.Message'.  Provided instance is 'ExtendedXmlSerializer.Tests.ReportedIssues.Issue214Tests+Subject'.")
 			          .WithInnerException<InvalidOperationException>();
 
 			serializer
 				.Invoking(x => x.Deserialize<Subject>(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue214Tests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message></Issue214Tests-Subject>"))
-				.ShouldThrowExactly<InvalidOperationException>()
+				.Should().ThrowExactly<InvalidOperationException>()
 				.WithMessage("An exception was encountered while deserializing member 'ExtendedXmlSerializer.Tests.ReportedIssues.Issue214Tests+Subject.Message'.")
 				.WithInnerException<XmlException>();
 		}

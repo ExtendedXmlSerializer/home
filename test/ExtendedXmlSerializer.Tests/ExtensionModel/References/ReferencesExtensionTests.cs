@@ -431,7 +431,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 				             support.Serialize(instance);
 			             };
 
-			sut.ShouldThrow<CircularReferencesDetectedException>()
+			sut.Should()
+			   .Throw<CircularReferencesDetectedException>()
 			   .WithMessage(@"The provided instance of type 'ExtendedXmlSerializer.Tests.ExtensionModel.References.ReferencesExtensionTests+Subject' contains circular references within its graph. Serializing this instance would result in a recursive, endless loop. To properly serialize this instance, please create a serializer that has referential support enabled by extending it with the ReferencesExtension.\r\n\r\nHere is a list of found references:\r\n- ExtendedXmlSerializer.Tests.ExtensionModel.References.ReferencesExtensionTests+Subject");
 		}
 

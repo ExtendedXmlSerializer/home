@@ -68,7 +68,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				</Issue271Tests-Entity>";
 
 			serializer.Invoking(x => x.Deserialize<Entity>(content1))
-			          .ShouldThrow<XmlException>()
+			          .Should().Throw<XmlException>()
 			          .WithMessage("Unknown/invalid member encountered: 'Show'. Line 4, position 7.");
 		}
 

@@ -24,19 +24,19 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var instance = new Subject {Item = 123};
 			serializer.Cycle(instance)
-			          .ShouldBeEquivalentTo(instance);
+			          .Should().BeEquivalentTo(instance);
 
 			var second = new SubjectWithMembers {Item = 123, Message = "Message", Time = DateTimeOffset.Now};
 			serializer.Cycle(second)
-			          .ShouldBeEquivalentTo(second);
+			          .Should().BeEquivalentTo(second);
 
 			var group = new Group2 {Type = GroupType.Large};
 			serializer.Cycle(group)
-			          .ShouldBeEquivalentTo(group);
+			          .Should().BeEquivalentTo(group);
 
 			var group3 = new Group3 {CreationTime = DateTime.Now};
 			serializer.Cycle(group3)
-			          .ShouldBeEquivalentTo(group3);
+			          .Should().BeEquivalentTo(group3);
 		}
 
 		[Fact]
@@ -52,11 +52,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                  @"<?xml version=""1.0"" encoding=""utf-8""?><Issue192Tests-ClassWithMixedContent xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><int xmlns=""https://extendedxmlserializer.github.io/system"">123</int><int xmlns=""https://extendedxmlserializer.github.io/system"">345</int></Issue192Tests-ClassWithMixedContent>");
 
 			serializer.Cycle(instance)
-			          .ShouldBeEquivalentTo(instance);
+			          .Should().BeEquivalentTo(instance);
 
 			var second  = new ClassWithMixedContent {Value = new List<object> {123, "hello world?", 345}};
 			var content = serializer.Cycle(second);
-			content.ShouldBeEquivalentTo(second);
+			content.Should().BeEquivalentTo(second);
 			content.Value.Should()
 			       .HaveCount(3);
 			content.Value.Should()

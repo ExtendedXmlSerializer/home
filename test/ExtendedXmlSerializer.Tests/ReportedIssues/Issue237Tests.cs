@@ -19,7 +19,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .ForTesting();
 			var instance = new Subject();
 			serializer.Cycle(instance)
-			          .ShouldBeEquivalentTo(instance);
+			          .Should().BeEquivalentTo(instance);
 		}
 
 		sealed class Subject

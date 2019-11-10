@@ -35,7 +35,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			    .BeEmpty();
 			var instance = new Subject {Message = "Hello World!"};
 			var cycled   = serializer.Cycle(instance);
-			cycled.ShouldBeEquivalentTo(instance);
+			cycled.Should().BeEquivalentTo(instance);
 			list.Select(x => x.Item1)
 			    .Should()
 			    .Equal(SerializationStages.OnSerializing, SerializationStages.OnSerializing,
@@ -56,7 +56,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			    .BeEmpty();
 			var instance = new Subject {Message = "Hello World!"};
 			var cycled   = serializer.Cycle(instance);
-			cycled.ShouldBeEquivalentTo(instance);
+			cycled.Should().BeEquivalentTo(instance);
 			list.Select(x => x.Item1)
 			    .Should()
 			    .Equal(DeserializationStages.OnDeserializing,
@@ -84,7 +84,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			        .BeEmpty();
 			var instance = new Subject {Message = "Hello World!"};
 			var cycled   = serializer.Cycle(instance);
-			cycled.ShouldBeEquivalentTo(instance);
+			cycled.Should().BeEquivalentTo(instance);
 			@default.Select(x => x.Item1)
 			        .Should()
 			        .Equal(DeserializationStages.OnDeserializing,
@@ -113,7 +113,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			        .BeEmpty();
 			var instance = new Subject {Message = "Hello World!"};
 			var cycled   = serializer.Cycle(instance);
-			cycled.ShouldBeEquivalentTo(instance);
+			cycled.Should().BeEquivalentTo(instance);
 			specific.Select(x => x.Item1)
 			        .Should()
 			        .Equal(DeserializationStages.OnDeserialized);

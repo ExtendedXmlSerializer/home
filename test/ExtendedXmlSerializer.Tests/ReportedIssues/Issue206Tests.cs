@@ -42,7 +42,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			<Name>xxx</Name>
 </Issue206Tests-Participant>
 	  </Participants></Issue206Tests-TravelFile></ArrayOfIssue206Tests-TravelFile>")
-				.ShouldBeEquivalentTo(subject);
+				// ReSharper disable once CoVariantArrayConversion
+				.Should().BeEquivalentTo(subject);
 		}
 
 		[Fact]
@@ -64,7 +65,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			};
 
 			support.Cycle(subject)
-			       .ShouldBeEquivalentTo(subject);
+			       // ReSharper disable once CoVariantArrayConversion
+			       .Should().BeEquivalentTo(subject);
 		}
 
 		public sealed class TravelFile

@@ -26,10 +26,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			support.Assert(myMessage,
 			               @"<?xml version=""1.0"" encoding=""utf-8""?><myMessage xmlns=""http://namespace/file.xsd""><myElement uniqueId=""Message"" /></myMessage>");
 			support.Cycle(myMessage)
-			       .ShouldBeEquivalentTo(myMessage);
+			       .Should().BeEquivalentTo(myMessage);
 
 			support.Cycle(element)
-			       .ShouldBeEquivalentTo(element);
+			       .Should().BeEquivalentTo(element);
 		}
 
 		[Fact]

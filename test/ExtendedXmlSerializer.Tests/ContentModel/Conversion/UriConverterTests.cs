@@ -13,7 +13,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Conversion
 			var instance = new Uri("https://extendedxmlserializer.github.io");
 
 			new SerializationSupport().Cycle(instance)
-			                          .ShouldBeEquivalentTo(instance);
+			                          .Should().BeEquivalentTo(instance);
 		}
 	}
 }
