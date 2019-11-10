@@ -18,8 +18,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer.git</RepositoryUrl>
-    <PackageIconUrl>https://extendedxmlserializer.github.io/img/logoBig.png</PackageIconUrl>
-
+    <PackageIcon>Logo.png</PackageIcon>
     <VersionPrefix>2.1.0.0</VersionPrefix>
     <PackageReleaseNotes>
 Features addressed in this release (where applicable):
@@ -52,8 +51,9 @@ https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/new?labels
     <DefineConstants>$(DefineConstants);NET45</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\..\LICENSE" Pack="true" Visible="false" PackagePath="" />
+  <ItemGroup Condition="$(Configuration) == 'Release'">
+    <None Include="..\..\LICENSE" Pack="true" Visible="false" PackagePath="\" />
+    <None Include="..\..\Logo.png" Pack="true" Visible="false" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
