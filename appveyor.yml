@@ -13,7 +13,7 @@ nuget:
 
 dotnet_csproj:
   patch: true
-  file: '.\src\$(APPVEYOR_PROJECT_NAME)\$(APPVEYOR_PROJECT_NAME).csproj'
+  file: '.\src\**\*.csproj'
   version_prefix: '{version}'
 build_script:
 - ps: .\Build.ps1
