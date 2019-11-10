@@ -52,8 +52,8 @@ https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/new?labels
   </PropertyGroup>
 
   <ItemGroup Condition="$(Configuration) == 'Release'">
-    <None Include="..\..\$(PackageLicenseFile)" Pack="true" Visible="false" PackagePath="/" />
-    <None Include="..\..\Logo.png" Pack="true" Visible="false" PackagePath="/" />
+    <None Include="..\..\$(PackageLicenseFile)" Pack="true" Visible="false" PackagePath="" />
+    <None Include="..\..\Logo.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
