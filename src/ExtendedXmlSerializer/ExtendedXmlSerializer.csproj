@@ -15,7 +15,7 @@
     <PackageId>ExtendedXmlSerializer</PackageId>
     <PackageTags>xmlserializer;xmlserialization;serialization;ExtendedXmlSerializer;xml</PackageTags>
     <PackageProjectUrl>https://extendedxmlserializer.github.io/</PackageProjectUrl>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer.git</RepositoryUrl>
     <PackageIcon>Logo.png</PackageIcon>
