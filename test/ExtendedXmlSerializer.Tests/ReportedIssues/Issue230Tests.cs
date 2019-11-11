@@ -13,7 +13,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			var subject = new Subject {Message1 = "This is message."};
 
-			var serializer = new ConfigurationContainer().AllowExistingInstances()
+			var serializer = new ConfigurationContainer().AllowTargetInstances()
 			                                             .Create()
 			                                             .ForTesting();
 
@@ -23,7 +23,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			subject.Message2.Should()
 			       .BeNull();
 
-			var returned = serializer.Deserialize(subject, data);
+			var returned = serializer.UsingTarget(subject).Deserialize(data);
 
 			returned.Should()
 			        .Be(subject);

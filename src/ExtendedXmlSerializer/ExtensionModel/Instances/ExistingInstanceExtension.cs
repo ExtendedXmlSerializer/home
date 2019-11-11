@@ -1,9 +1,9 @@
-﻿using System.Reflection;
-using System.Xml;
-using ExtendedXmlSerializer.ContentModel;
+﻿using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
+using System.Reflection;
+using System.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Instances
 {
@@ -13,8 +13,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Instances
 
 		ExistingInstanceExtension() {}
 
-		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Decorate<IActivation, Activation>();
+		public IServiceRepository Get(IServiceRepository parameter) => parameter.Decorate<IActivation, Activation>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 

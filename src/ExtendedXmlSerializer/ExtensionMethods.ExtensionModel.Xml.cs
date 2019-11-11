@@ -7,7 +7,6 @@ using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content;
-using ExtendedXmlSerializer.ExtensionModel.Instances;
 using ExtendedXmlSerializer.ExtensionModel.Types.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ExtensionModel.Xml.Classic;
@@ -240,8 +239,6 @@ namespace ExtendedXmlSerializer
 		readonly static IXmlWriterFactory WriterFactory
 			= new XmlWriterFactory(CloseSettings.Default.Get(Defaults.WriterSettings));
 
-		readonly static XmlReaderSettings CloseRead = CloseSettings.Default.Get(Defaults.ReaderSettings);
-
 		public static IExtendedXmlSerializer Create<T>(this T @this, Func<T, IConfigurationContainer> configure)
 			where T : IConfigurationContainer => configure(@this)
 			.Create();
@@ -278,7 +275,7 @@ namespace ExtendedXmlSerializer
 			=> XmlParserContexts.Default.Get(@this ?? new NameTable());
 
 		public static T Deserialize<T>(this IExtendedXmlSerializer @this, string data)
-			=> Deserialize<T>(@this, CloseRead, data);
+			=> Deserialize<T>(@this, Defaults.CloseRead, data);
 
 		public static T Deserialize<T>(this IExtendedXmlSerializer @this, XmlReaderSettings settings, string data)
 			=> Deserialize<T>(@this, settings, new MemoryStream(Encoding.UTF8.GetBytes(data)));
@@ -302,63 +299,6 @@ namespace ExtendedXmlSerializer
 		static T Deserialize<T>(this IExtendedXmlSerializer @this, IXmlReaderFactory factory, TextReader reader)
 			=> @this.Deserialize(factory.Get(reader))
 			        .AsValid<T>();
-
-		/// <summary>
-		/// Call AllowExistingInstances when creating ConfigurationContainer to use this method.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="this"></param>
-		/// <param name="existing"></param>
-		/// <param name="data"></param>
-		/// <returns></returns>
-		public static T Deserialize<T>(this IExtendedXmlSerializer @this, T existing, string data)
-			where T : class
-			=> @this.Deserialize(existing, CloseRead, data);
-
-		/// <summary>
-		/// Call AllowExistingInstances when creating ConfigurationContainer to use this method.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="this"></param>
-		/// <param name="existing"></param>
-		/// <param name="settings"></param>
-		/// <param name="data"></param>
-		/// <returns></returns>
-		public static T Deserialize<T>(this IExtendedXmlSerializer @this, T existing, XmlReaderSettings settings,
-		                               string data)
-			where T : class
-			=> @this.Deserialize(existing, settings, new MemoryStream(Encoding.UTF8.GetBytes(data)));
-
-		/// <summary>
-		/// Call AllowExistingInstances when creating ConfigurationContainer to use this method.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="this"></param>
-		/// <param name="existing"></param>
-		/// <param name="stream"></param>
-		/// <returns></returns>
-		public static T Deserialize<T>(this IExtendedXmlSerializer @this, T existing, Stream stream)
-			where T : class
-			=> @this.Deserialize(existing, Defaults.ReaderSettings, stream);
-
-		/// <summary>
-		/// Call AllowExistingInstances when creating ConfigurationContainer to use this method.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="this"></param>
-		/// <param name="existing"></param>
-		/// <param name="settings"></param>
-		/// <param name="stream"></param>
-		/// <returns></returns>
-		public static T Deserialize<T>(this IExtendedXmlSerializer @this, T existing, XmlReaderSettings settings,
-		                               Stream stream)
-			where T : class
-			=> @this.Deserialize(existing, new XmlReaderFactory(settings, settings.NameTable.Context()), stream);
-
-		static T Deserialize<T>(this IExtendedXmlSerializer @this, T existing, IXmlReaderFactory factory, Stream stream)
-			where T : class
-			=> (T)InstanceReaders.Default.Get(@this)
-			                     .Get(new Existing(factory.Get(stream), existing));
 
 		public static IConfigurationContainer EnableImplicitTyping(this IConfigurationContainer @this,
 		                                                           params Type[] types)
@@ -391,26 +331,5 @@ namespace ExtendedXmlSerializer
 
 		public static IConfigurationContainer EnableXmlText(this IConfigurationContainer @this)
 			=> @this.Extend(XmlTextExtension.Default);
-
-		sealed class CloseSettings : IAlteration<XmlWriterSettings>, IAlteration<XmlReaderSettings>
-		{
-			public static CloseSettings Default { get; } = new CloseSettings();
-
-			CloseSettings() {}
-
-			public XmlWriterSettings Get(XmlWriterSettings parameter)
-			{
-				var result = parameter.Clone();
-				result.CloseOutput = true;
-				return result;
-			}
-
-			public XmlReaderSettings Get(XmlReaderSettings parameter)
-			{
-				var result = parameter.Clone();
-				result.CloseInput = true;
-				return result;
-			}
-		}
 	}
 }

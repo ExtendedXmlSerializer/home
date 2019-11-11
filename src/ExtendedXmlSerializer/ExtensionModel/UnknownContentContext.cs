@@ -1,7 +1,7 @@
-﻿using System;
-using ExtendedXmlSerializer.Configuration;
+﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ExtensionModel.Content;
+using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {

@@ -12,5 +12,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			IgnoreComments               = true,
 			IgnoreProcessingInstructions = true
 		};
+
+		internal static XmlReaderSettings CloseRead { get; } = CloseSettings.Default.Get(ReaderSettings);
 	}
 }
