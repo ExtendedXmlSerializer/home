@@ -16,10 +16,9 @@ dotnet_csproj:
   version_prefix: '{version}'
 build_script:
 - ps: .\Build.ps1
-# test: off
 artifacts:
 - path: src\**\*.nupkg
-  name: NuGet
+  name: 'ExtendedXmlSerializer Package'
 deploy:
 - provider: NuGet
   name: production
