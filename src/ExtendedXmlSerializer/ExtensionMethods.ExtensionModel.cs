@@ -1,11 +1,18 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel;
+using ExtendedXmlSerializer.ExtensionModel.Coercion;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
+using ExtendedXmlSerializer.ExtensionModel.Expressions;
 using ExtendedXmlSerializer.ExtensionModel.Instances;
+using ExtendedXmlSerializer.ExtensionModel.Markup;
+using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 
 // ReSharper disable TooManyArguments
@@ -36,7 +43,7 @@ namespace ExtendedXmlSerializer
 		/// <typeparam name="T">The instance type.</typeparam>
 		/// <param name="this">The serializer</param>
 		/// <param name="instance">The instance to deserialize</param>
-		/// <returns>A <see cref="ReferencedDeserialization(T)"/> context.</returns>
+		/// <returns>A <see cref="ReferencedDeserialization(T)"/> context for deserialization on the referenced instance.</returns>
 		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/230" />
 		public static ReferencedDeserialization<T> UsingTarget<T>(this IExtendedXmlSerializer @this, T instance)
 			where T : class
@@ -65,7 +72,27 @@ namespace ExtendedXmlSerializer
 			=> @this.Root.With<RootInstanceExtension>()
 			        .Return(@this);
 
+		public static IConfigurationContainer EnableExpressions(this IConfigurationContainer @this)
+			=> @this.Root.Apply<CoercionExtension>()
+			        .Extend(ExpressionsExtension.Default)
+			        .Return(@this);
+
+		public static IConfigurationContainer EnableMarkupExtensions(this IConfigurationContainer @this)
+			=> @this.EnableExpressions()
+			        .Alter(MarkupExtensionConverterAlteration.Default)
+			        .Extend(MarkupExtension.Default);
+
+		public static IConfigurationContainer EnableAllConstructors(this IConfigurationContainer @this)
+			=> @this.Extend(AllConstructorsExtension.Default);
+
 		#region Obsolete
+
+		/// <exclude />
+		[Obsolete("This method is unused and will be removed in a future version.")]
+		public static IEnumerable<Type> WithArrayTypes(this IEnumerable<Type> @this)
+			=> @this.ToArray()
+			        .Alter(x => x.Concat(x.Select(y => y.MakeArrayType()))
+			                     .ToArray());
 
 		/// <exclude />
 		[Obsolete("Use IExtendedXmlSerializer.UsingTarget.Deserialize instead.")]

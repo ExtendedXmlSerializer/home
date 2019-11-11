@@ -78,11 +78,9 @@ namespace ExtendedXmlSerializer
 
 		public static ITypeConfiguration<T> ConfigureType<T>(this IConfigurationContainer @this) => @this.Type<T>();
 
-		public static ITypeConfiguration<T> Type<T>(this IConfigurationContainer @this) => @this
-		                                                                                   .Root.Types
-		                                                                                   .Get(Support<T>.Key)
-		                                                                                   .AsValid<TypeConfiguration<T>
-		                                                                                   >();
+		public static ITypeConfiguration<T> Type<T>(this IConfigurationContainer @this)
+			=> @this.Root.Types.Get(Support<T>.Key)
+			        .AsValid<TypeConfiguration<T>>();
 
 		public static IConfigurationContainer Type<T>(this IConfigurationContainer @this,
 		                                              Action<ITypeConfiguration<T>> configure)
