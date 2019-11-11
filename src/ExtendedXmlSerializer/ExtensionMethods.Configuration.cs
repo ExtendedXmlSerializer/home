@@ -34,7 +34,7 @@ namespace ExtendedXmlSerializer
 		}
 
 		public static T Add<T>(this IRootContext @this) where T : ISerializerExtension
-			=> Add(@this, Support<T>.NewOrSingleton);
+			=> @this.Add(Support<T>.NewOrSingleton);
 
 		public static T Add<T>(this IRootContext @this, Func<T> create) where T : ISerializerExtension
 		{

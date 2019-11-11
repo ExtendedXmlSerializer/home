@@ -27,8 +27,14 @@ using Defaults = ExtendedXmlSerializer.ExtensionModel.Xml.Defaults;
 namespace ExtendedXmlSerializer
 {
 	// ReSharper disable once MismatchedFileName
+	// ReSharper disable once ClassTooBig
 	public static partial class ExtensionMethods
 	{
+		/// <summary>
+		///   <note type="note">asdf</note>Members the specified name ffd.</summary>
+		/// <param name="this">The this.</param>
+		/// <param name="name">The name.</param>
+		/// <returns>XElement.</returns>
 		public static XElement Member(this XElement @this, string name)
 			=> @this.Element(XName.Get(name, @this.Name.NamespaceName));
 
