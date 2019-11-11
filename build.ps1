@@ -48,8 +48,6 @@ function Exec
     }
 }
 
-if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
-
 EnsurePsbuildInstalled
 
 $solution = ".\ExtendedXmlSerializer.sln"
@@ -62,7 +60,7 @@ exec { & dotnet build $solution -c Release }
 # TODO: Remove once AppVeyor properly detects .NET Core test assemblies: https://help.appveyor.com/discussions/problems/25375-automatically-discovered-tests-misses-net-core-testing-assembly
 exec { & dotnet test $solution -c Release -f netcoreapp2.1 }
 
-exec { & dotnet pack $solution -c Release -o .\..\..\artifacts --version-suffix=$suffix }
+exec { & dotnet pack $solution -c Release --version-suffix=$suffix }
 
 if ($release) {
     $headers = @{

@@ -12,13 +12,13 @@ nuget:
   disable_publish_on_pr: true
 dotnet_csproj:
   patch: true
-  file: 'src\*\*.csproj'
+  file: src\*\*.csproj
   version_prefix: '{version}'
 build_script:
 - ps: .\Build.ps1
 # test: off
 artifacts:
-- path: .\artifacts\*.nupkg
+- path: src\*\*.nupkg
   name: NuGet
 deploy:
 - provider: NuGet
