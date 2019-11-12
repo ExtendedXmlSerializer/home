@@ -1,8 +1,8 @@
+using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
@@ -10,7 +10,9 @@ namespace ExtendedXmlSerializer.ExtensionModel
 	{
 		readonly static Func<Type, bool> Specification = IsAssignableSpecification<T>.Default.IsSatisfiedBy;
 
-		public Registrations() : this(new HashSet<T>(), new HashSet<Type>()) {}
+		public Registrations() : this(new HashSet<T>()) {}
+
+		public Registrations(ICollection<T> instances) : this(instances, new HashSet<Type>()) {}
 
 		public Registrations(ICollection<T> instances, ICollection<Type> types)
 		{
