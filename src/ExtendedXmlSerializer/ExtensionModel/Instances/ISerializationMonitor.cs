@@ -6,9 +6,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Instances
 	public interface ISerializationMonitor : ISerializationMonitor<object> {}
 
 	/// <summary>
-	/// https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264#issuecomment-544104668
+	/// Provides a mechanism to listen in to important events during the serialization process.
 	/// </summary>
 	/// <typeparam name="T">The type to monitor.</typeparam>
+	/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264#issuecomment-544104668"/>
 	public interface ISerializationMonitor<in T>
 	{
 		void OnSerializing(IFormatWriter writer, T instance);

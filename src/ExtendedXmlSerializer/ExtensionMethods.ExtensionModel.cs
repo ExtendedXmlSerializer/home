@@ -33,24 +33,23 @@ namespace ExtendedXmlSerializer
 			=> @this.Root.With<ExistingInstanceExtension>()
 			        .Return(@this);
 
+		// ReSharper disable once InvalidXmlDocComment
 		/// <summary>
-		///   <para>
 		/// Specifies an existing reference to use as target for deserialization of values.  Read values during
 		/// deserialization will be read and assigned into the provided target instance.
-		/// </para>
-		///   <note type="important">Be sure to call <see cref="M:ExtendedXmlSerializer.ExtensionMethods.AllowExistingInstances(IConfigurationContainer)"/> when configuring the container before using this method.</note>
+		/// NOTICE: Be sure to call <see cref="M:ExtendedXmlSerializer.ExtensionMethods.AllowExistingInstances(IConfigurationContainer)"/> when configuring the container before using this method.
 		/// </summary>
 		/// <typeparam name="T">The instance type.</typeparam>
 		/// <param name="this">The serializer</param>
 		/// <param name="instance">The instance to deserialize</param>
-		/// <returns>A <see cref="ReferencedDeserialization(T)"/> context for deserialization on the referenced instance.</returns>
+		/// <returns>A ReferencedDeserialization&lt;T&gt; context.</returns>
 		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/230" />
 		public static ReferencedDeserialization<T> UsingTarget<T>(this IExtendedXmlSerializer @this, T instance)
 			where T : class
 			=> new ReferencedDeserialization<T>(@this, instance);
 
 		/// <summary>
-		///   Enables thread protection and wraps a simple `lock` around the reading and writing of the created serializer.
+		/// Enables thread protection and wraps a simple `lock` around the reading and writing of the created serializer.
 		/// </summary>
 		/// <param name="this">The configuration container to configure.</param>
 		/// <returns>The configured IConfigurationContainer.</returns>

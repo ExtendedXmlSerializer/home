@@ -11,8 +11,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 		ClassicExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.DecorateContent<DefaultCollectionSpecification, ClassicCollections>()
-			            .DecorateContent<DictionaryContentSpecification, ClassicDictionaryContents>();
+			=> parameter.DecorateContentsWith<ClassicCollections>()
+			            .When<DefaultCollectionSpecification>()
+			            .DecorateContentsWith<ClassicDictionaryContents>()
+			            .When<DictionaryContentSpecification>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

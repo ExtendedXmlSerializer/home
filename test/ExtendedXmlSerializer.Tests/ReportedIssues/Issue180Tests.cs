@@ -37,7 +37,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			Extension() {}
 
 			public IServiceRepository Get(IServiceRepository parameter)
-				=> parameter.DecorateContent<Content>(IsAssignableSpecification<string>.Default);
+				=> parameter.DecorateContentsWith<Content>()
+				            .When(IsAssignableSpecification<string>.Default);
 
 			public void Execute(IServices parameter) {}
 		}

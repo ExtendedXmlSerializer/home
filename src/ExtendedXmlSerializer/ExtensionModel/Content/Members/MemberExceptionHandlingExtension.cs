@@ -37,6 +37,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 					                   .Get()
 					                   .To<IXmlLineInfo>();
 					// ReSharper disable once ThrowFromCatchWithNoInnerException
+					// ReSharper disable once ThrowFromCatchWithNoInnerException
 					throw new
 						InvalidOperationException($"An exception was encountered while deserializing member '{member.Profile.Metadata.ReflectedType}.{member.Profile.Name}'.",
 						                          new XmlException(e.Message, e, line.LineNumber, line.LinePosition));

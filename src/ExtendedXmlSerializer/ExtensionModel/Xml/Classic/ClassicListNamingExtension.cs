@@ -3,6 +3,7 @@ using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
+using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
 using System;
@@ -14,11 +15,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 	{
 		public static ClassicListNamingExtension Default { get; } = new ClassicListNamingExtension();
 
-		ClassicListNamingExtension() {}
+		ClassicListNamingExtension() : this(IsArraySpecification.Default.Or(IsCollectionTypeSpecification.Default)) {}
 
-		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Decorate<ArrayElement>(IsArraySpecification.Default.Or(IsCollectionTypeSpecification.Default))
-			            .Decorate<ITypes, Types>();
+		readonly ISpecification<TypeInfo> _specification;
+
+		public ClassicListNamingExtension(ISpecification<TypeInfo> specification) => _specification = specification;
+
+		public IServiceRepository Get(IServiceRepository parameter) => parameter.DecorateElementWith<ArrayElement>()
+		                                                                        .When(_specification)
+		                                                                        .Decorate<ITypes, Types>();
 
 		public void Execute(IServices parameter) {}
 
