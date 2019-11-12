@@ -9,16 +9,15 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	public sealed class RootInstanceExtension : ISerializerExtension
+	sealed class RootInstanceExtension : ISerializerExtension
 	{
 		public static RootInstanceExtension Default { get; } = new RootInstanceExtension();
 
 		RootInstanceExtension() {}
 
-		public IServiceRepository Get(IServiceRepository parameter) => parameter
-		                                                               .RegisterInstance<IRootInstances>(RootInstances
-			                                                                                                 .Default)
-		                                                               .Decorate<ISerializers, Serializers>();
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.RegisterInstance<IRootInstances>(RootInstances.Default)
+			            .Decorate<ISerializers, Serializers>();
 
 		sealed class Serializers : ISerializers
 		{

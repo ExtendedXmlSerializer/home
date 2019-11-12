@@ -50,12 +50,19 @@ namespace ExtendedXmlSerializer
 			=> new ReferencedDeserialization<T>(@this, instance);
 
 		/// <summary>
-		///   <para>This is an args.</para>
+		///   Enables thread protection and wraps a simple `lock` around the reading and writing of the created serializer.
 		/// </summary>
-		/// <param name="this"></param>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <returns>The configured IConfigurationContainer.</returns>
 		public static IConfigurationContainer EnableThreadProtection(this IConfigurationContainer @this)
 			=> @this.Extend(ThreadProtectionExtension.Default);
 
+		/// <summary>
+		/// Enables member exception handling during serialization and deserialization.  By default when errors are encountered during these processes the exception is simply thrown without much context or detail.  This is for performance considerations and to cut down on try/catches.  Enabling this feature wraps serialization/deserialization in try-catches to provide more detail when exceptions occur.
+		/// </summary>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <returns>The configured IConfigurationContainer.</returns>
+		/// <seealso href="https://mattwarren.org/2016/12/20/Why-Exceptions-should-be-Exceptional/"/>
 		public static IConfigurationContainer EnableMemberExceptionHandling(this IConfigurationContainer @this)
 			=> @this.Extend(MemberExceptionHandlingExtension.Default);
 
@@ -63,25 +70,49 @@ namespace ExtendedXmlSerializer
 		/// Creates a new context for Unknown Content and allows the user to determine how the serializer behaves when it encounters unknown content during deserialization.
 		/// </summary>
 		/// <param name="this">The configuration container to configure.</param>
-		/// <returns>UnknownContentContext.</returns>
+		/// <returns>The UnknownContentContext for further action and configuration.</returns>
 		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/271#issuecomment-550976753" />
 		public static UnknownContentContext WithUnknownContent(this IConfigurationContainer @this)
 			=> new UnknownContentContext(@this);
 
+		/// <summary>
+		/// This is considered internal framework functionality and is not intended to be used from your code.  However. 😁  This enables root instances on a serializer.  When used, components that use the <see cref="IRootInstances"/> interface will have access to the root instance that was passed in for serialization using <see cref="IExtendedXmlSerializer.Serialize"/>.
+		/// </summary>
+		/// <typeparam name="T">The root context type.</typeparam>
+		/// <param name="this">The root context (usually an <see cref="IConfigurationContainer"/>) to configure.</param>
+		/// <returns>The configured root context (usually an <see cref="IConfigurationContainer"/>).</returns>
 		public static T EnableRootInstances<T>(this T @this) where T : IRootContext
 			=> @this.Root.With<RootInstanceExtension>()
 			        .Return(@this);
 
+		/// <summary>
+		/// This is considered internal framework functionality and is not intended to be used from your code.  However. 😁 This enables the use of expressions within deserialized properties (attached properties or markup extensions), so that they may be evaluated to a runtime value.
+		/// </summary>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <returns>The configured IConfigurationContainer.</returns>
 		public static IConfigurationContainer EnableExpressions(this IConfigurationContainer @this)
 			=> @this.Root.Apply<CoercionExtension>()
 			        .Extend(ExpressionsExtension.Default)
 			        .Return(@this);
 
+		/// <summary>
+		/// Enables markup extensions support for the container.  This allows you to create markup extensions and enable them within your XML, much like Xaml does for WPF.
+		/// </summary>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <returns>The configured IConfigurationContainer.</returns>
+		/// <seealso href="https://docs.microsoft.com/en-us/dotnet/framework/wpf/advanced/markup-extensions-and-wpf-xaml"/>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/wiki/04.-Features#xaml-ness-markup-extensions"/>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/blob/25514a768f7dc6b3166119254a1bd80ea13e1dbe/test/ExtendedXmlSerializer.Tests/ExtensionModel/Markup/MarkupExtensionTests.cs"/>
 		public static IConfigurationContainer EnableMarkupExtensions(this IConfigurationContainer @this)
 			=> @this.EnableExpressions()
 			        .Alter(MarkupExtensionConverterAlteration.Default)
 			        .Extend(MarkupExtension.Default);
 
+		/// <summary>
+		/// Enables all constructors -- in particular, private ones -- as candidates for selection when selecting a constructor to activate during deserialization.  By default, only public constructors are considered.  Calling this method configures the serializer so that all constructors -- private and otherwise -- are also considered.
+		/// </summary>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <returns>The configured IConfigurationContainer.</returns>
 		public static IConfigurationContainer EnableAllConstructors(this IConfigurationContainer @this)
 			=> @this.Extend(AllConstructorsExtension.Default);
 
