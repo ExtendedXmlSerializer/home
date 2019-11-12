@@ -2,7 +2,6 @@
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Encryption;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer
 {
@@ -19,7 +18,7 @@ namespace ExtendedXmlSerializer
 		public static IMemberConfiguration<T, TMember> Encrypt<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 		{
 			@this.Root.With<EncryptionExtension>()
-			     .Registered.Add(((ISource<MemberInfo>)@this).Get());
+			     .Registered.Add(@this.GetMember());
 			return @this;
 		}
 

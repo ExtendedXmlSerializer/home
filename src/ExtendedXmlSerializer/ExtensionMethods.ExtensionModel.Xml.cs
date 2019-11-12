@@ -42,7 +42,7 @@ namespace ExtendedXmlSerializer
 			this IMemberConfiguration<T, TMember> @this, Func<TMember, bool> when)
 		{
 			@this.Root.With<MemberFormatExtension>()
-			     .Specifications[((ISource<MemberInfo>)@this).Get()] =
+			     .Specifications[@this.GetMember()] =
 				new AttributeSpecification(new DelegatedSpecification<TMember>(when).Adapt());
 			return @this.Attribute();
 		}
@@ -51,7 +51,7 @@ namespace ExtendedXmlSerializer
 			this IMemberConfiguration<T, TMember> @this)
 		{
 			@this.Root.With<MemberFormatExtension>()
-			     .Registered.Add(((ISource<MemberInfo>)@this).Get());
+			     .Registered.Add(@this.GetMember());
 			return @this;
 		}
 
@@ -159,7 +159,7 @@ namespace ExtendedXmlSerializer
 		                                                                    ISerializer serializer)
 		{
 			@this.Root.With<CustomSerializationExtension>()
-			     .Members.Assign(((ISource<MemberInfo>)@this).Get(), serializer);
+			     .Members.Assign(@this.GetMember(), serializer);
 			return @this;
 		}
 
@@ -167,14 +167,14 @@ namespace ExtendedXmlSerializer
 			this IMemberConfiguration<T, TMember> @this)
 		{
 			@this.Root.With<CustomSerializationExtension>()
-			     .Members.Remove(((ISource<MemberInfo>)@this).Get());
+			     .Members.Remove(@this.GetMember());
 			return @this;
 		}
 
 		public static IMemberConfiguration<T, TMember> Content<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 		{
 			@this.Root.With<MemberFormatExtension>()
-			     .Registered.Remove(((ISource<MemberInfo>)@this).Get());
+			     .Registered.Remove(@this.GetMember());
 			return @this;
 		}
 

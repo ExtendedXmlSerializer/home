@@ -105,7 +105,7 @@ namespace ExtendedXmlSerializer
 		public static IMemberConfiguration<T, TMember> Ignore<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 		{
 			@this.Root.With<AllowedMembersExtension>()
-			     .Blacklist.Add(((ISource<MemberInfo>)@this).Get());
+			     .Blacklist.Add(@this.GetMember());
 			return @this;
 		}
 
@@ -119,14 +119,14 @@ namespace ExtendedXmlSerializer
 		public static IMemberConfiguration<T, TMember> Include<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 		{
 			@this.Root.With<AllowedMembersExtension>()
-			     .Whitelist.Add(((ISource<MemberInfo>)@this).Get());
+			     .Whitelist.Add(@this.GetMember());
 			return @this;
 		}
 
-		internal static IMemberConfiguration Include(this IMemberConfiguration @this)
+		static IMemberConfiguration Include(this IMemberConfiguration @this)
 		{
 			@this.Root.With<AllowedMembersExtension>()
-			     .Whitelist.Add(((ISource<MemberInfo>)@this).Get());
+			     .Whitelist.Add(@this.GetMember());
 			return @this;
 		}
 

@@ -1,4 +1,7 @@
-﻿namespace ExtendedXmlSerializer
+﻿using ExtendedXmlSerializer.Core.Sources;
+using System.Reflection;
+
+namespace ExtendedXmlSerializer
 {
 	// ReSharper disable once MismatchedFileName
 	public static partial class ExtensionMethods
@@ -10,5 +13,19 @@
 		/// <param name="result">The result.</param>
 		/// <returns>TOut.</returns>
 		public static TOut Return<T, TOut>(this T _, TOut result) => result;
+
+		/// <summary>
+		/// Convenience method for objects that implement several <see cref="ISource{T}"/> to get its type-based contents specifically.
+		/// </summary>
+		/// <param name="this">The implementing source.</param>
+		/// <returns>TypeInfo.</returns>
+		public static TypeInfo GetType(this ISource<TypeInfo> @this) => @this.Get();
+
+		/// <summary>
+		/// Convenience method for objects that implement several <see cref="ISource{T}"/> to get its member-based contents specifically.
+		/// </summary>
+		/// <param name="this">The implementing source.</param>
+		/// <returns>MemberInfo.</returns>
+		public static MemberInfo GetMember(this ISource<MemberInfo> @this) => @this.Get();
 	}
 }

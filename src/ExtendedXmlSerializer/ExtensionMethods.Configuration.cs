@@ -1,6 +1,5 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.References;
@@ -191,7 +190,7 @@ namespace ExtendedXmlSerializer
 			     .EnableReferences()
 			     .With<ReferencesExtension>()
 			     .Assign(@this.Parent.AsValid<ITypeConfigurationContext>()
-			                  .Get(), ((ISource<MemberInfo>)@this).Get());
+			                  .Get(), @this.GetMember());
 			return @this;
 		}
 
