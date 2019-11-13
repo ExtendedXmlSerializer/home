@@ -12,7 +12,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Encryption
 		public void SimpleString()
 		{
 			const string message = "Hello World!  This is my encrypted message!";
-			var support = new SerializationSupport(new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
+			var support = new SerializationSupport(new ConfigurationContainer().Emit(EmitBehaviors.WhenModified)
 			                                                                   .Type<SimpleSubject>()
 			                                                                   .Member(x => x.Message)
 			                                                                   .Encrypt()
@@ -27,7 +27,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Encryption
 		public void SimpleStringAsAttribute()
 		{
 			const string message = "Hello World!  This is my encrypted message!";
-			var support = new SerializationSupport(new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
+			var support = new SerializationSupport(new ConfigurationContainer().Emit(EmitBehaviors.WhenModified)
 			                                                                   .Type<SimpleSubject>()
 			                                                                   .Member(x => x.Message)
 			                                                                   .Attribute()

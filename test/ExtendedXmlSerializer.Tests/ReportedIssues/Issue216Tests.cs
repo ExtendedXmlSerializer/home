@@ -13,7 +13,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void Verify()
 		{
 			var instance = new Foo {Baz = {"hello"}};
-			var cycle = new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
+			var cycle = new ConfigurationContainer().Emit(EmitBehaviors.WhenModified)
 			                                        .Create()
 			                                        .Cycle(instance);
 			cycle.Should().BeEquivalentTo(instance);
@@ -33,7 +33,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void Emit()
 		{
 			var instance = new Foo {Baz = {"hello"}};
-			new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
+			new ConfigurationContainer().Emit(EmitBehaviors.WhenModified)
 			                            .Create()
 			                            .ForTesting()
 			                            .Assert(instance,
@@ -44,7 +44,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void EmitEmpty()
 		{
 			var instance = new Foo();
-			new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
+			new ConfigurationContainer().Emit(EmitBehaviors.WhenModified)
 			                            .Create()
 			                            .ForTesting()
 			                            .Assert(instance,
@@ -86,7 +86,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		void VerifyReadOnlyDoesNotEmitAssigned()
 		{
-			new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
+			new ConfigurationContainer().Emit(EmitBehaviors.WhenModified)
 			                            .Create()
 			                            .ForTesting()
 			                            .Assert(new Subject {Message = "Hello World!"},

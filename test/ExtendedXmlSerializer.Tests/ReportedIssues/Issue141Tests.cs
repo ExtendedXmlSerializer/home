@@ -9,7 +9,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		public void ShouldPreserveNullValueIfDefaultIsNotNull()
 		{
-			var serializer = new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
+			var serializer = new ConfigurationContainer().Emit(EmitBehaviors.WhenModified)
 			                                             .Create();
 
 			var xml          = serializer.Serialize(new ClassWithDefaultString {Name = null});
@@ -23,7 +23,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		public void ShouldPreserveNullStringValueIfDefaultIsNotNull()
 		{
 			var config = new ConfigurationContainer();
-			config.Emit(EmitBehaviors.Assigned);
+			config.Emit(EmitBehaviors.WhenModified);
 			var serializer = config.Create();
 
 			var xml          = serializer.Serialize(new ClassWithDefaultString() {Name = null, SubNode = null});
@@ -37,7 +37,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		public void ShouldPreserveNullObjectValueIfDefaultIsNotNull()
 		{
 			var config = new ConfigurationContainer();
-			config.Emit(EmitBehaviors.Assigned);
+			config.Emit(EmitBehaviors.WhenModified);
 			var serializer = config.Create();
 
 			var xml          = serializer.Serialize(new ClassWithDefaultString {Name = null, SubNode = null});
@@ -50,7 +50,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		public void ShouldPreserveNullObjectValueIfEmitWhenReturnsTrue()
 		{
-			var serializer = new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
+			var serializer = new ConfigurationContainer().Emit(EmitBehaviors.WhenModified)
 			                                             .ConfigureType<ClassWithDefaultString>()
 			                                             .Member(x => x.SubNode)
 			                                             .EmitWhen(x => true)

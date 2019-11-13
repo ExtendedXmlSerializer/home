@@ -50,7 +50,7 @@ namespace ExtendedXmlSerializer
 		/// deserialization events such as OnDeserializing, OnDeserialized, etc.
 		///
 		/// The default serialization monitor is applied for every type that is serialized with the serializer that the
-		/// configured container creates.  Use <see cref="ITypeConfiguration{T}.WithMonitor"/> on a type configuration to
+		/// configured container creates.  Use <see cref="WithMonitor{T}"/> on a type configuration to
 		/// apply a monitor to a specific type.
 		/// </summary>
 		/// <param name="this">The configuration container to configure.</param>
@@ -140,9 +140,26 @@ namespace ExtendedXmlSerializer
 
 		/* Emit: */
 
+		/// <summary>
+		/// Used to control and determine when content is emitted during serialization.  This is a general-purpose
+		/// configuration that works across every type encountered by the serializer. Use the <seealso cref="EmitBehaviors" />
+		/// class to utilize one of the built-in (and identified 😁) behaviors, or implement your own
+		/// <see cref="IEmitBehavior"/>.
+		/// </summary>
+		/// <param name="this">The container to configure.</param>
+		/// <param name="behavior">The behavior to apply to the container.</param>
+		/// <returns>The configured container.</returns>
 		public static IConfigurationContainer Emit(this IConfigurationContainer @this, IEmitBehavior behavior)
 			=> behavior.Get(@this);
 
+		/// <summary>
+		/// Configures a member configuration to only emit when its value meets certain criteria.
+		/// </summary>
+		/// <typeparam name="T">The containing type of the member.</typeparam>
+		/// <typeparam name="TMember">The member type.</typeparam>
+		/// <param name="this">The member to configure.</param>
+		/// <param name="specification">The specification to use to determine whether or not to emit the member, based on value.</param>
+		/// <returns>The configured member.</returns>
 		public static IMemberConfiguration<T, TMember> EmitWhen<T, TMember>(this IMemberConfiguration<T, TMember> @this,
 		                                                                    Func<TMember, bool> specification)
 		{
@@ -152,6 +169,16 @@ namespace ExtendedXmlSerializer
 			return @this;
 		}
 
+		/// <summary>
+		/// Configures a member configuration to only emit when a condition of its containing instance is met.  This is useful
+		/// for when a data value from another member in another part of the containing instance is needed to determine
+		/// whether or not to emit the (currently) configured member.
+		/// </summary>
+		/// <typeparam name="T">The containing type of the member.</typeparam>
+		/// <typeparam name="TMember">The member type.</typeparam>
+		/// <param name="this">The member to configure.</param>
+		/// <param name="specification"></param>
+		/// <returns>The configured member.</returns>
 		public static IMemberConfiguration<T, TMember> EmitWhenInstance<T, TMember>(
 			this IMemberConfiguration<T, TMember> @this,
 			Func<T, bool> specification)
@@ -161,6 +188,13 @@ namespace ExtendedXmlSerializer
 			return @this;
 		}
 
+		/// <summary>
+		/// Configures a type configuration so that instances of its type only emit when the provided condition is met.
+		/// </summary>
+		/// <typeparam name="T">The instance type.</typeparam>
+		/// <param name="this">The type configuration to configure.</param>
+		/// <param name="specification">The specification to determine the condition on when to emit.</param>
+		/// <returns>The configured type configuration.</returns>
 		public static ITypeConfiguration<T> EmitWhen<T>(this ITypeConfiguration<T> @this, Func<T, bool> specification)
 		{
 			@this.Root.With<AllowedInstancesExtension>()

@@ -23,7 +23,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void VerifyConfiguration()
 		{
 			var instance = new Subject {Message = null};
-			new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
+			new ConfigurationContainer().Emit(EmitBehaviors.WhenModified)
 			                            .Create()
 			                            .Cycle(instance)
 			                            .Message
@@ -35,7 +35,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void VerifyConfigurationWithReferences()
 		{
 			var instance = new Subject {Message = null};
-			new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
+			new ConfigurationContainer().Emit(EmitBehaviors.WhenModified)
 			                            .EnableReferences()
 			                            .Create()
 			                            .Cycle(instance)
@@ -48,7 +48,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void VerifySubjectWithDate()
 		{
 			var instance = new SubjectWithDate {Date = null};
-			new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
+			new ConfigurationContainer().Emit(EmitBehaviors.WhenModified)
 			                            .Create()
 			                            .Cycle(instance)
 			                            .Date

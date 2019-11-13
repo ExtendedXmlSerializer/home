@@ -38,7 +38,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void VerifyDefaultValue()
 		{
 			new ConfigurationContainer().EnableImplicitTyping(typeof(Subject))
-			                            .Emit(EmitBehaviors.Assigned)
+			                            .Emit(EmitBehaviors.WhenModified)
 			                            .Create()
 			                            .ForTesting()
 			                            .Assert(new Subject(),

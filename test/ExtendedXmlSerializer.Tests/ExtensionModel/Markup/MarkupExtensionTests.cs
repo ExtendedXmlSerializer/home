@@ -118,7 +118,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		public void VerifyNull()
 		{
 			new ConfigurationContainer().EnableMarkupExtensions()
-			                            .Emit(EmitBehaviors.Assigned)
+			                            .Emit(EmitBehaviors.WhenModified)
 			                            .ForTesting()
 			                            .Deserialize<DefaultAssignedSubject
 			                            >(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-DefaultAssignedSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system""  AssignedMessage=""{exs:Null}"" />")
