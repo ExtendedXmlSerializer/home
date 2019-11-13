@@ -205,13 +205,66 @@ namespace ExtendedXmlSerializer
 
 		/* Membership: */
 
-		public static IMemberConfiguration<T, TMember> Ignore<T, TMember>(this IMemberConfiguration<T, TMember> @this)
+		/// <summary>
+		/// Convenience method to iterate through all explicitly configured types and include all explicitly configured
+		/// members.  Only these members will be considered to emit content during serialization as well as reading it
+		/// during deserialization.
+		/// </summary>
+		/// <param name="this">The container to configure.</param>
+		/// <returns>The configured container.</returns>
+		public static IConfigurationContainer IncludeConfiguredMembers(this IConfigurationContainer @this)
 		{
-			@this.Root.With<AllowedMembersExtension>()
-			     .Blacklist.Add(@this.GetMember());
+			foreach (var type in @this)
+			{
+				type.IncludeConfiguredTypeMembers();
+			}
+
 			return @this;
 		}
 
+		/// <summary>
+		/// Convenience method to iterate through all explicitly configured members of a type and mark them as included.  Only
+		/// these members will be considered to emit content during serialization as well as reading it during
+		/// deserialization.
+		/// </summary>
+		/// <typeparam name="T">The type under configuration.</typeparam>
+		/// <param name="this">The type to configure.</param>
+		/// <returns>The configured type.</returns>
+		public static ITypeConfiguration<T> IncludeConfiguredMembers<T>(this ITypeConfiguration<T> @this)
+			=> IncludeConfiguredTypeMembers(@this)
+				.Return(@this);
+
+		static object IncludeConfiguredTypeMembers(this IEnumerable<IMemberConfiguration> @this)
+		{
+			foreach (var member in @this)
+			{
+				member.Include();
+			}
+
+			return default;
+		}
+
+		/// <summary>
+		/// Ignores a member so that it is not emitted during serialization, and is not read in during deserialization, even
+		/// if the content is specified in the document.  Note that this establishes a "blacklist" policy so that members that
+		/// are not ignored get processed.
+		/// </summary>
+		/// <typeparam name="T">The instance type.</typeparam>
+		/// <typeparam name="TMember">The member type.</typeparam>
+		/// <param name="this">The member to configure.</param>
+		/// <returns>The configured member.</returns>
+		public static IMemberConfiguration<T, TMember> Ignore<T, TMember>(this IMemberConfiguration<T, TMember> @this)
+			=> @this.Ignore(@this.GetMember())
+			        .Return(@this);
+
+		/// <summary>
+		/// Ignores a member so that it is not emitted during serialization, and is not read in during deserialization, even
+		/// if the content is specified in the document.  Note that this establishes a "blacklist" policy so that members that
+		/// are not ignored get processed.
+		/// </summary>
+		/// <param name="this">The container to configure.</param>
+		/// <param name="member">The member to ignore.</param>
+		/// <returns>The configured container.</returns>
 		public static IConfigurationContainer Ignore(this IConfigurationContainer @this, MemberInfo member)
 		{
 			@this.Root.With<AllowedMembersExtension>()
@@ -219,37 +272,30 @@ namespace ExtendedXmlSerializer
 			return @this;
 		}
 
+		/// <summary>
+		/// Includes a member so that it is emitted during serialization and read during deserialization.  Note that including
+		/// a member establishes a "whitelist" policy so that only members that are explicitly included are considered for processing.
+		/// </summary>
+		/// <typeparam name="T">The type that contains the member.</typeparam>
+		/// <typeparam name="TMember">The type of the member's value.</typeparam>
+		/// <param name="this">The member to configure.</param>
+		/// <returns>The configured member.</returns>
 		public static IMemberConfiguration<T, TMember> Include<T, TMember>(this IMemberConfiguration<T, TMember> @this)
-		{
-			@this.Root.With<AllowedMembersExtension>()
-			     .Whitelist.Add(@this.GetMember());
-			return @this;
-		}
+			=> @this.To<IMemberConfiguration>()
+			        .Include()
+			        .Return(@this);
 
+		/// <summary>
+		/// Includes a member so that it is emitted during serialization and read during deserialization.  Note that including
+		/// a member establishes a "whitelist" policy so that only members that are explicitly included are considered for
+		/// processing.
+		/// </summary>
+		/// <param name="this">The member to configure.</param>
+		/// <returns>The configured member.</returns>
 		public static IMemberConfiguration Include(this IMemberConfiguration @this)
 		{
 			@this.Root.With<AllowedMembersExtension>()
 			     .Whitelist.Add(@this.GetMember());
-			return @this;
-		}
-
-		public static IConfigurationContainer OnlyConfiguredProperties(this IConfigurationContainer @this)
-		{
-			foreach (var type in @this)
-			{
-				type.OnlyConfiguredProperties();
-			}
-
-			return @this;
-		}
-
-		public static ITypeConfiguration<T> OnlyConfiguredProperties<T>(this ITypeConfiguration<T> @this)
-		{
-			foreach (var member in (IEnumerable<IMemberConfiguration>)@this)
-			{
-				member.Include();
-			}
-
 			return @this;
 		}
 
@@ -333,6 +379,17 @@ namespace ExtendedXmlSerializer
 		public static IConfigurationContainer OptimizeConverters(this IConfigurationContainer @this,
 		                                                         IAlteration<IConverter> optimizations)
 			=> @this.Alter(optimizations);
+
+		[Obsolete(
+			"This method will be removed in a future release.  Use IConfigurationContainer.IncludeConfiguredMembers instead.")]
+		public static IConfigurationContainer OnlyConfiguredProperties(this IConfigurationContainer @this)
+			=> @this.IncludeConfiguredMembers();
+
+		[Obsolete(
+			"This method will be removed in a future release.  Use ITypeConfiguration<T>.IncludeConfiguredMembers instead.")]
+		public static ITypeConfiguration<T> OnlyConfiguredProperties<T>(this ITypeConfiguration<T> @this)
+			=> @this.IncludeConfiguredTypeMembers()
+			        .Return(@this);
 
 		#endregion
 	}

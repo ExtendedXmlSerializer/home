@@ -40,10 +40,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 				             ? (ISpecification<MemberInfo>)new WhitelistMemberPolicy(Whitelist.ToArray())
 				             : new BlacklistMemberPolicy(Blacklist.ToArray());
 
-			return parameter
-			       .RegisterInstance(policy.And<PropertyInfo>(_specification))
-			       .RegisterInstance(policy.And<FieldInfo>(_specification))
-			       .Register<IMetadataSpecification, MetadataSpecification>();
+			return parameter.RegisterInstance(policy.And<PropertyInfo>(_specification))
+			                .RegisterInstance(policy.And<FieldInfo>(_specification))
+			                .Register<IMetadataSpecification, MetadataSpecification>();
 		}
 
 		void ICommand<IServices>.Execute(IServices parameter) {}

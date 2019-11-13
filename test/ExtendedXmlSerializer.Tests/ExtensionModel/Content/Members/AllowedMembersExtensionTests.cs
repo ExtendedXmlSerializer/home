@@ -42,7 +42,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 			var type      = container.Type<Subject>();
 			type.Member(x => x.Property2);
 			type.Member(x => x.Property1);
-			type.OnlyConfiguredProperties();
+			type.IncludeConfiguredMembers();
 			var support  = new SerializationSupport(container);
 			var instance = new Subject {Property1 = "Hello World!", Property2 = 1000, Property3 = DateTime.Now};
 			var actual   = support.Cycle(instance);
@@ -58,7 +58,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 			var type      = container.Type<Subject>();
 			type.Member(x => x.Property2);
 			type.Member(x => x.Property3);
-			type.OnlyConfiguredProperties();
+			type.IncludeConfiguredMembers();
 			var support  = new SerializationSupport(container);
 			var instance = new Subject {Property1 = "Hello World!", Property2 = 1000, Property3 = DateTime.Now};
 			var actual   = support.Cycle(instance);

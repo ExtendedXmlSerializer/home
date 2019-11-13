@@ -49,16 +49,16 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				.Type<Person>()
 				.Member(p => p.Name)
 				.Identity()
-				.OnlyConfiguredProperties()
+				.IncludeConfiguredMembers()
 				.Create();
 
 			new ConfigurationContainer().Type<Person>()
 			                            .AddMigration(element => {})
-			                            .OnlyConfiguredProperties()
+			                            .IncludeConfiguredMembers()
 			                            .Create();
 
 			new ConfigurationContainer().Type<Person>()
-			                            .OnlyConfiguredProperties()
+			                            .IncludeConfiguredMembers()
 			                            .AddMigration(element => {})
 			                            .Create();
 
@@ -66,12 +66,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				.Type<Person>()
 				.Member(p => p.Name)
 				.Identity()
-				.OnlyConfiguredProperties()
+				.IncludeConfiguredMembers()
 				.Create();
 
 			new ConfigurationContainer()
 				.Type<Person>()
-				.OnlyConfiguredProperties()
+				.IncludeConfiguredMembers()
 				.Member(p => p.Name)
 				.Identity()
 				.Create();
