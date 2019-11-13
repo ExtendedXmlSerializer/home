@@ -253,10 +253,12 @@ namespace ExtendedXmlSerializer
 			=> @this.Root.With<DefaultReferencesExtension>().Blacklist;
 
 		/// <summary>
-		/// Allows references on a configuration container.  When the first reference is encountered, it will be emitted.
-		/// Further occurrences of the same reference will emit with a special attribute along with its unique value.  This
-		/// allows circular references to be serialized and subsequently deserialized appropriately.  Note that if
-		/// serialization occurs on an object graph that contains circular references, an exception is thrown.
+		/// Enables references on a configuration container, which will create a serializer that supports circular references.
+		/// When the first reference is encountered, it will be emitted. Further occurrences of the same reference will emit
+		/// with a special attribute along with its unique value.  This allows circular references to be serialized and
+		/// subsequently deserialized appropriately and properly.  Note that, by default, if this method is not invoked on a
+		/// configuration container, and a serializer that it creates attempts to serialize an object with circular
+		/// references, an exception is thrown.
 		/// </summary>
 		/// <param name="this">The configuration container to configure.</param>
 		/// <returns>The configured configuration container.</returns>
@@ -265,17 +267,32 @@ namespace ExtendedXmlSerializer
 
 
 		/// <summary>
-		///
+		/// Enables references on a configuration container, which will create a serializer that supports circular references.
+		/// Additionally, this call will register a particular type as allowing references, and establish the member that
+		/// evaluates with the provided expression as the identity member.  Doing so will allow the serializer to keep track
+		/// of references based on the unique values found with the identity member.
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <typeparam name="TMember"></typeparam>
-		/// <param name="this"></param>
-		/// <param name="member"></param>
-		/// <returns></returns>
+		/// <typeparam name="T">The type under configuration.</typeparam>
+		/// <typeparam name="TMember">The resulting identity member value type.</typeparam>
+		/// <param name="this">The type configuration under configuration.</param>
+		/// <param name="member">The member expression that is intended to resolve as the identity member for the type
+		/// configuration.</param>
+		/// <returns>The configured type configuration.</returns>
 		public static ITypeConfiguration<T> EnableReferences<T, TMember>(this ITypeConfiguration<T> @this,
 		                                                                 Expression<Func<T, TMember>> member)
 			=> @this.Member(member).Identity().Return(@this);
 
+		/// <summary>
+		/// This is an alternative version of enabling references on a configuration container and the subsequent serializers
+		/// that it creates.  It works much like
+		/// <see cref="EnableReferences(IConfigurationContainer)"/>, except that it will
+		/// defer emitting the identity references until the last one is encountered.  By contrast,
+		/// <see cref="EnableReferences(IConfigurationContainer)"/> emits the identity
+		/// references when it first encounters them, and then a reference back to the identity reference with each subsequent
+		/// encounter.
+		/// </summary>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <returns>The configured configuration container.</returns>
 		public static IConfigurationContainer EnableDeferredReferences(this IConfigurationContainer @this)
 			=> @this.Root.Extend(ReaderContextExtension.Default, DeferredReferencesExtension.Default).Return(@this);
 
