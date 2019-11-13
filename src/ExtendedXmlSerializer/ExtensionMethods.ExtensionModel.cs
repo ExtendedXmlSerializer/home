@@ -80,8 +80,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The root context (usually an <see cref="IConfigurationContainer"/>) to configure.</param>
 		/// <returns>The configured root context (usually an <see cref="IConfigurationContainer"/>).</returns>
 		public static T EnableRootInstances<T>(this T @this) where T : IRootContext
-			=> @this.Root.With<RootInstanceExtension>()
-			        .Return(@this);
+			=> @this.Root.With<RootInstanceExtension>().Return(@this);
 
 		/// <summary>
 		/// This is considered internal framework functionality and is not intended to be used from your code.  However. 😁 This enables the use of expressions within deserialized properties (attached properties or markup extensions), so that they may be evaluated to a runtime value.

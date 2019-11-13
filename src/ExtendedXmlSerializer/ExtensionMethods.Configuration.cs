@@ -25,7 +25,7 @@ namespace ExtendedXmlSerializer
 
 		public static IRootContext Apply<T>(this IRootContext @this, Func<T> create)
 			where T : class, ISerializerExtension
-			=> @this.Contains<T>() ? @this : @this.Apply(create).Return(@this);
+			=> @this.Contains<T>() ? @this : @this.Add(create).Return(@this);
 
 		public static T Add<T>(this IRootContext @this) where T : ISerializerExtension
 			=> @this.Add(Support<T>.NewOrSingleton);
@@ -223,33 +223,70 @@ namespace ExtendedXmlSerializer
 		/// <returns>The configured member configuration.</returns>
 		public static IMemberConfiguration<T, TMember> Identity<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 			=> @this.Attribute()
-			        .Root.EnableReferences()
+			        .Root.EnableRootReferences()
 			        .With<ReferencesExtension>()
 			        .Apply(@this.Parent.AsValid<ITypeConfigurationContext>().Get(), @this.GetMember())
 			        .Return(@this);
 
 		/* Extension Model */
 
+		/// <summary>
+		/// Retrieves the current "whitelist" of allowed types on a configuration container.  If specified and populated,
+		/// these are the only types that can have
+		/// <see cref="EnableReferences(IConfigurationContainer)"/> called on them.  Note
+		/// that if both whitelist and blacklists are populated, the whitelist takes precedence.
+		/// </summary>
+		/// <param name="this">The configuration container to query.</param>
+		/// <returns>The current allowed types that can be reference-enabled.</returns>
 		public static ICollection<TypeInfo> AllowedReferenceTypes(this IConfigurationContainer @this)
 			=> @this.Root.With<DefaultReferencesExtension>().Whitelist;
 
+		/// <summary>
+		/// Retrieves the current "blacklist" of ignored types on a configuration container.  By default this is the see
+		/// cref="String"/> type. If specified and populated, these are the only types that cannot have
+		/// <see cref="EnableReferences(IConfigurationContainer)"/> called on them.  Note that if both whitelist and
+		/// blacklists are populated, the whitelist takes precedence.
+		/// </summary>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <returns>A collection of types that cannot be reference-enabled.</returns>
 		public static ICollection<TypeInfo> IgnoredReferenceTypes(this IConfigurationContainer @this)
 			=> @this.Root.With<DefaultReferencesExtension>().Blacklist;
 
+		/// <summary>
+		/// Allows references on a configuration container.  When the first reference is encountered, it will be emitted.
+		/// Further occurrences of the same reference will emit with a special attribute along with its unique value.  This
+		/// allows circular references to be serialized and subsequently deserialized appropriately.  Note that if
+		/// serialization occurs on an object graph that contains circular references, an exception is thrown.
+		/// </summary>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <returns>The configured configuration container.</returns>
 		public static IConfigurationContainer EnableReferences(this IConfigurationContainer @this)
-			=> @this.Root.EnableReferences().Return(@this);
+			=> @this.Root.EnableRootReferences().Return(@this);
 
-		public static IRootContext EnableReferences(this IRootContext @this)
-			=> @this.EnableRootInstances().With<ReferencesExtension>().Return(@this);
 
-		public static IConfigurationContainer EnableDeferredReferences(this IConfigurationContainer @this)
-			=> @this.Root.Extend(ReaderContextExtension.Default, DeferredReferencesExtension.Default).Return(@this);
-
+		/// <summary>
+		///
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <typeparam name="TMember"></typeparam>
+		/// <param name="this"></param>
+		/// <param name="member"></param>
+		/// <returns></returns>
 		public static ITypeConfiguration<T> EnableReferences<T, TMember>(this ITypeConfiguration<T> @this,
 		                                                                 Expression<Func<T, TMember>> member)
 			=> @this.Member(member).Identity().Return(@this);
 
+		public static IConfigurationContainer EnableDeferredReferences(this IConfigurationContainer @this)
+			=> @this.Root.Extend(ReaderContextExtension.Default, DeferredReferencesExtension.Default).Return(@this);
+
+		static IRootContext EnableRootReferences(this IRootContext @this)
+			=> @this.EnableRootInstances().With<ReferencesExtension>().Return(@this);
+
 		#region Obsolete
+
+		[Obsolete("This is considered deprecated and will be removed in a future release.")]
+		public static IRootContext EnableReferences(this IRootContext @this)
+			=> @this.EnableRootInstances().With<ReferencesExtension>().Return(@this);
 
 		[Obsolete(
 			"This method is deprecated and will be removed in a future release.  Use IContext.GetTypeConfiguration(Type) instead.")]
