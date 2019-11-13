@@ -46,7 +46,7 @@ namespace ExtendedXmlSerializer.Core
 
 		public static ITypedSortOrder Sort<T>(this ITypedSortOrder @this, int sort)
 		{
-			@this.Assign(Support<T>.Key, sort);
+			@this.Assign(Support<T>.Metadata, sort);
 			return @this;
 		}
 
@@ -75,7 +75,7 @@ namespace ExtendedXmlSerializer.Core
 		}
 
 		public static MemberInfo GetMemberInfo<T, TMember>(this Expression<Func<T, TMember>> expression)
-			=> Support<T>.Key.GetMember(expression.Member()
+			=> Support<T>.Metadata.GetMember(expression.Member()
 			                                      .Name)
 			             .Single();
 

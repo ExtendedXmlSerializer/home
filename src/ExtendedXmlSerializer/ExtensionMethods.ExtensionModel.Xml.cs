@@ -63,11 +63,11 @@ namespace ExtendedXmlSerializer
 			                                           .Register(typeof(TSerializer));
 
 		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, Type serializerType)
-			=> @this.Register(new ActivatedSerializer(serializerType, Support<T>.Key));
+			=> @this.Register(new ActivatedSerializer(serializerType, Support<T>.Metadata));
 
 		public static ITypeConfiguration<T> UseClassicSerialization<T>(this ITypeConfiguration<T> @this)
 			where T : ISerializable
-			=> @this.Register(Support<ClassicSerializationAdapter<T>>.Key);
+			=> @this.Register(Support<ClassicSerializationAdapter<T>>.Metadata);
 
 		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, Func<T, T> write)
 			=> Alter(@this, Self<T>.Default.Get, write);
@@ -80,7 +80,7 @@ namespace ExtendedXmlSerializer
 		                                             IAlteration<T> write)
 		{
 			@this.Root.With<AlteredContentExtension>()
-			     .Types.Assign(Support<T>.Key, new ContentAlteration(read.Adapt(), write.Adapt()));
+			     .Types.Assign(Support<T>.Metadata, new ContentAlteration(read.Adapt(), write.Adapt()));
 			return @this;
 		}
 
@@ -128,7 +128,7 @@ namespace ExtendedXmlSerializer
 
 		public static ITypeConfiguration<T> CustomSerializer<T>(this IConfigurationContainer @this, Type serializerType)
 			=> @this.Type<T>()
-			        .CustomSerializer(new ActivatedXmlSerializer(serializerType, Support<T>.Key));
+			        .CustomSerializer(new ActivatedXmlSerializer(serializerType, Support<T>.Metadata));
 
 		public static ITypeConfiguration<T> CustomSerializer<T>(this ITypeConfiguration<T> @this,
 		                                                        Action<System.Xml.XmlWriter, T> serializer,
@@ -149,7 +149,7 @@ namespace ExtendedXmlSerializer
 
 		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this,
 		                                                                    Type serializerType)
-			=> @this.Register(new ActivatedSerializer(serializerType, Support<TMember>.Key));
+			=> @this.Register(new ActivatedSerializer(serializerType, Support<TMember>.Metadata));
 
 		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this,
 		                                                                    ISerializer<TMember> serializer) =>

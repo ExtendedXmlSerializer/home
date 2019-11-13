@@ -11,7 +11,7 @@ namespace ExtendedXmlSerializer.ContentModel
 	static class Extensions
 	{
 		public static IReader<T> CreateContents<T>(this IInnerContentServices @this, IInnerContentHandler parameter)
-			=> new ReaderAdapter<T>(@this.Create(Support<T>.Key, parameter));
+			=> new ReaderAdapter<T>(@this.Create(Support<T>.Metadata, parameter));
 
 		public static TypeInfo GetClassification(this IClassification @this, IFormatReader parameter,
 		                                         TypeInfo defaultValue = null)

@@ -19,7 +19,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		public IServiceRepository Get(IServiceRepository parameter)
 		{
-			var key = Support<TSpecification>.Key;
+			var key = Support<TSpecification>.Metadata;
 			var repository = key.IsClass &&
 			                 !parameter.AvailableServices.Contains(key)
 				                 ? parameter.RegisterWithDependencies<TSpecification>()
