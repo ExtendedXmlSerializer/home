@@ -30,8 +30,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The configuration container to configure.</param>
 		/// <returns>The configured configuration container.</returns>
 		public static IConfigurationContainer AllowTargetInstances(this IConfigurationContainer @this)
-			=> @this.Root.With<ExistingInstanceExtension>()
-			        .Return(@this);
+			=> @this.Root.With<ExistingInstanceExtension>().Return(@this);
 
 		// ReSharper disable once InvalidXmlDocComment
 		/// <summary>

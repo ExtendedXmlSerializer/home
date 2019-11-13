@@ -77,11 +77,9 @@ namespace ExtendedXmlSerializer
 		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264" />
 		public static ITypeConfiguration<T> WithMonitor<T>(this ITypeConfiguration<T> @this,
 		                                                   ISerializationMonitor<T> monitor)
-		{
-			@this.Root.With<SerializationMonitorExtension>()
-			     .Assign(Support<T>.Key, new SerializationMonitor<T>(monitor));
-			return @this;
-		}
+			=> @this.Root.With<SerializationMonitorExtension>()
+			        .Apply(Support<T>.Key, new SerializationMonitor<T>(monitor))
+			        .Return(@this);
 
 		/// <summary>
 		/// Allows content to be read as parameters for a constructor call to activate an object, rather than the more
@@ -196,12 +194,10 @@ namespace ExtendedXmlSerializer
 		/// <param name="specification">The specification to determine the condition on when to emit.</param>
 		/// <returns>The configured type configuration.</returns>
 		public static ITypeConfiguration<T> EmitWhen<T>(this ITypeConfiguration<T> @this, Func<T, bool> specification)
-		{
-			@this.Root.With<AllowedInstancesExtension>()
-			     .Assign(@this.Get(),
-			             new AllowedValueSpecification(new DelegatedSpecification<T>(specification).AdaptForNull()));
-			return @this;
-		}
+			=> @this.Root.With<AllowedInstancesExtension>()
+			        .Apply(@this.Get(),
+			               new AllowedValueSpecification(new DelegatedSpecification<T>(specification).AdaptForNull()))
+			        .Return(@this);
 
 		/* Membership: */
 
@@ -231,8 +227,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The type to configure.</param>
 		/// <returns>The configured type.</returns>
 		public static ITypeConfiguration<T> IncludeConfiguredMembers<T>(this ITypeConfiguration<T> @this)
-			=> IncludeConfiguredTypeMembers(@this)
-				.Return(@this);
+			=> @this.IncludeConfiguredTypeMembers().Return(@this);
 
 		static object IncludeConfiguredTypeMembers(this IEnumerable<IMemberConfiguration> @this)
 		{
@@ -266,11 +261,9 @@ namespace ExtendedXmlSerializer
 		/// <param name="member">The member to ignore.</param>
 		/// <returns>The configured container.</returns>
 		public static IConfigurationContainer Ignore(this IConfigurationContainer @this, MemberInfo member)
-		{
-			@this.Root.With<AllowedMembersExtension>()
-			     .Blacklist.Add(member);
-			return @this;
-		}
+			=> @this.Root.With<AllowedMembersExtension>()
+			        .Blacklist.Apply(member)
+			        .Return(@this);
 
 		/// <summary>
 		/// Includes a member so that it is emitted during serialization and read during deserialization.  Note that including
@@ -293,11 +286,9 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The member to configure.</param>
 		/// <returns>The configured member.</returns>
 		public static IMemberConfiguration Include(this IMemberConfiguration @this)
-		{
-			@this.Root.With<AllowedMembersExtension>()
-			     .Whitelist.Add(@this.GetMember());
-			return @this;
-		}
+			=> @this.Root.With<AllowedMembersExtension>()
+			        .Whitelist.Apply(@this.GetMember())
+			        .Return(@this);
 
 		/* Content registration: */
 
@@ -340,11 +331,9 @@ namespace ExtendedXmlSerializer
 		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264#issuecomment-531491807"/>
 		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
 		                                                                  ISerializerComposer composer)
-		{
-			@this.Root.With<RegisteredCompositionExtension>()
-			     .Assign(Support<T>.Key, composer);
-			return @this;
-		}
+			=> @this.Root.With<RegisteredCompositionExtension>()
+			        .Apply(Support<T>.Key, composer)
+			        .Return(@this);
 
 		/// <summary>
 		/// Provides a way to alter converters when they are accessed by the serializer.  This provides a mechanism to
@@ -355,11 +344,9 @@ namespace ExtendedXmlSerializer
 		/// <returns>The configured container.</returns>
 		public static IConfigurationContainer Alter(this IConfigurationContainer @this,
 		                                            IAlteration<IConverter> alteration)
-		{
-			@this.Root.With<ConverterAlterationsExtension>()
-			     .Alterations.Add(alteration);
-			return @this;
-		}
+			=> @this.Root.With<ConverterAlterationsExtension>()
+			        .Alterations.Apply(alteration)
+			        .Return(@this);
 
 		/// <summary>
 		/// Registers a converter for the provided type.  This defines how to deconstruct a type into a string for

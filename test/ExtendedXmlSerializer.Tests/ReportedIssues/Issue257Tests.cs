@@ -13,7 +13,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void Verify()
 		{
 			var subject = new ConfigurationContainer().EnableMemberExceptionHandling()
-			                                          .ConfigureType<Subject>()
+			                                          .Type<Subject>()
 			                                          .Member(re => re.Version)
 			                                          .Attribute()
 			                                          .Create()

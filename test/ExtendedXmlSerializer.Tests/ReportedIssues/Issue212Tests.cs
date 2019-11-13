@@ -28,7 +28,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void Verify()
 		{
 			var container = new ConfigurationContainer().EnableReaderContext()
-			                                            .ConfigureType<Owner>()
+			                                            .Type<Owner>()
 			                                            .Member(x => x.Element)
 			                                            .Register(typeof(Serializer))
 			                                            .Create();

@@ -82,17 +82,16 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 								  </Children>
 								</Root>";
 
-			new ConfigurationContainer()
-				.ConfigureType<SomeClass>()
-				.EnableReferences(s => s.Id)
-				.AddMigration(new SomeClassMigrations())
-				.Create()
-				.Deserialize<Root>(initialXml)
-				.Children
-				.Select(x => x.Blubb.RenamedProperty)
-				.Take(4)
-				.Should()
-				.Equal("String2", "String1", "String2", "String1");
+			new ConfigurationContainer().Type<SomeClass>()
+			                            .EnableReferences(s => s.Id)
+			                            .AddMigration(new SomeClassMigrations())
+			                            .Create()
+			                            .Deserialize<Root>(initialXml)
+			                            .Children
+			                            .Select(x => x.Blubb.RenamedProperty)
+			                            .Take(4)
+			                            .Should()
+			                            .Equal("String2", "String1", "String2", "String1");
 		}
 	}
 
