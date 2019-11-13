@@ -16,41 +16,91 @@ namespace ExtendedXmlSerializer
 	// ReSharper disable once MismatchedFileName
 	public static partial class ExtensionMethods
 	{
-		/* Extension Management 9 */
+		/* Extension Management */
 
+		/// <summary>
+		/// The main event.  Used to create a new serializer from the configured context (usually a <see cref="IConfigurationContainer"/>).
+		/// </summary>
+		/// <param name="this">The configured context that creates the serializer.</param>
+		/// <returns>The configured serializer.</returns>
 		public static IExtendedXmlSerializer Create(this IContext @this) => @this.Root.Create();
 
+		/// <summary>
+		/// Used to apply a new serializer extension of the provided type.  If an extension already exists in the provided
+		/// context, it is returned.  Otherwise, it will attempt to locate a singleton on the provided type, and if that isn't
+		/// found, activate it by calling its public constructor.
+		/// </summary>
+		/// <typeparam name="T">The serializer extension type to apply.</typeparam>
+		/// <param name="this">The configuration context (usually a configuration container) to locate the provided serializer extension type.</param>
+		/// <returns>The configured context with the requested extension applied to it.</returns>
 		public static IRootContext Apply<T>(this IRootContext @this) where T : class, ISerializerExtension
 			=> @this.Apply(Support<T>.NewOrSingleton);
 
+		/// <summary>
+		/// Used to apply a new serializer extension of the provided type.  If an extension already exists in the provided
+		/// context, it is returned.  Otherwise, it will use the provided factory to create the serializer and register it with the provided context.
+		/// </summary>
+		/// <typeparam name="T">The serializer extension type to apply.</typeparam>
+		/// <param name="this">The configuration context (usually a configuration container) to locate the provided serializer extension type.</param>
+		/// <param name="create">The factory used to create the extension of the requested type, if an instance of its type does not already exist.</param>
+		/// <returns>The configured context with the requested extension applied to it.</returns>
 		public static IRootContext Apply<T>(this IRootContext @this, Func<T> create)
 			where T : class, ISerializerExtension
 			=> @this.Contains<T>() ? @this : @this.Add(create).Return(@this);
 
+		/// <summary>
+		/// Adds an extension of the provided type to the provided context.  This will be done by attempting to locate a
+		/// singleton on the provided type, and if that isn't found, activate it by calling its public constructor.
+		/// </summary>
+		/// <typeparam name="T">The serializer extension type to locate and add.</typeparam>
+		/// <param name="this">The configuration context (usually a configuration container) with which to add the created serializer extension.</param>
+		/// <returns>The created and added extension.</returns>
 		public static T Add<T>(this IRootContext @this) where T : ISerializerExtension
 			=> @this.Add(Support<T>.NewOrSingleton);
 
+		/// <summary>
+		/// Adds an extension to the provided context by invoking the provided factory method and adding it to the context.
+		/// </summary>
+		/// <typeparam name="T">The serializer extension type to create and add.</typeparam>
+		/// <param name="this">The configuration context (usually a configuration container) with which to add the created serializer extension.</param>
+		/// <param name="create">The factory used to create the extension of the requested type.</param>
+		/// <returns>The created and added extension.</returns>
 		public static T Add<T>(this IRootContext @this, Func<T> create) where T : ISerializerExtension
 			=> @this.Apply(create()).AsValid<T>();
 
+		/// <summary>
+		/// Finds or creates/add the requested serializer extension type.  If an extension of the requested type already exists, it is returned.  Otherwise, a new one is created by searching first for a singleton on the requested type, and creating a new instance by way of public constructor if not.
+		/// </summary>
+		/// <typeparam name="T">The requested serializer extension type.</typeparam>
+		/// <param name="this">The root context to search for a serializer extension of provided type.</param>
+		/// <returns>The located or created serializer extension.</returns>
 		public static T With<T>(this IRootContext @this) where T : class, ISerializerExtension
 			=> @this.Find<T>() ?? @this.Add<T>();
 
+		/// <summary>
+		/// Finds or creates/add the requested serializer extension type, and then configures it with the provided action once it does.
+		/// </summary>
+		/// <typeparam name="T">The requested serializer extension type.</typeparam>
+		/// <param name="this">The root context to search for a serializer extension of provided type.</param>
+		/// <param name="configure">The configuration action to invoke once the serializer extension has been located.</param>
+		/// <returns>The configured context (usually a configuration container).</returns>
 		public static IRootContext With<T>(this IRootContext @this, Action<T> configure)
 			where T : class, ISerializerExtension
 			=> configure.Apply(@this.With<T>()).Return(@this);
 
+		/// <summary>
+		/// Used to extend a root context (usually a configuration container).  This passes in a collection of extensions to add to the context's collection of serializer extensions.
+		/// </summary>
+		/// <param name="this">The root context that contains the target collection of serializer extensions.</param>
+		/// <param name="extensions">The array of extensions to add.</param>
+		/// <returns>The configured context (usually a configuration container).</returns>
 		public static IRootContext Extend(this IRootContext @this, params ISerializerExtension[] extensions)
 		{
-			var items = With(@this, extensions).ToList();
+			var items = @this.TypeZip(extensions).ToList();
 			@this.Clear();
 			items.ForEach(@this.Add);
 			return @this;
 		}
-
-		public static ISerializerExtension[] With(this IEnumerable<ISerializerExtension> @this,
-		                                          params ISerializerExtension[] extensions)
-			=> @this.TypeZip(extensions).ToArray();
 
 		/* Container */
 
@@ -300,6 +350,11 @@ namespace ExtendedXmlSerializer
 			=> @this.EnableRootInstances().With<ReferencesExtension>().Return(@this);
 
 		#region Obsolete
+
+		[Obsolete("This is considered deprecated and will be removed in a future release.  Use IRootContext.Extend instead.")]
+		public static ISerializerExtension[] With(this IEnumerable<ISerializerExtension> @this,
+		                                          params ISerializerExtension[] extensions)
+			=> @this.TypeZip(extensions).ToArray();
 
 		[Obsolete("This is considered deprecated and will be removed in a future release.")]
 		public static IRootContext EnableReferences(this IRootContext @this)
