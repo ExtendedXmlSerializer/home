@@ -72,9 +72,6 @@ namespace ExtendedXmlSerializer
 			=> Support<T>.NewOrSingleton()
 			             .Get(@this);
 
-		[Obsolete("This will be removed in a future release.  Use IConfigurationContainer.Type<T> instead.")]
-		public static ITypeConfiguration<T> ConfigureType<T>(this IConfigurationContainer @this) => @this.Type<T>();
-
 		public static ITypeConfiguration<T> Type<T>(this IConfigurationContainer @this)
 			=> @this.Root.Types.Get(Support<T>.Key)
 			        .AsValid<TypeConfiguration<T>>();
@@ -117,13 +114,6 @@ namespace ExtendedXmlSerializer
 		public static ITypeConfiguration<T> Name<T>(this ITypeConfiguration<T> @this, string name)
 		{
 			((IInternalTypeConfiguration)@this).Name(name);
-			return @this;
-		}
-
-		[Obsolete("This method has been replaced by MemberBy.")]
-		public static ITypeConfiguration<T> Member<T>(this ITypeConfiguration<T> @this, MemberInfo member)
-		{
-			((IInternalTypeConfiguration)@this).Member(member);
 			return @this;
 		}
 
@@ -199,5 +189,19 @@ namespace ExtendedXmlSerializer
 		public static ICollection<TypeInfo> IgnoredReferenceTypes(this IConfigurationContainer @this)
 			=> @this.Root.With<DefaultReferencesExtension>()
 			        .Blacklist;
+
+		#region Obsolete
+
+		[Obsolete("This will be removed in a future release.  Use IConfigurationContainer.Type<T> instead.")]
+		public static ITypeConfiguration<T> ConfigureType<T>(this IConfigurationContainer @this) => @this.Type<T>();
+
+		[Obsolete("This method has been replaced by MemberBy.")]
+		public static ITypeConfiguration<T> Member<T>(this ITypeConfiguration<T> @this, MemberInfo member)
+		{
+			((IInternalTypeConfiguration)@this).Member(member);
+			return @this;
+		}
+
+		#endregion
 	}
 }
