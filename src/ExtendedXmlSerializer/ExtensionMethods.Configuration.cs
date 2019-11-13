@@ -53,8 +53,7 @@ namespace ExtendedXmlSerializer
 		public static T With<T>(this IRootContext @this) where T : class, ISerializerExtension
 			=> @this.Find<T>() ?? @this.Add<T>();
 
-		public static IRootContext Extend(this IRootContext @this,
-		                                  params ISerializerExtension[] extensions)
+		public static IRootContext Extend(this IRootContext @this, params ISerializerExtension[] extensions)
 		{
 			var items = With(@this, extensions)
 				.ToList();
@@ -68,13 +67,12 @@ namespace ExtendedXmlSerializer
 			=> @this.TypeZip(extensions)
 			        .ToArray();
 
-		/*public static ITypeConfiguration Type(this IConfiguration @this, TypeInfo type) => @this.Get(type);*/
-
 		public static IConfigurationContainer Configured<T>(this IConfigurationContainer @this)
 			where T : class, IConfigurationProfile
 			=> Support<T>.NewOrSingleton()
 			             .Get(@this);
 
+		[Obsolete("This will be removed in a future release.  Use IConfigurationContainer.Type<T> instead.")]
 		public static ITypeConfiguration<T> ConfigureType<T>(this IConfigurationContainer @this) => @this.Type<T>();
 
 		public static ITypeConfiguration<T> Type<T>(this IConfigurationContainer @this)
