@@ -1,18 +1,18 @@
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ReflectionModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	public sealed class DefaultReferencesExtension : ISerializerExtension
+	sealed class DefaultReferencesExtension : ISerializerExtension
 	{
-		public DefaultReferencesExtension() :
-			this(new HashSet<TypeInfo> {Support<string>.Metadata}, new HashSet<TypeInfo>()) {}
+		public DefaultReferencesExtension() : this(new HashSet<TypeInfo> {Support<string>.Metadata}) {}
 
-		public DefaultReferencesExtension(ICollection<TypeInfo> blacklist,
-		                                  ICollection<TypeInfo> whitelist)
+		public DefaultReferencesExtension(ICollection<TypeInfo> blacklist) : this(blacklist, new HashSet<TypeInfo>()) {}
+
+		public DefaultReferencesExtension(ICollection<TypeInfo> blacklist, ICollection<TypeInfo> whitelist)
 		{
 			Blacklist = blacklist;
 			Whitelist = whitelist;
