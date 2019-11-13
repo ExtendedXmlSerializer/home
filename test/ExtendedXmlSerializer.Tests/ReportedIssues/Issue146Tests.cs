@@ -13,7 +13,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		public void Verify()
 		{
 			var serializer = new ConfigurationContainer().EnableParameterizedContent()
-			                                             .ConfigureType<Plane>()
+			                                             .Type<Plane>()
 			                                             .Member(x => x.Rows)
 			                                             .Ignore()
 			                                             .Member(x => x.Length)
@@ -33,11 +33,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			var master = new Master(1);
 			var serializer = new ConfigurationContainer().EnableParameterizedContent()
-			                                             .ConfigureType<Master>()
+			                                             .Type<Master>()
 			                                             //.Member(x => x.sub).Include()
 			                                             .Member(x => x.A)
 			                                             .Ignore()
-			                                             .ConfigureType<SubItem>()
+			                                             .Type<SubItem>()
 			                                             .Member(x => x.X)
 			                                             .Attribute()
 			                                             .Create()

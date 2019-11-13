@@ -27,7 +27,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		public void ConditionalEmit()
 		{
-			var serializer = new ConfigurationContainer().ConfigureType<Container>()
+			var serializer = new ConfigurationContainer().Type<Container>()
 			                                             .Member(x => x.Dummy)
 			                                             .EmitWhen(x => x.Id != 0)
 			                                             .Create();

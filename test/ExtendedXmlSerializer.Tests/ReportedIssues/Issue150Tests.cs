@@ -14,7 +14,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		public void Verify()
 		{
-			var serializer = new ConfigurationContainer().ConfigureType<Subject>()
+			var serializer = new ConfigurationContainer().Type<Subject>()
 			                                             .Member(x => x.Message)
 			                                             .Register(Serializer.Default)
 			                                             .Create()
@@ -32,7 +32,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		public void VerifyActivated()
 		{
-			var serializer = new ConfigurationContainer().ConfigureType<Subject>()
+			var serializer = new ConfigurationContainer().Type<Subject>()
 			                                             .Member(x => x.Message)
 			                                             .Register(typeof(Serializer))
 			                                             .Create()
@@ -50,7 +50,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		public void VerifyActivatedDependency()
 		{
-			var serializer = new ConfigurationContainer().ConfigureType<Subject>()
+			var serializer = new ConfigurationContainer().Type<Subject>()
 			                                             .Member(x => x.Message)
 			                                             .Register(typeof(ActivatedSerializer))
 			                                             .Create()
@@ -68,7 +68,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		public void VerifyVerbatim()
 		{
-			var serializer = new ConfigurationContainer().ConfigureType<Subject>()
+			var serializer = new ConfigurationContainer().Type<Subject>()
 			                                             .Member(x => x.Message)
 			                                             .Verbatim()
 			                                             .Create()
@@ -86,7 +86,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		public void VerifyVerbatimRaw()
 		{
-			var serializer = new ConfigurationContainer().ConfigureType<Subject>()
+			var serializer = new ConfigurationContainer().Type<Subject>()
 			                                             .Member(x => x.Message)
 			                                             .Verbatim()
 			                                             .Create()
@@ -104,7 +104,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		public void VerifyVerbatimAttribute()
 		{
-			var serializer = new ConfigurationContainer().ConfigureType<SubjectWithAttribute>()
+			var serializer = new ConfigurationContainer().Type<SubjectWithAttribute>()
 			                                             .Create()
 			                                             .ForTesting();
 

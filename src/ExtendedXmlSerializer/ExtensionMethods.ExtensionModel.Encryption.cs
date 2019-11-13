@@ -16,11 +16,9 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The member to configure.</param>
 		/// <returns>The configured MemberConfiguration.</returns>
 		public static IMemberConfiguration<T, TMember> Encrypt<T, TMember>(this IMemberConfiguration<T, TMember> @this)
-		{
-			@this.Root.With<EncryptionExtension>()
-			     .Registered.Add(@this.GetMember());
-			return @this;
-		}
+			=> @this.Root.With<EncryptionExtension>()
+			        .Registered.Apply(@this.GetMember())
+			        .Return(@this);
 
 		/// <summary>
 		/// Configures a container for default encryption, which is base-64.  Every registered converter will be wrapped with a converter which will further encrypt its reading and writing.

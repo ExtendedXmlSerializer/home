@@ -51,7 +51,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		public void ShouldPreserveNullObjectValueIfEmitWhenReturnsTrue()
 		{
 			var serializer = new ConfigurationContainer().Emit(EmitBehaviors.WhenModified)
-			                                             .ConfigureType<ClassWithDefaultString>()
+			                                             .Type<ClassWithDefaultString>()
 			                                             .Member(x => x.SubNode)
 			                                             .EmitWhen(x => true)
 			                                             .Create();

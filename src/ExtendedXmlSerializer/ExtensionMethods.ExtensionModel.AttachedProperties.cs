@@ -44,8 +44,7 @@ namespace ExtendedXmlSerializer
 			this IConfigurationContainer @this,
 			Expression<Func<Property<TType, TValue>>> property)
 		{
-			var instance = property.Compile()
-			                       .Invoke();
+			var instance = property.Compile()();
 			@this.Root.With<AttachedPropertiesExtension>()
 			     .Registrations.Instances.Add(instance);
 			var subject = property.GetMemberInfo()
