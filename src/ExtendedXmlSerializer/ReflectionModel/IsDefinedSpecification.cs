@@ -6,7 +6,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 {
 	sealed class IsDefinedSpecification<T> : ISpecification<MemberInfo>
 	{
-		readonly static Type Type = Support<T>.Key.AsType();
+		readonly static Type Type = Support<T>.Metadata.AsType();
 
 		public static IsDefinedSpecification<T> Default { get; } = new IsDefinedSpecification<T>();
 

@@ -78,7 +78,7 @@ namespace ExtendedXmlSerializer
 		public static ITypeConfiguration<T> WithMonitor<T>(this ITypeConfiguration<T> @this,
 		                                                   ISerializationMonitor<T> monitor)
 			=> @this.Root.With<SerializationMonitorExtension>()
-			        .Apply(Support<T>.Key, new SerializationMonitor<T>(monitor))
+			        .Apply(Support<T>.Metadata, new SerializationMonitor<T>(monitor))
 			        .Return(@this);
 
 		/// <summary>
@@ -332,7 +332,7 @@ namespace ExtendedXmlSerializer
 		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
 		                                                                  ISerializerComposer composer)
 			=> @this.Root.With<RegisteredCompositionExtension>()
-			        .Apply(Support<T>.Key, composer)
+			        .Apply(Support<T>.Metadata, composer)
 			        .Return(@this);
 
 		/// <summary>

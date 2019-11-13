@@ -9,7 +9,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 	public sealed class DefaultReferencesExtension : ISerializerExtension
 	{
 		public DefaultReferencesExtension() :
-			this(new HashSet<TypeInfo> {Support<string>.Key}, new HashSet<TypeInfo>()) {}
+			this(new HashSet<TypeInfo> {Support<string>.Metadata}, new HashSet<TypeInfo>()) {}
 
 		public DefaultReferencesExtension(ICollection<TypeInfo> blacklist,
 		                                  ICollection<TypeInfo> whitelist)

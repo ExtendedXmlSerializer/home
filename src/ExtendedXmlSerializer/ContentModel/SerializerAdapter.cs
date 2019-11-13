@@ -27,7 +27,7 @@ namespace ExtendedXmlSerializer.ContentModel
 
 	class SerializerAdapter<T> : SerializerMarker, ISerializer<T>, IGenericAware
 	{
-		readonly static TypeInfo TypeInfo = Support<T>.Key;
+		readonly static TypeInfo TypeInfo = Support<T>.Metadata;
 
 		readonly IReader<T> _reader;
 		readonly IWriter<T> _writer;

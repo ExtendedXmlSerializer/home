@@ -11,7 +11,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 	public class Property<TType, TValue> : IProperty
 	{
 		readonly static ISpecification<TypeInfo> Accepts  = IsAssignableSpecification<TType>.Default;
-		readonly static TypeInfo                 TypeInfo = Support<TValue>.Key;
+		readonly static TypeInfo                 TypeInfo = Support<TValue>.Metadata;
 
 		readonly ISpecification<TypeInfo>    _specification;
 		readonly ITableSource<TType, TValue> _store;

@@ -9,7 +9,7 @@ namespace ExtendedXmlSerializer.Configuration
 	{
 		public ExtensionCollection(params ISerializerExtension[] extensions) : base(extensions) {}
 
-		public bool Contains<T>() where T : ISerializerExtension => Contains(Support<T>.Key.AsType());
+		public bool Contains<T>() where T : ISerializerExtension => Contains(Support<T>.Metadata.AsType());
 
 		public T Find<T>() where T : ISerializerExtension => this.OfType<T>()
 		                                                         .FirstOrDefault();
