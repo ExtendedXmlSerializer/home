@@ -1,5 +1,4 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Members;
@@ -289,113 +288,6 @@ namespace ExtendedXmlSerializer
 			=> @this.Root.With<AllowedMembersExtension>()
 			        .Whitelist.Apply(@this.GetMember())
 			        .Return(@this);
-
-		/* Content registration: */
-
-		/// <summary>
-		/// Used to alter a serializer whenever one is created for a specific type.  This allows the scenario of decorating
-		/// a serializer to override or monitor serialization and/or deserialization.
-		/// </summary>
-		/// <typeparam name="T">The type that the serializer processes.</typeparam>
-		/// <param name="this">The type configuration to configure.</param>
-		/// <param name="compose">The delegate used to alterate the created serializer.</param>
-		/// <returns>The configured type configuration.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264#issuecomment-531491807"/>
-		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
-		                                                                  Func<ISerializer<T>, ISerializer<T>> compose)
-			=> @this.RegisterContentComposition(new SerializerComposer<T>(compose).Get);
-
-		/// <summary>
-		/// Used to alter a serializer whenever one is created for a specific type.  This allows the scenario of decorating
-		/// a serializer to override or monitor serialization and/or deserialization.  This override accepts a generalized
-		/// serializer delegate.
-		/// </summary>
-		/// <typeparam name="T">The type that the serializer processes.</typeparam>
-		/// <param name="this">The type configuration to configure.</param>
-		/// <param name="compose">The delegate used to alterate the created serializer.</param>
-		/// <returns>The configured type configuration.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264#issuecomment-531491807"/>
-		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
-		                                                                  Func<ISerializer, ISerializer> compose)
-			=> @this.RegisterContentComposition(new SerializerComposer(compose));
-
-		/// <summary>
-		/// Used to alter a serializer whenever one is created for a specific type.  This allows the scenario of decorating a
-		/// serializer to override or monitor serialization and/or deserialization.  This override accepts an
-		/// <see cref="ISerializerComposer"/> that performs the alteration on the created serializer.
-		/// </summary>
-		/// <typeparam name="T">The type that the serializer processes.</typeparam>
-		/// <param name="this">The type configuration to configure.</param>
-		/// <param name="composer">The composer that is used to alter the serializer upon creation.</param>
-		/// <returns>The configured type configuration.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264#issuecomment-531491807"/>
-		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
-		                                                                  ISerializerComposer composer)
-			=> @this.Root.With<RegisteredCompositionExtension>()
-			        .Apply(Support<T>.Metadata, composer)
-			        .Return(@this);
-
-		/// <summary>
-		/// Provides a way to alter converters when they are accessed by the serializer.  This provides a mechanism to
-		/// decorate converters.  Alterations only occur once per converter per serializer.
-		/// </summary>
-		/// <param name="this">The container to configure.</param>
-		/// <param name="alteration">The alteration to perform on each converter when it is accessed by the serializer.</param>
-		/// <returns>The configured container.</returns>
-		public static IConfigurationContainer Alter(this IConfigurationContainer @this,
-		                                            IAlteration<IConverter> alteration)
-			=> @this.Root.With<ConverterAlterationsExtension>()
-			        .Alterations.Apply(alteration)
-			        .Return(@this);
-
-		/// <summary>
-		/// Registers a converter for the provided type.  This defines how to deconstruct a type into a string for
-		/// serialization, and to construct a string during deserialization.
-		/// </summary>
-		/// <typeparam name="T">The type to convert.</typeparam>
-		/// <param name="this">The configuration container to configure.</param>
-		/// <param name="format">The formatter to use during serialization.</param>
-		/// <param name="parse">The parser to use during deserialization.</param>
-		/// <returns>The configured container.</returns>
-		public static IConfigurationContainer Register<T>(this IConfigurationContainer @this,
-		                                                  Func<T, string> format,
-		                                                  Func<string, T> parse)
-			=> @this.Register<T>(new Converter<T>(parse, format));
-
-		/// <summary>
-		/// Registers a converter for the provided type.  This defines how to deconstruct a type into a string for
-		/// serialization, and to construct a string during deserialization.
-		/// </summary>
-		/// <typeparam name="T">The type to convert.</typeparam>
-		/// <param name="this">The configuration container to configure.</param>
-		/// <param name="converter">The converter to register.</param>
-		/// <returns>The configured container.</returns>
-		public static IConfigurationContainer Register<T>(this IConfigurationContainer @this, IConverter<T> converter)
-		{
-			var item = converter as Converter<T> ?? Converters<T>.Default.Get(converter);
-			return @this.Root.Find<ConvertersExtension>()
-			            .Converters
-			            .AddOrReplace(item)
-			            .Return(@this);
-		}
-
-		/// <summary>
-		/// Removes the registration (if any) from the container's converter registration.
-		/// </summary>
-		/// <typeparam name="T">The type that the converter processes.</typeparam>
-		/// <param name="this">The configuration container to configure.</param>
-		/// <param name="converter">The converter to remove from registration.</param>
-		/// <returns>The configured container.</returns>
-		public static bool Unregister<T>(this IConfigurationContainer @this, IConverter<T> converter)
-			=> @this.Root.Find<ConvertersExtension>()
-			        .Converters.Removing(converter);
-
-		sealed class Converters<T> : ReferenceCache<IConverter<T>, IConverter<T>>
-		{
-			public static Converters<T> Default { get; } = new Converters<T>();
-
-			Converters() : base(key => new Converter<T>(key, key.Parse, key.Format)) {}
-		}
 
 		#region Obsolete
 
