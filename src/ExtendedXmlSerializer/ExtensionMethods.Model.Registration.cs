@@ -22,27 +22,38 @@ namespace ExtendedXmlSerializer
 		public static TypeRegistrationContext<T> Register<T>(this ITypeConfiguration<T> @this)
 			=> new TypeRegistrationContext<T>(@this);
 
+		public static MemberRegistrationContext<T, TMember> Register<T, TMember>(
+			this IMemberConfiguration<T, TMember> @this)
+			=> new MemberRegistrationContext<T, TMember>(@this);
+
+		#region Obsolete
+
+		[Obsolete(
+			"This method is considered deprecated and will be removed in a future release.  Use IMemberConfiguration<T, TMember>.Register().Serializer().Of(Type) instead.")]
 		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this,
 		                                                                    Type serializerType)
 			=> @this.Register(new ActivatedSerializer(serializerType, Support<TMember>.Metadata));
 
+		[Obsolete(
+			"This method is considered deprecated and will be removed in a future release.  Use IMemberConfiguration<T, TMember>.Register().Serializer().Of(ISerializer<T>) instead.")]
 		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this,
 		                                                                    ISerializer<TMember> serializer)
 			=> @this.Register(serializer.Adapt());
 
+		[Obsolete(
+			"This method is considered deprecated and will be removed in a future release.  Use IMemberConfiguration<T, TMember>.Register().Serializer().Of(ISerializer) instead.")]
 		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this,
 		                                                                    ISerializer serializer)
 			=> @this.Root.With<CustomSerializationExtension>()
 			        .Members.Apply(@this.GetMember(), serializer)
 			        .Return(@this);
-
+		[Obsolete(
+			"This method is considered deprecated and will be removed in a future release.  Use IMemberConfiguration<T, TMember>.Register().Serializer().None() instead.")]
 		public static IMemberConfiguration<T, TMember> Unregister<T, TMember>(
 			this IMemberConfiguration<T, TMember> @this)
 			=> @this.Root.With<CustomSerializationExtension>()
 			        .Members.Remove(@this.GetMember())
 			        .Return(@this);
-
-		#region Obsolete
 
 		[Obsolete(
 			"This method is considered deprecated and will be removed in a future release.  Use ITypeConfiguration<T>.Register().Serializer().Of<TSerializer>() instead.")]

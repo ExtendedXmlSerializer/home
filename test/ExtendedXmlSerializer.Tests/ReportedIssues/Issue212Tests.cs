@@ -30,7 +30,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var container = new ConfigurationContainer().EnableReaderContext()
 			                                            .Type<Owner>()
 			                                            .Member(x => x.Element)
-			                                            .Register(typeof(Serializer))
+			                                            .Register()
+			                                            .Serializer()
+			                                            .Of(typeof(Serializer))
 			                                            .Create();
 
 			var instance = new Owner

@@ -147,7 +147,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The member configuration to configure.</param>
 		/// <returns>The configured member configuration.</returns>
 		public static IMemberConfiguration<T, string> Verbatim<T>(this IMemberConfiguration<T, string> @this)
-			=> @this.Register(VerbatimContentSerializer.Default);
+			=> @this.Register().Serializer().Using(VerbatimContentSerializer.Default);
 
 		#region v1
 

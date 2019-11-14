@@ -25,6 +25,4 @@
 		public TypeConverterRegistrationContext<T> Converter()
 			=> new TypeConverterRegistrationContext<T>(_configuration);
 	}
-
-
 }

@@ -1,9 +1,10 @@
-﻿using System;
-using ExtendedXmlSerializer.ContentModel;
+﻿using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
+using System;
 
-namespace ExtendedXmlSerializer.Configuration {
+namespace ExtendedXmlSerializer.Configuration
+{
 	/// <summary>
 	/// Used to configure the serializer that is used to write this object to the output document during the serialization
 	/// process, and to read from the provided document during the deserialization process.
