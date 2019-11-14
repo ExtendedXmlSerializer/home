@@ -20,7 +20,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			var support = new ConfigurationContainer().EnableImplicitTypingFromPublicNested<Issue206TestsExtensive>()
 			                                          .EnableClassicListNaming()
-			                                          .Register(DateTimeConverter.Local)
+			                                          .Type<DateTime>()
+			                                          .Register()
+			                                          .Converter()
+			                                          .Using(DateTimeConverter.Local)
 			                                          .Create()
 			                                          .ForTesting();
 
