@@ -1,6 +1,6 @@
+using ExtendedXmlSerializer.ContentModel.Reflection;
 using System;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {
@@ -20,15 +20,23 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 
 		TypeIdentity() : this(XmlRootIdentity.Default, XmlTypeIdentity.Default) {}
 
-		readonly ITypeIdentity _root;
-		readonly ITypeIdentity _type;
-
+		readonly ITypeIdentity _root, _type;
 		public TypeIdentity(ITypeIdentity root, ITypeIdentity type)
 		{
-			_root = root;
-			_type = type;
+			_root  = root;
+			_type  = type;
 		}
 
-		public Key? Get(TypeInfo parameter) => _root.Get(parameter) ?? _type.Get(parameter);
+		public Key? Get(TypeInfo parameter)
+		{
+			var root = _root.Get(parameter);
+			var type = _type.Get(parameter);
+
+			var result = root.HasValue || type.HasValue
+				             ? new Key(root?.Name ?? type?.Name ?? parameter.Name,
+				                       root?.Identifier ?? type?.Identifier)
+				             : default;
+			return result;
+		}
 	}
 }
