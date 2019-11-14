@@ -10,28 +10,89 @@ using System;
 
 namespace ExtendedXmlSerializer
 {
+	public sealed class TypeSerializationRegistrationContext<T>
+	{
+		readonly ITypeConfiguration<T> _configuration;
+
+		public TypeSerializationRegistrationContext(ITypeConfiguration<T> configuration)
+			=> _configuration = configuration;
+
+		public ITypeConfiguration<T> Of<TSerializer>() where TSerializer : ISerializer<T>
+			=> Of(Support<TSerializer>.Key);
+
+		public ITypeConfiguration<T> Of(Type serializerType)
+			=> Using(new ActivatedSerializer(serializerType, Support<T>.Metadata));
+
+		public ITypeConfiguration<T> Using(ISerializer<T> serializer) => Using(serializer.Adapt());
+
+		public ITypeConfiguration<T> Using(ISerializer serializer)
+			=> _configuration.Root.With<CustomSerializationExtension>()
+			                 .Types.Apply(_configuration.Get(), serializer)
+			                 .Return(_configuration);
+
+		public ITypeConfiguration<T> None() => _configuration.Root.With<CustomSerializationExtension>()
+		                                                     .Types.Remove(_configuration.Get())
+		                                                     .Return(_configuration);
+	}
+
+	public sealed class TypeRegistrationContext<T>
+	{
+		readonly ITypeConfiguration<T> _configuration;
+
+		public TypeRegistrationContext(ITypeConfiguration<T> configuration) => _configuration = configuration;
+
+		/*public ITypeConfiguration<T> Serializer<TSerializer>() where TSerializer : ISerializer<T>
+			=> Serializer(Support<TSerializer>.Key);
+
+		public ITypeConfiguration<T> Serializer(Type serializerType)
+			=> Serializer(new ActivatedSerializer(serializerType, Support<T>.Metadata));
+
+		public ITypeConfiguration<T> Serializer(ISerializer<T> serializer) => Serializer(serializer.Adapt());
+
+		public ITypeConfiguration<T> Serializer(ISerializer serializer)
+			=> _configuration.Root.With<CustomSerializationExtension>()
+			                 .Types.Apply(_configuration.Get(), serializer)
+			                 .Return(_configuration);
+
+		public ITypeConfiguration<T> ClearSerializer() => _configuration.Root.With<CustomSerializationExtension>()
+		                                                                .Types.Remove(_configuration.Get())
+		                                                                .Return(_configuration);*/
+
+		public TypeSerializationRegistrationContext<T> Serializer()
+			=> new TypeSerializationRegistrationContext<T>(_configuration);
+	}
+
 	// ReSharper disable once MismatchedFileName
 	public static partial class ExtensionMethods
 	{
+		public static TypeRegistrationContext<T> Register<T>(this ITypeConfiguration<T> @this)
+			=> new TypeRegistrationContext<T>(@this);
+
+		[Obsolete(
+			"This method is considered deprecated and will be removed in a future release.  Use ITypeConfiguration<T>.Register().Serializer().Of<TSerializer>() instead.")]
 		public static ITypeConfiguration<T> Register<T, TSerializer>(this IConfigurationContainer @this)
 			where TSerializer : ISerializer<T>
-			=> @this.Type<T>().Register(typeof(TSerializer));
+			=> @this.Type<T>().Register().Serializer().Of<TSerializer>();
 
+		[Obsolete(
+			"This method is considered deprecated and will be removed in a future release.  Use ITypeConfiguration<T>.Register().Serializer().Of(Type) instead.")]
 		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, Type serializerType)
-			=> @this.Register(new ActivatedSerializer(serializerType, Support<T>.Metadata));
+			=> @this.Register().Serializer().Of(serializerType);
 
+		[Obsolete(
+			"This method is considered deprecated and will be removed in a future release.  Use ITypeConfiguration<T>.Register().Serializer().Of(ISerializer<T>) instead.")]
 		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, ISerializer<T> serializer)
-			=> @this.Register(serializer.Adapt());
+			=> @this.Register().Serializer().Using(serializer);
 
+		[Obsolete(
+			"This method is considered deprecated and will be removed in a future release.  Use ITypeConfiguration<T>.Register().Serializer().Of(ISerializer) instead.")]
 		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, ISerializer serializer)
-			=> @this.Root.With<CustomSerializationExtension>()
-			        .Types.Apply(@this.Get(), serializer)
-			        .Return(@this);
+			=> @this.Register().Serializer().Using(serializer);
 
+		[Obsolete(
+			"This method is considered deprecated and will be removed in a future release.  Use ITypeConfiguration<T>.Register().Serializer().None() instead.")]
 		public static ITypeConfiguration<T> Unregister<T>(this ITypeConfiguration<T> @this)
-			=> @this.Root.With<CustomSerializationExtension>()
-			        .Types.Remove(@this.Get())
-			        .Return(@this);
+			=> @this.Register().Serializer().None();
 
 		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this,
 		                                                                    Type serializerType)

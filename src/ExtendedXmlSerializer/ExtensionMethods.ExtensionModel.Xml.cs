@@ -79,7 +79,7 @@ namespace ExtendedXmlSerializer
 		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/268" />
 		public static ITypeConfiguration<T> UseClassicSerialization<T>(this ITypeConfiguration<T> @this)
 			where T : ISerializable
-			=> @this.Register(Support<ClassicSerializationAdapter<T>>.Key);
+			=> @this.Register().Serializer().Of<ClassicSerializationAdapter<T>>();
 
 		/// <summary>
 		/// Ensures that all text and strings encountered when emitting the specified member are valid Xml characters,

@@ -1,7 +1,4 @@
-﻿using System.Reflection;
-using System.Text;
-using System.Xml.Linq;
-using ExtendedXmlSerializer.Configuration;
+﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core.Sources;
@@ -9,6 +6,9 @@ using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using JetBrains.Annotations;
+using System.Reflection;
+using System.Text;
+using System.Xml.Linq;
 using Xunit;
 using XmlWriter = System.Xml.XmlWriter;
 
@@ -69,7 +69,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		public void VerifySerializer()
 		{
 			var serializer = new ConfigurationContainer().Type<string>()
-			                                             .Register(BasicSerializer.Default)
+			                                             .Register()
+			                                             .Serializer()
+			                                             .Using(BasicSerializer.Default)
 			                                             .Create()
 			                                             .ForTesting();
 
@@ -86,7 +88,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		public void VerifySerializerActivated()
 		{
 			var serializer = new ConfigurationContainer().Type<string>()
-			                                             .Register(typeof(BasicSerializer))
+			                                             .Register()
+			                                             .Serializer()
+			                                             .Of<BasicSerializer>()
 			                                             .Create()
 			                                             .ForTesting();
 
@@ -103,7 +107,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		public void VerifySerializerActivatedDependency()
 		{
 			var serializer = new ConfigurationContainer().Type<string>()
-			                                             .Register(typeof(ActivatedSerializer))
+			                                             .Register()
+			                                             .Serializer()
+			                                             .Of(typeof(ActivatedSerializer))
 			                                             .Create()
 			                                             .ForTesting();
 

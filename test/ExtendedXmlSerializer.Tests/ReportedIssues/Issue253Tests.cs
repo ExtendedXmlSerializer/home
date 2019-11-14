@@ -16,7 +16,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		void Verify()
 		{
-			var serializer = new ConfigurationContainer().Register<Encoding, EncodingSerializer>()
+			var serializer = new ConfigurationContainer().Type<Encoding>()
+			                                             .Register()
+			                                             .Serializer()
+			                                             .Of<EncodingSerializer>()
 			                                             .Create()
 			                                             .ForTesting();
 
@@ -32,7 +35,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var instance = new ClassWithEncodingProperty {Encoding = Encoding.ASCII};
 
 			var serializer = new ConfigurationContainer().Type<Encoding>()
-			                                             .Register(typeof(EncodingSerializer))
+			                                             .Register()
+			                                             .Serializer()
+			                                             .Of(typeof(EncodingSerializer))
 			                                             .Create()
 			                                             .ForTesting();
 			serializer.Cycle(instance)
@@ -45,7 +50,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			var instance = new Settings {DbSettings = new DBVCSV {Encoding = Encoding.ASCII}};
 			var serializer = new ConfigurationContainer().Type<Encoding>()
-			                                             .Register(typeof(EncodingSerializer))
+			                                             .Register()
+			                                             .Serializer()
+			                                             .Of<EncodingSerializer>()
 			                                             .Create()
 			                                             .ForTesting();
 			serializer.Cycle(instance)

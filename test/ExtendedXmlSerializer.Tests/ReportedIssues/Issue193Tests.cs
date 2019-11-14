@@ -19,7 +19,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		void Registration()
 		{
-			var serializer = new ConfigurationContainer().Register<RandomType, SerializerWithDependencies>()
+			var serializer = new ConfigurationContainer().Type<RandomType>()
+			                                             .Register()
+			                                             .Serializer()
+			                                             .Of<SerializerWithDependencies>()
 			                                             .Create()
 			                                             .ForTesting();
 
