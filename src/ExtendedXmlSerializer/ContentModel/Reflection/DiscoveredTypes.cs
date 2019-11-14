@@ -1,7 +1,7 @@
-﻿using System.Collections.Immutable;
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Members;
+﻿using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Sources;
+using System.Collections.Immutable;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
@@ -12,7 +12,6 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 		public DiscoveredTypes(ITypeMembers members) => _members = members;
 
 		protected override ImmutableArray<TypeInfo> Create(TypeInfo parameter)
-			=> new VariableTypeWalker(_members, parameter).Get()
-			                                              .ToImmutableArray();
+			=> new VariableTypeWalker(_members, parameter).Get().ToImmutableArray();
 	}
 }

@@ -1,16 +1,13 @@
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {
 	sealed class ClassicIdentificationExtension : ISerializerExtension
 	{
-		public ClassicIdentificationExtension() : this(new Collection<TypeInfo>()) {}
-
 		public ClassicIdentificationExtension(ICollection<TypeInfo> types) => Types = types;
 
 		public ICollection<TypeInfo> Types { get; }
@@ -23,8 +20,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 			            .Decorate<ITypeIdentities, TypeIdentities>()
 			            .Register(Register);
 
-		ITypeIdentification Register(IServiceProvider services) => services.Get<ITypeIdentifications>()
-		                                                                   .Get(Types);
+		ITypeIdentification Register(IServiceProvider services) => services.Get<ITypeIdentifications>().Get(Types);
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

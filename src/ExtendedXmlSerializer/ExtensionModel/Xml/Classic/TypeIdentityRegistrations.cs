@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+
 // ReSharper disable TooManyDependencies
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
@@ -19,12 +20,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 
 		public TypeIdentityRegistrations(IDiscoveredTypes types, ITypeIdentity identity, IIdentityStore store,
 		                                 INamespaceFormatter formatter)
-			: this(types.To(EnumerableCoercer<TypeInfo>.Default)
-			            .ToSelectionDelegate(), identity, store, formatter) {}
+			: this(types.To(EnumerableCoercer<TypeInfo>.Default).ToSelectionDelegate(), identity, store, formatter) {}
 
 		TypeIdentityRegistrations(Func<TypeInfo, IEnumerable<TypeInfo>> types, ITypeIdentity identity,
-		                          IIdentityStore store,
-		                          INamespaceFormatter formatter)
+		                          IIdentityStore store, INamespaceFormatter formatter)
 		{
 			_types     = types;
 			_identity  = identity;
@@ -34,8 +33,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 
 		public IEnumerable<KeyValuePair<TypeInfo, IIdentity>> Get(IEnumerable<TypeInfo> parameter)
 		{
-			foreach (var type in parameter.SelectMany(_types)
-			                              .Distinct())
+			foreach (var type in parameter.SelectMany(_types).Distinct())
 			{
 				var key = _identity.Get(type);
 				if (key != null)
