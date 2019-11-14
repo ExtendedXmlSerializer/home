@@ -151,10 +151,10 @@ namespace ExtendedXmlSerializer
 
 		#region v1
 
-		// TODO:
-
 		/// <summary>
-		/// This is considered v1 functionality and is not supported, although it is not yet considered deprecated.  Please make use of the registration methods instead.
+		/// This is considered v1 functionality and is not supported, although it is not yet considered deprecated.  Please
+		/// make use of the registration methods instead.  The current equivalent for this method call is
+		/// IConfigurationContainer.Type{T}.Register().Serializer().Of{TSerializer}.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <typeparam name="TSerializer"></typeparam>
@@ -164,19 +164,57 @@ namespace ExtendedXmlSerializer
 			where TSerializer : IExtendedXmlCustomSerializer<T>
 			=> @this.CustomSerializer<T>(typeof(TSerializer));
 
+		/// <summary>
+		/// This is considered v1 functionality and is not supported, although it is not yet considered deprecated.  Please
+		/// make use of the registration methods instead.  The current equivalent for this method call is
+		/// IConfigurationContainer.Type{T}.Register().Serializer().Of(serializerType).
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="this"></param>
+		/// <param name="serializerType"></param>
+		/// <returns></returns>
 		public static ITypeConfiguration<T> CustomSerializer<T>(this IConfigurationContainer @this, Type serializerType)
 			=> @this.Type<T>()
 			        .CustomSerializer(new ActivatedXmlSerializer(serializerType, Support<T>.Metadata));
 
+		/// <summary>
+		/// This is considered v1 functionality and is not supported, although it is not yet considered deprecated.  Please
+		/// make use of the registration methods instead.  The current equivalent for this method call is
+		/// IConfigurationContainer.Type{T}.Register().Serializer().ByCalling(serializer, deserializer).  Note that the
+		/// signatures for the delegates have changed since v1.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="this"></param>
+		/// <param name="serializer"></param>
+		/// <param name="deserialize"></param>
+		/// <returns></returns>
 		public static ITypeConfiguration<T> CustomSerializer<T>(this ITypeConfiguration<T> @this,
 		                                                        Action<XmlWriter, T> serializer,
 		                                                        Func<XElement, T> deserialize)
 			=> @this.CustomSerializer(new ExtendedXmlCustomSerializer<T>(deserialize, serializer));
 
+		/// <summary>
+		/// This is considered v1 functionality and is not supported, although it is not yet considered deprecated.  Please
+		/// make use of the registration methods instead.  The current equivalent for this method call is
+		/// IConfigurationContainer.Type{T}.Register().Serializer().Using(serializer).
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="this"></param>
+		/// <param name="serializer"></param>
+		/// <returns></returns>
 		public static ITypeConfiguration<T> CustomSerializer<T>(this ITypeConfiguration<T> @this,
 		                                                        IExtendedXmlCustomSerializer<T> serializer)
 			=> @this.CustomSerializer(new Adapter<T>(serializer));
 
+		/// <summary>
+		/// This is considered v1 functionality and is not supported, although it is not yet considered deprecated.  Please
+		/// make use of the registration methods instead.  The current equivalent for this method call is
+		/// IConfigurationContainer.Type{T}.Register().Serializer().Using(serializer).
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="this"></param>
+		/// <param name="serializer"></param>
+		/// <returns></returns>
 		public static ITypeConfiguration<T> CustomSerializer<T>(this ITypeConfiguration<T> @this,
 		                                                        IExtendedXmlCustomSerializer serializer)
 			=> @this.Root.With<CustomSerializationExtension>()
