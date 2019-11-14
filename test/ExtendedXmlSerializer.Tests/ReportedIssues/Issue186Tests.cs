@@ -11,7 +11,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		void Verify()
 		{
-			var serializer = new ConfigurationContainer().ConfigureType<SubjectRequest>()
+			var serializer = new ConfigurationContainer().Type<SubjectRequest>()
 			                                             .Member(x => x.SomeInterface)
 			                                             .Name("YourName")
 			                                             .EnableImplicitTypingFromNested<Issue186Tests>()

@@ -1,45 +1,124 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel;
-using ExtendedXmlSerializer.ExtensionModel.Content;
-using ExtendedXmlSerializer.ExtensionModel.Types.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ExtensionModel.Xml.Classic;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Xml;
 using System.Xml.Linq;
-using Defaults = ExtendedXmlSerializer.ExtensionModel.Xml.Defaults;
-
-// ReSharper disable TooManyArguments
+using XmlWriter = System.Xml.XmlWriter;
 
 namespace ExtendedXmlSerializer
 {
 	// ReSharper disable once MismatchedFileName
-	// ReSharper disable once ClassTooBig
 	public static partial class ExtensionMethods
 	{
 		/// <summary>
-		///   <note type="note">asdf</note>Members the specified name ffd.</summary>
-		/// <param name="this">The this.</param>
-		/// <param name="name">The name.</param>
-		/// <returns>XElement.</returns>
-		public static XElement Member(this XElement @this, string name)
-			=> @this.Element(XName.Get(name, @this.Name.NamespaceName));
+		/// Configures the provided configuration container to create a serializer that automatically formats its contents
+		/// into attributes and elements.  When a serializer encounters a primitive type (or more accurately, a type that has
+		/// an <see cref="IConverter"/> registered to handle it), it will automatically serialize its resulting (string) data
+		/// as an Xml attribute.  The only exception is when a <see cref="String"/> is encountered, where it will check its
+		/// length.  Strings greater than 128 characters will be emitted as inner content.  Otherwise, it will be emitted as
+		/// an Xml attribute.
+		/// </summary>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <returns>The configured configuration container.</returns>
+		public static IConfigurationContainer UseAutoFormatting(this IConfigurationContainer @this)
+			=> @this.Extend(AutoMemberFormatExtension.Default);
 
+		/// <summary>
+		/// Configures the provided configuration container to create a serializer that automatically formats its contents
+		/// into attributes and elements.  When a serializer encounters a primitive type (or more accurately, a type that has
+		/// an <see cref="IConverter"/> registered to handle it), it will automatically serialize its resulting (string) data
+		/// as an Xml attribute.  The only exception is when a <see cref="String"/> is encountered, where it will check its
+		/// length.  Strings greater than the provided max-length will be emitted as inner content.  Otherwise, it will be
+		/// emitted as an Xml attribute.
+		/// </summary>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <param name="maxTextLength">The max length a string can be before it is rendered as inner content.  Any string
+		/// shorter than this amount will be rendered as an Xml attribute.</param>
+		/// <returns>The configured configuration container.</returns>
+		public static IConfigurationContainer UseAutoFormatting(this IConfigurationContainer @this, int maxTextLength)
+			=> @this.Extend(new AutoMemberFormatExtension(maxTextLength));
+
+		/// <summary>
+		/// Configures the container to create a serializer that consolidates all namespaces so that they emit at the root of
+		/// the document, rather than throughout the document when they are first encountered (which can lead to a lot of
+		/// unnecessary overhead and larger documents).
+		/// </summary>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <returns>The configured configuration container.</returns>
+		public static IConfigurationContainer UseOptimizedNamespaces(this IConfigurationContainer @this)
+			=> @this.Extend(RootInstanceExtension.Default)
+			        .Extend(OptimizedNamespaceExtension.Default);
+
+		/// <summary>
+		/// Ensures that all text and strings encountered when emitting the document are valid Xml characters, replacing those that are not with empty strings.
+		/// </summary>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <returns>The configured configuration container.</returns>
+		/// <seealso href="https://stackoverflow.com/a/961504/3602057"/>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/167" />
+		public static IConfigurationContainer WithValidCharacters(this IConfigurationContainer @this)
+			=> @this.Type<string>().Alter(ValidContentCharacters.Default.Get);
+
+		/// <summary>
+		/// Used in dire circumstances.  If you encounter an older .NET object type that cannot be serialized (e.g.
+		/// DataTable), and it implements <see cref="ISerializable"/>, call this method to configure the container to create a
+		/// serializer that will serialize and deserialize using this interface.
+		/// </summary>
+		/// <typeparam name="T">The type under configuration.</typeparam>
+		/// <param name="this">The type configuration to configure.</param>
+		/// <returns>The configured type configuration.</returns>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/268" />
+		public static ITypeConfiguration<T> UseClassicSerialization<T>(this ITypeConfiguration<T> @this)
+			where T : ISerializable
+			=> @this.Register().Serializer().Of<ClassicSerializationAdapter<T>>();
+
+		/// <summary>
+		/// Ensures that all text and strings encountered when emitting the specified member are valid Xml characters,
+		/// replacing those that are not with empty strings.
+		/// </summary>
+		/// <typeparam name="T">The member's containing type.</typeparam>
+		/// <param name="this">The member configuration to configure.</param>
+		/// <returns>The configured member configuration.</returns>
+		/// <seealso href="https://stackoverflow.com/a/961504/3602057"/>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/167" />
+		public static IMemberConfiguration<T, string> WithValidCharacters<T>(this IMemberConfiguration<T, string> @this)
+			=> @this.Alter(ValidContentCharacters.Default.Get);
+
+		/// <summary>
+		/// Configures the specified member to emit as an Xml attribute, rather than as an element.
+		/// </summary>
+		/// <typeparam name="T">The member's containing type.</typeparam>
+		/// <typeparam name="TMember">The value type of the member.</typeparam>
+		/// <param name="this">The member configuration to configure.</param>
+		/// <returns>The configured member configuration.</returns>
 		public static IMemberConfiguration<T, TMember> Attribute<T, TMember>(
-			this IMemberConfiguration<T, TMember> @this, Func<TMember, bool> when)
+			this IMemberConfiguration<T, TMember> @this)
+			=> @this.Root.With<MemberFormatExtension>()
+			        .Registered.Apply(@this.GetMember())
+			        .Return(@this);
+
+		/// <summary>
+		/// Configures the specified member to emit as an Xml attribute when the provided condition is met, rather than as an
+		/// element.  When the provided condition delegate evaluates as true, the member is emitted as an Xml attribute.
+		/// Otherwise, it emits as an Xml element.
+		/// </summary>
+		/// <typeparam name="T">The member's containing type.</typeparam>
+		/// <typeparam name="TMember">The value type of the member.</typeparam>
+		/// <param name="this">The member configuration to configure.</param>
+		/// <param name="when">The condition used to specify when to render this member as an Xml attribute.</param>
+		/// <returns>The configured member configuration.</returns>
+		public static IMemberConfiguration<T, TMember> Attribute<T, TMember>(
+			this IMemberConfiguration<T, TMember> @this,
+			Func<TMember, bool> when)
 		{
 			@this.Root.With<MemberFormatExtension>()
 			     .Specifications[@this.GetMember()] =
@@ -47,136 +126,100 @@ namespace ExtendedXmlSerializer
 			return @this.Attribute();
 		}
 
-		public static IMemberConfiguration<T, TMember> Attribute<T, TMember>(
-			this IMemberConfiguration<T, TMember> @this)
-		{
-			@this.Root.With<MemberFormatExtension>()
-			     .Registered.Add(@this.GetMember());
-			return @this;
-		}
+		/// <summary>
+		/// Forces a member to emit as an Xml element.  This is only useful if a member was registered as an attribute and for
+		/// some reason the member should be further configured to emit as an Xml element instead (effectively delisting it as
+		/// an Xml attribute).  Otherwise, emitting as an Xml element is the default behavior and this method should not be used.
+		/// </summary>
+		/// <typeparam name="T">The member's containing type.</typeparam>
+		/// <typeparam name="TMember">The value type of the member.</typeparam>
+		/// <param name="this">The member configuration to configure.</param>
+		/// <returns>The configured member configuration.</returns>
+		public static IMemberConfiguration<T, TMember> Content<T, TMember>(this IMemberConfiguration<T, TMember> @this)
+			=> @this.Root.With<MemberFormatExtension>()
+			        .Registered.Remove(@this.GetMember())
+			        .Return(@this);
 
-		public static IMemberConfiguration<T, string> Verbatim<T>(this IMemberConfiguration<T, string> @this) =>
-			@this.Register(VerbatimContentSerializer.Default);
+		/// <summary>
+		/// Forces a member to emit within a CDATA container so it can render its contents verbatim.
+		/// </summary>
+		/// <typeparam name="T">The member's containing type.</typeparam>
+		/// <param name="this">The member configuration to configure.</param>
+		/// <returns>The configured member configuration.</returns>
+		public static IMemberConfiguration<T, string> Verbatim<T>(this IMemberConfiguration<T, string> @this)
+			=> @this.Register().Serializer().Using(VerbatimContentSerializer.Default);
 
-		public static ITypeConfiguration<T> Register<T, TSerializer>(this IConfigurationContainer @this)
-			where TSerializer : ISerializer<T> => @this.Type<T>()
-			                                           .Register(typeof(TSerializer));
+		#region v1
 
-		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, Type serializerType)
-			=> @this.Register(new ActivatedSerializer(serializerType, Support<T>.Key));
-
-		public static ITypeConfiguration<T> UseClassicSerialization<T>(this ITypeConfiguration<T> @this)
-			where T : ISerializable
-			=> @this.Register(Support<ClassicSerializationAdapter<T>>.Key);
-
-		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, Func<T, T> write)
-			=> Alter(@this, Self<T>.Default.Get, write);
-
-		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, Func<T, T> read,
-		                                             Func<T, T> write)
-			=> @this.Alter(new DelegatedAlteration<T>(read), new DelegatedAlteration<T>(write));
-
-		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, IAlteration<T> read,
-		                                             IAlteration<T> write)
-		{
-			@this.Root.With<AlteredContentExtension>()
-			     .Types.Assign(Support<T>.Key, new ContentAlteration(read.Adapt(), write.Adapt()));
-			return @this;
-		}
-
-		public static IMemberConfiguration<T, TMember> Alter<T, TMember>(this IMemberConfiguration<T, TMember> @this,
-		                                                                 Func<TMember, TMember> write)
-			=> Alter(@this, Self<TMember>.Default.Get, write);
-
-		public static IMemberConfiguration<T, TMember> Alter<T, TMember>(this IMemberConfiguration<T, TMember> @this,
-		                                                                 Func<TMember, TMember> read,
-		                                                                 Func<TMember, TMember> write)
-			=> @this.Alter(new DelegatedAlteration<TMember>(read), new DelegatedAlteration<TMember>(write));
-
-		public static IMemberConfiguration<T, TMember> Alter<T, TMember>(this IMemberConfiguration<T, TMember> @this,
-		                                                                 IAlteration<TMember> read,
-		                                                                 IAlteration<TMember> write)
-		{
-			@this.Root.With<AlteredContentExtension>()
-			     .Members.Assign(@this.GetMember(), new ContentAlteration(read.Adapt(), write.Adapt()));
-			return @this;
-		}
-
-		public static MemberInfo GetMember(this IMemberConfiguration @this) => @this.To<ISource<MemberInfo>>()
-		                                                                            .Get();
-
-		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, ISerializer<T> serializer) =>
-			Register(@this, serializer.Adapt());
-
-		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, ISerializer serializer)
-		{
-			@this.Root.With<CustomSerializationExtension>()
-			     .Types.Assign(@this.Get(), serializer);
-			return @this;
-		}
-
-		public static ITypeConfiguration<T> Unregister<T>(this ITypeConfiguration<T> @this)
-		{
-			@this.Root.With<CustomSerializationExtension>()
-			     .Types.Remove(@this.Get());
-			return @this;
-		}
-
+		/// <summary>
+		/// This is considered v1 functionality and is not supported, although it is not yet considered deprecated.  Please
+		/// make use of the registration methods instead.  The current equivalent for this method call is
+		/// IConfigurationContainer.Type{T}.Register().Serializer().Of{TSerializer}.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <typeparam name="TSerializer"></typeparam>
+		/// <param name="this"></param>
+		/// <returns></returns>
 		public static ITypeConfiguration<T> CustomSerializer<T, TSerializer>(this IConfigurationContainer @this)
 			where TSerializer : IExtendedXmlCustomSerializer<T>
 			=> @this.CustomSerializer<T>(typeof(TSerializer));
 
+		/// <summary>
+		/// This is considered v1 functionality and is not supported, although it is not yet considered deprecated.  Please
+		/// make use of the registration methods instead.  The current equivalent for this method call is
+		/// IConfigurationContainer.Type{T}.Register().Serializer().Of(serializerType).
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="this"></param>
+		/// <param name="serializerType"></param>
+		/// <returns></returns>
 		public static ITypeConfiguration<T> CustomSerializer<T>(this IConfigurationContainer @this, Type serializerType)
 			=> @this.Type<T>()
-			        .CustomSerializer(new ActivatedXmlSerializer(serializerType, Support<T>.Key));
+			        .CustomSerializer(new ActivatedXmlSerializer(serializerType, Support<T>.Metadata));
 
+		/// <summary>
+		/// This is considered v1 functionality and is not supported, although it is not yet considered deprecated.  Please
+		/// make use of the registration methods instead.  The current equivalent for this method call is
+		/// IConfigurationContainer.Type{T}.Register().Serializer().ByCalling(serializer, deserializer).  Note that the
+		/// signatures for the delegates have changed since v1.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="this"></param>
+		/// <param name="serializer"></param>
+		/// <param name="deserialize"></param>
+		/// <returns></returns>
 		public static ITypeConfiguration<T> CustomSerializer<T>(this ITypeConfiguration<T> @this,
-		                                                        Action<System.Xml.XmlWriter, T> serializer,
+		                                                        Action<XmlWriter, T> serializer,
 		                                                        Func<XElement, T> deserialize)
 			=> @this.CustomSerializer(new ExtendedXmlCustomSerializer<T>(deserialize, serializer));
 
+		/// <summary>
+		/// This is considered v1 functionality and is not supported, although it is not yet considered deprecated.  Please
+		/// make use of the registration methods instead.  The current equivalent for this method call is
+		/// IConfigurationContainer.Type{T}.Register().Serializer().Using(serializer).
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="this"></param>
+		/// <param name="serializer"></param>
+		/// <returns></returns>
 		public static ITypeConfiguration<T> CustomSerializer<T>(this ITypeConfiguration<T> @this,
 		                                                        IExtendedXmlCustomSerializer<T> serializer)
 			=> @this.CustomSerializer(new Adapter<T>(serializer));
 
+		/// <summary>
+		/// This is considered v1 functionality and is not supported, although it is not yet considered deprecated.  Please
+		/// make use of the registration methods instead.  The current equivalent for this method call is
+		/// IConfigurationContainer.Type{T}.Register().Serializer().Using(serializer).
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="this"></param>
+		/// <param name="serializer"></param>
+		/// <returns></returns>
 		public static ITypeConfiguration<T> CustomSerializer<T>(this ITypeConfiguration<T> @this,
 		                                                        IExtendedXmlCustomSerializer serializer)
-		{
-			@this.Root.With<CustomSerializationExtension>()
-			     .XmlSerializers.Assign(@this.Get(), serializer);
-			return @this;
-		}
-
-		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this,
-		                                                                    Type serializerType)
-			=> @this.Register(new ActivatedSerializer(serializerType, Support<TMember>.Key));
-
-		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this,
-		                                                                    ISerializer<TMember> serializer) =>
-			Register(@this, serializer.Adapt());
-
-		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this,
-		                                                                    ISerializer serializer)
-		{
-			@this.Root.With<CustomSerializationExtension>()
-			     .Members.Assign(@this.GetMember(), serializer);
-			return @this;
-		}
-
-		public static IMemberConfiguration<T, TMember> Unregister<T, TMember>(
-			this IMemberConfiguration<T, TMember> @this)
-		{
-			@this.Root.With<CustomSerializationExtension>()
-			     .Members.Remove(@this.GetMember());
-			return @this;
-		}
-
-		public static IMemberConfiguration<T, TMember> Content<T, TMember>(this IMemberConfiguration<T, TMember> @this)
-		{
-			@this.Root.With<MemberFormatExtension>()
-			     .Registered.Remove(@this.GetMember());
-			return @this;
-		}
+			=> @this.Root.With<CustomSerializationExtension>()
+			        .XmlSerializers.Apply(@this.Get(), serializer)
+			        .Return(@this);
 
 		public static ITypeConfiguration<T> AddMigration<T>(this ITypeConfiguration<T> @this,
 		                                                    ICommand<XElement> migration)
@@ -188,154 +231,10 @@ namespace ExtendedXmlSerializer
 
 		public static ITypeConfiguration<T> AddMigration<T>(this ITypeConfiguration<T> @this,
 		                                                    IEnumerable<Action<XElement>> migrations)
-		{
-			@this.Root.With<MigrationsExtension>()
-			     .Add(@this.Get(), migrations.Fixed());
-			return @this;
-		}
+			=> @this.Root.With<MigrationsExtension>()
+			        .Apply(@this.Get(), migrations.Fixed())
+			        .Return(@this);
 
-		public static IConfigurationContainer WithValidCharacters(this IConfigurationContainer @this)
-			=> @this.Type<string>()
-			        .Alter(ValidContentCharacters.Default.Get);
-
-		public static IMemberConfiguration<T, string> WithValidCharacters<T>(this IMemberConfiguration<T, string> @this)
-			=> @this.Alter(ValidContentCharacters.Default.Get);
-
-		public static IConfigurationContainer UseAutoFormatting(this IConfigurationContainer @this)
-			=> @this.Extend(AutoMemberFormatExtension.Default);
-
-		public static IConfigurationContainer UseAutoFormatting(this IConfigurationContainer @this, int maxTextLength)
-			=> @this.Extend(new AutoMemberFormatExtension(maxTextLength));
-
-		public static IConfigurationContainer EnableClassicMode(this IConfigurationContainer @this)
-			=> @this.Emit(EmitBehaviors.Classic)
-			        .Extend(ClassicExtension.Default);
-
-		/// <summary>
-		/// Enables the xsi:type for legacy deserialization purposes.
-		/// https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/261
-		/// </summary>
-		/// <param name="this"></param>
-		/// <returns></returns>
-		public static IConfigurationContainer EnableClassicSchemaTyping(this IConfigurationContainer @this)
-			=> @this.Extend(SchemaTypeExtension.Default);
-
-		/// <summary>
-		/// Enables `ArrayOfT` and `ListOfT` naming conventions for arrays and lists, respectively.
-		/// </summary>
-		/// <param name="this"></param>
-		/// <returns></returns>
-		public static IConfigurationContainer EnableClassicListNaming(this IConfigurationContainer @this)
-			=> @this.Extend(ClassicListNamingExtension.Default);
-
-		public static IConfigurationContainer InspectingType<T>(this IConfigurationContainer @this)
-			=> @this.InspectingTypes(typeof(T).Yield());
-
-		public static IConfigurationContainer InspectingTypes(this IConfigurationContainer @this,
-		                                                      IEnumerable<Type> types)
-			=> @this.Extend(new ClassicIdentificationExtension(types.YieldMetadata()
-			                                                        .ToList()));
-
-		public static IConfigurationContainer UseOptimizedNamespaces(this IConfigurationContainer @this)
-			=> @this.Extend(RootInstanceExtension.Default)
-			        .Extend(OptimizedNamespaceExtension.Default);
-
-		readonly static Func<Stream> New = DefaultActivators.Default.New<MemoryStream>;
-
-		readonly static IXmlWriterFactory WriterFactory
-			= new XmlWriterFactory(CloseSettings.Default.Get(Defaults.WriterSettings));
-
-		public static IExtendedXmlSerializer Create<T>(this T @this, Func<T, IConfigurationContainer> configure)
-			where T : IConfigurationContainer => configure(@this)
-			.Create();
-
-		public static string Serialize(this IExtendedXmlSerializer @this, object instance)
-			=> Serialize(@this, WriterFactory, New, instance);
-
-		public static string Serialize(this IExtendedXmlSerializer @this, XmlWriterSettings settings, object instance)
-			=> Serialize(@this, new XmlWriterFactory(CloseSettings.Default.Get(settings)), New, instance);
-
-		public static string Serialize(this IExtendedXmlSerializer @this, Stream stream, object instance)
-			=> Serialize(@this, XmlWriterFactory.Default, stream.Self, instance);
-
-		public static string Serialize(this IExtendedXmlSerializer @this, XmlWriterSettings settings, Stream stream,
-		                               object instance)
-			=> Serialize(@this, new XmlWriterFactory(settings), stream.Self, instance);
-
-		static string Serialize(this IExtendedXmlSerializer @this, IXmlWriterFactory factory, Func<Stream> stream,
-		                        object instance)
-			=> new InstanceFormatter(@this, factory, stream).Get(instance);
-
-		public static void Serialize(this IExtendedXmlSerializer @this, TextWriter writer, object instance)
-			=> Serialize(@this, XmlWriterFactory.Default, writer, instance);
-
-		public static void Serialize(this IExtendedXmlSerializer @this, XmlWriterSettings settings, TextWriter writer,
-		                             object instance)
-			=> Serialize(@this, new XmlWriterFactory(settings), writer, instance);
-
-		static void Serialize(this IExtendedXmlSerializer @this, IXmlWriterFactory factory, TextWriter writer,
-		                      object instance)
-			=> @this.Serialize(factory.Get(writer), instance);
-
-		public static XmlParserContext Context(this XmlNameTable @this)
-			=> XmlParserContexts.Default.Get(@this ?? new NameTable());
-
-		public static T Deserialize<T>(this IExtendedXmlSerializer @this, string data)
-			=> Deserialize<T>(@this, Defaults.CloseRead, data);
-
-		public static T Deserialize<T>(this IExtendedXmlSerializer @this, XmlReaderSettings settings, string data)
-			=> Deserialize<T>(@this, settings, new MemoryStream(Encoding.UTF8.GetBytes(data)));
-
-		public static T Deserialize<T>(this IExtendedXmlSerializer @this, Stream stream)
-			=> Deserialize<T>(@this, Defaults.ReaderSettings, stream);
-
-		public static T Deserialize<T>(this IExtendedXmlSerializer @this, XmlReaderSettings settings, Stream stream)
-			=> Deserialize<T>(@this, new XmlReaderFactory(settings, settings.NameTable.Context()), stream);
-
-		static T Deserialize<T>(this IExtendedXmlSerializer @this, IXmlReaderFactory factory, Stream stream)
-			=> @this.Deserialize(factory.Get(stream))
-			        .AsValid<T>();
-
-		public static T Deserialize<T>(this IExtendedXmlSerializer @this, TextReader reader)
-			=> Deserialize<T>(@this, Defaults.ReaderSettings, reader);
-
-		public static T Deserialize<T>(this IExtendedXmlSerializer @this, XmlReaderSettings settings, TextReader reader)
-			=> Deserialize<T>(@this, new XmlReaderFactory(settings, settings.NameTable.Context()), reader);
-
-		static T Deserialize<T>(this IExtendedXmlSerializer @this, IXmlReaderFactory factory, TextReader reader)
-			=> @this.Deserialize(factory.Get(reader))
-			        .AsValid<T>();
-
-		public static IConfigurationContainer EnableImplicitTyping(this IConfigurationContainer @this,
-		                                                           params Type[] types)
-			=> @this.EnableImplicitTyping(types.AsEnumerable());
-
-		public static IConfigurationContainer EnableImplicitTypingFromPublicNested<T>(
-			this IConfigurationContainer @this) =>
-			@this.EnableImplicitTyping(new PublicNestedTypes<T>());
-
-		public static IConfigurationContainer EnableImplicitTypingFromNested<T>(this IConfigurationContainer @this) =>
-			@this.EnableImplicitTyping(new NestedTypes<T>());
-
-		public static IConfigurationContainer EnableImplicitTypingFromAll<T>(this IConfigurationContainer @this) =>
-			@this.EnableImplicitTyping(new AllAssemblyTypes<T>());
-
-		public static IConfigurationContainer EnableImplicitTypingFromPublic<T>(this IConfigurationContainer @this) =>
-			@this.EnableImplicitTyping(new PublicAssemblyTypes<T>());
-
-		public static IConfigurationContainer EnableImplicitTypingFromNamespace<T>(this IConfigurationContainer @this)
-			=>
-				@this.EnableImplicitTyping(new AllTypesInSameNamespace<T>());
-
-		public static IConfigurationContainer
-			EnableImplicitTypingFromNamespacePublic<T>(this IConfigurationContainer @this) =>
-			@this.EnableImplicitTyping(new PublicTypesInSameNamespace<T>());
-
-		public static IConfigurationContainer EnableImplicitTyping(this IConfigurationContainer @this,
-		                                                           IEnumerable<Type> types)
-			=> @this.Extend(new ImplicitTypingExtension(types.ToMetadata()));
-
-		public static IConfigurationContainer EnableXmlText(this IConfigurationContainer @this)
-			=> @this.Extend(XmlTextExtension.Default);
+		#endregion
 	}
 }

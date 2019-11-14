@@ -1,8 +1,10 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Conversion;
+using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using System;
+using System.Linq;
 using System.Reflection;
 using Xunit;
 
@@ -13,7 +15,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		public void VerifyRegisteredCustomConverterReplacesExistingConverter()
 		{
-			var serializer = new ConfigurationContainer().Register(DateTimeConverter.Default)
+			var serializer = new ConfigurationContainer().Type<DateTime>()
+			                                             .Register()
+			                                             .Converter()
+			                                             .Using(DateTimeConverter.Default)
 			                                             .Create()
 			                                             .ForTesting();
 
@@ -23,15 +28,19 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		}
 
 		[Fact]
-		public void VerifyUnregisterReturnsTrueThenFalse()
+		public void VerifyNoneRemovesConverter()
 		{
 			var container = new ConfigurationContainer();
-			container.Unregister(DateTimeConverter.Default)
+			var extension = container.Root.With<ConvertersExtension>();
+
+			extension.Converters.Count(x => x.IsSatisfiedBy(typeof(DateTime).GetTypeInfo()))
 			         .Should()
-			         .BeTrue();
-			container.Unregister(DateTimeConverter.Default)
+			         .BeGreaterOrEqualTo(1);
+
+			container.Type<DateTime>().Register().Converter().None();
+			extension.Converters.Count(x => x.IsSatisfiedBy(typeof(DateTime).GetTypeInfo()))
 			         .Should()
-			         .BeFalse();
+			         .Be(0);
 		}
 
 		sealed class Subject
@@ -48,10 +57,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			readonly DateTime _dateTime;
 			readonly string   _text;
 
-			public DateTimeConverter(DateTime dateTime) : this(dateTime,
-			                                                   ExtendedXmlSerializer
-				                                                   .ContentModel.Conversion.DateTimeConverter.Default
-				                                                   .Format(dateTime)) {}
+			public DateTimeConverter(DateTime dateTime)
+				: this(dateTime,
+				       ExtendedXmlSerializer.ContentModel.Conversion.DateTimeConverter.Default.Format(dateTime)) {}
 
 			public DateTimeConverter(DateTime dateTime, string text)
 			{

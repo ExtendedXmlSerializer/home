@@ -50,7 +50,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 		IMemberContents Register(IServiceProvider services, IMemberContents contents)
 			=> new AlteredMemberContents(_specification, _alteration, contents, services.Get<IConverters>(),
 			                             services.Get<ISerializers>()
-			                                     .Get(Support<string>.Key));
+			                                     .Get(Support<string>.Metadata));
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

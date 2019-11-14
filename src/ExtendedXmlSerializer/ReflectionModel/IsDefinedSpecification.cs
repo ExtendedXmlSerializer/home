@@ -6,7 +6,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 {
 	sealed class IsDefinedSpecification<T> : ISpecification<MemberInfo>
 	{
-		readonly static Type Type = Support<T>.Key.AsType();
+		readonly static Type Type = Support<T>.Key;
 
 		public static IsDefinedSpecification<T> Default { get; } = new IsDefinedSpecification<T>();
 
@@ -14,10 +14,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 
 		readonly bool _inherit;
 
-		public IsDefinedSpecification(bool inherit)
-		{
-			_inherit = inherit;
-		}
+		public IsDefinedSpecification(bool inherit) => _inherit = inherit;
 
 		public bool IsSatisfiedBy(MemberInfo parameter) => parameter.IsDefined(Type, _inherit);
 	}

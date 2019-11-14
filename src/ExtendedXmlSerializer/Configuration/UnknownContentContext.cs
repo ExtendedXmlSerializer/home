@@ -1,9 +1,8 @@
-﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ContentModel.Format;
+﻿using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using System;
 
-namespace ExtendedXmlSerializer.ExtensionModel
+namespace ExtendedXmlSerializer.Configuration
 {
 	public sealed class UnknownContentContext
 	{

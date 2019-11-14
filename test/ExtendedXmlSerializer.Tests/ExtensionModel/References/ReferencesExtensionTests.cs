@@ -179,7 +179,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 			var first     = new ChildClass {Name = "Key"};
 			var instance  = new Container {First = first, Second = first};
 			var container = new ConfigurationContainer();
-			container.ConfigureType<ParentClass>()
+			container.Type<ParentClass>()
 			         .EnableReferences(x => x.Name);
 			var support = new SerializationSupport(container);
 			var actual  = support.Cycle(instance);
@@ -195,7 +195,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 			var first     = new ChildClass {Name = "Key"};
 			var instance  = new Container {First = first, Second = first};
 			var container = new ConfigurationContainer();
-			container.ConfigureType<ChildClass>()
+			container.Type<ChildClass>()
 			         .EnableReferences(x => x.Name);
 			var support = new SerializationSupport(container);
 			var actual  = support.Cycle(instance);

@@ -17,9 +17,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var registry = new PrefixRegistryExtension(new Dictionary<Type, string>
 				                                           {{typeof(PatientVerificationRequest), "q"}});
 			var container = new ConfigurationContainer().Extend(registry)
+			                                            .Type<DateTime>()
+			                                            .Register()
+			                                            .Converter()
 			                                            // Totally cheating here. Put formatter logic to get what you want:
-			                                            .Register(x => "2018-08-07+10:00",
-			                                                      x => new DateTime(2018, 8, 7, 10, 0, 0))
+			                                            .ByCalling(x => "2018-08-07+10:00",
+			                                                     x => new DateTime(2018, 8, 7, 10, 0, 0))
 			                                            .InspectingType<PatientVerificationRequest>()
 			                                            .Create()
 			                                            .ForTesting();
@@ -35,9 +38,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				new PrefixRegistryExtension(new AllTypesInSameNamespace<PatientVerificationRequest>()
 					                            .ToDictionary(x => x, x => "q"));
 			var container = new ConfigurationContainer().Extend(registry)
+			                                            .Type<DateTime>()
+			                                            .Register()
+			                                            .Converter()
 			                                            // Totally cheating here. Put formatter logic to get what you want:
-			                                            .Register(x => "2018-08-07+10:00",
-			                                                      x => new DateTime(2018, 8, 7, 10, 0, 0))
+			                                            .ByCalling(x => "2018-08-07+10:00",
+			                                                     x => new DateTime(2018, 8, 7, 10, 0, 0))
 			                                            .InspectingType<PatientVerificationRequest>()
 			                                            .Create()
 			                                            .ForTesting();

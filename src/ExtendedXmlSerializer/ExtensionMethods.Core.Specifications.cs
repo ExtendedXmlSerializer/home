@@ -40,7 +40,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The this.</param>
 		/// <returns>Func&lt;System.Boolean&gt;.</returns>
 		public static Func<bool> Build<T>(this ISpecification<TypeInfo> @this) => @this.ToDelegate()
-		                                                                               .Build(Support<T>.Key);
+		                                                                               .Build(Support<T>.Metadata);
 
 		/// <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
 		/// <typeparam name="T"></typeparam>

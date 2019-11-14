@@ -28,6 +28,6 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion
 
 		string IConvert<object>.Format(object instance) => instance != null ? Format((T)instance) : null;
 
-		public TypeInfo Get() => Support<T>.Key;
+		public TypeInfo Get() => Support<T>.Metadata;
 	}
 }

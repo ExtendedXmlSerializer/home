@@ -11,7 +11,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	sealed class DictionaryEntries : IDictionaryEntries
 	{
-		readonly static TypeInfo Type = Support<DictionaryEntry>.Key;
+		readonly static TypeInfo Type = Support<DictionaryEntry>.Metadata;
 
 		readonly static PropertyInfo
 			Key   = Type.GetProperty(nameof(DictionaryEntry.Key)),

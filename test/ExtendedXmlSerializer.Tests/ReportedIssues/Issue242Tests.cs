@@ -19,7 +19,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			new ConfigurationContainer().Type<Subject>()
 			                            .Member(subject => subject.Value)
-			                            .Register(Serializer.Default)
+			                            .Register()
+			                            .Serializer()
+			                            .Using(Serializer.Default)
 			                            .Create()
 			                            .ForTesting()
 			                            .Assert(instance,

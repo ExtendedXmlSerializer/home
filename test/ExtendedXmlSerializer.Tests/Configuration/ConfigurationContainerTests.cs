@@ -32,7 +32,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		[Fact]
 		public void ConfigureType()
 		{
-			var config = Configure(cfg => cfg.ConfigureType<TestClassPrimitiveTypes>());
+			var config = Configure(cfg => cfg.Type<TestClassPrimitiveTypes>());
 
 			var configType = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
 			Assert.NotNull(configType);
@@ -77,7 +77,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		[Fact]
 		public void ConfigureMigrationForType()
 		{
-			var configuration = Configure(cfg => cfg.ConfigureType<TestClassPrimitiveTypes>()
+			var configuration = Configure(cfg => cfg.Type<TestClassPrimitiveTypes>()
 			                                        .AddMigration(xml => {}));
 			var type = configuration.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
 			Assert.Single(configuration.Root.With<MigrationsExtension>()
@@ -89,7 +89,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		{
 			var config = Configure(cfg =>
 			                       {
-				                       var t = cfg.ConfigureType<TestClassPrimitiveTypes>();
+				                       var t = cfg.Type<TestClassPrimitiveTypes>();
 				                       Assert.Null(cfg.Root.With<CustomSerializationExtension>()
 				                                      .XmlSerializers.Get(t.Get()));
 				                       t.CustomSerializer((writer, types) => {}, element => null);
@@ -102,7 +102,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		[Fact]
 		public void ConfigureProperty()
 		{
-			var config = Configure(cfg => cfg.ConfigureType<TestClassPrimitiveTypes>()
+			var config = Configure(cfg => cfg.Type<TestClassPrimitiveTypes>()
 			                                 .Member(p => p.PropChar));
 			var configType = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
 			Assert.NotNull(configType.Member("PropChar"));
@@ -113,7 +113,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		public void ConfigurePropertyAsId()
 		{
 			var configuration =
-				Configure(cfg => cfg.ConfigureType<TestClassPrimitiveTypes>()
+				Configure(cfg => cfg.Type<TestClassPrimitiveTypes>()
 				                    .EnableReferences(p => p.PropChar));
 			var configType = configuration.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
 			var property   = configType.Member("PropChar");
@@ -128,7 +128,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		public void ConfigureNameForProperty()
 		{
 			var configuration =
-				Configure(cfg => cfg.ConfigureType<SimpleTestSubject>()
+				Configure(cfg => cfg.Type<SimpleTestSubject>()
 				                    .Member(p => p.BasicProperty)
 				                    .Name(MemberName));
 
@@ -149,10 +149,9 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		public void ConfigureOrderForProperty()
 		{
 			var order = 0;
-			var configuration = Configure(cfg =>
-				                              cfg.ConfigureType<SimpleOrderedTestSubject>()
-				                                 .Member(p => p.Property2)
-				                                 .Order(order));
+			var configuration = Configure(cfg => cfg.Type<SimpleOrderedTestSubject>()
+			                                        .Member(p => p.Property2)
+			                                        .Order(order));
 			var member =
 				configuration.GetTypeConfiguration(typeof(SimpleOrderedTestSubject))
 				             .Member(nameof(SimpleOrderedTestSubject.Property2));
@@ -174,7 +173,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var configuration =
 				Configure(cfg =>
 				          {
-					          cfg.ConfigureType<SimpleTestSubject>()
+					          cfg.Type<SimpleTestSubject>()
 					             .Member(p => p.BasicProperty)
 					             .Attribute();
 				          });
@@ -194,7 +193,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var configuration = new ConfigurationContainer();
 			Assert.Null(configuration.Root.Find<EncryptionExtension>());
 			configuration.UseEncryptionAlgorithm()
-			             .ConfigureType<TestClassWithEncryptedData>()
+			             .Type<TestClassWithEncryptedData>()
 			             .Member(p => p.Password, x => x.Encrypt())
 			             .Member(p => p.Salary)
 			             .Encrypt();
@@ -225,7 +224,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			container.UseAutoFormatting();
 
 			Assert.Null(container.Root.Find<EncryptionExtension>());
-			container.ConfigureType<TestClassWithEncryptedData>()
+			container.Type<TestClassWithEncryptedData>()
 			         .Member(p => p.Password, x => x.Encrypt())
 			         .Member(p => p.Salary)
 			         .Encrypt();

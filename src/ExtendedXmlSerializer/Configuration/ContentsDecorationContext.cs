@@ -1,9 +1,10 @@
 ﻿using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using System.Reflection;
 
-namespace ExtendedXmlSerializer.ExtensionModel
+namespace ExtendedXmlSerializer.Configuration
 {
 	/// <summary>
 	/// Used to establish a fluent context for decorating the <see cref="IContents"/> component when configuring the
