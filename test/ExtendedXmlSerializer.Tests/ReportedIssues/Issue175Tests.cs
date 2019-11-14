@@ -25,10 +25,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			support.Assert(myMessage,
 			               @"<?xml version=""1.0"" encoding=""utf-8""?><myMessage xmlns=""http://namespace/file.xsd""><myElement uniqueId=""Message"" /></myMessage>");
 			support.Cycle(myMessage)
-			       .Should().BeEquivalentTo(myMessage);
+			       .Should()
+			       .BeEquivalentTo(myMessage);
 
 			support.Cycle(element)
-			       .Should().BeEquivalentTo(element);
+			       .Should()
+			       .BeEquivalentTo(element);
 		}
 
 		[Fact]
@@ -43,7 +45,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		public void VerifyRead()
 		{
-			var xml = @"<?xml version=""1.0""?>
+			const string xml = @"<?xml version=""1.0""?>
 						<myMessage xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns=""http://namespace/file.xsd"">
 							<myElement uniqueId=""12345"" />
 						</myMessage>";
@@ -54,7 +56,32 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                            .MyElement.UniqueId.Should()
 			                            .Be("12345");
 		}
+
+		[Fact]
+		void VerifyCrossAttributeCombination()
+		{
+			const string xml = @"<?xml version=""1.0""?>
+						<FooBar xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns=""http://namespace/file.xsd"">
+							<num>12345</num>
+						</FooBar>";
+
+			new ConfigurationContainer().InspectingType<Foo>()
+			                            .ForTesting()
+			                            .Deserialize<Foo>(xml).Number.Should()
+			                            .Be(12345);
+		}
 	}
+
+	[Serializable]
+	[XmlType(AnonymousType = true, Namespace      = "http://namespace/file.xsd")]
+	[XmlRoot(ElementName   = "FooBar", IsNullable = false)]
+	public class Foo : IFoo
+	{
+		[XmlElement("num")]
+		public int Number { get; set; }
+	}
+
+	public interface IFoo {}
 
 	[Serializable, XmlType(AnonymousType = true, Namespace                         = "http://namespace/file.xsd"),
 	 XmlRoot("myMessage", Namespace      = "http://namespace/file.xsd", IsNullable = false)]

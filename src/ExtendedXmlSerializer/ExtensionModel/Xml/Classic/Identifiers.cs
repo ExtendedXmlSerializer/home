@@ -1,6 +1,6 @@
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {
@@ -15,8 +15,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 			_identifiers  = identifiers;
 		}
 
-		public string Get(TypeInfo parameter) => _registration.Get(parameter)
-		                                                      ?.Identifier.NullIfEmpty() ??
+		public string Get(TypeInfo parameter) => _registration.Get(parameter)?.Identifier.NullIfEmpty()
+		                                         ??
 		                                         _identifiers.Get(parameter);
 	}
 }

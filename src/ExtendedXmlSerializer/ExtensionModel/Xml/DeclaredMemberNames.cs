@@ -1,7 +1,7 @@
-using System.Reflection;
-using System.Xml.Serialization;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
+using System.Reflection;
+using System.Xml.Serialization;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -12,9 +12,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		DeclaredMemberNames() {}
 
 		public string Get(MemberInfo parameter)
-			=> parameter.GetCustomAttribute<XmlAttributeAttribute>(false)
-			            ?.AttributeName.NullIfEmpty() ??
-			   DefaultXmlElementAttribute.Default.Get(parameter)
-			                             ?.ElementName.NullIfEmpty();
+			=> parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
+			   DefaultXmlElementAttribute.Default.Get(parameter)?.ElementName.NullIfEmpty();
 	}
 }
