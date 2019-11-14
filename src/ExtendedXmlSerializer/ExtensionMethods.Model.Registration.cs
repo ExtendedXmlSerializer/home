@@ -13,8 +13,8 @@ namespace ExtendedXmlSerializer
 	public static partial class ExtensionMethods
 	{
 		/// <summary>
-		/// Establishes a registration context for the specified type configuration.  From there, you can perform operations
-		/// on serializers and converters for the type.
+		/// Establishes a registration context for the specified type configuration.  From there, you can perform registration
+		/// operations on serializers and converters for the type.
 		/// </summary>
 		/// <typeparam name="T">The type under configuration.</typeparam>
 		/// <param name="this">The type configuration to configure.</param>
@@ -22,6 +22,14 @@ namespace ExtendedXmlSerializer
 		public static TypeRegistrationContext<T> Register<T>(this ITypeConfiguration<T> @this)
 			=> new TypeRegistrationContext<T>(@this);
 
+		/// <summary>
+		/// Establishes a registration context for the specified member configuration.  From there, you can perform
+		/// registration operations on serializers and converters for the type.
+		/// </summary>
+		/// <typeparam name="T">The member's containing type.</typeparam>
+		/// <typeparam name="TMember">The member's value type.</typeparam>
+		/// <param name="this">The member configuration to configure.</param>
+		/// <returns>The member registration context.</returns>
 		public static MemberRegistrationContext<T, TMember> Register<T, TMember>(
 			this IMemberConfiguration<T, TMember> @this)
 			=> new MemberRegistrationContext<T, TMember>(@this);
