@@ -1,10 +1,10 @@
-﻿using System.Text.RegularExpressions;
-using ExtendedXmlSerializer.Core.Sources;
+﻿using ExtendedXmlSerializer.Core.Sources;
+using System.Text.RegularExpressions;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
 	// ATTRIBUTION: https://stackoverflow.com/a/961504/3602057
-	public sealed class ValidContentCharacters : IAlteration<string>
+	sealed class ValidContentCharacters : IAlteration<string>
 	{
 		public static ValidContentCharacters Default { get; } = new ValidContentCharacters();
 

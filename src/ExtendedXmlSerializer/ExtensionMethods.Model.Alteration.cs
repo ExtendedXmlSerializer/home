@@ -23,7 +23,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="write">The alteration delegate to invoke during writing.</param>
 		/// <returns>The configured type configuration.</returns>
 		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, Func<T, T> write)
-			=> @this.Alter(Self<T>.Default.Get, write);
+			=> @this.Alter(Self.Of<T>(), write);
 
 		/// <summary>
 		/// Used to alter an instance of the configured result type whenever it is encountered during the serialization or
@@ -72,7 +72,7 @@ namespace ExtendedXmlSerializer
 		/// <returns>The configured member configuration.</returns>
 		public static IMemberConfiguration<T, TMember> Alter<T, TMember>(this IMemberConfiguration<T, TMember> @this,
 		                                                                 Func<TMember, TMember> write)
-			=> @this.Alter(Self.DelegateOf<TMember>(), write);
+			=> @this.Alter(Self.Of<TMember>(), write);
 
 		/// <summary>
 		/// Used to alter the value of a member whenever it is encountered during the serialization or deserialization
