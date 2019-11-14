@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace ExtendedXmlSerializer
 {
@@ -76,5 +77,8 @@ namespace ExtendedXmlSerializer
 			@this.Add(parameter);
 			return parameter;
 		}
+
+		public static XElement Member(this XElement @this, string name)
+			=> @this.Element(XName.Get(name, @this.Name.NamespaceName));
 	}
 }
