@@ -6,6 +6,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
@@ -14,6 +15,14 @@ namespace ExtendedXmlSerializer
 	// ReSharper disable once MismatchedFileName
 	public static partial class ExtensionMethods
 	{
+		/// <summary>
+		/// Used to create a <see cref="XmlParserContext"/> from an XmlNameTable.
+		/// </summary>
+		/// <param name="this">The XmlNameTable from which to create the context.</param>
+		/// <returns>The context.</returns>
+		public static XmlParserContext Context(this XmlNameTable @this)
+			=> XmlParserContexts.Default.Get(@this ?? new NameTable());
+
 		/// <summary>
 		/// Convenience method to retrieve a member element from a provided <see cref="XElement"/>.
 		/// </summary>
