@@ -17,6 +17,9 @@ using XmlWriter = System.Xml.XmlWriter;
 namespace ExtendedXmlSerializer
 {
 	// ReSharper disable once MismatchedFileName
+	/// <summary>
+	/// Contains all public extension methods for the ExtendedXmlSerializer model and API.
+	/// </summary>
 	public static partial class ExtensionMethods
 	{
 		/// <summary>
