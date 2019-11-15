@@ -51,6 +51,10 @@ https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/new?labels
     <DefineConstants>$(DefineConstants);NET45</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <DocumentationFile>.\ExtendedXmlSerializer.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup Condition="$(Configuration) == 'Release'">
     <None Include="..\..\$(PackageLicenseFile)" Pack="true" Visible="false" PackagePath="" />
     <None Include="..\..\Logo.png" Pack="true" Visible="false" PackagePath="" />
