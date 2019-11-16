@@ -1,0 +1,96 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": [ "*.csproj" ],
+          "src": "../src/ExtendedXmlSerializer"
+        }
+      ],
+      /*"dest": "content/.build/api/netstandard2.0",*/
+      "dest": "api",
+      "properties": {
+        "TargetFramework": "netstandard2.0"
+      },
+      "disableGitFeatures": false,
+      "disableDefaultFilter": false
+    } /*,
+    {
+      "src": "src/#1#*.csproj",
+      "dest": "content/.build/api/net45",
+      "properties": {
+        "TargetFramework": "net45"
+      },
+      "disableGitFeatures": false,
+      "disableDefaultFilter": false
+    }
+  */
+  ],
+  /*"merge": {
+    "content": [
+      {
+        "files": "*.yml",
+        "src": "content/.build/api/netstandard2.0"
+      }/*,
+      {
+        "files": "*.yml",
+        "src": "temp/api/net45"
+      }#1#
+    ],
+    "fileMetadata": {
+      "platform": {
+        "content/.build/api/netstandard2.0/*.yml": [
+          "netstandard2.0"
+        ] /*,
+        "temp/api/net45/*.yml": [
+          "net45"
+        ]#1#
+      }
+    },
+    "dest": "docs"
+  },*/
+  "build": {
+    "content": [
+      {
+        "files": [
+          "api/**.yml",
+          "api/index.md",
+          "articles/**.md",
+          "articles/**/toc.yml",
+          "toc.yml",
+          "*.md"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "images/**"
+        ]
+      }
+    ],
+    "overwrite": [
+      {
+        "files": [
+          "apidoc/**.md"
+        ],
+        "exclude": [
+          "obj/**"
+        ]
+      }
+    ],
+    "dest": "../docs",
+    "globalMetadataFiles": [],
+    "fileMetadataFiles": [],
+    "template": [
+      "default",
+      "mathew/src"
+    ],
+    "postProcessors": [],
+    "markdownEngineName": "markdig",
+    "noLangKeyword": false,
+    "keepFileLink": false,
+    "cleanupCacheHistory": false,
+    "disableGitFeatures": false
+  }
+}
