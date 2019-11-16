@@ -5,8 +5,10 @@ using ExtendedXmlSerializer.ExtensionModel.Encryption;
 
 namespace ExtendedXmlSerializer
 {
-	// ReSharper disable once MismatchedFileName
-	public static partial class ExtensionMethods
+	/// <summary>
+	/// Extension methods that assist or enable functionality found within the extension model namespace for encryption (<see cref="ExtensionModel.Encryption"/>).
+	/// </summary>
+	public static class ExtensionMethodsForEncryption
 	{
 		/// <summary>
 		/// Encrypts the specified member with the default encryption, which is a base-64 string.
@@ -21,7 +23,8 @@ namespace ExtendedXmlSerializer
 			        .Return(@this);
 
 		/// <summary>
-		/// Configures a container for default encryption, which is base-64.  Every registered converter will be wrapped with a converter which will further encrypt its reading and writing.
+		/// Configures a container for default encryption, which is base-64.  Every registered converter will be wrapped with
+		/// a converter which will further encrypt its reading and writing.
 		/// </summary>
 		/// <param name="this">The container to configure for encryption.</param>
 		/// <returns>A configured IConfigurationContainer.</returns>
@@ -29,7 +32,8 @@ namespace ExtendedXmlSerializer
 			=> @this.UseEncryptionAlgorithm(EncryptionConverterAlteration.Default);
 
 		/// <summary>
-		/// Configures a container for encryption with the specified encryption component.  Every registered converter will be wrapped with a converter which will further encrypt its reading and writing.
+		/// Configures a container for encryption with the specified encryption component.  Every registered converter will be
+		/// wrapped with a converter which will further encrypt its reading and writing.
 		/// </summary>
 		/// <param name="this">The container to configure for encryption.</param>
 		/// <param name="encryption">The encryption with which to encrypt and decrypt data.</param>
@@ -39,7 +43,8 @@ namespace ExtendedXmlSerializer
 			=> @this.UseEncryptionAlgorithm(new EncryptionConverterAlteration(encryption));
 
 		/// <summary>
-		/// Configures a container for encryption with the specified converter alteration.  Every registered converter will be altered by the provided alteration.
+		/// Configures a container for encryption with the specified converter alteration.  Every registered converter will be
+		/// altered by the provided alteration.
 		/// </summary>
 		/// <param name="this">The container which to configure for encryption.</param>
 		/// <param name="parameter">The alteration with which to alter each converter in the configuration container.</param>

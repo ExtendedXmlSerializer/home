@@ -16,8 +16,11 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer
 {
-	// ReSharper disable once MismatchedFileName
-	public static partial class ExtensionMethods
+	/// <summary>
+	/// Extension methods that assist or enable functionality found within the content model's content namespace (
+	/// <see cref="ContentModel.Content"/>).
+	/// </summary>
+	public static class ExtensionMethodsForContent
 	{
 		/// <summary>
 		/// Convenience method for extension authors.  This is used to establish a context to decorate the container's
@@ -90,7 +93,9 @@ namespace ExtendedXmlSerializer
 		///		<item>only public fields / properties are considered</item>
 		///		<item>any public fields (spit) must be readonly</item>
 		///		<item>any public properties must have a get but not a set (on the public API, at least)</item>
-		///		<item>there must be exactly one interesting constructor, with parameters that are a case-insensitive match for each field/property in some order (i.e. there must be an obvious 1:1 mapping between members and constructor parameter names)</item>
+		///		<item>there must be exactly one interesting constructor, with parameters that are a case-insensitive match for
+		///		each field/property in some order (i.e. there must be an obvious 1:1 mapping between members and constructor
+		///		parameter names)</item>
 		/// </list>
 		/// </summary>
 		/// <param name="this">The container to configure.</param>
@@ -123,12 +128,14 @@ namespace ExtendedXmlSerializer
 
 		/// <summary>
 		/// This is intended to circumvent default behavior which throws an exception for primitive data types when there is
-		/// no content provided for their elements.  For example, say you have a boolean element defined as such:
-		/// <code>&lt;Boolean /&gt;</code>  Or perhaps the long-form version: <code>&lt;Boolean&gt;&lt;/Boolean&gt;</code>
+		/// no content provided for their elements.
 		///
-		/// Either one of these will throw a <seealso cref="FormatException"/>.  Configuring the container with
+		/// For example, say you have a boolean element defined as such: `<Boolean />`  or, perhaps its long-form equivalent `
+		/// <Boolean></Boolean>`.
+		///
+		/// Either one of these by default will throw a <seealso cref="FormatException"/>.  Configuring the container with
 		/// <seealso cref="EnableImplicitlyDefinedDefaultValues"/> will allow the use of empty values within document
-		/// elements.
+		/// elements such as the above without throwing an exception.
 		/// </summary>
 		/// <param name="this">The container to configure.</param>
 		/// <returns>The configured container.</returns>

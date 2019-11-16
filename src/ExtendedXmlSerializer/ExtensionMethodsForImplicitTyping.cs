@@ -8,8 +8,10 @@ using System.Linq;
 
 namespace ExtendedXmlSerializer
 {
-	// ReSharper disable once MismatchedFileName
-	public static partial class ExtensionMethods
+	/// <summary>
+	/// A set of extension methods that assist in enabling implicit typing for the configuration container.
+	/// </summary>
+	public static class ExtensionMethodsForImplicitTyping
 	{
 		/// <summary>
 		/// Enables implicit typing on a configuration container, which will create a serializer that does not emit xmlns
@@ -28,7 +30,8 @@ namespace ExtendedXmlSerializer
 
 		/// <summary>
 		/// Convenience method to pass in a source type enumerable and resolve it into an array to pass to
-		/// <see cref="EnableImplicitTyping(IConfigurationContainer,System.Type[])" />.  This is primarily used by the EnableImplicitTyping* methods, but can also be used with any enumerable of <see cref="System.Type"/>.
+		/// <see cref="EnableImplicitTyping(IConfigurationContainer,System.Type[])" />.  This is primarily used by the
+		/// EnableImplicitTyping* methods, but can also be used with any enumerable of <see cref="System.Type"/>.
 		/// </summary>
 		/// <param name="this">The configuration container to configure.</param>
 		/// <param name="types">The types to register as implicit.</param>

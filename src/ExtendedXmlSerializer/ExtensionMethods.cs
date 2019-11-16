@@ -5,8 +5,10 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer
 {
-	// ReSharper disable once MismatchedFileName
-	public static partial class ExtensionMethods
+	/// <summary>
+	/// General-purpose extension methods.
+	/// </summary>
+	public static class ExtensionMethods
 	{
 		/// <summary>Convenience method used for fluent-type methods.</summary>
 		/// <typeparam name="T">The type of the calling instance.</typeparam>

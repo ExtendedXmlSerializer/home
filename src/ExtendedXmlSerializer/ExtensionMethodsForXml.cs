@@ -16,11 +16,11 @@ using XmlWriter = System.Xml.XmlWriter;
 
 namespace ExtendedXmlSerializer
 {
-	// ReSharper disable once MismatchedFileName
 	/// <summary>
-	/// Contains all public extension methods for the ExtendedXmlSerializer model and API.
+	/// Extension methods that assist or enable functionality found within the extension model namespace for xml-specific
+	/// behaviors (<see cref="ExtensionModel.Xml"/>).
 	/// </summary>
-	public static partial class ExtensionMethods
+	public static class ExtensionMethodsForXml
 	{
 		/// <summary>
 		/// Configures the provided configuration container to create a serializer that automatically formats its contents
@@ -62,7 +62,8 @@ namespace ExtendedXmlSerializer
 			        .Extend(OptimizedNamespaceExtension.Default);
 
 		/// <summary>
-		/// Ensures that all text and strings encountered when emitting the document are valid Xml characters, replacing those that are not with empty strings.
+		/// Ensures that all text and strings encountered when emitting the document are valid Xml characters, replacing those
+		/// that are not with empty strings.
 		/// </summary>
 		/// <param name="this">The configuration container to configure.</param>
 		/// <returns>The configured configuration container.</returns>
@@ -224,14 +225,43 @@ namespace ExtendedXmlSerializer
 			        .XmlSerializers.Apply(@this.Get(), serializer)
 			        .Return(@this);
 
+		/// <summary>
+		/// Adds a migration command to the configured type.  A migration allows older persisted XML to migrate to an object
+		/// model schema that has changed since the XML was persisted.  The provided command specifies how to manipulate the
+		/// element that represents the type so that it can (hopefully 😇) be deserialized without error.
+		/// </summary>
+		/// <typeparam name="T">The type under configuration.</typeparam>
+		/// <param name="this">The type configuration to configure.</param>
+		/// <param name="migration">The command that specifies how to migrate an Xml element that represents an older schema.</param>
+		/// <returns>The configured type configuration.</returns>
 		public static ITypeConfiguration<T> AddMigration<T>(this ITypeConfiguration<T> @this,
 		                                                    ICommand<XElement> migration)
 			=> @this.AddMigration(migration.Execute);
 
+		/// <summary>
+		/// Adds a migration delegate to the configured type.  A migration allows older persisted XML to migrate to an object
+		/// model schema that has changed since the XML was persisted.  The provided command specifies how to manipulate the
+		/// element that represents the type so that it can (hopefully 😇) be deserialized without error.
+		/// </summary>
+		/// <typeparam name="T">The type under configuration.</typeparam>
+		/// <param name="this">The type configuration to configure.</param>
+		/// <param name="migration">The delegate that specifies how to migrate an Xml element that represents an older schema.
+		/// </param>
+		/// <returns>The configured type configuration.</returns>
 		public static ITypeConfiguration<T> AddMigration<T>(this ITypeConfiguration<T> @this,
 		                                                    Action<XElement> migration)
 			=> @this.AddMigration(migration.Yield());
 
+		/// <summary>
+		/// Adds a set of migration delegates to the configured type.  A migration allows older persisted XML to migrate to an
+		/// object model schema that has changed since the XML was persisted.  The provided command specifies how to
+		/// manipulate the element that represents the type so that it can (hopefully 😇) be deserialized without error.
+		/// </summary>
+		/// <typeparam name="T">The type under configuration.</typeparam>
+		/// <param name="this">The type configuration to configure.</param>
+		/// <param name="migrations">The delegates that specify how to migrate an Xml element that represents an older schema.
+		/// </param>
+		/// <returns>The configured type configuration.</returns>
 		public static ITypeConfiguration<T> AddMigration<T>(this ITypeConfiguration<T> @this,
 		                                                    IEnumerable<Action<XElement>> migrations)
 			=> @this.Root.With<MigrationsExtension>()
