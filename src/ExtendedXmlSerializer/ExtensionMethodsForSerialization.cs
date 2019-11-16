@@ -11,8 +11,11 @@ using System.Xml;
 
 namespace ExtendedXmlSerializer
 {
-	// ReSharper disable once MismatchedFileName
-	public static partial class ExtensionMethods
+	/// <summary>
+	/// Extension methods for convenience that assist in simplifying the amount of code required for serializing instances
+	/// and deserializing document sources.
+	/// </summary>
+	public static class ExtensionMethodsForSerialization
 	{
 		readonly static Func<Stream> New = DefaultActivators.Default.New<MemoryStream>;
 
@@ -29,7 +32,8 @@ namespace ExtendedXmlSerializer
 			=> @this.Serialize(WriterFactory, New, instance);
 
 		/// <summary>
-		/// Serialization convenience method to serialize the provided instance into a string with the provided <see cref="XmlWriterSettings"/>.
+		/// Serialization convenience method to serialize the provided instance into a string with the provided
+		/// <see cref="XmlWriterSettings"/>.
 		/// </summary>
 		/// <param name="this">The serializer to use for serialization.</param>
 		/// <param name="settings">The writer settings for handling the xml writer used create the resulting Xml.</param>

@@ -8,8 +8,12 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer
 {
-	// ReSharper disable once MismatchedFileName
-	public static partial class ExtensionMethods
+	/// <summary>
+	/// Extension methods that assist or enable functionality found within the namespace for specifications (
+	/// <see cref="Core.Sources"/>).  This is considered internal code and while publicly exposed, is not supported.  Feel
+	/// free to knock yourself out with it if you think you can figure it out, however. 😆
+	/// </summary>
+	public static class ExtensionMethodsForCoreSpecifications
 	{
 		/// <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
 		/// <typeparam name="TParameter">The type of the t parameter.</typeparam>

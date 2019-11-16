@@ -17,7 +17,8 @@ namespace ExtendedXmlSerializer.Configuration
 			new EmitBehavior(new AllowedSpecificationAlteration(AlwaysEmitMemberSpecification.Default));
 
 		/// <summary>
-		/// Follows the classic serializer behavior for emitting content.  For classic serialization, the serializer always emits the value when it is a System.<see cref="Enum"/>.  Otherwise, it emits if the value is assigned (non-null).
+		/// Follows the classic serializer behavior for emitting content.  For classic serialization, the serializer always
+		/// emits the value when it is a <see cref="Enum"/>.  Otherwise, it emits if the value is assigned (non-null).
 		/// </summary>
 		public static IEmitBehavior Classic { get; } =
 			new EmitBehavior(new AddAlteration(ClassicAllowedMemberValues.Default));
@@ -30,9 +31,8 @@ namespace ExtendedXmlSerializer.Configuration
 
 		/// <summary>
 		/// This is a variant of the <see cref="WhenAssigned"/> behavior.  With this behavior, the serializer emits when the
-		/// value is different from the defined value in the class.  For instance, if you have a property
-		/// <code>public bool MyProperty {get; set} = true</code> and <code>MyProperty</code> is <code>false</code> upon
-		/// serialization, then the content is emitted.
+		/// value is different from the defined value in the class.  For instance, if you have a property `public bool
+		/// MyProperty {get; set} = true` and `MyProperty` is `false` upon serialization, then the content is emitted.
 		/// </summary>
 		public static IEmitBehavior WhenModified { get; } =
 			new EmitBehavior(new AddAlteration(AllowedAssignedInstanceValues.Default));

@@ -3,11 +3,16 @@ using ExtendedXmlSerializer.ContentModel.Conversion;
 
 namespace ExtendedXmlSerializer
 {
-	// ReSharper disable once MismatchedFileName
-	public static partial class ExtensionMethods
+	/// <summary>
+	/// Extension methods that assist or enable functionality found within the content model namespace (
+	/// <see cref="ContentModel"/>).
+	/// </summary>
+	public static class ExtensionMethodsForContentModel
 	{
 		/// <summary>
-		/// Given a generalized serializer, create a type-specific serializer that handles the specified type.  This is typically used for simple casting to and from a general object type and should be handled with care as an incorrect type will throw errors.
+		/// Given a generalized serializer, create a type-specific serializer that handles the specified type.  This is
+		/// typically used for simple casting to and from a general object type and should be handled with care as an
+		/// incorrect type will throw errors.
 		/// </summary>
 		/// <typeparam name="T">The type to use for serialization.</typeparam>
 		/// <param name="this">The this.</param>
@@ -16,7 +21,8 @@ namespace ExtendedXmlSerializer
 		                                                               new GeneralSerializerAdapter<T>(@this);
 
 		/// <summary>
-		/// Given a type-specific serializer, create a generalized serializer that serializes and deserializes in terms of a general <see cref="System.Object"/>.
+		/// Given a type-specific serializer, create a generalized serializer that serializes and deserializes in terms of a
+		/// general <see cref="System.Object"/>.
 		/// </summary>
 		/// <typeparam name="T">The type that the given serializer uses.</typeparam>
 		/// <param name="this">The serializer used to create a new serializer.</param>
@@ -24,7 +30,8 @@ namespace ExtendedXmlSerializer
 		                                                                 new GenericSerializerAdapter<T>(@this);
 
 		/// <summary>
-		/// Given a type-specific writer, create a generalized writer that writers in terms of a general <see cref="System.Object"/>.
+		/// Given a type-specific writer, create a generalized writer that writers in terms of a general
+		/// <see cref="System.Object"/>.
 		/// </summary>
 		/// <typeparam name="T">The type that the writer is used to write.</typeparam>
 		/// <param name="this">The writer instance which to base the new writer.</param>
@@ -41,7 +48,8 @@ namespace ExtendedXmlSerializer
 			=> new StructureConverter<T>(@this);
 
 		/// <summary>
-		/// Given a type-specific converter, create a generalized converter that serializes and deserializes in terms of a general <see cref="System.Object"/>.
+		/// Given a type-specific converter, create a generalized converter that serializes and deserializes in terms of a
+		/// general <see cref="System.Object"/>.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="this">The type-specific converter upon which to base the new generalized converter.</param>

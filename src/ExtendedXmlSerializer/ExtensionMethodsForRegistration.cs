@@ -9,8 +9,12 @@ using System;
 
 namespace ExtendedXmlSerializer
 {
-	// ReSharper disable once MismatchedFileName
-	public static partial class ExtensionMethods
+	/// <summary>
+	/// A set of extension methods to assist in registration operations for the container, its types, and/or its type's members.
+	/// Registrations can be serializers or converters to change the default behavior on how these components emit or read
+	/// in their content.
+	/// </summary>
+	public static class ExtensionMethodsForRegistration
 	{
 		/// <summary>
 		/// Establishes a registration context for the specified type configuration.  From there, you can perform registration

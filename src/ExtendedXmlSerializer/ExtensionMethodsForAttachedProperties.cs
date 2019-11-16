@@ -9,8 +9,11 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer
 {
-	// ReSharper disable once MismatchedFileName
-	public static partial class ExtensionMethods
+	/// <summary>
+	/// Extension methods that assist or enable functionality found within the extension model namespace for attached
+	/// properties (<see cref="ExtensionModel.AttachedProperties"/>).
+	/// </summary>
+	public static class ExtensionMethodsForAttachedProperties
 	{
 		/// <summary>
 		/// Enables attached properties on the container with optional initial properties to register.

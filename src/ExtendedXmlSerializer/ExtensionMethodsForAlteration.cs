@@ -8,8 +8,11 @@ using System;
 
 namespace ExtendedXmlSerializer
 {
-	// ReSharper disable once MismatchedFileName
-	public static partial class ExtensionMethods
+	/// <summary>
+	/// Extension methods that assist or enable functionality for altering content produced (or read in) by the container,
+	/// its types, and/or its type's members.
+	/// </summary>
+	public static class ExtensionMethodsForAlteration
 	{
 		/// <summary>
 		/// Used to alter an instance of the configured result type whenever it is encountered during the serialization
