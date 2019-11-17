@@ -1,9 +1,8 @@
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -28,7 +27,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_contents      = contents;
 		}
 
-		public ISerializer Get(TypeInfo parameter)
+		public ContentModel.ISerializer Get(TypeInfo parameter)
 		{
 			var serializer = _contents.Get(parameter);
 			var result = serializer is ReferenceSerializer && _specification.IsSatisfiedBy(parameter)

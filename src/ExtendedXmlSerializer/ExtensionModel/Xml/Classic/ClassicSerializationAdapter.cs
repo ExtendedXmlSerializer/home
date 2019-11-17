@@ -1,5 +1,4 @@
-﻿using System.Xml.Serialization;
-using ExtendedXmlSerializer.ContentModel;
+﻿using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
 
@@ -9,27 +8,23 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 	{
 		public static ClassicSerializationAdapter<T> Default { get; } = new ClassicSerializationAdapter<T>();
 
-		ClassicSerializationAdapter() : this(new XmlSerializer(typeof(T))) {}
+		ClassicSerializationAdapter() : this(new System.Xml.Serialization.XmlSerializer(typeof(T))) {}
 
-		readonly XmlSerializer _classic;
+		readonly System.Xml.Serialization.XmlSerializer _classic;
 
-		public ClassicSerializationAdapter(XmlSerializer classic) => _classic = classic;
+		public ClassicSerializationAdapter(System.Xml.Serialization.XmlSerializer classic) => _classic = classic;
 
 		public T Get(IFormatReader parameter)
 		{
-			var reader = parameter.Get()
-			                      .AsValid<System.Xml.XmlReader>();
+			var reader = parameter.Get().AsValid<System.Xml.XmlReader>();
 			reader.Read();
-			var result = _classic.Deserialize(reader)
-			                     .AsValid<T>();
+			var result = _classic.Deserialize(reader).AsValid<T>();
 			return result;
 		}
 
 		public void Write(IFormatWriter writer, T instance)
 		{
-			_classic.Serialize(writer.Get()
-			                         .AsValid<System.Xml.XmlWriter>(),
-			                   instance);
+			_classic.Serialize(writer.Get().AsValid<System.Xml.XmlWriter>(), instance);
 		}
 	}
 }

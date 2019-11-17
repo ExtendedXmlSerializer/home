@@ -1,4 +1,3 @@
-using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core.Sources;
 using Sprache;
@@ -6,17 +5,17 @@ using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class MarkupExtensionAwareSerializer : ISerializer
+	sealed class MarkupExtensionAwareSerializer : ContentModel.ISerializer
 	{
 		readonly Parser<MarkupExtensionParts> _parser;
 		readonly IMarkupExtensions            _container;
-		readonly ISerializer                  _serializer;
+		readonly ContentModel.ISerializer                  _serializer;
 
-		public MarkupExtensionAwareSerializer(IMarkupExtensions container, ISerializer serializer)
+		public MarkupExtensionAwareSerializer(IMarkupExtensions container, ContentModel.ISerializer serializer)
 			: this(MarkupExtensionParser.Default, container, serializer) {}
 
 		public MarkupExtensionAwareSerializer(Parser<MarkupExtensionParts> parser, IMarkupExtensions container,
-		                                      ISerializer serializer)
+		                                      ContentModel.ISerializer serializer)
 		{
 			_parser     = parser;
 			_container  = container;

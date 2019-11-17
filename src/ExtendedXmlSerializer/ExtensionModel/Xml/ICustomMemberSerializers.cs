@@ -1,7 +1,6 @@
-﻿using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ReflectionModel;
+﻿using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	public interface ICustomMemberSerializers : IMemberTable<ISerializer>, ISerializerExtension {}
+	public interface ICustomMemberSerializers : IMemberTable<ContentModel.ISerializer>, ISerializerExtension {}
 }

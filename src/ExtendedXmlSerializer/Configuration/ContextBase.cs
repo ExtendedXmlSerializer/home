@@ -1,6 +1,4 @@
-﻿using ExtendedXmlSerializer.ExtensionModel.Xml;
-
-namespace ExtendedXmlSerializer.Configuration
+﻿namespace ExtendedXmlSerializer.Configuration
 {
 	public abstract class ContextBase : IContext
 	{

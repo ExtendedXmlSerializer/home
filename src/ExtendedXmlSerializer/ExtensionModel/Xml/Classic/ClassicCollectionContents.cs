@@ -1,4 +1,3 @@
-using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ReflectionModel;
@@ -16,8 +15,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 			_enumerators = enumerators;
 		}
 
-		public ISerializer Get(CollectionContentInput parameter)
-			=> new Serializer(_contents.Create(parameter.Classification,
+		public ContentModel.ISerializer Get(CollectionContentInput parameter)
+			=> new ContentModel.Serializer(_contents.Create(parameter.Classification,
 			                                   new CollectionInnerContentHandler(parameter.Item, _contents)),
 			                  new EnumerableWriter(_enumerators, parameter.Item).Adapt());
 	}

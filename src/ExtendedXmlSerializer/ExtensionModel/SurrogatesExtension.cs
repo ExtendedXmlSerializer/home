@@ -1,5 +1,4 @@
-﻿using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
+﻿using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
 using System;
@@ -43,7 +42,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 				_contents = contents;
 			}
 
-			public ISerializer Get(TypeInfo parameter)
+			public ContentModel.ISerializer Get(TypeInfo parameter)
 			{
 				var surrogateType = _provider.GetSurrogateType(parameter);
 				var result = surrogateType != null
@@ -66,13 +65,13 @@ namespace ExtendedXmlSerializer.ExtensionModel
 				public Type Surrogate { get; }
 			}
 
-			sealed class Serializer : ISerializer
+			sealed class Serializer : ContentModel.ISerializer
 			{
 				readonly ISerializationSurrogateProvider _provider;
 				readonly Mapping                         _mapping;
-				readonly ISerializer                     _serializer;
+				readonly ContentModel.ISerializer                     _serializer;
 
-				public Serializer(ISerializationSurrogateProvider provider, Mapping mapping, ISerializer serializer)
+				public Serializer(ISerializationSurrogateProvider provider, Mapping mapping, ContentModel.ISerializer serializer)
 				{
 					_provider   = provider;
 					_mapping    = mapping;

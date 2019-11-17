@@ -23,7 +23,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			            .Decorate<IContents, DeferredReferenceContents>()
 			            .Decorate<ISerializers, DeferredReferenceSerializers>()
 			            .Decorate<IReferenceEncounters, DeferredReferenceEncounters>()
-			            .Decorate(typeof(IFormatReaders<>), typeof(Factory<>));
+			            .Decorate<IFormatReaders, Factory>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
@@ -50,16 +50,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		}
 
 		[UsedImplicitly]
-		sealed class Factory<T> : IFormatReaders<T>
+		sealed class Factory : IFormatReaders
 		{
-			readonly IFormatReaders<T> _factory;
+			readonly IFormatReaders _factory;
 
-			public Factory(IFormatReaders<T> factory)
-			{
-				_factory = factory;
-			}
+			public Factory(IFormatReaders factory) => _factory = factory;
 
-			public IFormatReader Get(T reader) => new DeferredReferencesReader(_factory.Get(reader));
+			public IFormatReader Get(System.Xml.XmlReader reader) => new DeferredReferencesReader(_factory.Get(reader));
 		}
 
 		sealed class DeferredReferencesReader : IFormatReader

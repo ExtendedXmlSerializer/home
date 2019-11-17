@@ -5,7 +5,7 @@ using ExtendedXmlSerializer.ContentModel.Format;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class ActivatedSerializer : Activated<ISerializer>, ISerializer
+	sealed class ActivatedSerializer : Activated<ContentModel.ISerializer>, ContentModel.ISerializer
 	{
 		public ActivatedSerializer(Type objectType, TypeInfo targetType) : base(objectType, targetType,
 		                                                                        typeof(GenericSerializerAdapter<>)) {}

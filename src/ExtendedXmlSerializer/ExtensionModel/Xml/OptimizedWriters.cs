@@ -1,21 +1,23 @@
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core.Specifications;
+using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class OptimizedWriters : IFormatWriters<System.Xml.XmlWriter>
+	sealed class OptimizedWriters : IFormatWriters
 	{
-		readonly ISpecification<object>               _specification;
-		readonly IFormatWriters<System.Xml.XmlWriter> _factory;
-		readonly IObjectIdentifiers                   _identifiers;
-		readonly IRootInstances                       _instances;
+		readonly ISpecification<object> _specification;
+		readonly IFormatWriters         _factory;
+		readonly IObjectIdentifiers     _identifiers;
+		readonly IRootInstances         _instances;
 
-		public OptimizedWriters(IFormatWriters<System.Xml.XmlWriter> factory, IObjectIdentifiers identifiers,
+		[UsedImplicitly]
+		public OptimizedWriters(IFormatWriters factory, IObjectIdentifiers identifiers,
 		                        IRootInstances instances)
 			: this(new InstanceConditionalSpecification(), factory, identifiers, instances) {}
 
 		// ReSharper disable once TooManyDependencies
-		public OptimizedWriters(ISpecification<object> specification, IFormatWriters<System.Xml.XmlWriter> factory,
+		public OptimizedWriters(ISpecification<object> specification, IFormatWriters factory,
 		                        IObjectIdentifiers identifiers, IRootInstances instances)
 		{
 			_specification = specification;
@@ -26,8 +28,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public IFormatWriter Get(System.Xml.XmlWriter parameter)
 			=> new OptimizedNamespaceXmlWriter(_factory.Get(parameter),
-			                                   new IdentifierCommand(_identifiers,
-			                                                         _specification.Fix(parameter),
+			                                   new IdentifierCommand(_identifiers, _specification.Fix(parameter),
 			                                                         _instances.Build(parameter)));
 	}
 }

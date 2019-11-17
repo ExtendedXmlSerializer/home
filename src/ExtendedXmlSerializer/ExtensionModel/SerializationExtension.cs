@@ -2,6 +2,9 @@ using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.References;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
+using ISerializer = ExtendedXmlSerializer.ExtensionModel.Xml.ISerializer;
+using Serializer = ExtendedXmlSerializer.ExtensionModel.Xml.Serializer;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
@@ -12,11 +15,11 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		SerializationExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Register(typeof(IRead<>), typeof(Read<>))
-			            .Register(typeof(IWrite<>), typeof(Write<>))
-			            .Register(typeof(ISerializer<,>), typeof(Serializer<,>))
+			=> parameter.Register<IRead, Read>()
+			            .Register<IWrite, Write>()
+			            .Register<ISerializer, Serializer>()
 			            .Register<IRuntimeSerialization, RuntimeSerialization>()
-			            .Register<ISerializer, RuntimeSerializer>()
+			            .Register<ContentModel.ISerializer, RuntimeSerializer>()
 			            .Register<RuntimeSerializers>()
 			            .Register<ISerializers, Serializers>()
 			            .RegisterInstance(RuntimeSerializationExceptionMessage.Default)

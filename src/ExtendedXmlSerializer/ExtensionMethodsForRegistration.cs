@@ -71,7 +71,7 @@ namespace ExtendedXmlSerializer
 		[Obsolete(
 			"This method is considered deprecated and will be removed in a future release.  Use IMemberConfiguration<T, TMember>.Register().Serializer().Of(ISerializer) instead.")]
 		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this,
-		                                                                    ISerializer serializer)
+		                                                                    ContentModel.ISerializer serializer)
 			=> @this.Root.With<CustomSerializationExtension>()
 			        .Members.Apply(@this.GetMember(), serializer)
 			        .Return(@this);
@@ -107,7 +107,7 @@ namespace ExtendedXmlSerializer
 		[Obsolete(
 			"This method is considered deprecated and will be removed in a future release.  Use ITypeConfiguration<T>.Register().Serializer().Of(ISerializer) instead.")]
 
-		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, ISerializer serializer)
+		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, ContentModel.ISerializer serializer)
 			=> @this.Register().Serializer().Using(serializer);
 
 		/// <exclude />

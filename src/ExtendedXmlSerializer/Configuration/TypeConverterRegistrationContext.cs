@@ -39,7 +39,6 @@ namespace ExtendedXmlSerializer.Configuration
 		/// configured type into a string for serialization, and to construct an instance of the currently configured type
 		/// from a string during deserialization.
 		/// </summary>
-		/// <typeparam name="T">The type to convert.</typeparam>
 		/// <param name="converter">The converter to register.</param>
 		/// <returns>The configured type container.</returns>
 		public ITypeConfiguration<T> Using(IConverter<T> converter)

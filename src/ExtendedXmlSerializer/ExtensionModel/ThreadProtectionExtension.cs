@@ -1,4 +1,5 @@
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
@@ -8,18 +9,17 @@ namespace ExtendedXmlSerializer.ExtensionModel
 
 		ThreadProtectionExtension() {}
 
-		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Decorate(typeof(ISerializer<,>), typeof(Serializer<,>));
+		public IServiceRepository Get(IServiceRepository parameter) => parameter.Decorate<ISerializer, Serializer>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
-		sealed class Serializer<TRead, TWrite> : ISerializer<TRead, TWrite>
+		sealed class Serializer : ISerializer
 		{
-			readonly ISerializer<TRead, TWrite> _serializer;
+			readonly ISerializer _serializer;
 
-			public Serializer(ISerializer<TRead, TWrite> serializer) => _serializer = serializer;
+			public Serializer(ISerializer serializer) => _serializer = serializer;
 
-			public object Deserialize(TRead reader)
+			public object Deserialize(System.Xml.XmlReader reader)
 			{
 				lock (_serializer)
 				{
@@ -27,7 +27,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 				}
 			}
 
-			public void Serialize(TWrite writer, object instance)
+			public void Serialize(System.Xml.XmlWriter writer, object instance)
 			{
 				lock (_serializer)
 				{

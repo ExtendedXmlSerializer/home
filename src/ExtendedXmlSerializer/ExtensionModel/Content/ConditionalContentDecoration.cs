@@ -1,11 +1,10 @@
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Linq;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -32,7 +31,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			=> new ConditionalContents(arg1.Get<TSpecification>(), arg1.Get<T>(), arg2);
 	}
 
-	sealed class ConditionalContentDecoration<T> : DecorateAlteration<IContents, T, TypeInfo, ISerializer>
+	sealed class ConditionalContentDecoration<T> : DecorateAlteration<IContents, T, TypeInfo, ContentModel.ISerializer>
 		where T : IContents
 	{
 		public ConditionalContentDecoration(ISpecification<TypeInfo> specification)

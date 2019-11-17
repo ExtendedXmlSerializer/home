@@ -1,8 +1,7 @@
-﻿using System.Collections;
+﻿using ExtendedXmlSerializer.ExtensionModel;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerializer.ExtensionModel;
 
 namespace ExtendedXmlSerializer.Configuration
 {
@@ -12,8 +11,8 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public ConfigurationContainer() : this(DefaultExtensions.Default.ToArray()) {}
 
-		public ConfigurationContainer(params ISerializerExtension[] extensions) :
-			this(new ExtensionCollection(extensions)) {}
+		public ConfigurationContainer(params ISerializerExtension[] extensions)
+			: this(new ExtensionCollection(extensions)) {}
 
 		public ConfigurationContainer(IExtensionCollection extensions) : this(new RootContext(extensions)) {}
 
@@ -21,20 +20,19 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public ConfigurationContainer(IRootContext context) : base(context) => _context = context;
 
+		/// <inheritdoc />
 		public IConfigurationContainer Extend(ISerializerExtension extension)
 		{
-			var existing = _context.SingleOrDefault(extension.GetType()
-			                                                 .GetTypeInfo()
-			                                                 .IsInstanceOfType);
+			var existing = _context.SingleOrDefault(extension.GetType().IsInstanceOfType);
 			if (existing != null)
 			{
 				_context.Remove(existing);
 			}
 
-			_context.Add(extension);
-			return this;
+			return _context.Apply(extension).Return(this);
 		}
 
+		/// <inheritdoc />
 		public IEnumerator<ITypeConfiguration> GetEnumerator() => _context.Types.GetEnumerator();
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

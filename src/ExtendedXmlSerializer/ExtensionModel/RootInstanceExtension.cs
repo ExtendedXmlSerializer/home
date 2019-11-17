@@ -1,5 +1,4 @@
-﻿using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
+﻿using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Specifications;
@@ -40,7 +39,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 				_instances     = instances;
 			}
 
-			public ISerializer Get(TypeInfo parameter)
+			public ContentModel.ISerializer Get(TypeInfo parameter)
 			{
 				var write = _writers.Get(parameter);
 				var result = _specification.IsSatisfiedBy(parameter)
@@ -50,13 +49,13 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			}
 		}
 
-		sealed class Serializer : ISerializer
+		sealed class Serializer : ContentModel.ISerializer
 		{
 			readonly ISpecification<object> _conditions;
 			readonly IRootInstances         _instances;
-			readonly ISerializer            _container;
+			readonly ContentModel.ISerializer            _container;
 
-			public Serializer(ISpecification<object> conditions, IRootInstances instances, ISerializer container)
+			public Serializer(ISpecification<object> conditions, IRootInstances instances, ContentModel.ISerializer container)
 			{
 				_conditions = conditions;
 				_instances  = instances;

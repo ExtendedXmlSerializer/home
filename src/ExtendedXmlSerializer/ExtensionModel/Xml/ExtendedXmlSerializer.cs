@@ -8,10 +8,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 	[UsedImplicitly]
 	sealed class ExtendedXmlSerializer : IExtendedXmlSerializer
 	{
-		readonly ISerializer<System.Xml.XmlReader, System.Xml.XmlWriter> _serializer;
+		readonly ISerializer _serializer;
 
-		public ExtendedXmlSerializer(ISerializer<System.Xml.XmlReader, System.Xml.XmlWriter> serializer) =>
-			_serializer = serializer;
+		public ExtendedXmlSerializer(ISerializer serializer) => _serializer = serializer;
 
 		public void Serialize(System.Xml.XmlWriter writer, object instance)
 			=> _serializer.Serialize(writer, instance);
