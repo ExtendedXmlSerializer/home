@@ -83,11 +83,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			_writer.WriteCData(content);
 		}
 
-		public void Content(IIdentity property, string content)
+		public void Content(IIdentity identity, string content)
 		{
-			var identifier = property.Identifier.NullIfEmpty();
+			var identifier = identity.Identifier.NullIfEmpty();
 			var prefix     = identifier != null ? Prefix(identifier) : null;
-			var name       = property.Name;
+			var name       = identity.Name;
 
 			if (!string.IsNullOrEmpty(prefix))
 			{

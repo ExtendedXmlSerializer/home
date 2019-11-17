@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Conversion;
+﻿using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
@@ -8,10 +6,12 @@ using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 {
-	public sealed class EncryptionExtension : ISerializerExtension, ISpecification<IAlteration<IConverter>>
+	sealed class EncryptionExtension : ISerializerExtension, ISpecification<IAlteration<IConverter>>
 	{
 		readonly static EncryptionConverterAlteration Alteration = EncryptionConverterAlteration.Default;
 

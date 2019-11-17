@@ -1,6 +1,5 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.Tests.Support;
 using System;
 using System.Runtime.Serialization;
@@ -14,12 +13,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 	public sealed class Issue161Tests
 	{
 		[Fact]
-		public void Verify()
+		void Verify()
 		{
-			var serializer = IntegrationExtensions
-			                 .Register(new ConfigurationContainer(), SerializationSurrogateProvider.Default)
-			                 .Create()
-			                 .ForTesting();
+			var serializer = new ConfigurationContainer().Register(SerializationSurrogateProvider.Default)
+			                                             .Create()
+			                                             .ForTesting();
 			serializer.Assert(new Subject {Message = "Surrogates in the hizzy, dawg."},
 			                  @"<?xml version=""1.0"" encoding=""utf-8""?><Issue161Tests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message>Hello world from Surrogate: Surrogates in the hizzy, dawg.</Message></Issue161Tests-Subject>");
 		}

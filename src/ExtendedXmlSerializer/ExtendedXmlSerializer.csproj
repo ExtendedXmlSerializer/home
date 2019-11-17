@@ -8,7 +8,7 @@
     <ClassicFrameworkVersion>net45</ClassicFrameworkVersion>
     <TargetFrameworks>netstandard2.0;$(ClassicFrameworkVersion)</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer</AssemblyName>
-    <NoWarn>1701;1702;1705;0436;0628</NoWarn>
+    <DocumentationFile>.\ExtendedXmlSerializer.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="$(Configuration) == 'Release'">

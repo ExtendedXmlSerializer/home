@@ -4,6 +4,9 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public sealed class TypeModelExtension : ISerializerExtension
 	{
 		public static TypeModelExtension Default { get; } = new TypeModelExtension();

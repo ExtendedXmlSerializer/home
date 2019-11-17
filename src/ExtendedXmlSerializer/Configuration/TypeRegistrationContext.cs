@@ -9,6 +9,10 @@
 	{
 		readonly ITypeConfiguration<T> _configuration;
 
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="configuration">The type configuration to configure.</param>
 		public TypeRegistrationContext(ITypeConfiguration<T> configuration) => _configuration = configuration;
 
 		/// <summary>

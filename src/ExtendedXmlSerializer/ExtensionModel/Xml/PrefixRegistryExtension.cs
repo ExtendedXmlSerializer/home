@@ -100,9 +100,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 					_writer.EndCurrent();
 				}
 
-				public void Content(IIdentity property, string content)
+				public void Content(IIdentity identity, string content)
 				{
-					_writer.Content(property, content);
+					_writer.Content(identity, content);
 				}
 
 				public void Content(string content)

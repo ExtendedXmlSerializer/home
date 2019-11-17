@@ -170,6 +170,7 @@ namespace ExtendedXmlSerializer
 
 		#region Obsolete
 
+		/// <exclude />
 		[Obsolete("This is considered deprecated, unsupported functionality and will be removed in a future release.")]
 		public static IExtendedXmlSerializer Create<T>(this T @this, Func<T, IConfigurationContainer> configure)
 			where T : IConfigurationContainer => configure(@this).Create();

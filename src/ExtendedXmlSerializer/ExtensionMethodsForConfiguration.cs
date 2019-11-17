@@ -363,29 +363,31 @@ namespace ExtendedXmlSerializer
 
 		#region Obsolete
 
+		/// <exclude />
 		[Obsolete("This is considered deprecated and will be removed in a future release.  Use IRootContext.Extend instead.")]
 		public static ISerializerExtension[] With(this IEnumerable<ISerializerExtension> @this,
 		                                          params ISerializerExtension[] extensions)
 			=> @this.TypeZip(extensions).ToArray();
 
+		/// <exclude />
 		[Obsolete("This is considered deprecated and will be removed in a future release.")]
 		public static IRootContext EnableReferences(this IRootContext @this)
 			=> @this.EnableRootInstances().With<ReferencesExtension>().Return(@this);
 
+		/// <exclude />
 		[Obsolete(
 			"This method is deprecated and will be removed in a future release.  Use IContext.GetTypeConfiguration(Type) instead.")]
 		public static ITypeConfiguration GetTypeConfiguration(this IContext @this, TypeInfo type)
 			=> @this.GetTypeConfiguration(type.AsType());
 
+		/// <exclude />
 		[Obsolete("This will be removed in a future release.  Use IConfigurationContainer.Type<T> instead.")]
 		public static ITypeConfiguration<T> ConfigureType<T>(this IConfigurationContainer @this) => @this.Type<T>();
 
+		/// <exclude />
 		[Obsolete("This method has been replaced by MemberBy.")]
 		public static ITypeConfiguration<T> Member<T>(this ITypeConfiguration<T> @this, MemberInfo member)
-		{
-			((IInternalTypeConfiguration)@this).Member(member);
-			return @this;
-		}
+			=> @this.AsInternal().Member(member).Return(@this);
 
 		#endregion
 	}

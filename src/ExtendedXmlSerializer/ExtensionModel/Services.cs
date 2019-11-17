@@ -140,12 +140,11 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		public IServiceRepository Register<T1, T2, T3, T4, TService>(
 			Func<IServiceProvider, T1, T2, T3, T4, TService> factory,
 			string serviceName)
-			=>
-				new Services(_container,
-				             _registry
-					             .Register<T1, T2, T3, T4, TService
-					             >(new Registration<T1, T2, T3, T4, TService>(factory).Get,
-					               serviceName));
+			=> new Services(_container,
+			                _registry
+				                .Register<T1, T2, T3, T4, TService
+				                >(new Registration<T1, T2, T3, T4, TService>(factory).Get,
+				                  serviceName));
 
 		public IServiceRepository Register<TService>(Func<IServiceProvider, TService> factory, string serviceName)
 			=> new Services(_container, _registry.Register(new Registration<TService>(factory).Get, serviceName));

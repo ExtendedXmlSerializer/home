@@ -248,18 +248,22 @@ namespace ExtendedXmlSerializer
 
 		#region Obsolete
 
+		/// <exclude />
 		[Obsolete("Use ToSourceDelegate instead.")]
 		public static Func<T> ToDelegate<T>(this ISource<T> @this) => @this.ToSourceDelegate();
 
+		/// <exclude />
 		[Obsolete("Use ToSelectionDelegate instead.")]
 		public static Func<TParameter, TResult> ToDelegate<TParameter, TResult>(
 			this IParameterizedSource<TParameter, TResult> @this) => @this.ToSelectionDelegate();
 
+		/// <exclude />
 		[Obsolete("Use FixedSelection instead.")]
 		public static ISource<TResult> Fix<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this,
 		                                                        TParameter parameter)
 			=> @this.FixedSelection(parameter);
 
+		/// <exclude />
 		[Obsolete("Use FixedSelection instead.")]
 		public static ISource<TResult> Fix<TParameter, TResult>(this Func<TParameter, TResult> @this,
 		                                                        TParameter parameter)
