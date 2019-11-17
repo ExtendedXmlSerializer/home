@@ -85,21 +85,28 @@ namespace ExtendedXmlSerializer
 
 		#region Obsolete
 
-		[Obsolete("This method is and will be removed in a future release.")]
+		/// <exclude />
+		[Obsolete("This method is deprecated and will be removed in a future release.")]
 		public static IConfigurationContainer EnableAttachedProperties(this IConfigurationContainer @this,
 		                                                               ICollection<IProperty> properties,
 		                                                               ICollection<Type> types)
 			=> @this.Extend(new AttachedPropertiesExtension(new Registrations<IProperty>(properties, types)));
 
+		/// <summary>
+		/// This method is not used and will be removed in a future release.
+		/// </summary>
+		/// <typeparam name="TType"></typeparam>
+		/// <typeparam name="TValue"></typeparam>
+		/// <param name="this"></param>
+		/// <param name="property"></param>
+		/// <param name="configure"></param>
+		/// <returns></returns>
 		[Obsolete("This method is not used and will be removed in a future release.")]
 		public static IConfigurationContainer AttachedProperty<TType, TValue>(
 			this IConfigurationContainer @this,
 			Expression<Func<Property<TType, TValue>>> property,
 			Action<IMemberConfiguration<TType, TValue>> configure)
-		{
-			configure(@this.AttachedProperty(property));
-			return @this;
-		}
+			=> configure.Apply(@this.AttachedProperty(property)).Return(@this);
 
 		#endregion
 	}

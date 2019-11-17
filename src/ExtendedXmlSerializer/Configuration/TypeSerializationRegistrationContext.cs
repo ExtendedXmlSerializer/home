@@ -15,6 +15,10 @@ namespace ExtendedXmlSerializer.Configuration
 	{
 		readonly ITypeConfiguration<T> _configuration;
 
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="configuration">The type configuration under configuration.</param>
 		public TypeSerializationRegistrationContext(ITypeConfiguration<T> configuration)
 			=> _configuration = configuration;
 

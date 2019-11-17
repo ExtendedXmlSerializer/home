@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-#pragma warning disable 1584,1711,1572,1581,1580
+#pragma warning disable 1584, 1711, 1572, 1581, 1580
 
 namespace ExtendedXmlSerializer.Core
 {
 	// ATTRIBUTION: https://msdn.microsoft.com/en-us/library/ms404549%28v=vs.110%29.aspx?f=255&MSPPError=-2147217396
 	/// <summary>Provides a collection whose items are types that serve as keys.</summary>
-	/// <typeparam name="TItem">The item types contained in the collection that also serve as the keys for the collection.</typeparam>
+	/// <typeparam name="TItem">The item types contained in the collection that also serve as the keys for the collection.
+	/// </typeparam>
 	public class KeyedByTypeCollection<TItem> : KeyedCollection<Type, TItem>
 	{
 		/// <summary>Initializes a new instance of the <see cref="T:System.Collections.Generic.KeyedByTypeCollection`1" /> class.  </summary>
-		public KeyedByTypeCollection()
-			: base(null, 4) {}
+		public KeyedByTypeCollection() : base(null, 4) {}
 
 		/// <summary>Initializes a new instance of the <see cref="T:System.Collections.Generic.KeyedByTypeCollection`1" /> class for a specified enumeration of objects.</summary>
 		/// <param name="items">The <see cref="T:System.Collections.Generic.IEnumerable`1" /> of generic type <see cref="T:System.Object" /> used to initialize the collection.</param>
@@ -28,11 +28,6 @@ namespace ExtendedXmlSerializer.Core
 			foreach (var obj in items)
 				Add(obj);
 		}
-
-		/*/// <summary>Returns the first item in the collection of a specified type.</summary>
-		/// <returns>The object of type <paramref name="T" /> if it is a reference type and the value of type <paramref name="T" /> if it is a value type. The default value of the type is returned if no object of type <paramref name="T" /> is contained in the collection: null if it is a reference type and 0 if it is a value type.</returns>
-		/// <typeparam name="T">The type of item in the collection to find.</typeparam>
-		public T Find<T>() => Find<T>(false);*/
 
 		/// <summary>Removes an object of a specified type from the collection.</summary>
 		/// <returns>The object removed from the collection.</returns>
@@ -53,6 +48,12 @@ namespace ExtendedXmlSerializer.Core
 			return false;
 		}
 
+		/// <summary>
+		/// Adds or replaces the given element.
+		/// </summary>
+		/// <typeparam name="T">The element type.</typeparam>
+		/// <param name="item">The item to add or replace.</param>
+		/// <returns>The containing collection.</returns>
 		public KeyedByTypeCollection<TItem> AddOrReplace<T>(T item)
 		{
 			if (item is TItem)

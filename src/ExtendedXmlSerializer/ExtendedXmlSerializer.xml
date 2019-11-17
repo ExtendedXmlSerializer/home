@@ -1,0 +1,2575 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ExtendedXmlSerializer</name>
+    </assembly>
+    <members>
+        <member name="T:ExtendedXmlSerializer.Configuration.ConfiguredSerializer`1">
+            <summary>
+            Defines, instantiates, and applies a profile to a serializer, which is also instantiated.  A profile is a stored
+            preset configuration that can be applied to a serializer.
+            </summary>
+            <typeparam name="T">The profile type.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.ConfiguredSerializer`1.#ctor">
+            <summary>
+            Creates a new instance.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.ConfiguredSerializer`1.#ctor(ExtendedXmlSerializer.ISerializer{System.Xml.XmlReader,System.Xml.XmlWriter})">
+            <summary>
+            Creates a new instance with the provided serializer.
+            </summary>
+            <param name="serializer">The serializer to decorate.</param>
+        </member>
+        <member name="T:ExtendedXmlSerializer.Configuration.ContentsDecorationContext`1">
+            <summary>
+            Used to establish a fluent context for decorating the <see cref="T:ExtendedXmlSerializer.ContentModel.Content.IContents"/> component when configuring the
+            configuration container.
+            </summary>
+            <typeparam name="T">The IContents type.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.ContentsDecorationContext`1.When``1">
+            <summary>
+            Configures the <see cref="T:ExtendedXmlSerializer.ContentModel.Content.IContents"/> to use the configured context type when the provided specification is satisfied.
+            </summary>
+            <typeparam name="TSpecification">The specification to use for determining which IContents to use.  When this
+            specification evaluates to true, the currently configured context type will be used.  Otherwise, the previous
+            IContents will be utilized instead.</typeparam>
+            <returns>The configured repository.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.ContentsDecorationContext`1.When(ExtendedXmlSerializer.Core.Specifications.ISpecification{System.Reflection.TypeInfo})">
+            <summary>
+            Configures the <see cref="T:ExtendedXmlSerializer.ContentModel.Content.IContents"/> to use the configured context type when the provided specification is
+            satisfied.
+            </summary>
+            <param name="specification">The specification to use for determining which IContents to use.  When this
+            specification evaluates to true, the currently configured context type will be used.  Otherwise, the previous
+            IContents will be utilized instead.</param>
+            <returns>The configured repository.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.ContentsDecorationContext`1.Then">
+            <summary>
+            Decorates <see cref="T:ExtendedXmlSerializer.ContentModel.Content.IContents"/> with the currently configured context type and returns the configured service
+            repository.
+            </summary>
+            <returns>The configured repository.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.Configuration.ElementDecorationContext`1">
+            <summary>
+            Used to establish a fluent context for decorating the <see cref="T:ExtendedXmlSerializer.ContentModel.Content.IElement"/> component when configuring the
+            configuration container.
+            </summary>
+            <typeparam name="T">The decorating type of type IElement with which to establish the context.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.ElementDecorationContext`1.When(ExtendedXmlSerializer.Core.Specifications.ISpecification{System.Reflection.TypeInfo})">
+            <summary>
+            Configures the container's <see cref="T:ExtendedXmlSerializer.ContentModel.Content.IElement"/> to use the decorated type when the provided specification is
+            satisfied.
+            </summary>
+            <param name="specification">The specification to use for determining which IElement to use.  When this
+            specification evaluates to true, the currently configured context type will be used.  Otherwise, the previous
+            IElement will be utilized instead.</param>
+            <returns>The configured repository.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.Configuration.EmitBehaviors">
+            <summary>
+            A set of built-in, identified behaviors that configure how a serializer emits content when it serializes an object.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.Configuration.EmitBehaviors.Always">
+            <summary>
+            Ensures that content is always emitted, regardless of its value.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.Configuration.EmitBehaviors.Classic">
+            <summary>
+            Follows the classic serializer behavior for emitting content.  For classic serialization, the serializer always
+            emits the value when it is a <see cref="T:System.Enum"/>.  Otherwise, it emits if the value is assigned (non-null).
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.Configuration.EmitBehaviors.WhenAssigned">
+            <summary>
+            This configures the container to emit when the value is assigned.  That is, not null.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.Configuration.EmitBehaviors.WhenModified">
+            <summary>
+            This is a variant of the <see cref="P:ExtendedXmlSerializer.Configuration.EmitBehaviors.WhenAssigned"/> behavior.  With this behavior, the serializer emits when the
+            value is different from the defined value in the class.  For instance, if you have a property `public bool
+            MyProperty {get; set} = true` and `MyProperty` is `false` upon serialization, then the content is emitted.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.Configuration.MemberSerializationRegistrationContext`2">
+            <summary>
+            Establishes a serialization registration context for a member configuration.
+            </summary>
+            <typeparam name="T">The member's containing type.</typeparam>
+            <typeparam name="TMember">The member's value type.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.MemberSerializationRegistrationContext`2.Of``1">
+            <summary>
+            Used to activate the specified strongly-typed definition and register it as this member's serializer.  Doing so
+            will allow you to design your serializer to import dependencies into its constructor.
+            </summary>
+            <typeparam name="TSerializer">The serializer type to activate.</typeparam>
+            <returns>The configured member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.MemberSerializationRegistrationContext`2.Of(System.Type)">
+            <summary>
+            Used to activate the specified type and register it as this member's serializer.  Doing so will allow you to
+            design your serializer to import dependencies into its constructor.
+            </summary>
+            <returns>The configured member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.MemberSerializationRegistrationContext`2.ByCalling(System.Action{ExtendedXmlSerializer.ContentModel.Format.IFormatWriter,`1},System.Func{ExtendedXmlSerializer.ContentModel.Format.IFormatReader,`1})">
+            <summary>
+            Registers a new serializer with the provided delegates.
+            </summary>
+            <param name="serialize">The delegate to call when serializing an instance of the member's value.</param>
+            <param name="deserialize">The delegate to call when deserializing an instance of the member's value.</param>
+            <returns>The configured member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.MemberSerializationRegistrationContext`2.Using(ExtendedXmlSerializer.ContentModel.ISerializer{`1})">
+            <summary>
+            Provides an instance of a serializer to register as this member's serializer.
+            </summary>
+            <param name="serializer">The serializer to use to serialize/deserialize instances of this member's value.</param>
+            <returns>The configured member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.MemberSerializationRegistrationContext`2.Using(ExtendedXmlSerializer.ContentModel.ISerializer)">
+            <summary>
+            Provides an instance of a serializer to register as this member's serializer.
+            </summary>
+            <param name="serializer">The serializer to use to serialize/deserialize instances of this member's value.</param>
+            <returns>The configured member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.MemberSerializationRegistrationContext`2.None">
+            <summary>
+            Clears any serializer that is registered with this type.  This will result in this member using the default
+            serialization/deserialization mechanisms of the root serializer for this member's value type.
+            </summary>
+            <returns>The configured member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.TypeConverterRegistrationContext`1.ByCalling(System.Func{`0,System.String},System.Func{System.String,`0})">
+            <summary>
+            Registers a converter for the provided type.  This defines how to deconstruct an instance of the currently
+            configured type into a string for serialization, and to construct an instance of the currently configured type
+            from a string during deserialization.
+            </summary>
+            <param name="format">The formatter to use during serialization.</param>
+            <param name="parse">The parser to use during deserialization.</param>
+            <returns>The configured type container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.TypeConverterRegistrationContext`1.Using(ExtendedXmlSerializer.ContentModel.Conversion.IConverter{`0})">
+            <summary>
+            Registers a converter for the provided type.  This defines how to deconstruct an instance of the currently
+            configured type into a string for serialization, and to construct an instance of the currently configured type
+            from a string during deserialization.
+            </summary>
+            <typeparam name="T">The type to convert.</typeparam>
+            <param name="converter">The converter to register.</param>
+            <returns>The configured type container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.TypeConverterRegistrationContext`1.Without(ExtendedXmlSerializer.ContentModel.Conversion.IConverter)">
+            <summary>
+            Removes the registration (if any) from the container's converter registration.
+            </summary>
+            <param name="converter">The converter to remove from registration.</param>
+            <returns>The configured type container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.TypeConverterRegistrationContext`1.Without(ExtendedXmlSerializer.ContentModel.Conversion.IConverter{`0})">
+            <summary>
+            Removes the registration (if any) from the container's converter registration.
+            </summary>
+            <param name="converter">The converter to remove from registration.</param>
+            <returns>The configured type container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.TypeConverterRegistrationContext`1.None">
+            <summary>
+            Removes all registered converters that work with the currently configured type.
+            </summary>
+            <returns>The configured type configuration.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.Configuration.TypeRegistrationContext`1">
+            <summary>
+            Used to establish a content regstration context for a type configuration.  Using this context you can further
+            establish registration contexts for serializers or converters.
+            </summary>
+            <typeparam name="T">The type under configuration.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.TypeRegistrationContext`1.Serializer">
+            <summary>
+            Establishes a Serializer-registration context.
+            </summary>
+            <returns>A context to perform operations on serializer registrations for the captured type configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.TypeRegistrationContext`1.Converter">
+            <summary>
+            Establishes a Converter-registration context.
+            </summary>
+            <returns>A context to perform operations on converter registrations for the captured type configuration.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.Configuration.TypeSerializationRegistrationContext`1">
+            <summary>
+            Used to configure the serializer that is used to write this object to the output document during the serialization
+            process, and to read from the provided document during the deserialization process.
+            </summary>
+            <typeparam name="T">The type under configuration.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.TypeSerializationRegistrationContext`1.Of``1">
+            <summary>
+            Used to activate the specified type and register it as this type's serializer.  Doing so will allow you to design your serializer to import dependencies into its constructor.
+            </summary>
+            <typeparam name="TSerializer">The serializer type to activate.</typeparam>
+            <returns>The configured type configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.TypeSerializationRegistrationContext`1.Of(System.Type)">
+            <summary>
+            Used to activate the specified type and register it as this type's serializer.  Doing so will allow you to design your serializer to import dependencies into its constructor.
+            </summary>
+            <returns>The configured type configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.TypeSerializationRegistrationContext`1.ByCalling(System.Action{ExtendedXmlSerializer.ContentModel.Format.IFormatWriter,`0},System.Func{ExtendedXmlSerializer.ContentModel.Format.IFormatReader,`0})">
+            <summary>
+            Registers a new serializer with the provided delegates.
+            </summary>
+            <param name="serialize">The delegate to call when serializing an instance of the configured type.</param>
+            <param name="deserialize">The delegate to call when deserializing an instance of the configured type.</param>
+            <returns>The configured type configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.TypeSerializationRegistrationContext`1.Using(ExtendedXmlSerializer.ContentModel.ISerializer{`0})">
+            <summary>
+            Provides an instance of a serializer to register as this type's serializer.
+            </summary>
+            <param name="serializer">The serializer to use to serialize/deserialize instances of this type.</param>
+            <returns>The configured type configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.TypeSerializationRegistrationContext`1.Using(ExtendedXmlSerializer.ContentModel.ISerializer)">
+            <summary>
+            Provides an instance of a serializer to register as this type's serializer.
+            </summary>
+            <param name="serializer">The serializer to use to serialize/deserialize instances of this type.</param>
+            <returns>The configured type configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Configuration.TypeSerializationRegistrationContext`1.None">
+            <summary>
+            Clears any serializer that is registered with this type.  This will result in this type using the default
+            serialization/deserialization mechanisms of the root serializer for instances of this type.
+            </summary>
+            <returns>The configuration type configuration.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.Core.KeyedByTypeCollection`1">
+            <summary>Provides a collection whose items are types that serve as keys.</summary>
+            <typeparam name="TItem">The item types contained in the collection that also serve as the keys for the collection.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Core.KeyedByTypeCollection`1.#ctor">
+            <summary>Initializes a new instance of the <see cref="T:System.Collections.Generic.KeyedByTypeCollection`1" /> class.  </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Core.KeyedByTypeCollection`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+            <summary>Initializes a new instance of the <see cref="T:System.Collections.Generic.KeyedByTypeCollection`1" /> class for a specified enumeration of objects.</summary>
+            <param name="items">The <see cref="T:System.Collections.Generic.IEnumerable`1" /> of generic type <see cref="T:System.Object" /> used to initialize the collection.</param>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="items" /> is null.</exception>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Core.KeyedByTypeCollection`1.Remove``1(``0)">
+            <summary>Removes an object of a specified type from the collection.</summary>
+            <returns>The object removed from the collection.</returns>
+            <typeparam name="T">The type of item in the collection to remove.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Core.KeyedByTypeCollection`1.RemoveAll``1">
+            <summary>Removes all of the elements of a specified type from the collection.</summary>
+            <returns>The <see cref="T:System.Collections.ObjectModel.Collection`1" /> that contains the objects of type <paramref name="T" /> from the original collection.</returns>
+            <typeparam name="T">The type of item in the collection to remove.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Core.KeyedByTypeCollection`1.GetKeyForItem(`0)">
+            <summary>Gets the type of an item contained in the collection.</summary>
+            <returns>The type of the specified <paramref name="item" /> in the collection.</returns>
+            <param name="item">The item in the collection whose type is to be retrieved.</param>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="item" /> is null.</exception>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Core.KeyedByTypeCollection`1.InsertItem(System.Int32,`0)">
+            <summary>Inserts an element into the collection at a specific location.</summary>
+            <param name="index">The zero-based index at which <paramref name="item" /> should be inserted. </param>
+            <param name="item">The object to insert into the collection.</param>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="item" /> is null.</exception>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Core.KeyedByTypeCollection`1.SetItem(System.Int32,`0)">
+            <summary>Replaces the item at the specified index with a new object.</summary>
+            <param name="index">The zero-based index of the <paramref name="item" /> to be replaced.</param>
+            <param name="item">The object to add to the collection.</param>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="item" /> is null.</exception>
+        </member>
+        <member name="T:ExtendedXmlSerializer.Core.ObjectIdGenerator">
+            <summary>
+            Attribution: https://msdn.microsoft.com/en-us/library/system.runtime.serialization.objectmanager(v=vs.110).aspx
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Core.ObjectIdGenerator.#ctor">
+            <summary>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" /> class.</summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Core.ObjectIdGenerator.For(System.Object)">
+            <summary>Returns the ID for the specified object, generating a new ID if the specified object has not already been identified by the <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" />.</summary>
+            <returns>The object's identity context, which can be used for serialization. FirstEncounter is set to true if this is the first time the object has been identified; otherwise, it is set to false.</returns>
+            <param name="obj">The object you want an ID for. </param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="obj" /> parameter is null. </exception>
+        </member>
+        <member name="T:ExtendedXmlSerializer.Core.ObjectWalkerBase`2">
+            <summary>
+            Attribution: https://msdn.microsoft.com/en-us/library/system.runtime.serialization.objectmanager(v=vs.110).aspx
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.Core.Sources.IAlteration`1">
+            <summary>
+            A specialized selection that accepts and returns an instance of the same type.
+            </summary>
+            <typeparam name="T">The type instance to alter.</typeparam>
+        </member>
+        <member name="T:ExtendedXmlSerializer.Core.Sources.IParameterizedSource`2">
+            <summary>
+            A general purpose selection component that accepts a value and returns a value.
+            </summary>
+            <typeparam name="TParameter">The type to accept.</typeparam>
+            <typeparam name="TResult">The return type.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Core.Sources.IParameterizedSource`2.Get(`0)">
+            <summary>
+            Performs the selection.
+            </summary>
+            <param name="parameter">The parameter to accept.</param>
+            <returns>A value of the return type.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.Core.Sources.Self">
+            <summary>
+            Convenience class used for accessing internal components.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Core.Sources.Self.Instance``1">
+            <summary>
+            Returns an alteration that returns the instance that is passed to it.  Used for scenarios where a default value is
+            needed where the instance passed in is the instance to return.
+            </summary>
+            <typeparam name="T">The type to return.</typeparam>
+            <returns>An alteration that returns the instance that is passed into it.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.Core.Sources.Self.Of``1">
+            <summary>
+            Returns a delegate that returns the instance that is passed to it.  Used for scenarios where a default value is
+            needed where the instance passed in is the instance to return.
+            </summary>
+            <typeparam name="T">The type to return.</typeparam>
+            <returns>A delegate that returns the instance that is passed into it.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.DecoratedSerializer`2">
+            <summary>
+            Convenience class to decorate an existing serializer, usually used for construction.
+            </summary>
+            <typeparam name="TRead">The reader type.</typeparam>
+            <typeparam name="TWrite">The writer type.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.DecoratedSerializer`2.#ctor(ExtendedXmlSerializer.ISerializer{`0,`1})">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="serializer">The existing serializer to decorate.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.DecoratedSerializer`2.Deserialize(`0)">
+            <inheritdoc />
+        </member>
+        <member name="M:ExtendedXmlSerializer.DecoratedSerializer`2.Serialize(`1,System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionMethods">
+            <summary>
+            General-purpose extension methods.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethods.Return``2(``0,``1)">
+            <summary>Convenience method used for fluent-type methods.</summary>
+            <typeparam name="T">The type of the calling instance.</typeparam>
+            <typeparam name="TOut">The result type.</typeparam>
+            <param name="_">Not used.</param>
+            <param name="result">The result.</param>
+            <returns>TOut.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethods.GetType(ExtendedXmlSerializer.Core.Sources.ISource{System.Reflection.TypeInfo})">
+            <summary>
+            Convenience method for objects that implement several <see cref="T:ExtendedXmlSerializer.Core.Sources.ISource`1"/> to get its type-based contents
+            specifically.
+            </summary>
+            <param name="this">The implementing source.</param>
+            <returns>TypeInfo.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethods.GetMember(ExtendedXmlSerializer.Core.Sources.ISource{System.Reflection.MemberInfo})">
+            <summary>
+            Convenience method for objects that implement several <see cref="T:ExtendedXmlSerializer.Core.Sources.ISource`1"/> to get its member-based contents
+            specifically.
+            </summary>
+            <param name="this">The implementing source.</param>
+            <returns>MemberInfo.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethods.Apply``1(System.Action{``0},``0)">
+            <summary>
+            Convenience method to invoke a method and return the parameter.  This is useful for fluent-based configuration
+            method calls.
+            </summary>
+            <typeparam name="T">The parameter type.</typeparam>
+            <param name="this">The delegate to call.</param>
+            <param name="parameter">The parameter to pass to the delegate and return.</param>
+            <returns>The delegate.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethods.Apply``2(ExtendedXmlSerializer.Core.Sources.IAssignable{``0,``1},``0,``1)">
+            <summary>
+            Convenience method to pass values to an assignable command, and return the command.  This is useful for
+            fluent-based configuration method calls.
+            </summary>
+            <typeparam name="TKey">The key type.</typeparam>
+            <typeparam name="TValue">The value type.</typeparam>
+            <param name="this">The assignable to command to invoke.</param>
+            <param name="key">The key to pass in.</param>
+            <param name="value">The value to pass in.</param>
+            <returns>The assignable command.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethods.Apply``1(System.Collections.Generic.ICollection{``0},``0)">
+            <summary>
+            Convenience method to add an element to a collection, and return the element.  This is useful for
+            fluent-based configuration method calls.
+            </summary>
+            <typeparam name="T">The element type.</typeparam>
+            <param name="this">The collection to add an element to.</param>
+            <param name="parameter">The element to add.</param>
+            <returns>The element.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionMethodsForAlteration">
+            <summary>
+            Extension methods that assist or enable functionality for altering content produced (or read in) by the container,
+            its types, and/or its type's members.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForAlteration.Alter``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},System.Func{``0,``0})">
+            <summary>
+            Used to alter an instance of the configured result type whenever it is encountered during the serialization
+            process.  This can be used in scenarios where it is desired to know when an instance of a particular type is
+            emitted (for logging purposes, etc.) or, more generally, to alter it in some way (scrubbing data, etc)
+            before it is written to the external stream.  You can consider this as a value interception of
+            the serialization pipeline.
+            </summary>
+            <typeparam name="T">The type under configuration.</typeparam>
+            <param name="this">The type configuration to configure.</param>
+            <param name="write">The alteration delegate to invoke during writing.</param>
+            <returns>The configured type configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForAlteration.Alter``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},System.Func{``0,``0},System.Func{``0,``0})">
+            <summary>
+            Used to alter an instance of the configured result type whenever it is encountered during the serialization or
+            deserialization process.  This can be used in scenarios where it is desired to know when an instance of a
+            particular type is emitted or read (for logging purposes, etc.) or, more generally, to alter it in some way
+            (scrubbing data, etc) before it is written to the external stream or read into memory.  You can consider this as a
+            value interception of the serialization/deserialization pipeline.
+            </summary>
+            <typeparam name="T">The type under configuration.</typeparam>
+            <param name="this">The type configuration to configure.</param>
+            <param name="read">The alteration delegate to invoke during reading.</param>
+            <param name="write">The alteration delegate to invoke during writing.</param>
+            <returns>The configured type configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForAlteration.Alter``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},ExtendedXmlSerializer.Core.Sources.IAlteration{``0},ExtendedXmlSerializer.Core.Sources.IAlteration{``0})">
+            <summary>
+            Used to alter an instance of the configured result type whenever it is encountered during the serialization or
+            deserialization process.  This can be used in scenarios where it is desired to know when an instance of a
+            particular type is emitted or read (for logging purposes, etc.) or, more generally, to alter it in some way
+            (scrubbing data, etc) before it is written to the external stream or read into memory.  You can consider this as a
+            value interception of the serialization/deserialization pipeline.
+            </summary>
+            <typeparam name="T">The type under configuration.</typeparam>
+            <param name="this">The type configuration to configure.</param>
+            <param name="read">The alteration to apply during reading.</param>
+            <param name="write">The alteration to apply during writing.</param>
+            <returns>The configured type configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForAlteration.Alter``2(ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,``1},System.Func{``1,``1})">
+            <summary>
+            Used to alter the value of a member whenever it is encountered during the serialization process.  This can be used
+            in scenarios where it is desired to know when a the value of a member is emitted (for logging purposes,
+            etc.) or, more generally, to alter it in some way (scrubbing data, etc) before it is written to the external
+            stream.  You can consider this as a member value interception of the serialization pipeline.
+            </summary>
+            <typeparam name="T">The containing type under configuration.</typeparam>
+            <typeparam name="TMember">The member's value type.</typeparam>
+            <param name="this">The member configuration under configuration.</param>
+            <param name="write">The alteration delegate to invoke on the member value when it is written.</param>
+            <returns>The configured member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForAlteration.Alter``2(ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,``1},System.Func{``1,``1},System.Func{``1,``1})">
+            <summary>
+            Used to alter the value of a member whenever it is encountered during the serialization or deserialization
+            process.  This can be used in scenarios where it is desired to know when a the value of a member is emitted or
+            read (for logging purposes, etc.) or, more generally, to alter it in some way (scrubbing data, etc) before it is
+            written to the external stream or read into memory.  You can consider this as a member value interception of the
+            serialization/deserialization pipeline.
+            </summary>
+            <typeparam name="T">The containing type under configuration.</typeparam>
+            <typeparam name="TMember">The member's value type.</typeparam>
+            <param name="this">The member configuration under configuration.</param>
+            <param name="read">The alteration delegate to invoke on the member value when it is read.</param>
+            <param name="write">The alteration delegate to invoke on the member value when it is written.</param>
+            <returns>The configured member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForAlteration.Alter``2(ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,``1},ExtendedXmlSerializer.Core.Sources.IAlteration{``1},ExtendedXmlSerializer.Core.Sources.IAlteration{``1})">
+            <summary>
+            Used to alter the value of a member whenever it is encountered during the serialization or deserialization
+            process.  This can be used in scenarios where it is desired to know when a the value of a member is emitted or
+            read (for logging purposes, etc.) or, more generally, to alter it in some way (scrubbing data, etc) before it is
+            written to the external stream or read into memory.  You can consider this as a member value interception of the
+            serialization/deserialization pipeline.
+            </summary>
+            <typeparam name="T">The containing type under configuration.</typeparam>
+            <typeparam name="TMember">The member's value type.</typeparam>
+            <param name="this">The member configuration under configuration.</param>
+            <param name="read">The alteration to apply to the member value when it is read.</param>
+            <param name="write">The alteration to apply to the member value when it is written.</param>
+            <returns>The configured member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForAlteration.RegisterContentComposition``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},System.Func{ExtendedXmlSerializer.ContentModel.ISerializer{``0},ExtendedXmlSerializer.ContentModel.ISerializer{``0}})">
+            <summary>
+            Used to alter a serializer whenever one is created for a specific type.  This allows the scenario of decorating
+            a serializer to override or monitor serialization and/or deserialization.
+            </summary>
+            <typeparam name="T">The type that the serializer processes.</typeparam>
+            <param name="this">The type configuration to configure.</param>
+            <param name="compose">The delegate used to alterate the created serializer.</param>
+            <returns>The configured type configuration.</returns>
+            <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264#issuecomment-531491807"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForAlteration.RegisterContentComposition``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},System.Func{ExtendedXmlSerializer.ContentModel.ISerializer,ExtendedXmlSerializer.ContentModel.ISerializer})">
+            <summary>
+            Used to alter a serializer whenever one is created for a specific type.  This allows the scenario of decorating
+            a serializer to override or monitor serialization and/or deserialization.  This override accepts a generalized
+            serializer delegate.
+            </summary>
+            <typeparam name="T">The type that the serializer processes.</typeparam>
+            <param name="this">The type configuration to configure.</param>
+            <param name="compose">The delegate used to alterate the created serializer.</param>
+            <returns>The configured type configuration.</returns>
+            <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264#issuecomment-531491807"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForAlteration.RegisterContentComposition``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},ExtendedXmlSerializer.ExtensionModel.Content.ISerializerComposer)">
+            <summary>
+            Used to alter a serializer whenever one is created for a specific type.  This allows the scenario of decorating a
+            serializer to override or monitor serialization and/or deserialization.  This override accepts an
+            <see cref="T:ExtendedXmlSerializer.ExtensionModel.Content.ISerializerComposer"/> that performs the alteration on the created serializer.
+            </summary>
+            <typeparam name="T">The type that the serializer processes.</typeparam>
+            <param name="this">The type configuration to configure.</param>
+            <param name="composer">The composer that is used to alter the serializer upon creation.</param>
+            <returns>The configured type configuration.</returns>
+            <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264#issuecomment-531491807"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForAlteration.Alter(ExtendedXmlSerializer.Configuration.IConfigurationContainer,ExtendedXmlSerializer.Core.Sources.IAlteration{ExtendedXmlSerializer.ContentModel.Conversion.IConverter})">
+            <summary>
+            Provides a way to alter converters when they are accessed by the serializer.  This provides a mechanism to
+            decorate converters.  Alterations only occur once per converter per serializer.
+            </summary>
+            <param name="this">The container to configure.</param>
+            <param name="alteration">The alteration to perform on each converter when it is accessed by the serializer.</param>
+            <returns>The configured container.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionMethodsForAttachedProperties">
+            <summary>
+            Extension methods that assist or enable functionality found within the extension model namespace for attached
+            properties (<see cref="N:ExtendedXmlSerializer.ExtensionModel.AttachedProperties"/>).
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForAttachedProperties.EnableAttachedProperties(ExtendedXmlSerializer.Configuration.IConfigurationContainer,ExtendedXmlSerializer.ExtensionModel.AttachedProperties.IProperty[])">
+            <summary>
+            Enables attached properties on the container with optional initial properties to register.
+            </summary>
+            <param name="this">The container to configure.</param>
+            <param name="properties">The properties to register with the container.</param>
+            <returns>The configured IConfigurationContainer.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForAttachedProperties.EnableAttachedProperties(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Collections.Generic.ICollection{ExtendedXmlSerializer.ExtensionModel.AttachedProperties.IProperty})">
+            <summary>
+            Enables attached properties on the container with the initial properties to register.
+            </summary>
+            <param name="this">The container to configure.</param>
+            <param name="properties">The properties to register with the container.</param>
+            <returns>The configured IConfigurationContainer.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForAttachedProperties.AttachedProperty``2(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Linq.Expressions.Expression{System.Func{ExtendedXmlSerializer.ExtensionModel.AttachedProperties.Property{``0,``1}}})">
+            <summary>
+            Registers an attached property by expression.
+            </summary>
+            <typeparam name="TType">The type of object the attached property targets.</typeparam>
+            <typeparam name="TValue">The type of the value the attached property provides.</typeparam>
+            <param name="this">The container to configure.</param>
+            <param name="property">The expression that resolves to an attached property.</param>
+            <returns>The configured IMemberConfiguration that represents the attached property.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForAttachedProperties.Get``2(``0,ExtendedXmlSerializer.ExtensionModel.AttachedProperties.Property{``0,``1})">
+            <summary>
+            Given an instance, gets the value stored with the attached property.
+            </summary>
+            <typeparam name="TType">The instance type.</typeparam>
+            <typeparam name="TValue">The stored value type.</typeparam>
+            <param name="this">The instance to use to retrieve the value.</param>
+            <param name="property">The property used to retrieve the value.</param>
+            <returns>The value stored with the attached property.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForAttachedProperties.Set``2(``0,ExtendedXmlSerializer.ExtensionModel.AttachedProperties.Property{``0,``1},``1)">
+            <summary>
+            Given an instance and value, stores a value with the attached property.
+            </summary>
+            <typeparam name="TType">The instance type.</typeparam>
+            <typeparam name="TValue">The stored value type.</typeparam>
+            <param name="this">The instance with which to store the value.</param>
+            <param name="property">The attached property to store the value.</param>
+            <param name="value">The value to store.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForAttachedProperties.EnableAttachedProperties(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Collections.Generic.ICollection{ExtendedXmlSerializer.ExtensionModel.AttachedProperties.IProperty},System.Collections.Generic.ICollection{System.Type})">
+            <exclude />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForAttachedProperties.AttachedProperty``2(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Linq.Expressions.Expression{System.Func{ExtendedXmlSerializer.ExtensionModel.AttachedProperties.Property{``0,``1}}},System.Action{ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,``1}})">
+            <summary>
+            This method is not used and will be removed in a future release.
+            </summary>
+            <typeparam name="TType"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <param name="this"></param>
+            <param name="property"></param>
+            <param name="configure"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionMethodsForClassicSerialization">
+            <summary>
+            Extension methods that assist or enable functionality found within the extension model namespace for classic
+            serialization (<see cref="N:ExtendedXmlSerializer.ExtensionModel.Xml.Classic"/>).
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForClassicSerialization.Context(System.Xml.XmlNameTable)">
+            <summary>
+            Used to create a <see cref="T:System.Xml.XmlParserContext"/> from an XmlNameTable.
+            </summary>
+            <param name="this">The XmlNameTable from which to create the context.</param>
+            <returns>The context.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForClassicSerialization.Member(System.Xml.Linq.XElement,System.String)">
+            <summary>
+            Convenience method to retrieve a member element from a provided <see cref="T:System.Xml.Linq.XElement"/>.
+            </summary>
+            <param name="this">The provided XElement to query.</param>
+            <param name="name">The member name used to query the provided XElement.</param>
+            <returns>The located XElement</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForClassicSerialization.EnableClassicMode(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Applies the classic emit behavior (<see cref="P:ExtendedXmlSerializer.Configuration.EmitBehaviors.Classic"/>) and processes lists and dictionaries
+            without members.  That is, if your list or dictionary is extended with its own properties and members, they will
+            not be serialized nor deserialized if applied in the document.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForClassicSerialization.EnableClassicSchemaTyping(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Enables the xsi:type for classic deserialization purposes.  This will be used to resolve types during the
+            serialization process if no other type resolution mechanisms are successful in resolving a type.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+            <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/261"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForClassicSerialization.EnableClassicListNaming(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Enables `ArrayOfT` and `ListOfT` naming conventions for arrays and lists, respectively.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForClassicSerialization.InspectingType``1(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Used to inspect a type for an <see cref="T:System.Xml.Serialization.XmlRootAttribute"/> and if not found, a <see cref="T:System.Xml.Serialization.XmlTypeAttribute"/> to
+            establish its identity.  If both are found, the <see cref="T:System.Xml.Serialization.XmlRootAttribute"/> takes precedence, but if any values
+            there are empty or null, the <see cref="T:System.Xml.Serialization.XmlTypeAttribute"/> values will be used, instead.  Using such an approach,
+            you can use an URI -- either <see cref="P:System.Xml.Serialization.XmlRootAttribute.Namespace"/> or <see cref="P:System.Xml.Serialization.XmlTypeAttribute.Namespace"/>
+            -- to specify the type's namespace and the entity's name by using <see cref="P:System.Xml.Serialization.XmlRootAttribute.ElementName"/> or
+            <see cref="P:System.Xml.Serialization.XmlTypeAttribute.TypeName"/>) for the that value.  If no name value is found on either, the type's name
+            will be used instead.
+            </summary>
+            <typeparam name="T">The subject type to inspect.</typeparam>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+            <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/175" />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForClassicSerialization.InspectingTypes(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Collections.Generic.IEnumerable{System.Type})">
+            <summary>
+            Inspects a collection of types to inspect for their identities.  This is done by querying the existence of an
+            <see cref="T:System.Xml.Serialization.XmlRootAttribute"/> on each type, and if not found, a <see cref="T:System.Xml.Serialization.XmlTypeAttribute" /> to establish its
+            identity.  If both are found, the <see cref="T:System.Xml.Serialization.XmlRootAttribute"/> takes precedence, but if any values there are
+            empty or null, the <see cref="T:System.Xml.Serialization.XmlTypeAttribute" /> values will be used, instead.  Using such an approach, you can
+            use an URI -- either <see cref="P:System.Xml.Serialization.XmlRootAttribute.Namespace"/> or <see cref="P:System.Xml.Serialization.XmlTypeAttribute.Namespace" /> -- to
+            specify the type's namespace and the entity's name by using <see cref="P:System.Xml.Serialization.XmlRootAttribute.ElementName" /> or
+            <see cref="P:System.Xml.Serialization.XmlTypeAttribute.TypeName"/>) for the that value.  If no name value is found on either, the type's name
+            will be used instead.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <param name="types">The list of types to inspect.</param>
+            <returns>The configured configuration container.</returns>
+            <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/175"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForClassicSerialization.EnableXmlText(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Adds basic support for the <see cref="T:System.Xml.Serialization.XmlTextAttribute" />.  Note that this is not a very robust solution and
+            there are deficiencies in the fidelity with the classic serializer's implementation.  Use with care, and make a
+            wish. 😆
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+            <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/192"/>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionMethodsForConfiguration">
+            <summary>
+            Extension methods that assist or enable functionality found within the configuration namespace (
+            <see cref="N:ExtendedXmlSerializer.Configuration"/>).
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.Create(ExtendedXmlSerializer.Configuration.IContext)">
+            <summary>
+            The main event.  Used to create a new serializer from the configured context (usually a <see cref="T:ExtendedXmlSerializer.Configuration.IConfigurationContainer"/>).
+            </summary>
+            <param name="this">The configured context that creates the serializer.</param>
+            <returns>The configured serializer.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.Apply``1(ExtendedXmlSerializer.Configuration.IRootContext)">
+            <summary>
+            Used to apply a new serializer extension of the provided type.  If an extension already exists in the provided
+            context, it is returned.  Otherwise, it will attempt to locate a singleton on the provided type, and if that isn't
+            found, activate it by calling its public constructor.
+            </summary>
+            <typeparam name="T">The serializer extension type to apply.</typeparam>
+            <param name="this">The configuration context (usually a configuration container) to locate the provided serializer
+            extension type.</param>
+            <returns>The configured context with the requested extension applied to it.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.Apply``1(ExtendedXmlSerializer.Configuration.IRootContext,System.Func{``0})">
+            <summary>
+            Used to apply a new serializer extension of the provided type.  If an extension already exists in the provided
+            context, it is returned.  Otherwise, it will use the provided factory to create the serializer and register it
+            with the provided context.
+            </summary>
+            <typeparam name="T">The serializer extension type to apply.</typeparam>
+            <param name="this">The configuration context (usually a configuration container) to locate the provided serializer
+            extension type.</param>
+            <param name="create">The factory used to create the extension of the requested type, if an instance of its type
+            does not already exist.</param>
+            <returns>The configured context with the requested extension applied to it.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.Add``1(ExtendedXmlSerializer.Configuration.IRootContext)">
+            <summary>
+            Adds an extension of the provided type to the provided context.  This will be done by attempting to locate a
+            singleton on the provided type, and if that isn't found, activate it by calling its public constructor.
+            </summary>
+            <typeparam name="T">The serializer extension type to locate and add.</typeparam>
+            <param name="this">The configuration context (usually a configuration container) with which to add the created
+            serializer extension.</param>
+            <returns>The created and added extension.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.Add``1(ExtendedXmlSerializer.Configuration.IRootContext,System.Func{``0})">
+            <summary>
+            Adds an extension to the provided context by invoking the provided factory method and adding it to the context.
+            </summary>
+            <typeparam name="T">The serializer extension type to create and add.</typeparam>
+            <param name="this">The configuration context (usually a configuration container) with which to add the created
+            serializer extension.</param>
+            <param name="create">The factory used to create the extension of the requested type.</param>
+            <returns>The created and added extension.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.With``1(ExtendedXmlSerializer.Configuration.IRootContext)">
+            <summary>
+            Finds or creates/add the requested serializer extension type.  If an extension of the requested type already
+            exists, it is returned.  Otherwise, a new one is created by searching first for a singleton on the requested type,
+            and creating a new instance by way of public constructor if not.
+            </summary>
+            <typeparam name="T">The requested serializer extension type.</typeparam>
+            <param name="this">The root context to search for a serializer extension of provided type.</param>
+            <returns>The located or created serializer extension.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.With``1(ExtendedXmlSerializer.Configuration.IRootContext,System.Action{``0})">
+            <summary>
+            Finds or creates/add the requested serializer extension type, and then configures it with the provided action once
+            it does.
+            </summary>
+            <typeparam name="T">The requested serializer extension type.</typeparam>
+            <param name="this">The root context to search for a serializer extension of provided type.</param>
+            <param name="configure">The configuration action to invoke once the serializer extension has been located.</param>
+            <returns>The configured context (usually a configuration container).</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.Extend(ExtendedXmlSerializer.Configuration.IRootContext,ExtendedXmlSerializer.ExtensionModel.ISerializerExtension[])">
+            <summary>
+            Used to extend a root context (usually a configuration container).  This passes in a collection of extensions to
+            add to the context's collection of serializer extensions.
+            </summary>
+            <param name="this">The root context that contains the target collection of serializer extensions.</param>
+            <param name="extensions">The array of extensions to add.</param>
+            <returns>The configured context (usually a configuration container).</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.Configured``1(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Configures the container with a configuration profile.  A configuration profile is a profile of configurations
+            that can be applied to a configuration container.  It is a way of preserving commonly-used configurations and
+            applying them quickly to a configuration container.
+            </summary>
+            <typeparam name="T">The type of the configuration profile.</typeparam>
+            <param name="this">The container to configure.</param>
+            <returns>The configured container with the configuration profile applied to it.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.Type``1(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Gets or creates a type configuration from the container.  Type configurations are configurations that deal
+            specifically with a particular type and allow you to query its member configurations for further configuration of
+            the type's members.
+            </summary>
+            <typeparam name="T">The requested type.</typeparam>
+            <param name="this">The container from which to request the type configuration.</param>
+            <returns>The type configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.Type``1(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Action{ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0}})">
+            <summary>
+            Gets or creates a type configuration from the container, and then configures it with the provided action.  Type
+            configurations are configurations that deal specifically with a particular type and allow you to query its member
+            configurations for further configuration of the type's members.
+            </summary>
+            <typeparam name="T">The requested type.</typeparam>
+            <param name="this">The container from which to request the type configuration.</param>
+            <param name="configure">The configuration to perform on the type configuration once it has been retrieved.</param>
+            <returns>The configured type configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.GetTypeConfiguration(ExtendedXmlSerializer.Configuration.IContext,System.Type)">
+            <summary>
+            Gets or creates a type configuration from the container.  Type configurations are configurations that deal
+            specifically with a particular type and allow you to query its member configurations for further configuration of
+            the type's members.
+            </summary>
+            <param name="this">The context (usually a configuration containers) from which to request the type configuration.</param>
+            <param name="type">The type to retrieve.</param>
+            <returns>The type configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.Name``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},System.String)">
+            <summary>
+            Applies a name for the type.  This provided name will be used to emit the type when needed during serialization,
+            and again when needed during the reading of a deserialization.
+            </summary>
+            <typeparam name="T">The type under configuration.</typeparam>
+            <param name="this">The type configuration to configure.</param>
+            <param name="name">The name to apply to the type.</param>
+            <returns>The configured type configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.Member``2(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+            <summary>
+            Get (or create) the member configuration from the type that resolves with the provided expression.
+            </summary>
+            <typeparam name="T">The type under configuration.</typeparam>
+            <typeparam name="TMember">The type of the member's value.</typeparam>
+            <param name="this">The type configuration to configure.</param>
+            <param name="member">The expression to that resolves to a member of the type under configuration.</param>
+            <returns>The requested member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.Member``2(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},System.Linq.Expressions.Expression{System.Func{``0,``1}},System.Action{ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,``1}})">
+            <summary>
+            Get (or create) the member configuration from the type that resolves with the provided expression, and then
+            configures it with the provided action.
+            </summary>
+            <typeparam name="T">The type under configuration.</typeparam>
+            <typeparam name="TMember">The type of the member's value.</typeparam>
+            <param name="this">The type configuration to configure.</param>
+            <param name="member">The expression to that resolves to a member of the type under configuration.</param>
+            <param name="configure">The configuration to perform on the member configuration once retrieved.</param>
+            <returns>The configured type configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.MemberBy``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},System.Reflection.MemberInfo)">
+            <summary>
+            Get (or create) the member configuration from the type that resolves with the provided member metadata.
+            </summary>
+            <typeparam name="T">The type under configuration.</typeparam>
+            <param name="this">The type configuration to configure.</param>
+            <param name="member">The metadata used to query the type.</param>
+            <returns>The located member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.MemberBy``2(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},ExtendedXmlSerializer.Configuration.MemberInfo{``1})">
+            <summary>
+            Get (or create) the member configuration from the type that resolves with the provided strongly-typed member
+            metadata.  Strongly-typed member metadata can be created via the use of the <see cref="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.As``1(System.Reflection.MemberInfo)"/> method.
+            </summary>
+            <typeparam name="T">The type under configuration.</typeparam>
+            <typeparam name="TMember">The value type of the member.</typeparam>
+            <param name="this">The type configuration to configure.</param>
+            <param name="member">The strongly-typed metadata used to query the type.</param>
+            <returns>The located member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.Name``2(ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,``1},System.String)">
+            <summary>
+            Applies a name for the member.  This will result in emitting an element name for the member with the provided
+            value during serialization, as well as reading the name from XML elements during deserialization.
+            </summary>
+            <typeparam name="T">The containing type of the member.</typeparam>
+            <typeparam name="TMember">The type of the member's value.</typeparam>
+            <param name="this">The member configuration to configure.</param>
+            <param name="name">The name to assign for the member under configuration.</param>
+            <returns>The configured member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.Order``2(ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,``1},System.Int32)">
+            <summary>
+            Sets the order for the given member.  This is used in ordering all elements when they are emitted during serialization.
+            </summary>
+            <typeparam name="T">The containing type of the member.</typeparam>
+            <typeparam name="TMember">The member's value type.</typeparam>
+            <param name="this">The member configuration which to order.</param>
+            <param name="order">The desired order value for the member.</param>
+            <returns>The configured member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.As``1(System.Reflection.MemberInfo)">
+            <summary>
+            Convenience method to create a strongly-typed MemberInfo object that can be used to query from a configuration
+            container via the <see cref="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.MemberBy``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},System.Reflection.MemberInfo)"/> method call.
+            </summary>
+            <typeparam name="T">The value type of the member.</typeparam>
+            <param name="this">The member to use as the source.</param>
+            <returns>A strongly-typed MemberInfo instance.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.Identity``2(ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,``1})">
+            <summary>
+            Flags the provided member configuration as the identity member for the container's references.  Once an identity
+            member is established, it is used to emit its unique value and to later read it during deserialization.  The
+            unique value is used to keep track of references in a different application and/or domain context from when the
+            original serialization occurred.
+            </summary>
+            <typeparam name="T">The containing type of the member.</typeparam>
+            <typeparam name="TMember">The member's value type.</typeparam>
+            <param name="this">The member configuration to configure.</param>
+            <returns>The configured member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.AllowedReferenceTypes(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Retrieves the current "whitelist" of allowed types on a configuration container.  If specified and populated,
+            these are the only types that can have
+            <see cref="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.EnableReferences(ExtendedXmlSerializer.Configuration.IConfigurationContainer)"/> called on them.  Note
+            that if both whitelist and blacklists are populated, the whitelist takes precedence.
+            </summary>
+            <param name="this">The configuration container to query.</param>
+            <returns>The current allowed types that can be reference-enabled.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.IgnoredReferenceTypes(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Retrieves the current "blacklist" of ignored types on a configuration container.  By default this is the see
+            cref="String"/> type. If specified and populated, these are the only types that cannot have
+            <see cref="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.EnableReferences(ExtendedXmlSerializer.Configuration.IConfigurationContainer)"/> called on them.  Note that if both whitelist and
+            blacklists are populated, the whitelist takes precedence.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <returns>A collection of types that cannot be reference-enabled.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.EnableReferences(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Enables references on a configuration container, which will create a serializer that supports circular references.
+            When the first reference is encountered, it will be emitted. Further occurrences of the same reference will emit
+            with a special attribute along with its unique value.  This allows circular references to be serialized and
+            subsequently deserialized appropriately and properly.  Note that, by default, if this method is not invoked on a
+            configuration container, and a serializer that it creates attempts to serialize an object with circular
+            references, an exception is thrown.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.EnableReferences``2(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+            <summary>
+            Enables references on a configuration container, which will create a serializer that supports circular references.
+            Additionally, this call will register a particular type as allowing references, and establish the member that
+            evaluates with the provided expression as the identity member.  Doing so will allow the serializer to keep track
+            of references based on the unique values found with the identity member.
+            </summary>
+            <typeparam name="T">The type under configuration.</typeparam>
+            <typeparam name="TMember">The resulting identity member value type.</typeparam>
+            <param name="this">The type configuration under configuration.</param>
+            <param name="member">The member expression that is intended to resolve as the identity member for the type
+            configuration.</param>
+            <returns>The configured type configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.EnableDeferredReferences(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            This is an alternative version of enabling references on a configuration container and the subsequent serializers
+            that it creates.  It works much like
+            <see cref="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.EnableReferences(ExtendedXmlSerializer.Configuration.IConfigurationContainer)"/>, except that it will
+            defer emitting the identity references until the last one is encountered.  By contrast,
+            <see cref="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.EnableReferences(ExtendedXmlSerializer.Configuration.IConfigurationContainer)"/> emits the identity
+            references when it first encounters them, and then a reference back to the identity reference with each subsequent
+            encounter.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionMethodsForContent">
+            <summary>
+            Extension methods that assist or enable functionality found within the content model's content namespace (
+            <see cref="N:ExtendedXmlSerializer.ContentModel.Content"/>).
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContent.DecorateContentsWith``1(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
+            <summary>
+            Convenience method for extension authors.  This is used to establish a context to decorate the container's
+            <see cref="T:ExtendedXmlSerializer.ContentModel.Content.IContents"/> component.
+            </summary>
+            <typeparam name="T">The implementation type, of type IContent.</typeparam>
+            <param name="this">The repository to configure (used within an extension).</param>
+            <returns>The configured repository.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContent.DecorateElementWith``1(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
+            <summary>
+            Convenience method for extension authors.  This is used to establish a fluent context which can further be used to
+            decorate the container's <see cref="T:ExtendedXmlSerializer.ContentModel.Content.IElement"/> component.
+            </summary>
+            <typeparam name="T">The implementation type, of type IElement.</typeparam>
+            <param name="this">The repository to configure.</param>
+            <returns>The configured repository.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContent.WithDefaultMonitor(ExtendedXmlSerializer.Configuration.IConfigurationContainer,ExtendedXmlSerializer.ExtensionModel.Instances.ISerializationMonitor)">
+             <summary>
+             Assigns a default serialization monitor for a configuration container.  A serialization monitor is a component
+             that gets notified whenever there is a serialization such as OnSerializing, OnSerialized, as well as
+             deserialization events such as OnDeserializing, OnDeserialized, etc.
+            
+             The default serialization monitor is applied for every type that is serialized with the serializer that the
+             configured container creates.  Use <see cref="M:ExtendedXmlSerializer.ExtensionMethodsForContent.WithMonitor``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},ExtendedXmlSerializer.ExtensionModel.Instances.ISerializationMonitor{``0})"/> on a type configuration to
+             apply a monitor to a specific type.
+             </summary>
+             <param name="this">The configuration container to configure.</param>
+             <param name="monitor">The monitor to assign as the default monitor.</param>
+             <returns>The configured container.</returns>
+             <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContent.WithMonitor``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},ExtendedXmlSerializer.ExtensionModel.Instances.ISerializationMonitor{``0})">
+             <summary>
+             Applies a serialization monitor to a specific type.  A serialization monitor is a component that gets notified
+             whenever there is a serialization such as OnSerializing, OnSerialized, as well as deserialization events such as
+             OnDeserializing, OnDeserialized, etc.
+            
+             Note that calling this method will establish a default monitor if one has not already been assigned.  If you also
+             want to use a default monitor in addition to type-specific monitors, call the <see cref="M:ExtendedXmlSerializer.ExtensionMethodsForContent.WithDefaultMonitor(ExtendedXmlSerializer.Configuration.IConfigurationContainer,ExtendedXmlSerializer.ExtensionModel.Instances.ISerializationMonitor)" />
+             first before calling this method on any types.
+             </summary>
+             <typeparam name="T">The type to monitor.</typeparam>
+             <param name="this">The type configuration to configure.</param>
+             <param name="monitor">The monitor to apply to the specified type.</param>
+             <returns>The configured type configuration.</returns>
+             <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264" />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContent.EnableParameterizedContent(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+             <summary>
+             Allows content to be read as parameters for a constructor call to activate an object, rather than the more
+             traditional route of activating an object and its content read as property assignments.  This is preferred --
+             required, even -- if your model is comprised of immutable objects.
+            
+             Note that there are several requirements for a class to be successfully processed:
+             <list type="number">
+            		<item>only public fields / properties are considered</item>
+            		<item>any public fields (spit) must be readonly</item>
+            		<item>any public properties must have a get but not a set (on the public API, at least)</item>
+            		<item>there must be exactly one interesting constructor, with parameters that are a case-insensitive match for
+            		each field/property in some order (i.e. there must be an obvious 1:1 mapping between members and constructor
+            		parameter names)</item>
+             </list>
+             </summary>
+             <param name="this">The container to configure.</param>
+             <returns>The configured container.</returns>
+             <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/wiki/04.-Features#immutable-classes-and-content"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContent.EnableParameterizedContentWithPropertyAssignments(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            This is a less strict version of <see cref="M:ExtendedXmlSerializer.ExtensionMethodsForContent.EnableParameterizedContent(ExtendedXmlSerializer.Configuration.IConfigurationContainer)"/>.  Using this version, parameterized
+            content works the same as <see cref="M:ExtendedXmlSerializer.ExtensionMethodsForContent.EnableParameterizedContent(ExtendedXmlSerializer.Configuration.IConfigurationContainer)"/> but in addition, all properties defined in the
+            deserialized document are also considered and assigned to the target instance if the property is writable.
+            </summary>
+            <param name="this">The container to configure.</param>
+            <returns>The configured container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContent.EnableReaderContext(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Intended for extension authors, and enables a reader context on the deserialization process.  Extension authors
+            can use <seealso cref="T:ExtendedXmlSerializer.ExtensionModel.Content.ContentsHistory"/> to retrieve this history of objects being parsed and activated to the
+            current point of the graph.  This is valuable when parsing object graphs with many internal properties which in
+            turn have their own set of complex properties.
+            </summary>
+            <param name="this">The container to configure.</param>
+            <returns>The configured container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContent.EnableImplicitlyDefinedDefaultValues(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+             <summary>
+             This is intended to circumvent default behavior which throws an exception for primitive data types when there is
+             no content provided for their elements.
+            
+             For example, say you have a boolean element defined as such: `<Boolean />`  or, perhaps its long-form equivalent `
+             <Boolean></Boolean>`.
+            
+             Either one of these by default will throw a <seealso cref="T:System.FormatException"/>.  Configuring the container with
+             <seealso cref="M:ExtendedXmlSerializer.ExtensionMethodsForContent.EnableImplicitlyDefinedDefaultValues(ExtendedXmlSerializer.Configuration.IConfigurationContainer)"/> will allow the use of empty values within document
+             elements such as the above without throwing an exception.
+             </summary>
+             <param name="this">The container to configure.</param>
+             <returns>The configured container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContent.Emit(ExtendedXmlSerializer.Configuration.IConfigurationContainer,ExtendedXmlSerializer.Configuration.IEmitBehavior)">
+            <summary>
+            Used to control and determine when content is emitted during serialization.  This is a general-purpose
+            configuration that works across every type encountered by the serializer. Use the <seealso cref="T:ExtendedXmlSerializer.Configuration.EmitBehaviors" />
+            class to utilize one of the built-in (and identified 😁) behaviors, or implement your own
+            <see cref="T:ExtendedXmlSerializer.Configuration.IEmitBehavior"/>.
+            </summary>
+            <param name="this">The container to configure.</param>
+            <param name="behavior">The behavior to apply to the container.</param>
+            <returns>The configured container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContent.EmitWhen``2(ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,``1},System.Func{``1,System.Boolean})">
+            <summary>
+            Configures a member configuration to only emit when its value meets certain criteria.
+            </summary>
+            <typeparam name="T">The containing type of the member.</typeparam>
+            <typeparam name="TMember">The member type.</typeparam>
+            <param name="this">The member to configure.</param>
+            <param name="specification">The specification to use to determine whether or not to emit the member, based on value.</param>
+            <returns>The configured member.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContent.EmitWhenInstance``2(ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,``1},System.Func{``0,System.Boolean})">
+            <summary>
+            Configures a member configuration to only emit when a condition of its containing instance is met.  This is useful
+            for when a data value from another member in another part of the containing instance is needed to determine
+            whether or not to emit the (currently) configured member.
+            </summary>
+            <typeparam name="T">The containing type of the member.</typeparam>
+            <typeparam name="TMember">The member type.</typeparam>
+            <param name="this">The member to configure.</param>
+            <param name="specification"></param>
+            <returns>The configured member.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContent.EmitWhen``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Configures a type configuration so that instances of its type only emit when the provided condition is met.
+            </summary>
+            <typeparam name="T">The instance type.</typeparam>
+            <param name="this">The type configuration to configure.</param>
+            <param name="specification">The specification to determine the condition on when to emit.</param>
+            <returns>The configured type configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContent.IncludeConfiguredMembers(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Convenience method to iterate through all explicitly configured types and include all explicitly configured
+            members.  Only these members will be considered to emit content during serialization as well as reading it
+            during deserialization.
+            </summary>
+            <param name="this">The container to configure.</param>
+            <returns>The configured container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContent.IncludeConfiguredMembers``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0})">
+            <summary>
+            Convenience method to iterate through all explicitly configured members of a type and mark them as included.  Only
+            these members will be considered to emit content during serialization as well as reading it during
+            deserialization.
+            </summary>
+            <typeparam name="T">The type under configuration.</typeparam>
+            <param name="this">The type to configure.</param>
+            <returns>The configured type.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContent.Ignore``2(ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,``1})">
+            <summary>
+            Ignores a member so that it is not emitted during serialization, and is not read in during deserialization, even
+            if the content is specified in the document.  Note that this establishes a "blacklist" policy so that members that
+            are not ignored get processed.
+            </summary>
+            <typeparam name="T">The instance type.</typeparam>
+            <typeparam name="TMember">The member type.</typeparam>
+            <param name="this">The member to configure.</param>
+            <returns>The configured member.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContent.Ignore(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Reflection.MemberInfo)">
+            <summary>
+            Ignores a member so that it is not emitted during serialization, and is not read in during deserialization, even
+            if the content is specified in the document.  Note that this establishes a "blacklist" policy so that members that
+            are not ignored get processed.
+            </summary>
+            <param name="this">The container to configure.</param>
+            <param name="member">The member to ignore.</param>
+            <returns>The configured container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContent.Include``2(ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,``1})">
+            <summary>
+            Includes a member so that it is emitted during serialization and read during deserialization.  Note that including
+            a member establishes a "whitelist" policy so that only members that are explicitly included are considered for processing.
+            </summary>
+            <typeparam name="T">The type that contains the member.</typeparam>
+            <typeparam name="TMember">The type of the member's value.</typeparam>
+            <param name="this">The member to configure.</param>
+            <returns>The configured member.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContent.Include(ExtendedXmlSerializer.Configuration.IMemberConfiguration)">
+            <summary>
+            Includes a member so that it is emitted during serialization and read during deserialization.  Note that including
+            a member establishes a "whitelist" policy so that only members that are explicitly included are considered for
+            processing.
+            </summary>
+            <param name="this">The member to configure.</param>
+            <returns>The configured member.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionMethodsForContentModel">
+            <summary>
+            Extension methods that assist or enable functionality found within the content model namespace (
+            <see cref="N:ExtendedXmlSerializer.ContentModel"/>).
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContentModel.For``1(ExtendedXmlSerializer.ContentModel.ISerializer)">
+            <summary>
+            Given a generalized serializer, create a type-specific serializer that handles the specified type.  This is
+            typically used for simple casting to and from a general object type and should be handled with care as an
+            incorrect type will throw errors.
+            </summary>
+            <typeparam name="T">The type to use for serialization.</typeparam>
+            <param name="this">The this.</param>
+            <returns>ISerializer&lt;T&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContentModel.Adapt``1(ExtendedXmlSerializer.ContentModel.ISerializer{``0})">
+            <summary>
+            Given a type-specific serializer, create a generalized serializer that serializes and deserializes in terms of a
+            general <see cref="T:System.Object"/>.
+            </summary>
+            <typeparam name="T">The type that the given serializer uses.</typeparam>
+            <param name="this">The serializer used to create a new serializer.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContentModel.Adapt``1(ExtendedXmlSerializer.ContentModel.IWriter{``0})">
+            <summary>
+            Given a type-specific writer, create a generalized writer that writers in terms of a general
+            <see cref="T:System.Object"/>.
+            </summary>
+            <typeparam name="T">The type that the writer is used to write.</typeparam>
+            <param name="this">The writer instance which to base the new writer.</param>
+            <returns>The generalized writer.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContentModel.Structured``1(ExtendedXmlSerializer.ContentModel.Conversion.IConverter{``0})">
+            <summary>
+            Given a struct-specific converter, creates its nullable equivalent.
+            </summary>
+            <typeparam name="T">The struct type of the converter.</typeparam>
+            <param name="this">The converter upon which to base the new converter.</param>
+            <returns>IConverter&lt;System.Nullable&lt;T&gt;&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForContentModel.Adapt``1(ExtendedXmlSerializer.ContentModel.Conversion.IConverter{``0})">
+            <summary>
+            Given a type-specific converter, create a generalized converter that serializes and deserializes in terms of a
+            general <see cref="T:System.Object"/>.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="this">The type-specific converter upon which to base the new generalized converter.</param>
+            <returns>A generalized IConverter.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionMethodsForCoreSources">
+            <summary>
+            Extension methods that assist or enable functionality found within the namespace for sources (
+            <see cref="N:ExtendedXmlSerializer.Core.Sources"/>).  This is considered internal code and while publicly exposed, is not supported.  Feel
+            free to knock yourself out with it if you think you can figure it out, however. 😆
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.Adapt``1(ExtendedXmlSerializer.Core.Sources.IAlteration{``0})">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="T"></typeparam>
+            <param name="this">The this.</param>
+            <returns>IAlteration&lt;System.Object&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.Get``1(ExtendedXmlSerializer.Core.Sources.IParameterizedSource{System.IO.Stream,``0},System.String)">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="T"></typeparam>
+            <param name="this">The this.</param>
+            <param name="parameter">The parameter.</param>
+            <returns>T.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.Get``1(ExtendedXmlSerializer.Core.Sources.IParameterizedSource{System.Reflection.TypeInfo,``0},System.Type)">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="T"></typeparam>
+            <param name="this">The this.</param>
+            <param name="parameter">The parameter.</param>
+            <returns>T.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.Get``1(ExtendedXmlSerializer.Core.Sources.IParameterizedSource{System.Type,``0},System.Reflection.TypeInfo)">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="T"></typeparam>
+            <param name="this">The this.</param>
+            <param name="parameter">The parameter.</param>
+            <returns>T.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.To``3(ExtendedXmlSerializer.Core.Sources.IParameterizedSource{``0,``1},ExtendedXmlSerializer.Core.Sources.IParameterizedSource{``1,``2})">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="TParameter">The type of the t parameter.</typeparam>
+            <typeparam name="TResult">The type of the t result.</typeparam>
+            <typeparam name="TTo">The type of the t to.</typeparam>
+            <param name="this">The this.</param>
+            <param name="coercer">The coercer.</param>
+            <returns>IParameterizedSource&lt;TParameter, TTo&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.In``3(ExtendedXmlSerializer.Core.Sources.IParameterizedSource{``1,``2},ExtendedXmlSerializer.Core.Sources.IParameterizedSource{``0,``1})">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="TFrom">The type of the t from.</typeparam>
+            <typeparam name="TTo">The type of the t to.</typeparam>
+            <typeparam name="TResult">The type of the t result.</typeparam>
+            <param name="this">The this.</param>
+            <param name="coercer">The coercer.</param>
+            <returns>IParameterizedSource&lt;TFrom, TResult&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.GetAny``2(ExtendedXmlSerializer.Core.Sources.IParameterizedSource{``0,System.Collections.Immutable.ImmutableArray{``1}},``0)">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="T"></typeparam>
+            <typeparam name="TItem">The type of the t item.</typeparam>
+            <param name="this">The this.</param>
+            <param name="parameter">The parameter.</param>
+            <returns>System.Nullable&lt;ImmutableArray&lt;TItem&gt;&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.If``2(ExtendedXmlSerializer.Core.Sources.IParameterizedSource{``0,``1},ExtendedXmlSerializer.Core.Specifications.ISpecification{``0})">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="TParameter">The type of the t parameter.</typeparam>
+            <typeparam name="TResult">The type of the t result.</typeparam>
+            <param name="this">The this.</param>
+            <param name="specification">The specification.</param>
+            <returns>IParameterizedSource&lt;TParameter, TResult&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.If``2(``1,ExtendedXmlSerializer.Core.Specifications.ISpecification{``0})">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="TParameter">The type of the t parameter.</typeparam>
+            <typeparam name="TResult">The type of the t result.</typeparam>
+            <param name="this">The this.</param>
+            <param name="specification">The specification.</param>
+            <returns>IParameterizedSource&lt;TParameter, TResult&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.Let``2(ExtendedXmlSerializer.Core.Sources.IParameterizedSource{``0,``1},ExtendedXmlSerializer.Core.Specifications.ISpecification{``0},ExtendedXmlSerializer.Core.Sources.IParameterizedSource{``0,``1})">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="TParameter">The type of the t parameter.</typeparam>
+            <typeparam name="TResult">The type of the t result.</typeparam>
+            <param name="this">The this.</param>
+            <param name="specification">The specification.</param>
+            <param name="other">The other.</param>
+            <returns>IParameterizedSource&lt;TParameter, TResult&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.Let``2(ExtendedXmlSerializer.Core.Sources.IParameterizedSource{``0,``1},ExtendedXmlSerializer.Core.Specifications.ISpecification{``0},ExtendedXmlSerializer.Core.Specifications.ISpecification{``1},ExtendedXmlSerializer.Core.Sources.IParameterizedSource{``0,``1})">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="TParameter">The type of the t parameter.</typeparam>
+            <typeparam name="TResult">The type of the t result.</typeparam>
+            <param name="this">The this.</param>
+            <param name="specification">The specification.</param>
+            <param name="result">The result.</param>
+            <param name="other">The other.</param>
+            <returns>IParameterizedSource&lt;TParameter, TResult&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.Let``2(ExtendedXmlSerializer.Core.Sources.IParameterizedSource{``0,``1},ExtendedXmlSerializer.Core.Specifications.ISpecification{``0},``1)">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="TParameter">The type of the t parameter.</typeparam>
+            <typeparam name="TResult">The type of the t result.</typeparam>
+            <param name="this">The this.</param>
+            <param name="specification">The specification.</param>
+            <param name="other">The other.</param>
+            <returns>IParameterizedSource&lt;TParameter, TResult&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.Let``2(``1,ExtendedXmlSerializer.Core.Specifications.ISpecification{``0},``1)">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="TSpecification">The type of the t specification.</typeparam>
+            <typeparam name="TInstance">The type of the t instance.</typeparam>
+            <param name="this">The this.</param>
+            <param name="specification">The specification.</param>
+            <param name="other">The other.</param>
+            <returns>IParameterizedSource&lt;TSpecification, TInstance&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.Or``2(ExtendedXmlSerializer.Core.Sources.IParameterizedSource{``0,``1},ExtendedXmlSerializer.Core.Sources.IParameterizedSource{``0,``1})">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="TParameter">The type of the t parameter.</typeparam>
+            <typeparam name="TResult">The type of the t result.</typeparam>
+            <param name="this">The this.</param>
+            <param name="next">The next.</param>
+            <returns>IParameterizedSource&lt;TParameter, TResult&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.Alter``1(System.Collections.Generic.IEnumerable{ExtendedXmlSerializer.Core.Sources.IAlteration{``0}},``0)">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="T"></typeparam>
+            <param name="this">The this.</param>
+            <param name="seed">The seed.</param>
+            <returns>T.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.Build``2(ExtendedXmlSerializer.Core.Sources.IParameterizedSource{``0,``1},``0)">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="TParameter">The type of the t parameter.</typeparam>
+            <typeparam name="TResult">The type of the t result.</typeparam>
+            <param name="this">The this.</param>
+            <param name="parameter">The parameter.</param>
+            <returns>Func&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.Build``2(System.Func{``0,``1},``0)">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="TParameter">The type of the t parameter.</typeparam>
+            <typeparam name="TResult">The type of the t result.</typeparam>
+            <param name="this">The this.</param>
+            <param name="parameter">The parameter.</param>
+            <returns>Func&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.FixedSelection``2(ExtendedXmlSerializer.Core.Sources.IParameterizedSource{``0,``1},``0)">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="TParameter">The type of the t parameter.</typeparam>
+            <typeparam name="TResult">The type of the t result.</typeparam>
+            <param name="this">The this.</param>
+            <param name="parameter">The parameter.</param>
+            <returns>ISource&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.FixedSelection``2(System.Func{``0,``1},``0)">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="TParameter">The type of the t parameter.</typeparam>
+            <typeparam name="TResult">The type of the t result.</typeparam>
+            <param name="this">The this.</param>
+            <param name="parameter">The parameter.</param>
+            <returns>ISource&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.Singleton``1(ExtendedXmlSerializer.Core.Sources.ISource{``0})">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="T"></typeparam>
+            <param name="this">The this.</param>
+            <returns>ISource&lt;T&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.ToSelectionDelegate``2(ExtendedXmlSerializer.Core.Sources.IParameterizedSource{``0,``1})">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="TParameter">The type of the t parameter.</typeparam>
+            <typeparam name="TResult">The type of the t result.</typeparam>
+            <param name="this">The this.</param>
+            <returns>Func&lt;TParameter, TResult&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSources.ToSourceDelegate``1(ExtendedXmlSerializer.Core.Sources.ISource{``0})">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="T"></typeparam>
+            <param name="this">The this.</param>
+            <returns>Func&lt;T&gt;.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionMethodsForCoreSpecifications">
+            <summary>
+            Extension methods that assist or enable functionality found within the namespace for specifications (
+            <see cref="N:ExtendedXmlSerializer.Core.Sources"/>).  This is considered internal code and while publicly exposed, is not supported.  Feel
+            free to knock yourself out with it if you think you can figure it out, however. 😆
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSpecifications.IfAssigned``2(ExtendedXmlSerializer.Core.Sources.IParameterizedSource{``0,``1})">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="TParameter">The type of the t parameter.</typeparam>
+            <typeparam name="TResult">The type of the t result.</typeparam>
+            <param name="this">The this.</param>
+            <returns>ISpecification&lt;TParameter&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSpecifications.IfAssigned``2(System.Func{``0,``1})">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="TParameter">The type of the t parameter.</typeparam>
+            <typeparam name="TResult">The type of the t result.</typeparam>
+            <param name="this">The this.</param>
+            <returns>ISpecification&lt;TParameter&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSpecifications.ToDelegate``1(ExtendedXmlSerializer.Core.Specifications.ISpecification{``0})">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="T"></typeparam>
+            <param name="this">The this.</param>
+            <returns>Func&lt;T, System.Boolean&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSpecifications.Build``1(ExtendedXmlSerializer.Core.Specifications.ISpecification{System.Reflection.TypeInfo})">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="T"></typeparam>
+            <param name="this">The this.</param>
+            <returns>Func&lt;System.Boolean&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSpecifications.Build``1(ExtendedXmlSerializer.Core.Specifications.ISpecification{``0},``0)">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="T"></typeparam>
+            <param name="this">The this.</param>
+            <param name="parameter">The parameter.</param>
+            <returns>Func&lt;System.Boolean&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSpecifications.Fix``1(ExtendedXmlSerializer.Core.Specifications.ISpecification{``0},``0)">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="T"></typeparam>
+            <param name="this">The this.</param>
+            <param name="parameter">The parameter.</param>
+            <returns>Func&lt;System.Boolean&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSpecifications.Any``1(ExtendedXmlSerializer.Core.Specifications.ISpecification{``0},``0[])">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="T"></typeparam>
+            <param name="this">The this.</param>
+            <param name="parameters">The parameters.</param>
+            <returns>ISpecification&lt;T&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSpecifications.Or``1(ExtendedXmlSerializer.Core.Specifications.ISpecification{``0},ExtendedXmlSerializer.Core.Specifications.ISpecification{``0}[])">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="T"></typeparam>
+            <param name="this">The this.</param>
+            <param name="others">The others.</param>
+            <returns>ISpecification&lt;T&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSpecifications.And``1(ExtendedXmlSerializer.Core.Specifications.ISpecification{``0},ExtendedXmlSerializer.Core.Specifications.ISpecification{``0}[])">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="T"></typeparam>
+            <param name="this">The this.</param>
+            <param name="others">The others.</param>
+            <returns>ISpecification&lt;T&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSpecifications.Inverse``1(ExtendedXmlSerializer.Core.Specifications.ISpecification{``0})">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="T"></typeparam>
+            <param name="this">The this.</param>
+            <returns>ISpecification&lt;T&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSpecifications.AdaptForNull``1(ExtendedXmlSerializer.Core.Specifications.ISpecification{``0})">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="T"></typeparam>
+            <param name="this">The this.</param>
+            <returns>ISpecification&lt;System.Object&gt;.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForCoreSpecifications.Adapt``1(ExtendedXmlSerializer.Core.Specifications.ISpecification{``0})">
+            <summary>This is considered unsupported internal framework code and is not intended for external use.</summary>
+            <typeparam name="T"></typeparam>
+            <param name="this">The this.</param>
+            <returns>ISpecification&lt;System.Object&gt;.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionMethodsForEncryption">
+            <summary>
+            Extension methods that assist or enable functionality found within the extension model namespace for encryption (<see cref="N:ExtendedXmlSerializer.ExtensionModel.Encryption"/>).
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForEncryption.Encrypt``2(ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,``1})">
+            <summary>
+            Encrypts the specified member with the default encryption, which is a base-64 string.
+            </summary>
+            <typeparam name="T">The containing type of the member.</typeparam>
+            <typeparam name="TMember">The member type.</typeparam>
+            <param name="this">The member to configure.</param>
+            <returns>The configured MemberConfiguration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForEncryption.UseEncryptionAlgorithm(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Configures a container for default encryption, which is base-64.  Every registered converter will be wrapped with
+            a converter which will further encrypt its reading and writing.
+            </summary>
+            <param name="this">The container to configure for encryption.</param>
+            <returns>A configured IConfigurationContainer.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForEncryption.UseEncryptionAlgorithm(ExtendedXmlSerializer.Configuration.IConfigurationContainer,ExtendedXmlSerializer.ExtensionModel.Encryption.IEncryption)">
+            <summary>
+            Configures a container for encryption with the specified encryption component.  Every registered converter will be
+            wrapped with a converter which will further encrypt its reading and writing.
+            </summary>
+            <param name="this">The container to configure for encryption.</param>
+            <param name="encryption">The encryption with which to encrypt and decrypt data.</param>
+            <returns>A configured IConfigurationContainer.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForEncryption.UseEncryptionAlgorithm(ExtendedXmlSerializer.Configuration.IConfigurationContainer,ExtendedXmlSerializer.Core.Sources.IAlteration{ExtendedXmlSerializer.ContentModel.Conversion.IConverter})">
+            <summary>
+            Configures a container for encryption with the specified converter alteration.  Every registered converter will be
+            altered by the provided alteration.
+            </summary>
+            <param name="this">The container which to configure for encryption.</param>
+            <param name="parameter">The alteration with which to alter each converter in the configuration container.</param>
+            <returns>A configured IConfigurationContainer.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel">
+            <summary>
+            Extension methods that assist or enable functionality found within the extension model namespace (
+            <see cref="N:ExtendedXmlSerializer.ExtensionModel"/>).
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.AllowTargetInstances(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Enables the use of target instances to read values into when serialization occurs.  Use this in conjunction with
+            <see cref="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.UsingTarget``1(ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer,``0)" /> to establish a target instance during deserialization.  In this context, values read
+            from the source document will be assigned to the provided existing target instance rather than the default
+            behavior of creating a new instance altogether.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.UsingTarget``1(ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer,``0)">
+            <summary>
+            Specifies an existing reference to use as target for deserialization of values.  Read values during
+            deserialization will be read and assigned into the provided target instance. NOTICE: Be sure to call
+            <see cref="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.AllowTargetInstances(ExtendedXmlSerializer.Configuration.IConfigurationContainer)"/> when configuring the container before using this method.
+            </summary>
+            <typeparam name="T">The instance type.</typeparam>
+            <param name="this">The serializer</param>
+            <param name="instance">The instance to deserialize</param>
+            <returns>A deserialization context that will assign values to the provided instance.</returns>
+            <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/230" />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.EnableThreadProtection(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Enables thread protection and wraps a simple `lock` around the reading and writing of the created serializer.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.EnableMemberExceptionHandling(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Enables member exception handling during serialization and deserialization.  By default when errors are
+            encountered during these processes the exception is simply thrown without much context or detail.  This is for
+            performance considerations and to cut down on try/catches.  Enabling this feature wraps
+            serialization/deserialization in try-catches to provide more detail when exceptions occur.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+            <seealso href="https://mattwarren.org/2016/12/20/Why-Exceptions-should-be-Exceptional/"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.WithUnknownContent(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Creates a new context for Unknown Content and allows the user to determine how the serializer behaves when it
+            encounters unknown content during deserialization.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The UnknownContentContext for further action and configuration.</returns>
+            <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/271#issuecomment-550976753" />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.EnableRootInstances``1(``0)">
+            <summary>
+            This is considered internal framework functionality and is not intended to be used from your code.  However. 😁
+            This enables root instances on a serializer.  When used, components that use the <see cref="T:ExtendedXmlSerializer.ExtensionModel.IRootInstances"/>
+            interface will have access to the root instance that was passed in for serialization, usually by using
+            <see cref="T:ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer"/>'s `Serialize` method.
+            </summary>
+            <typeparam name="T">The root context type.</typeparam>
+            <param name="this">The root context (usually an <see cref="T:ExtendedXmlSerializer.Configuration.IConfigurationContainer"/>) to configure.</param>
+            <returns>The configured root context (usually an <see cref="T:ExtendedXmlSerializer.Configuration.IConfigurationContainer"/>).</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.EnableExpressions(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            This is considered internal framework functionality and is not intended to be used from your code.  However. 😁
+            This enables the use of expressions within deserialized properties (attached properties or markup extensions), so
+            that they may be evaluated to a runtime value.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.EnableMarkupExtensions(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Enables markup extensions support for the container.  This allows you to create markup extensions and enable them
+            within your XML, much like Xaml does for WPF.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+            <seealso href="https://docs.microsoft.com/en-us/dotnet/framework/wpf/advanced/markup-extensions-and-wpf-xaml"/>
+            <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/wiki/04.-Features#xaml-ness-markup-extensions"/>
+            <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/blob/25514a768f7dc6b3166119254a1bd80ea13e1dbe/test/ExtendedXmlSerializer.Tests/ExtensionModel/Markup/MarkupExtensionTests.cs"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.EnableAllConstructors(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Enables all constructors -- in particular, private ones -- as candidates for selection when selecting a
+            constructor to activate during deserialization.  By default, only public constructors are considered.  Calling
+            this method configures the serializer so that all constructors -- private and otherwise -- are also considered.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.WithArrayTypes(System.Collections.Generic.IEnumerable{System.Type})">
+            <summary>
+            This is an unused method and will be removed in a future version.
+            </summary>
+            <param name="this"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.Deserialize``1(ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer,``0,System.String)">
+            <summary>
+            Use `IExtendedXmlSerializer.UsingTarget.Deserialize` instead.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="this"></param>
+            <param name="existing"></param>
+            <param name="data"></param>
+            <returns></returns>
+            <seealso cref="M:ExtendedXmlSerializer.ExtensionModel.ReferencedDeserialization`1.Deserialize(System.String)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.Deserialize``1(ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer,``0,System.Xml.XmlReaderSettings,System.String)">
+            <summary>
+            Use `IExtendedXmlSerializer.UsingTarget.Deserialize` instead.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="this"></param>
+            <param name="existing"></param>
+            <param name="settings"></param>
+            <param name="data"></param>
+            <returns></returns>
+            <seealso cref="M:ExtendedXmlSerializer.ExtensionModel.ReferencedDeserialization`1.Deserialize(System.Xml.XmlReaderSettings,System.String)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.Deserialize``1(ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer,``0,System.IO.Stream)">
+            <summary>
+            Use `IExtendedXmlSerializer.UsingTarget.Deserialize` instead.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="this"></param>
+            <param name="existing"></param>
+            <param name="stream"></param>
+            <returns></returns>
+            <seealso cref="M:ExtendedXmlSerializer.ExtensionModel.ReferencedDeserialization`1.Deserialize(System.IO.Stream)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.Deserialize``1(ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer,``0,System.Xml.XmlReaderSettings,System.IO.Stream)">
+            <summary>
+            Use `IExtendedXmlSerializer.UsingTarget.Deserialize` instead.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="this"></param>
+            <param name="existing"></param>
+            <param name="settings"></param>
+            <param name="stream"></param>
+            <returns></returns>
+            <seealso cref="M:ExtendedXmlSerializer.ExtensionModel.ReferencedDeserialization`1.Deserialize(System.Xml.XmlReaderSettings,System.IO.Stream)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.AllowExistingInstances(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Deprecated.  Use `AllowTargetInstances` instead.
+            </summary>
+            <param name="this"></param>
+            <returns></returns>
+            <seealso cref="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.AllowTargetInstances(ExtendedXmlSerializer.Configuration.IConfigurationContainer)" />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForExtensionModel.EnableUnknownContentHandling(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Action{ExtendedXmlSerializer.ContentModel.Format.IFormatReader})">
+            <summary>
+            This method is being deprecated.  Please use `ConfigurationContainer.WithUnknownContent.Call` instead.
+            </summary>
+            <param name="this"></param>
+            <param name="onMissing"></param>
+            <returns></returns>
+            <seealso cref="M:ExtendedXmlSerializer.Configuration.UnknownContentContext.Call(System.Action{ExtendedXmlSerializer.ContentModel.Format.IFormatReader})"/>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionMethodsForImplicitTyping">
+            <summary>
+            A set of extension methods that assist in enabling implicit typing for the configuration container.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForImplicitTyping.EnableImplicitTyping(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Type[])">
+            <summary>
+            Enables implicit typing on a configuration container, which will create a serializer that does not emit xmlns
+            namespaces for the provided types, nor will it require them during deserialization.  This makes XML more JSON-like
+            in its resulting output and required input, leading to more streamlined and less verbose documents.  Note that
+            this feature has limits, namely that there can be only one type with any given name.  The type name is considered
+            the unique identifier and if there is more than one type with the same name an exception is thrown.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <param name="types">The types to register.  Ensure the provided types all have unique names or else an exception
+            is thrown.</param>
+            <returns>The configured configuration container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForImplicitTyping.EnableImplicitTyping(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Collections.Generic.IEnumerable{System.Type})">
+            <summary>
+            Convenience method to pass in a source type enumerable and resolve it into an array to pass to
+            <see cref="M:ExtendedXmlSerializer.ExtensionMethodsForImplicitTyping.EnableImplicitTyping(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Type[])" />.  This is primarily used by the
+            EnableImplicitTyping* methods, but can also be used with any enumerable of <see cref="T:System.Type"/>.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <param name="types">The types to register as implicit.</param>
+            <returns>The configured configuration container.</returns>
+            <seealso cref="M:ExtendedXmlSerializer.ExtensionMethodsForImplicitTyping.EnableImplicitTyping(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Type[])"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForImplicitTyping.EnableImplicitTypingFromPublicNested``1(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Convenience method to enable implicit typing on a container, using all public-nested types found within the
+            provided subject type.  All public nested types found within the provided subject type will be included as an
+            implicit type.
+            </summary>
+            <typeparam name="T">The subject type to query for type resolution.</typeparam>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+            <seealso cref="M:ExtendedXmlSerializer.ExtensionMethodsForImplicitTyping.EnableImplicitTyping(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Type[])"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForImplicitTyping.EnableImplicitTypingFromNested``1(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Convenience method to enable implicit typing on a container, using all nested types -- private or otherwise --
+            found within the provided subject type.  All nested types found within the provided subject type will be
+            included and registered as an implicit type.
+            </summary>
+            <typeparam name="T">The subject type to query for type resolution.</typeparam>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+            <seealso cref="M:ExtendedXmlSerializer.ExtensionMethodsForImplicitTyping.EnableImplicitTyping(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Type[])"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForImplicitTyping.EnableImplicitTypingFromAll``1(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Convenience method to enable implicit typing on a container, using all found types within the provided subject
+            type's assembly.  All types found within the provided subject type's assembly will be included and registered as
+            an implicit type.  Use this with care and ensure that the names of all the types found within the assembly are
+            unique. Otherwise, an exception will be thrown if more than one type share the same name.
+            </summary>
+            <typeparam name="T">The subject type to query for type resolution.</typeparam>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+            <seealso cref="M:ExtendedXmlSerializer.ExtensionMethodsForImplicitTyping.EnableImplicitTyping(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Type[])"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForImplicitTyping.EnableImplicitTypingFromPublic``1(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Convenience method to enable implicit typing on a container, using all found public types within the provided
+            subject type's assembly.  All public types found within the provided subject type's assembly will be included and
+            registered as an implicit type.  Use this with care and ensure that the names of all the public types found within
+            the assembly are unique.  Otherwise, an exception will be thrown if more than one type share the same name.
+            </summary>
+            <typeparam name="T">The subject type to query for type resolution.</typeparam>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+            <seealso cref="M:ExtendedXmlSerializer.ExtensionMethodsForImplicitTyping.EnableImplicitTyping(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Type[])"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForImplicitTyping.EnableImplicitTypingFromNamespace``1(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Convenience method to enable implicit typing on a container, using all found types within the provided subject
+            type's namespace.  All types found within the provided subject type's namespace will be included and registered as
+            an implicit type.  Use this with care and ensure that the names of all the types found within the namespace are
+            unique. Otherwise, an exception will be thrown if more than one type share the same name.
+            </summary>
+            <typeparam name="T">The subject type to query for type resolution.</typeparam>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+            <seealso cref="M:ExtendedXmlSerializer.ExtensionMethodsForImplicitTyping.EnableImplicitTyping(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Type[])"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForImplicitTyping.EnableImplicitTypingFromNamespacePublic``1(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Convenience method to enable implicit typing on a container, using all found public types within the provided
+            subject type's namespace.  All public types found within the provided subject type's namespace will be included and
+            registered as an implicit type.  Use this with care and ensure that the names of all the public types found within
+            the namespace are unique.  Otherwise, an exception will be thrown if more than one type share the same name.
+            </summary>
+            <typeparam name="T">The subject type to query for type resolution.</typeparam>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+            <seealso cref="M:ExtendedXmlSerializer.ExtensionMethodsForImplicitTyping.EnableImplicitTyping(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Type[])"/>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionMethodsForLocation">
+            <summary>
+            Extension methods used for service location and registration.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForLocation.RegisterWithDependencies``1(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
+            <summary>
+            Convenience method for the LightInject
+            </summary>
+            <param name="this"></param>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionMethodsForRegistration">
+            <summary>
+            A set of extension methods to assist in registration operations for the container, its types, and/or its type's members.
+            Registrations can be serializers or converters to change the default behavior on how these components emit or read
+            in their content.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForRegistration.Register``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0})">
+            <summary>
+            Establishes a registration context for the specified type configuration.  From there, you can perform registration
+            operations on serializers and converters for the type.
+            </summary>
+            <typeparam name="T">The type under configuration.</typeparam>
+            <param name="this">The type configuration to configure.</param>
+            <returns>A type registration context.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForRegistration.Register``2(ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,``1})">
+            <summary>
+            Establishes a registration context for the specified member configuration.  From there, you can perform
+            registration operations on serializers and converters for the type.
+            </summary>
+            <typeparam name="T">The member's containing type.</typeparam>
+            <typeparam name="TMember">The member's value type.</typeparam>
+            <param name="this">The member configuration to configure.</param>
+            <returns>The member registration context.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionMethodsForSerialization">
+            <summary>
+            Extension methods for convenience that assist in simplifying the amount of code required for serializing instances
+            and deserializing document sources.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForSerialization.Serialize(ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer,System.Object)">
+            <summary>
+            Serialization convenience method to serialize the provided instance into a string.
+            </summary>
+            <param name="this">The serializer to use for serialization.</param>
+            <param name="instance">The instance to serialize.</param>
+            <returns>A string that represents the provided instance in Xml format.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForSerialization.Serialize(ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer,System.Xml.XmlWriterSettings,System.Object)">
+            <summary>
+            Serialization convenience method to serialize the provided instance into a string with the provided
+            <see cref="T:System.Xml.XmlWriterSettings"/>.
+            </summary>
+            <param name="this">The serializer to use for serialization.</param>
+            <param name="settings">The writer settings for handling the xml writer used create the resulting Xml.</param>
+            <param name="instance">The instance to serialize.</param>
+            <returns>A string that represents the provided instance in Xml format.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForSerialization.Serialize(ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer,System.IO.Stream,System.Object)">
+            <summary>
+            Serialization convenience method to serialize the provided instance into a string along with the provided
+            destination <see cref="T:System.IO.Stream"/>.
+            </summary>
+            <param name="this">The serializer to use for serialization.</param>
+            <param name="stream">The destination stream.</param>
+            <param name="instance">The instance to serialize.</param>
+            <returns>A string that represents the provided instance in Xml format.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForSerialization.Serialize(ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer,System.Xml.XmlWriterSettings,System.IO.Stream,System.Object)">
+            <summary>
+            Serialization convenience method to serialize the provided instance into a string along with the provided
+            destination <see cref="T:System.IO.Stream"/> while using the settings configured in the provided
+            <see cref="T:System.Xml.XmlWriterSettings"/>.
+            </summary>
+            <param name="this">The serializer to use for serialization.</param>
+            <param name="settings">The writer settings for handling the xml writer used create the resulting Xml.</param>
+            <param name="stream">The destination stream.</param>
+            <param name="instance">The instance to serialize.</param>
+            <returns>A string that represents the provided instance in Xml format.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForSerialization.Serialize(ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer,System.IO.TextWriter,System.Object)">
+            <summary>
+            Serialization convenience method to serialize the provided instance into the provided destination
+            <see cref="T:System.IO.TextWriter"/>.
+            </summary>
+            <param name="this">The serializer to use for serialization.</param>
+            <param name="writer">The destination writer.</param>
+            <param name="instance">The instance to serialize.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForSerialization.Serialize(ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer,System.Xml.XmlWriterSettings,System.IO.TextWriter,System.Object)">
+            <summary>
+            Serialization convenience method to serialize the provided instance into the provided destination
+            <see cref="T:System.IO.TextWriter"/> while using the settings configured in the provided <see cref="T:System.Xml.XmlWriterSettings"/>.
+            </summary>
+            <param name="this">The serializer to use for serialization.</param>
+            <param name="settings">The writer settings for handling the xml writer used create the resulting Xml.</param>
+            <param name="writer">The destination writer.</param>
+            <param name="instance">The instance to serialize.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForSerialization.Deserialize``1(ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer,System.String)">
+            <summary>
+            Deserialization convenience method to deserialize a document found within the provided string into an instance of
+            the requested instance type, using reader settings that will close the stream once the process is complete.
+            </summary>
+            <typeparam name="T">The requested instance type.</typeparam>
+            <param name="this">The serializer to create the requested instance.</param>
+            <param name="data">A text representation of an Xml document.</param>
+            <returns>An instance of the requested type.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForSerialization.Deserialize``1(ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer,System.Xml.XmlReaderSettings,System.String)">
+            <summary>
+            Deserialization convenience method to deserialize a document found within the provided string into an instance of
+            the requested instance type, using the provided <see cref="T:System.Xml.XmlReaderSettings"/>.
+            </summary>
+            <typeparam name="T">The requested instance type.</typeparam>
+            <param name="this">The serializer to create the requested instance.</param>
+            <param name="settings">The reader settings for handling the xml reader used create the instance.</param>
+            <param name="data">A text representation of an Xml document.</param>
+            <returns>An instance of the requested type.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForSerialization.Deserialize``1(ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer,System.IO.Stream)">
+            <summary>
+            Deserialization convenience method to deserialize a document found within the provided <see cref="T:System.IO.Stream"/> into
+            an instance of the requested instance type, using the default reader settings found at
+            <see cref="P:ExtendedXmlSerializer.ExtensionModel.Xml.Defaults.ReaderSettings"/>.
+            </summary>
+            <typeparam name="T">The requested instance type.</typeparam>
+            <param name="this">The serializer to create the requested instance.</param>
+            <param name="stream">The stream containing the necessary data to deserialize the object of requested type.</param>
+            <returns>An instance of the requested type.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForSerialization.Deserialize``1(ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer,System.Xml.XmlReaderSettings,System.IO.Stream)">
+            <summary>
+            Deserialization convenience method to deserialize a document found within the provided <see cref="T:System.IO.Stream"/> into
+            an instance of the requested instance type, using the provided <see cref="T:System.Xml.XmlReaderSettings"/>.
+            </summary>
+            <typeparam name="T">The requested instance type.</typeparam>
+            <param name="this">The serializer to create the requested instance.</param>
+            <param name="settings">The reader settings for handling the xml reader used create the instance.</param>
+            <param name="stream">The stream containing the necessary data to deserialize the object of requested type.</param>
+            <returns>An instance of the requested type.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForSerialization.Deserialize``1(ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer,System.IO.TextReader)">
+            <summary>
+            Deserialization convenience method to deserialize a document found within the provided <see cref="T:System.IO.TextReader"/>
+            into an instance of the requested instance type, using the default reader settings found at
+            <see cref="P:ExtendedXmlSerializer.ExtensionModel.Xml.Defaults.ReaderSettings"/>.
+            </summary>
+            <typeparam name="T">The requested instance type.</typeparam>
+            <param name="this">The serializer to create the requested instance.</param>
+            <param name="reader">The reader containing the necessary data to deserialize the object of requested type.</param>
+            <returns>An instance of the requested type.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForSerialization.Deserialize``1(ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlSerializer,System.Xml.XmlReaderSettings,System.IO.TextReader)">
+            <summary>
+            Deserialization convenience method to deserialize a document found within the provided <see cref="T:System.IO.TextReader"/>
+            into an instance of the requested instance type, using the provided <see cref="T:System.Xml.XmlReaderSettings"/>.
+            </summary>
+            <typeparam name="T">The requested instance type.</typeparam>
+            <param name="this">The serializer to create the requested instance.</param>
+            <param name="settings">The reader settings for handling the xml reader used create the instance.</param>
+            <param name="reader">The reader containing the necessary data to deserialize the object of requested type.</param>
+            <returns>An instance of the requested type.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionMethodsForXml">
+            <summary>
+            Extension methods that assist or enable functionality found within the extension model namespace for xml-specific
+            behaviors (<see cref="N:ExtendedXmlSerializer.ExtensionModel.Xml"/>).
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForXml.UseAutoFormatting(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Configures the provided configuration container to create a serializer that automatically formats its contents
+            into attributes and elements.  When a serializer encounters a primitive type (or more accurately, a type that has
+            an <see cref="T:ExtendedXmlSerializer.ContentModel.Conversion.IConverter"/> registered to handle it), it will automatically serialize its resulting (string) data
+            as an Xml attribute.  The only exception is when a <see cref="T:System.String"/> is encountered, where it will check its
+            length.  Strings greater than 128 characters will be emitted as inner content.  Otherwise, it will be emitted as
+            an Xml attribute.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForXml.UseAutoFormatting(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Int32)">
+            <summary>
+            Configures the provided configuration container to create a serializer that automatically formats its contents
+            into attributes and elements.  When a serializer encounters a primitive type (or more accurately, a type that has
+            an <see cref="T:ExtendedXmlSerializer.ContentModel.Conversion.IConverter"/> registered to handle it), it will automatically serialize its resulting (string) data
+            as an Xml attribute.  The only exception is when a <see cref="T:System.String"/> is encountered, where it will check its
+            length.  Strings greater than the provided max-length will be emitted as inner content.  Otherwise, it will be
+            emitted as an Xml attribute.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <param name="maxTextLength">The max length a string can be before it is rendered as inner content.  Any string
+            shorter than this amount will be rendered as an Xml attribute.</param>
+            <returns>The configured configuration container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForXml.UseOptimizedNamespaces(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Configures the container to create a serializer that consolidates all namespaces so that they emit at the root of
+            the document, rather than throughout the document when they are first encountered (which can lead to a lot of
+            unnecessary overhead and larger documents).
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForXml.WithValidCharacters(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            Ensures that all text and strings encountered when emitting the document are valid Xml characters, replacing those
+            that are not with empty strings.
+            </summary>
+            <param name="this">The configuration container to configure.</param>
+            <returns>The configured configuration container.</returns>
+            <seealso href="https://stackoverflow.com/a/961504/3602057"/>
+            <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/167" />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForXml.UseClassicSerialization``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0})">
+            <summary>
+            Used in dire circumstances.  If you encounter an older .NET object type that cannot be serialized (e.g.
+            DataTable), and it implements <see cref="T:System.Runtime.Serialization.ISerializable"/>, call this method to configure the container to create a
+            serializer that will serialize and deserialize using this interface.
+            </summary>
+            <typeparam name="T">The type under configuration.</typeparam>
+            <param name="this">The type configuration to configure.</param>
+            <returns>The configured type configuration.</returns>
+            <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/268" />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForXml.WithValidCharacters``1(ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,System.String})">
+            <summary>
+            Ensures that all text and strings encountered when emitting the specified member are valid Xml characters,
+            replacing those that are not with empty strings.
+            </summary>
+            <typeparam name="T">The member's containing type.</typeparam>
+            <param name="this">The member configuration to configure.</param>
+            <returns>The configured member configuration.</returns>
+            <seealso href="https://stackoverflow.com/a/961504/3602057"/>
+            <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/167" />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForXml.Attribute``2(ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,``1})">
+            <summary>
+            Configures the specified member to emit as an Xml attribute, rather than as an element.
+            </summary>
+            <typeparam name="T">The member's containing type.</typeparam>
+            <typeparam name="TMember">The value type of the member.</typeparam>
+            <param name="this">The member configuration to configure.</param>
+            <returns>The configured member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForXml.Attribute``2(ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,``1},System.Func{``1,System.Boolean})">
+            <summary>
+            Configures the specified member to emit as an Xml attribute when the provided condition is met, rather than as an
+            element.  When the provided condition delegate evaluates as true, the member is emitted as an Xml attribute.
+            Otherwise, it emits as an Xml element.
+            </summary>
+            <typeparam name="T">The member's containing type.</typeparam>
+            <typeparam name="TMember">The value type of the member.</typeparam>
+            <param name="this">The member configuration to configure.</param>
+            <param name="when">The condition used to specify when to render this member as an Xml attribute.</param>
+            <returns>The configured member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForXml.Content``2(ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,``1})">
+            <summary>
+            Forces a member to emit as an Xml element.  This is only useful if a member was registered as an attribute and for
+            some reason the member should be further configured to emit as an Xml element instead (effectively delisting it as
+            an Xml attribute).  Otherwise, emitting as an Xml element is the default behavior and this method should not be used.
+            </summary>
+            <typeparam name="T">The member's containing type.</typeparam>
+            <typeparam name="TMember">The value type of the member.</typeparam>
+            <param name="this">The member configuration to configure.</param>
+            <returns>The configured member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForXml.Verbatim``1(ExtendedXmlSerializer.Configuration.IMemberConfiguration{``0,System.String})">
+            <summary>
+            Forces a member to emit within a CDATA container so it can render its contents verbatim.
+            </summary>
+            <typeparam name="T">The member's containing type.</typeparam>
+            <param name="this">The member configuration to configure.</param>
+            <returns>The configured member configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForXml.CustomSerializer``2(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
+            <summary>
+            This is considered v1 functionality and is not supported, although it is not yet considered deprecated.  Please
+            make use of the registration methods instead.  The current equivalent for this method call is
+            IConfigurationContainer.Type{T}.Register().Serializer().Of{TSerializer}.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <typeparam name="TSerializer"></typeparam>
+            <param name="this"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForXml.CustomSerializer``1(ExtendedXmlSerializer.Configuration.IConfigurationContainer,System.Type)">
+            <summary>
+            This is considered v1 functionality and is not supported, although it is not yet considered deprecated.  Please
+            make use of the registration methods instead.  The current equivalent for this method call is
+            IConfigurationContainer.Type{T}.Register().Serializer().Of(serializerType).
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="this"></param>
+            <param name="serializerType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForXml.CustomSerializer``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},System.Action{System.Xml.XmlWriter,``0},System.Func{System.Xml.Linq.XElement,``0})">
+            <summary>
+            This is considered v1 functionality and is not supported, although it is not yet considered deprecated.  Please
+            make use of the registration methods instead.  The current equivalent for this method call is
+            IConfigurationContainer.Type{T}.Register().Serializer().ByCalling(serializer, deserializer).  Note that the
+            signatures for the delegates have changed since v1.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="this"></param>
+            <param name="serializer"></param>
+            <param name="deserialize"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForXml.CustomSerializer``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlCustomSerializer{``0})">
+            <summary>
+            This is considered v1 functionality and is not supported, although it is not yet considered deprecated.  Please
+            make use of the registration methods instead.  The current equivalent for this method call is
+            IConfigurationContainer.Type{T}.Register().Serializer().Using(serializer).
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="this"></param>
+            <param name="serializer"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForXml.CustomSerializer``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlCustomSerializer)">
+            <summary>
+            This is considered v1 functionality and is not supported, although it is not yet considered deprecated.  Please
+            make use of the registration methods instead.  The current equivalent for this method call is
+            IConfigurationContainer.Type{T}.Register().Serializer().Using(serializer).
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="this"></param>
+            <param name="serializer"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForXml.AddMigration``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},ExtendedXmlSerializer.Core.ICommand{System.Xml.Linq.XElement})">
+            <summary>
+            Adds a migration command to the configured type.  A migration allows older persisted XML to migrate to an object
+            model schema that has changed since the XML was persisted.  The provided command specifies how to manipulate the
+            element that represents the type so that it can (hopefully 😇) be deserialized without error.
+            </summary>
+            <typeparam name="T">The type under configuration.</typeparam>
+            <param name="this">The type configuration to configure.</param>
+            <param name="migration">The command that specifies how to migrate an Xml element that represents an older schema.</param>
+            <returns>The configured type configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForXml.AddMigration``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},System.Action{System.Xml.Linq.XElement})">
+            <summary>
+            Adds a migration delegate to the configured type.  A migration allows older persisted XML to migrate to an object
+            model schema that has changed since the XML was persisted.  The provided command specifies how to manipulate the
+            element that represents the type so that it can (hopefully 😇) be deserialized without error.
+            </summary>
+            <typeparam name="T">The type under configuration.</typeparam>
+            <param name="this">The type configuration to configure.</param>
+            <param name="migration">The delegate that specifies how to migrate an Xml element that represents an older schema.
+            </param>
+            <returns>The configured type configuration.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForXml.AddMigration``1(ExtendedXmlSerializer.Configuration.ITypeConfiguration{``0},System.Collections.Generic.IEnumerable{System.Action{System.Xml.Linq.XElement}})">
+            <summary>
+            Adds a set of migration delegates to the configured type.  A migration allows older persisted XML to migrate to an
+            object model schema that has changed since the XML was persisted.  The provided command specifies how to
+            manipulate the element that represents the type so that it can (hopefully 😇) be deserialized without error.
+            </summary>
+            <typeparam name="T">The type under configuration.</typeparam>
+            <param name="this">The type configuration to configure.</param>
+            <param name="migrations">The delegates that specify how to migrate an Xml element that represents an older schema.
+            </param>
+            <returns>The configured type configuration.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.DefaultExtensions">
+            <summary>
+            Compiles a list of default extensions used in the configuration container.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.DefaultExtensions.Default">
+            <summary>
+            The default instance.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.DefaultExtensions.#ctor(ExtendedXmlSerializer.ContentModel.Members.IMetadataSpecification,ExtendedXmlSerializer.ContentModel.Members.INames,ExtendedXmlSerializer.Core.Sources.IParameterizedSource{System.Reflection.MemberInfo,System.Int32})">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="metadata">The metadata specification used to create a <see cref="T:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMembersExtension"/>.</param>
+            <param name="defaultNames">The default names selector for element and attribute names.</param>
+            <param name="defaultMemberOrder">The order selector to use when a <see cref="T:System.Reflection.MemberInfo"/> is encountered and
+            selected.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.DefaultExtensions.GetEnumerator">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Encryption.IDecrypt">
+            <summary>
+            Used to decrypt a string from encrypted input to decrypted output.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Encryption.IEncrypt">
+            <summary>
+            Used to encrypt a string from its plain text input to encrypted output.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Encryption.IEncryption">
+            <summary>
+            A converter used to encrypt and decrypt values.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.FallbackSerializationExtension">
+            <summary>
+            Configures a serializer so that if an exception occcurs during selection of a serializer for a given type, a
+            provided fallback serializer is selected instead.  By default the provided fallback serializer does nothing for
+            serializer and returns a null instance for deserialization.
+            </summary>
+            <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/197"/>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.FallbackSerializationExtension.Default">
+            <summary>
+            The default instance.  By default the provided fallback serializer does nothing for
+            serializer and returns a null instance for deserialization.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.FallbackSerializationExtension.#ctor(ExtendedXmlSerializer.ExtensionModel.FallbackSerializationExtension.IFallbackSerializer)">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="fallback">The fallback serializer to use in case an exception is thrown during serialzer selection..
+            </param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.FallbackSerializationExtension.Get(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.FallbackSerializationExtension.IFallbackSerializer">
+            <summary>
+            Used to register a specific serializer with the container so that it is used for fall back serialization.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Instances.ISerializationMonitor`1">
+            <summary>
+            Provides a mechanism to listen in to important events during the serialization process.
+            </summary>
+            <typeparam name="T">The type to monitor.</typeparam>
+            <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264#issuecomment-544104668"/>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.ISerializerExtension">
+            <summary>
+            The heart and soul of the extension model.  This performs any registrations during serializer activation and once
+            the serializer is created, performs any necessary post-processing with its <see cref="T:ExtendedXmlSerializer.Core.ICommand`1"/>
+            implementation.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.IServiceRepository">
+            <summary>
+            Custom service registry.  Modeled after <see cref="T:LightInject.IServiceRegistry"/>.  If designed today, we would remove this
+            interface with the LightInject version.  Perhaps in a future version we will do this as a breaking change.  For the
+            default implementation, most calls pass through directly to the underlying LightInject equivalent.  For those
+            operations that require a <see cref="T:LightInject.ILifetime"/>, a <see cref="T:LightInject.PerContainerLifetime"/> is used.
+            </summary>
+            <seealso cref="T:LightInject.IServiceRegistry"/>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.AvailableServices">
+            <seealso cref="P:LightInject.IServiceRegistry.AvailableServices"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register(System.Type,System.Type)">
+            <seealso cref="M:LightInject.IServiceRegistry.Register(System.Type,System.Type)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register(System.Type,System.Type,System.String)">
+            <seealso cref="M:LightInject.IServiceRegistry.Register(System.Type,System.Type,System.String)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``2">
+            <seealso cref="M:LightInject.IServiceRegistry.Register``2"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``2(System.String)">
+            <seealso cref="M:LightInject.IServiceRegistry.Register``2(System.String)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``1">
+            <seealso cref="M:LightInject.IServiceRegistry.Register``1"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterInstance``1(``0)">
+            <seealso cref="M:LightInject.IServiceRegistry.RegisterInstance``1(``0)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterInstance``1(``0,System.String)">
+            <seealso cref="M:LightInject.IServiceRegistry.RegisterInstance``1(``0,System.String)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterInstance(System.Type,System.Object)">
+            <seealso cref="M:LightInject.IServiceRegistry.RegisterInstance(System.Type,System.Object)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterInstance(System.Type,System.Object,System.String)">
+            <seealso cref="M:LightInject.IServiceRegistry.RegisterInstance(System.Type,System.Object,System.String)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register(System.Type)">
+            <seealso cref="M:LightInject.IServiceRegistry.RegisterInstance(System.Type,System.Object)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``1(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0})">
+            <remarks>Uses a <see cref="T:LightInject.PerContainerLifetime"/> instance for the lifetime.</remarks>
+            <seealso cref="M:LightInject.IServiceRegistry.Register``1(System.Func{LightInject.IServiceFactory,``0},LightInject.ILifetime)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``2(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0,``1})">
+            <seealso cref="M:LightInject.IServiceRegistry.Register``1(System.Func{LightInject.IServiceFactory,``0},LightInject.ILifetime)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``2(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0,``1},System.String)">
+            <seealso cref="M:LightInject.IServiceRegistry.Register``2(System.Func{LightInject.IServiceFactory,``0,``1},System.String)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``3(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0,``1,``2})">
+            <seealso cref="M:LightInject.IServiceRegistry.Register``3(System.Func{LightInject.IServiceFactory,``0,``1,``2})"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``3(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0,``1,``2},System.String)">
+            <seealso cref="M:LightInject.IServiceRegistry.Register``3(System.Func{LightInject.IServiceFactory,``0,``1,``2},System.String)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``4(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0,``1,``2,``3})">
+            <seealso cref="M:LightInject.IServiceRegistry.Register``4(System.Func{LightInject.IServiceFactory,``0,``1,``2,``3})"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``4(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0,``1,``2,``3},System.String)">
+            <seealso cref="M:LightInject.IServiceRegistry.Register``4(System.Func{LightInject.IServiceFactory,``0,``1,``2,``3},System.String)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``5(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0,``1,``2,``3,``4})">
+            <seealso cref="M:LightInject.IServiceRegistry.Register``5(System.Func{LightInject.IServiceFactory,``0,``1,``2,``3,``4})"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``5(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0,``1,``2,``3,``4},System.String)">
+            <seealso cref="M:LightInject.IServiceRegistry.Register``5(System.Func{LightInject.IServiceFactory,``0,``1,``2,``3,``4},System.String)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``1(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0},System.String)">
+            <seealso cref="M:LightInject.IServiceRegistry.Register``1(System.Func{LightInject.IServiceFactory,``0},System.String)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterFallback(System.Func{System.Type,System.Boolean},System.Func{System.Type,System.Object})">
+            <seealso cref="M:LightInject.IServiceRegistry.RegisterFallback(System.Func{System.Type,System.String,System.Boolean},System.Func{LightInject.ServiceRequest,System.Object})"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterConstructorDependency``1(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,System.Reflection.ParameterInfo,``0})">
+            <seealso cref="M:LightInject.IServiceRegistry.RegisterConstructorDependency``1(System.Func{LightInject.IServiceFactory,System.Reflection.ParameterInfo,``0})"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterConstructorDependency``1(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,System.Reflection.ParameterInfo,System.Object[],``0})">
+            <seealso cref="M:LightInject.IServiceRegistry.RegisterConstructorDependency``1(System.Func{LightInject.IServiceFactory,System.Reflection.ParameterInfo,System.Object[],``0})"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Decorate(System.Type,System.Type)">
+            <seealso cref="M:LightInject.IServiceRegistry.Decorate(System.Type,System.Type)"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Decorate``2">
+            <seealso cref="M:LightInject.IServiceRegistry.Decorate``2"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Decorate``1(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0,``0})">
+            <seealso cref="M:LightInject.IServiceRegistry.Decorate``1(System.Func{LightInject.IServiceFactory,``0,``0})"/>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.IServices">
+            <summary>
+            Represents a services container for the extension model.  This is responsible for querying and registering
+            services, as well as finally disposing and cleaning all resources once the serializer has been constructed.  This
+            is passed in as the parameter to post-registration during the extension processing.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Types.ImmutableArrayExtension">
+            <summary>
+            For extension authors, enables immutable arrays on a container.  This is a default extension used by
+            <see cref="T:ExtendedXmlSerializer.ExtensionModel.DefaultExtensions"/>.
+            </summary>
+            <seealso cref="T:ExtendedXmlSerializer.ExtensionModel.DefaultExtensions"/>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Types.ImmutableArrayExtension.Default">
+            <summary>
+            The instance.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.ImmutableArrayExtension.#ctor(ExtendedXmlSerializer.Core.Specifications.ISpecification{System.Reflection.TypeInfo})">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="specification">The specification used to determine when to assign a serializer to a given type.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.ImmutableArrayExtension.Get(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Types.Sources.AllAssemblyTypes">
+            <summary>
+            Iterates through all private and public types found in the assembly of the provided reference type.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.Sources.AllAssemblyTypes.#ctor(System.Type)">
+            <summary>
+            Creates a new instance from the provided reference type.
+            </summary>
+            <param name="referenceType">The reference type of which to query.</param>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Types.Sources.AllAssemblyTypes`1">
+            <summary>
+            Iterates through all private and public types found in the assembly of the provided reference type.
+            </summary>
+            <typeparam name="T">The reference type of which to query.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.Sources.AllAssemblyTypes`1.#ctor">
+            <summary>
+            Creates a new instance.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Types.Sources.AllTypesInSameNamespace`1">
+            <summary>
+            Iterates through all private and public types found in the namespace of the provided reference type.
+            </summary>
+            <typeparam name="T">The reference type to query.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.Sources.AllTypesInSameNamespace`1.#ctor">
+            <summary>
+            Creates a new instance.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Types.Sources.AllTypesInSameNamespace">
+            <summary>
+            Iterates through all private and public types found in the namespace of the provided reference type.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.Sources.AllTypesInSameNamespace.#ctor(System.Type)">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="referenceType">The reference type to query.</param>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Types.Sources.NestedTypes`1">
+            <summary>
+            Iterates through all private and public nested types found in the provided reference type.
+            </summary>
+            <typeparam name="T">The reference type to query.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.Sources.NestedTypes`1.#ctor">
+            <summary>
+            Creates a new instance.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Types.Sources.NestedTypes">
+            <summary>
+            Iterates through all private and public nested types found in the provided reference type.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.Sources.NestedTypes.#ctor(System.Type)">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="referenceType">The reference type to query.</param>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Types.Sources.PublicAssemblyTypes`1">
+            <summary>
+            Iterates through all public types found in the assembly of the provided reference type.
+            </summary>
+            <typeparam name="T">The reference type to query.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.Sources.PublicAssemblyTypes`1.#ctor">
+            <summary>
+            Creates a new instance.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Types.Sources.PublicAssemblyTypes">
+            <summary>
+            Iterates through all public types found in the assembly of the provided reference type.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.Sources.PublicAssemblyTypes.#ctor(System.Type)">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="referenceType">The reference type to query.</param>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Types.Sources.PublicNestedTypes`1">
+            <summary>
+            Iterates through all public nested types found in the provided reference type.
+            </summary>
+            <typeparam name="T">The type to query.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.Sources.PublicNestedTypes`1.#ctor">
+            <summary>
+            Creates a new instance.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Types.Sources.PublicNestedTypes">
+            <summary>
+            Iterates through all public nested types found in the provided reference type.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.Sources.PublicNestedTypes.#ctor(System.Type)">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="referenceType">The reference type to query.</param>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Types.Sources.PublicTypesInSameNamespace`1">
+            <summary>
+            Iterates through all public types found in the namespace of the provided reference type.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.Sources.PublicTypesInSameNamespace`1.#ctor">
+            <summary>
+            Creates a new instance.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Types.Sources.PublicTypesInSameNamespace">
+            <summary>
+            Iterates through all public types found in the namespace of the provided reference type.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.Sources.PublicTypesInSameNamespace.#ctor(System.Type)">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="referenceType">The reference type to query.</param>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Types.TypeModelExtension">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.Defaults">
+            <summary>
+            Convenience class to hold system defaults.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Xml.Defaults.WriterSettings">
+            <summary>
+            Default writer settings, which is an unmodified instance of <see cref="T:System.Xml.XmlWriterSettings"/>.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Xml.Defaults.ReaderSettings">
+            <summary>
+            Default reader settings, which is an instance of <see cref="T:System.Xml.XmlReaderSettings"/> with its
+            <see cref="P:System.Xml.XmlReaderSettings.IgnoreWhitespace"/>, <see cref="P:System.Xml.XmlReaderSettings.IgnoreComments"/>, and
+            <see cref="P:System.Xml.XmlReaderSettings.IgnoreProcessingInstructions"/> all set to true.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.ExtendedXmlSerializer">
+            <summary>
+            Extended Xml Serializer
+            </summary>
+        </member>
+    </members>
+</doc>

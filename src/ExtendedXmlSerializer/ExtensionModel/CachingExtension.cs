@@ -15,11 +15,10 @@ namespace ExtendedXmlSerializer.ExtensionModel
 
 		public int Sort { get; }
 
-		public IServiceRepository Get(IServiceRepository parameter) => parameter.Decorate<IContents, CachedContents>()
-		                                                                        .Decorate<ISerializers,
-			                                                                        CachedSerializers>()
-		                                                                        .Decorate<IConverters, CachedConverters
-		                                                                        >();
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.Decorate<IContents, CachedContents>()
+			            .Decorate<ISerializers, CachedSerializers>()
+			            .Decorate<IConverters, CachedConverters>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

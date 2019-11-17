@@ -8,10 +8,19 @@ using System.Linq;
 
 namespace ExtendedXmlSerializer.Configuration
 {
+	/// <summary>
+	/// Establishes context that enables converter registration operations to be performed on the subject type
+	/// configuration.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
 	public sealed class TypeConverterRegistrationContext<T>
 	{
 		readonly ITypeConfiguration<T> _configuration;
 
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="configuration">The type configuration under configuration.</param>
 		public TypeConverterRegistrationContext(ITypeConfiguration<T> configuration) => _configuration = configuration;
 
 		/// <summary>

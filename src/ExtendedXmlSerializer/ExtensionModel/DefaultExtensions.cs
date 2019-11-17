@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Content;
@@ -7,11 +5,19 @@ using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
+	/// <summary>
+	/// Compiles a list of default extensions used in the configuration container.
+	/// </summary>
 	public sealed class DefaultExtensions : ItemsBase<ISerializerExtension>
 	{
+		/// <summary>
+		/// The default instance.
+		/// </summary>
 		public static DefaultExtensions Default { get; } = new DefaultExtensions();
 
 		DefaultExtensions()
@@ -21,6 +27,13 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		readonly INames                                _defaultNames;
 		readonly IParameterizedSource<MemberInfo, int> _defaultMemberOrder;
 
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="metadata">The metadata specification used to create a <see cref="AllowedMembersExtension"/>.</param>
+		/// <param name="defaultNames">The default names selector for element and attribute names.</param>
+		/// <param name="defaultMemberOrder">The order selector to use when a <see cref="MemberInfo"/> is encountered and
+		/// selected.</param>
 		public DefaultExtensions(IMetadataSpecification metadata, INames defaultNames,
 		                         IParameterizedSource<MemberInfo, int> defaultMemberOrder)
 		{
@@ -29,6 +42,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			_defaultMemberOrder = defaultMemberOrder;
 		}
 
+		/// <inheritdoc />
 		public override IEnumerator<ISerializerExtension> GetEnumerator()
 		{
 			yield return new DefaultReferencesExtension();

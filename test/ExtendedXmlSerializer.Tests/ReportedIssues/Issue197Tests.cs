@@ -55,7 +55,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .Create()
 			                                             .ForTesting();
 			serializer.Cycle(buttonEx2)
-			          .Should().BeEquivalentTo(buttonEx2);
+			          .Should()
+			          .BeEquivalentTo(buttonEx2);
 		}
 
 		[Fact]
@@ -81,7 +82,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                            .Create()
 			                            .ForTesting()
 			                            .Cycle(obj)
-			                            .Should().BeEquivalentTo(obj);
+			                            .Should()
+			                            .BeEquivalentTo(obj);
 		}
 
 		//Interface implementations

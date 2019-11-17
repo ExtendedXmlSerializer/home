@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	public struct CollectionContentInput
+	readonly struct CollectionContentInput
 	{
 		public CollectionContentInput(ISerializer item, TypeInfo classification, TypeInfo itemType)
 		{

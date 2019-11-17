@@ -46,9 +46,9 @@ namespace ExtendedXmlSerializer
 		/// <param name="instance">The instance to deserialize</param>
 		/// <returns>A deserialization context that will assign values to the provided instance.</returns>
 		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/230" />
-		public static ReferencedDeserialization<T> UsingTarget<T>(this IExtendedXmlSerializer @this, T instance)
+		public static ReferencedDeserializationContext<T> UsingTarget<T>(this IExtendedXmlSerializer @this, T instance)
 			where T : class
-			=> new ReferencedDeserialization<T>(@this, instance);
+			=> new ReferencedDeserializationContext<T>(@this, instance);
 
 		/// <summary>
 		/// Enables thread protection and wraps a simple `lock` around the reading and writing of the created serializer.
@@ -130,51 +130,98 @@ namespace ExtendedXmlSerializer
 
 		#region Obsolete
 
-		/// <exclude />
+		/// <summary>
+		/// This is an unused method and will be removed in a future version.
+		/// </summary>
+		/// <param name="this"></param>
+		/// <returns></returns>
 		[Obsolete("This method is unused and will be removed in a future version.")]
 		public static IEnumerable<Type> WithArrayTypes(this IEnumerable<Type> @this)
 			=> @this.ToArray()
 			        .Alter(x => x.Concat(x.Select(y => y.MakeArrayType()))
 			                     .ToArray());
 
-		/// <exclude />
+		/// <summary>
+		/// Use `IExtendedXmlSerializer.UsingTarget.Deserialize` instead.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="this"></param>
+		/// <param name="existing"></param>
+		/// <param name="data"></param>
+		/// <returns></returns>
+		/// <seealso cref="ReferencedDeserializationContext{T}.Deserialize(string)"/>
 		[Obsolete("Use IExtendedXmlSerializer.UsingTarget.Deserialize instead.")]
 		public static T Deserialize<T>(this IExtendedXmlSerializer @this, T existing, string data) where T : class
 			=> @this.UsingTarget(existing)
 			        .Deserialize(data);
 
-		/// <exclude />
+		/// <summary>
+		/// Use `IExtendedXmlSerializer.UsingTarget.Deserialize` instead.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="this"></param>
+		/// <param name="existing"></param>
+		/// <param name="settings"></param>
+		/// <param name="data"></param>
+		/// <returns></returns>
+		/// <seealso cref="ReferencedDeserializationContext{T}.Deserialize(XmlReaderSettings,string)"/>
 		[Obsolete("Use IExtendedXmlSerializer.UsingTarget.Deserialize instead.")]
 		public static T Deserialize<T>(this IExtendedXmlSerializer @this, T existing, XmlReaderSettings settings,
 		                               string data) where T : class
 			=> @this.UsingTarget(existing)
 			        .Deserialize(settings, data);
 
-		/// <exclude />
+		/// <summary>
+		/// Use `IExtendedXmlSerializer.UsingTarget.Deserialize` instead.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="this"></param>
+		/// <param name="existing"></param>
+		/// <param name="stream"></param>
+		/// <returns></returns>
+		/// <seealso cref="ReferencedDeserializationContext{T}.Deserialize(Stream)"/>
 		[Obsolete("Use IExtendedXmlSerializer.UsingTarget.Deserialize instead.")]
 		public static T Deserialize<T>(this IExtendedXmlSerializer @this, T existing, Stream stream) where T : class
-			=> @this.UsingTarget(existing)
-			        .Deserialize(stream);
+			=> @this.UsingTarget(existing).Deserialize(stream);
 
-		/// <exclude />
+		/// <summary>
+		/// Use `IExtendedXmlSerializer.UsingTarget.Deserialize` instead.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="this"></param>
+		/// <param name="existing"></param>
+		/// <param name="settings"></param>
+		/// <param name="stream"></param>
+		/// <returns></returns>
+		/// <seealso cref="ReferencedDeserializationContext{T}.Deserialize(XmlReaderSettings,Stream)"/>
 		[Obsolete("Use IExtendedXmlSerializer.UsingTarget.Deserialize instead.")]
 		public static T Deserialize<T>(this IExtendedXmlSerializer @this, T existing, XmlReaderSettings settings,
-		                               Stream stream) where T : class
-			=> @this.UsingTarget(existing)
-			        .Deserialize(settings, stream);
+		                               Stream stream)
+			where T : class
+			=> @this.UsingTarget(existing).Deserialize(settings, stream);
 
-		/// <exclude />
+		/// <summary>
+		/// Deprecated.  Use `AllowTargetInstances` instead.
+		/// </summary>
+		/// <param name="this"></param>
+		/// <returns></returns>
+		/// <seealso cref="AllowTargetInstances" />
 		[Obsolete("Use AllowTargetInstances instead.")]
 		public static IConfigurationContainer AllowExistingInstances(this IConfigurationContainer @this)
 			=> @this.AllowTargetInstances();
 
-		/// <exclude />
+		/// <summary>
+		/// This method is being deprecated.  Please use `ConfigurationContainer.WithUnknownContent.Call` instead.
+		/// </summary>
+		/// <param name="this"></param>
+		/// <param name="onMissing"></param>
+		/// <returns></returns>
+		/// <seealso cref="UnknownContentContext.Call"/>
 		[Obsolete(
 			"This method is being deprecated.  Please use ConfigurationContainer.WithUnknownContent.Call instead.")]
 		public static IConfigurationContainer EnableUnknownContentHandling(this IConfigurationContainer @this,
 		                                                                   Action<IFormatReader> onMissing)
-			=> @this.WithUnknownContent()
-			        .Call(onMissing);
+			=> @this.WithUnknownContent().Call(onMissing);
 
 		#endregion
 	}

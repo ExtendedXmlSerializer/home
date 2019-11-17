@@ -27,7 +27,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public void EndCurrent() => _writer.EndCurrent();
 
-		public void Content(IIdentity property, string content) => _writer.Content(property, content);
+		public void Content(IIdentity identity, string content) => _writer.Content(identity, content);
 
 		public void Content(string content) => _writer.Content(content);
 

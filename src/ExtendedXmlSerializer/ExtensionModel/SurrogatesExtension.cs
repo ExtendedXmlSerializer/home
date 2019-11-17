@@ -1,5 +1,4 @@
-﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ContentModel;
+﻿using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
@@ -10,6 +9,7 @@ using System.Runtime.Serialization;
 #if NET45 // http://www.nooooooooooooooo.com/ ... Hashtags belong on Twitter. ;)
 namespace System.Runtime.Serialization
 {
+/// <exclude />
 	public interface ISerializationSurrogateProvider
 	{
 		object GetDeserializedObject(object obj, Type t);
@@ -21,14 +21,7 @@ namespace System.Runtime.Serialization
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	public static class IntegrationExtensions
-	{
-		public static IConfigurationContainer Register(this IConfigurationContainer @this,
-		                                               ISerializationSurrogateProvider provider)
-			=> @this.Extend(new SurrogatesExtension(provider));
-	}
-
-	public sealed class SurrogatesExtension : ISerializerExtension
+	sealed class SurrogatesExtension : ISerializerExtension
 	{
 		readonly ISerializationSurrogateProvider _provider;
 

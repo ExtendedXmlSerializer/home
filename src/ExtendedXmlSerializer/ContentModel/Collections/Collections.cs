@@ -1,10 +1,10 @@
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	public class Collections : IContents
+	class Collections : IContents
 	{
 		readonly ISerializers               _serializers;
 		readonly ICollectionItemTypeLocator _locator;

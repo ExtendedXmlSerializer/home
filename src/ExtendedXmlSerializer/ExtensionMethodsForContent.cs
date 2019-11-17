@@ -298,6 +298,7 @@ namespace ExtendedXmlSerializer
 
 		#region Obsolete
 
+		/// <exclude />
 		[Obsolete(
 			"This method is being deprecated and will be removed in a future release. Use Decorate.Element.When instead.")]
 		public static IServiceRepository Decorate<T>(this IServiceRepository @this,
@@ -305,6 +306,7 @@ namespace ExtendedXmlSerializer
 			where T : IElement
 			=> new ConditionalElementDecoration<T>(specification).Get(@this);
 
+		/// <exclude />
 		[Obsolete(
 			"This method is being deprecated and will be removed in a future release. Use Decorate.Contents.When instead.")]
 		public static IServiceRepository DecorateContent<TSpecification, T>(this IServiceRepository @this)
@@ -312,26 +314,31 @@ namespace ExtendedXmlSerializer
 			where T : IContents
 			=> ConditionalContentDecoration<TSpecification, T>.Default.Get(@this);
 
+		/// <exclude />
 		[Obsolete(
 			"This method is being deprecated and will be removed in a future release. Use Decorate.Contents.When instead.")]
 		public static IServiceRepository DecorateContent<T>(this IServiceRepository @this,
 		                                                    ISpecification<TypeInfo> specification) where T : IContents
 			=> new ConditionalContentDecoration<T>(specification).Get(@this);
 
+		/// <exclude />
 		[Obsolete("This is considered a deprecated feature and will be removed in a future release.")]
 		public static IConfigurationContainer OptimizeConverters(this IConfigurationContainer @this)
 			=> OptimizeConverters(@this, new Optimizations());
 
+		/// <exclude />
 		[Obsolete("This is considered a deprecated feature and will be removed in a future release.")]
 		public static IConfigurationContainer OptimizeConverters(this IConfigurationContainer @this,
 		                                                         IAlteration<IConverter> optimizations)
 			=> @this.Alter(optimizations);
 
+		/// <exclude />
 		[Obsolete(
 			"This method will be removed in a future release.  Use IConfigurationContainer.IncludeConfiguredMembers instead.")]
 		public static IConfigurationContainer OnlyConfiguredProperties(this IConfigurationContainer @this)
 			=> @this.IncludeConfiguredMembers();
 
+		/// <exclude />
 		[Obsolete(
 			"This method will be removed in a future release.  Use ITypeConfiguration<T>.IncludeConfiguredMembers instead.")]
 		public static ITypeConfiguration<T> OnlyConfiguredProperties<T>(this ITypeConfiguration<T> @this)
