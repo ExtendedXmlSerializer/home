@@ -72,15 +72,15 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			Extension() {}
 
 			public IServiceRepository Get(IServiceRepository parameter)
-				=> parameter.Decorate<IFormatWriters<XmlWriter>, Writers>();
+				=> parameter.Decorate<IFormatWriters, Writers>();
 
 			void ICommand<IServices>.Execute(IServices parameter) {}
 
-			sealed class Writers : IFormatWriters<XmlWriter>
+			sealed class Writers : IFormatWriters
 			{
-				readonly IFormatWriters<XmlWriter> _writers;
+				readonly IFormatWriters _writers;
 
-				public Writers(IFormatWriters<XmlWriter> writers) => _writers = writers;
+				public Writers(IFormatWriters writers) => _writers = writers;
 
 				public IFormatWriter Get(XmlWriter parameter) => new Writer(_writers.Get(parameter));
 			}

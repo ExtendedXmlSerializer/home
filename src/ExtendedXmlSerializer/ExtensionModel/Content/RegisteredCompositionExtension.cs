@@ -1,10 +1,9 @@
-﻿using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
+﻿using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -33,7 +32,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 				_table    = table;
 			}
 
-			public ISerializer Get(TypeInfo parameter)
+			public ContentModel.ISerializer Get(TypeInfo parameter)
 			{
 				var content = _contents.Get(parameter);
 				var result = _table.IsSatisfiedBy(parameter)

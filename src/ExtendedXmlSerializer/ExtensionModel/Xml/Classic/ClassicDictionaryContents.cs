@@ -1,8 +1,7 @@
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {
@@ -20,11 +19,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 			_entries     = entries;
 		}
 
-		public ISerializer Get(TypeInfo parameter)
+		public ContentModel.ISerializer Get(TypeInfo parameter)
 		{
 			var entry  = _entries.Get(parameter);
 			var reader = _contents.Create(parameter, new CollectionInnerContentHandler(entry, _contents));
-			var result = new Serializer(reader, new EnumerableWriter(_enumerators, entry).Adapt());
+			var result = new ContentModel.Serializer(reader, new EnumerableWriter(_enumerators, entry).Adapt());
 			return result;
 		}
 	}

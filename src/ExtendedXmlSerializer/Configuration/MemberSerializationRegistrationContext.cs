@@ -56,7 +56,7 @@ namespace ExtendedXmlSerializer.Configuration
 		/// </summary>
 		/// <param name="serializer">The serializer to use to serialize/deserialize instances of this member's value.</param>
 		/// <returns>The configured member configuration.</returns>
-		public IMemberConfiguration<T, TMember> Using(ISerializer serializer)
+		public IMemberConfiguration<T, TMember> Using(ContentModel.ISerializer serializer)
 			=> _member.Root.With<CustomSerializationExtension>()
 			          .Members.Apply(_member.GetMember(), serializer)
 			          .Return(_member);

@@ -58,7 +58,7 @@ namespace ExtendedXmlSerializer.Configuration
 		/// </summary>
 		/// <param name="serializer">The serializer to use to serialize/deserialize instances of this type.</param>
 		/// <returns>The configured type configuration.</returns>
-		public ITypeConfiguration<T> Using(ISerializer serializer)
+		public ITypeConfiguration<T> Using(ContentModel.ISerializer serializer)
 			=> _configuration.Root.With<CustomSerializationExtension>()
 			                 .Types.Apply(_configuration.Get(), serializer)
 			                 .Return(_configuration);

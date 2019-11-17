@@ -1,14 +1,14 @@
 namespace ExtendedXmlSerializer.ContentModel.Format
 {
-	struct Writing<T>
+	readonly struct Writing
 	{
-		public Writing(T writer, object instance)
+		public Writing(System.Xml.XmlWriter writer, object instance)
 		{
 			Writer   = writer;
 			Instance = instance;
 		}
 
-		public T Writer { get; }
+		public System.Xml.XmlWriter Writer { get; }
 		public object Instance { get; }
 	}
 }

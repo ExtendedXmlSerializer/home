@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
+﻿using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Xml.Linq;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -60,14 +59,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 				_contents = contents;
 			}
 
-			public ISerializer Get(TypeInfo parameter)
+			public ContentModel.ISerializer Get(TypeInfo parameter)
 			{
 				var custom = _custom.Get(parameter);
 				var result = custom != null ? new Serializer(custom) : _contents.Get(parameter);
 				return result;
 			}
 
-			sealed class Serializer : ISerializer
+			sealed class Serializer : ContentModel.ISerializer
 			{
 				readonly IExtendedXmlCustomSerializer _custom;
 

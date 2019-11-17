@@ -16,6 +16,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using Xunit;
+using ISerializer = ExtendedXmlSerializer.ContentModel.ISerializer;
 using XmlReader = System.Xml.XmlReader;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues

@@ -1,7 +1,6 @@
+using ExtendedXmlSerializer.ContentModel.Content;
 using System;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -11,7 +10,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		public DeferredContents(Func<IContents> contents) => _contents = contents;
 
-		public ISerializer Get(TypeInfo parameter) => _contents()
+		public ContentModel.ISerializer Get(TypeInfo parameter) => _contents()
 			.Get(parameter);
 	}
 }

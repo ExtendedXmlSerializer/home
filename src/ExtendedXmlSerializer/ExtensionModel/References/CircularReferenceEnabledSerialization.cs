@@ -1,7 +1,6 @@
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -11,13 +10,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		public CircularReferenceEnabledSerialization(ISerializers context) => _context = context;
 
-		public ISerializer Get(TypeInfo parameter) => new Container(_context.Get(parameter));
+		public ContentModel.ISerializer Get(TypeInfo parameter) => new Container(_context.Get(parameter));
 
-		sealed class Container : ISerializer
+		sealed class Container : ContentModel.ISerializer
 		{
-			readonly ISerializer _serializer;
+			readonly ContentModel.ISerializer _serializer;
 
-			public Container(ISerializer serializer) => _serializer = serializer;
+			public Container(ContentModel.ISerializer serializer) => _serializer = serializer;
 
 			public object Get(IFormatReader parameter) => _serializer.Get(parameter);
 

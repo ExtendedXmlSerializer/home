@@ -24,7 +24,7 @@ namespace ExtendedXmlSerializer.Configuration
 		/// <param name="this">The serializer to configure.</param>
 		/// <param name="existing">The existing target instance.</param>
 		public ReferencedDeserializationContext(IExtendedXmlSerializer @this, T existing)
-			: this(@this, existing, ExtensionModel.Xml.Defaults.ReaderSettings) {}
+			: this(@this, existing, Defaults.ReaderSettings) {}
 
 		/// <summary>
 		/// Creates a new instance.

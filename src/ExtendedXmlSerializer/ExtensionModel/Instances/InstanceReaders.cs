@@ -1,5 +1,4 @@
 ﻿using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Instances
 {

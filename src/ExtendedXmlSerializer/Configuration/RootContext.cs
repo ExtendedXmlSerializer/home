@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using ExtendedXmlSerializer.Core;
+﻿using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.Configuration
 {

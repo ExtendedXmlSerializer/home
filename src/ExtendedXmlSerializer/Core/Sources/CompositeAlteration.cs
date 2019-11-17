@@ -2,12 +2,12 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	/// <exclude />
+	/// <inheritdoc />
 	public class CompositeAlteration<T> : IAlteration<T>
 	{
 		readonly IEnumerable<IAlteration<T>> _alterations;
 
-		/// <exclude />
+		/// <inheritdoc />
 		public CompositeAlteration(IEnumerable<IAlteration<T>> alterations) => _alterations = alterations;
 
 		/// <inheritdoc />

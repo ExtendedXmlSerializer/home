@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using ExtendedXmlSerializer.ReflectionModel;
+using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class CustomSerializers : Metadata<TypeInfo, ISerializer>, ICustomSerializers
+	sealed class CustomSerializers : Metadata<TypeInfo, ContentModel.ISerializer>, ICustomSerializers
 	{
 		readonly static CompositeTypeComparer Comparer = new CompositeTypeComparer(ImplementedTypeComparer.Default,
 		                                                                           TypeIdentityComparer.Default,

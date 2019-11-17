@@ -16,7 +16,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public PrefixRegistryExtension(IDictionary<Type, string> registry) => _registry = registry;
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Decorate<IFormatWriters<System.Xml.XmlWriter>, FormatWriters>()
+			=> parameter.Decorate<IFormatWriters, FormatWriters>()
 			            .RegisterInstance<IPrefixRegistry>(new PrefixRegistry(_registry));
 
 		public void Execute(IServices parameter) {}
@@ -28,13 +28,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			public PrefixRegistry(IDictionary<Type, string> store) : base(store) {}
 		}
 
-		sealed class FormatWriters : IFormatWriters<System.Xml.XmlWriter>
+		sealed class FormatWriters : IFormatWriters
 		{
 			readonly IPrefixRegistry                      _registry;
 			readonly ITypes                               _types;
-			readonly IFormatWriters<System.Xml.XmlWriter> _writers;
+			readonly IFormatWriters _writers;
 
-			public FormatWriters(IPrefixRegistry registry, ITypes types, IFormatWriters<System.Xml.XmlWriter> writers)
+			public FormatWriters(IPrefixRegistry registry, ITypes types, IFormatWriters writers)
 			{
 				_registry = registry;
 				_types    = types;

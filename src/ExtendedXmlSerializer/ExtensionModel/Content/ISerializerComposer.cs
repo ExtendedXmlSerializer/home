@@ -1,7 +1,6 @@
-﻿using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.Core.Sources;
+﻿using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	public interface ISerializerComposer : IAlteration<ISerializer> {}
+	public interface ISerializerComposer : IAlteration<ContentModel.ISerializer> {}
 }

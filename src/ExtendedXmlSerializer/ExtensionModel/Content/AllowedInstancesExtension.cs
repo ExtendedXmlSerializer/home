@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
+﻿using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -35,7 +34,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 				_serializers    = serializers;
 			}
 
-			public ISerializer Get(TypeInfo parameter)
+			public ContentModel.ISerializer Get(TypeInfo parameter)
 			{
 				var specification = _specifications.Get(parameter);
 				var serializer    = _serializers.Get(parameter);
@@ -88,12 +87,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			}
 		}
 
-		sealed class Serializer : ISerializer
+		sealed class Serializer : ContentModel.ISerializer
 		{
 			readonly ISpecification<object> _specification;
-			readonly ISerializer            _serializer;
+			readonly ContentModel.ISerializer            _serializer;
 
-			public Serializer(ISpecification<object> specification, ISerializer serializer)
+			public Serializer(ISpecification<object> specification, ContentModel.ISerializer serializer)
 			{
 				_specification = specification;
 				_serializer    = serializer;

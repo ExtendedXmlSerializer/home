@@ -1,11 +1,13 @@
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
+using JetBrains.Annotations;
+
 // ReSharper disable TooManyDependencies
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class FormatWriters : IFormatWriters<System.Xml.XmlWriter>
+	sealed class FormatWriters : IFormatWriters
 	{
 		readonly static Aliases              Aliases = Aliases.Default;
 		readonly        IIdentifierFormatter _formatter;
@@ -15,6 +17,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		readonly IAliases _table;
 
+		[UsedImplicitly]
 		public FormatWriters(IIdentifierFormatter formatter, IIdentityStore store, ITypePartResolver parts,
 		                     IPrefixes prefixes)
 			: this(Aliases, formatter, store, parts, prefixes) {}

@@ -1,5 +1,3 @@
-using ExtendedXmlSerializer.ContentModel;
-
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
 	sealed class Enhancer : IEnhancer
@@ -11,6 +9,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			_container = container;
 		}
 
-		public ISerializer Get(ISerializer parameter) => new MarkupExtensionAwareSerializer(_container, parameter);
+		public ContentModel.ISerializer Get(ContentModel.ISerializer parameter) => new MarkupExtensionAwareSerializer(_container, parameter);
 	}
 }

@@ -1,5 +1,4 @@
-﻿using ExtendedXmlSerializer.ExtensionModel.Xml;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel
 {

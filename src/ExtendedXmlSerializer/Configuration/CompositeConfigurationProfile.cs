@@ -1,15 +1,24 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using ExtendedXmlSerializer.Core.Sources;
+﻿using ExtendedXmlSerializer.Core.Sources;
+using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.Configuration
 {
+	/// <summary>
+	/// Used to define a configuration profile composed of multiple configurations.
+	/// </summary>
 	public class CompositeConfigurationProfile : CompositeAlteration<IConfigurationContainer>, IConfigurationProfile
 	{
-		public CompositeConfigurationProfile(params IAlteration<IConfigurationContainer>[] profiles)
-			: this(profiles.AsEnumerable()) {}
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="profiles">Configuration profiles to apply to a configuration container.</param>
+		public CompositeConfigurationProfile(params IAlteration<IConfigurationContainer>[] profiles) : base(profiles) {}
 
-		public CompositeConfigurationProfile(IEnumerable<IAlteration<IConfigurationContainer>> alterations) :
-			base(alterations) {}
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="profiles">Configuration profiles to apply to a configuration container.</param>
+		public CompositeConfigurationProfile(IEnumerable<IAlteration<IConfigurationContainer>> profiles)
+			: base(profiles) {}
 	}
 }

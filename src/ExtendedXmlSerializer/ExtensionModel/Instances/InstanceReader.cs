@@ -1,6 +1,5 @@
-﻿using System;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
+﻿using ExtendedXmlSerializer.Core.Sources;
+using System;
 using XmlReader = System.Xml.XmlReader;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Instances

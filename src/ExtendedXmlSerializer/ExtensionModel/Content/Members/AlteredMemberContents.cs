@@ -1,6 +1,5 @@
 ﻿// ReSharper disable TooManyDependencies
 
-using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Members;
@@ -21,15 +20,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 		readonly IAlteration<IConverter>    _alteration;
 		readonly IMemberContents            _contents;
 		readonly IConverters                _converters;
-		readonly ISerializer                _content;
+		readonly ContentModel.ISerializer                _content;
 
 		public AlteredMemberContents(ISpecification<MemberInfo> specification, IAlteration<IConverter> alteration,
-		                             IMemberContents contents, IConverters converters, ISerializer content)
+		                             IMemberContents contents, IConverters converters, ContentModel.ISerializer content)
 			: this(specification, AssignedSpecification, alteration, contents, converters, content) {}
 
 		public AlteredMemberContents(ISpecification<MemberInfo> specification, ISpecification<IConverter> assigned,
 		                             IAlteration<IConverter> alteration,
-		                             IMemberContents contents, IConverters converters, ISerializer content)
+		                             IMemberContents contents, IConverters converters, ContentModel.ISerializer content)
 		{
 			_specification = specification;
 			_assigned      = assigned;
@@ -39,7 +38,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 			_content       = content;
 		}
 
-		public ISerializer Get(IMember parameter)
+		public ContentModel.ISerializer Get(IMember parameter)
 		{
 			var converter = _converters.Get(parameter.MemberType);
 			var result = _assigned.IsSatisfiedBy(converter) && _specification.IsSatisfiedBy(parameter.Metadata)
@@ -48,12 +47,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 			return result;
 		}
 
-		sealed class Serializer : ISerializer
+		sealed class Serializer : ContentModel.ISerializer
 		{
-			readonly ISerializer _serializer;
+			readonly ContentModel.ISerializer _serializer;
 			readonly IConverter  _converter;
 
-			public Serializer(ISerializer serializer, IConverter converter)
+			public Serializer(ContentModel.ISerializer serializer, IConverter converter)
 			{
 				_serializer = serializer;
 				_converter  = converter;

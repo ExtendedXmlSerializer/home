@@ -1,5 +1,4 @@
-﻿using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
+﻿using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
@@ -121,16 +120,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			readonly IIdentities                _identities;
 			readonly IMemberSerializers         _members;
 			readonly ISerializers               _serializers;
-			readonly ISerializer                _serializer;
+			readonly ContentModel.ISerializer                _serializer;
 			readonly ISpecification<MemberInfo> _content;
 
 			[UsedImplicitly]
-			public MemberSerializers(ISerializer serializer, IIdentities identities, ISerializers serializers,
+			public MemberSerializers(ContentModel.ISerializer serializer, IIdentities identities, ISerializers serializers,
 			                         IMemberSerializers members, IConverters converters, IContentMember member)
 				: this(IsDefinedSpecification<XmlTextAttribute>.Default, serializer, identities, serializers, members,
 				       converters, member) {}
 
-			public MemberSerializers(ISpecification<MemberInfo> content, ISerializer serializer, IIdentities identities,
+			public MemberSerializers(ISpecification<MemberInfo> content, ContentModel.ISerializer serializer, IIdentities identities,
 			                         ISerializers serializers, IMemberSerializers members, IConverters converters,
 			                         IContentMember member)
 			{
@@ -183,7 +182,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		{
 			readonly static Generic<ILists> Lists = new Generic<ILists>(typeof(GenericList<>));
 
-			readonly ISerializer                            _serializer;
+			readonly ContentModel.ISerializer                            _serializer;
 			readonly ISerializers                           _serializers;
 			readonly IMemberSerializer                      _default;
 			readonly IMemberSerializer                      _item;
@@ -191,11 +190,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			readonly IParameterizedSource<ArrayList, IList> _lists;
 			readonly TypeInfo                               _type;
 
-			public ListSerializer(ISerializer serializer, ISerializers serializers, IMemberSerializer @default,
+			public ListSerializer(ContentModel.ISerializer serializer, ISerializers serializers, IMemberSerializer @default,
 			                      IMemberSerializer item, IIdentity identity, TypeInfo type)
 				: this(serializer, serializers, @default, item, identity, Lists.Get(type)(), type) {}
 
-			public ListSerializer(ISerializer serializer, ISerializers serializers, IMemberSerializer @default,
+			public ListSerializer(ContentModel.ISerializer serializer, ISerializers serializers, IMemberSerializer @default,
 			                      IMemberSerializer item, IIdentity identity, ILists lists, TypeInfo type)
 			{
 				_serializer  = serializer;

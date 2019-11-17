@@ -1,17 +1,14 @@
+using ExtendedXmlSerializer.ContentModel.Format;
 using System;
 using System.Xml;
-using ExtendedXmlSerializer.ContentModel.Format;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class FormatReaders : IFormatReaders<System.Xml.XmlReader>
+	sealed class FormatReaders : IFormatReaders
 	{
 		readonly IFormatReaderContexts _read;
 
-		public FormatReaders(IFormatReaderContexts read)
-		{
-			_read = read;
-		}
+		public FormatReaders(IFormatReaderContexts read) => _read = read;
 
 		public IFormatReader Get(System.Xml.XmlReader parameter)
 		{

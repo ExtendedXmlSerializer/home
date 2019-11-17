@@ -1,11 +1,10 @@
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core.Sources;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class DeferredReferenceSerializers : CacheBase<TypeInfo, ISerializer>, ISerializers
+	sealed class DeferredReferenceSerializers : CacheBase<TypeInfo, ContentModel.ISerializer>, ISerializers
 	{
 		readonly ISerializers _serializers;
 
@@ -14,7 +13,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_serializers = serializers;
 		}
 
-		protected override ISerializer Create(TypeInfo parameter)
+		protected override ContentModel.ISerializer Create(TypeInfo parameter)
 			=> new DeferredReferenceSerializer(_serializers.Get(parameter));
 	}
 }

@@ -11,7 +11,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.Register<IObjectIdentifiers, ObjectIdentifiers>()
-			            .Decorate<IFormatWriters<System.Xml.XmlWriter>, OptimizedWriters>();
+			            .Decorate<IFormatWriters, OptimizedWriters>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

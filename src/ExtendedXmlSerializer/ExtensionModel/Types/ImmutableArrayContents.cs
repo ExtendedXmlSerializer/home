@@ -1,11 +1,11 @@
-using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
+using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
@@ -21,11 +21,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		}
 
 		public ISerializer Get(CollectionContentInput parameter)
-			=> new Serializer(Readers.Default.Get(parameter.ItemType)
-			                         .Invoke(_contents, parameter.Item),
-			                  new EnumerableWriter(_enumerators,
-			                                       parameter.Item)
-				                  .Adapt());
+			=> new Serializer(Readers.Default.Get(parameter.ItemType)(_contents, parameter.Item),
+			                  new EnumerableWriter(_enumerators, parameter.Item).Adapt());
 
 		sealed class Readers : Generic<IInnerContentServices, IReader, IReader>
 		{
@@ -44,8 +41,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 			Reader(IReader<Collection<T>> reader) => _reader = reader;
 
-			public object Get(IFormatReader parameter) => _reader.Get(parameter)
-			                                                     .ToImmutableArray();
+			public object Get(IFormatReader parameter) => _reader.Get(parameter).ToImmutableArray();
 		}
 	}
 }

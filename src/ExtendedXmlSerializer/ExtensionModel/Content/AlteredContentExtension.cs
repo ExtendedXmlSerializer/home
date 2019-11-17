@@ -1,12 +1,11 @@
-﻿using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
+﻿using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -46,7 +45,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 				_contents      = contents;
 			}
 
-			public ISerializer Get(TypeInfo parameter)
+			public ContentModel.ISerializer Get(TypeInfo parameter)
 			{
 				var serializer = _contents.Get(parameter);
 				var result = _registrations.IsSatisfiedBy(parameter)
@@ -67,7 +66,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 				_contents      = contents;
 			}
 
-			public ISerializer Get(IMember parameter)
+			public ContentModel.ISerializer Get(IMember parameter)
 			{
 				var serializer = _contents.Get(parameter);
 				var result = _registrations.IsSatisfiedBy(parameter.Metadata)
@@ -77,17 +76,17 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			}
 		}
 
-		sealed class Serializer : ISerializer
+		sealed class Serializer : ContentModel.ISerializer
 		{
 			readonly IAlteration<object> _read;
 			readonly IAlteration<object> _write;
-			readonly ISerializer         _serializer;
+			readonly ContentModel.ISerializer         _serializer;
 
-			public Serializer(ContentAlteration alteration, ISerializer serializer) : this(alteration.Read,
+			public Serializer(ContentAlteration alteration, ContentModel.ISerializer serializer) : this(alteration.Read,
 			                                                                               alteration.Write,
 			                                                                               serializer) {}
 
-			public Serializer(IAlteration<object> read, IAlteration<object> write, ISerializer serializer)
+			public Serializer(IAlteration<object> read, IAlteration<object> write, ContentModel.ISerializer serializer)
 			{
 				_read       = read;
 				_write      = write;

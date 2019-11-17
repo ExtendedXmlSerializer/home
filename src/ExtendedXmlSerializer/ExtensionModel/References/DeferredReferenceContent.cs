@@ -1,20 +1,19 @@
-using System.Collections;
-using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ExtensionModel.Content;
+using System.Collections;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class DeferredReferenceContent : ISerializer
+	sealed class DeferredReferenceContent : ContentModel.ISerializer
 	{
 		readonly IReservedItems  _reserved;
 		readonly IRootReferences _references;
-		readonly ISerializer     _serializer;
+		readonly ContentModel.ISerializer     _serializer;
 
-		public DeferredReferenceContent(IRootReferences references, ISerializer serializer)
+		public DeferredReferenceContent(IRootReferences references, ContentModel.ISerializer serializer)
 			: this(ReservedItems.Default, references, serializer) {}
 
-		public DeferredReferenceContent(IReservedItems reserved, IRootReferences references, ISerializer serializer)
+		public DeferredReferenceContent(IReservedItems reserved, IRootReferences references, ContentModel.ISerializer serializer)
 		{
 			_reserved   = reserved;
 			_references = references;

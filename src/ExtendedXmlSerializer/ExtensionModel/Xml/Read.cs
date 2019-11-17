@@ -3,22 +3,22 @@ using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 
-namespace ExtendedXmlSerializer
+namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class Read<T> : IRead<T>
+	sealed class Read : IRead
 	{
 		readonly ISerializers      _serializers;
-		readonly IFormatReaders<T> _readers;
+		readonly IFormatReaders _readers;
 		readonly IClassification   _classification;
 
-		public Read(ISerializers serializers, IFormatReaders<T> readers, IClassification classification)
+		public Read(ISerializers serializers, IFormatReaders readers, IClassification classification)
 		{
 			_serializers    = serializers;
 			_readers        = readers;
 			_classification = classification;
 		}
 
-		public object Get(T parameter)
+		public object Get(System.Xml.XmlReader parameter)
 		{
 			using (var content = _readers.Get(parameter))
 			{
