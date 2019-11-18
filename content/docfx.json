@@ -7,8 +7,7 @@
           "src": "../src/ExtendedXmlSerializer"
         }
       ],
-      /*"dest": "content/.build/api/netstandard2.0",*/
-      "dest": "api",
+      "dest": "reference",
       "properties": {
         "TargetFramework": "netstandard2.0"
       },
@@ -53,10 +52,10 @@
     "content": [
       {
         "files": [
-          "api/**.yml",
-          "api/index.md",
-          "articles/**.md",
-          "articles/**/toc.yml",
+          "reference/**.yml",
+          "reference/index.md",
+          "conceptual/**.md",
+          "conceptual/**/toc.yml",
           "toc.yml",
           "*.md"
         ]
