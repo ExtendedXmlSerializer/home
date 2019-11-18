@@ -3591,6 +3591,85 @@
             </param>
             <returns>The configured type configuration.</returns>
         </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.AttachedProperties.IProperty">
+            <summary>
+            Represents an attached property.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.AttachedProperties.IProperty.Metadata">
+            <summary>
+            The metadata of the property that this attached property represents.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.AttachedProperties.Property`2">
+            <summary>
+            A baseline property component that represents an attached property.
+            </summary>
+            <typeparam name="TType">The hosting type.</typeparam>
+            <typeparam name="TValue">The property's value.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.AttachedProperties.Property`2.#ctor(ExtendedXmlSerializer.Core.Sources.ITableSource{`0,`1},System.Linq.Expressions.Expression{System.Func{ExtendedXmlSerializer.ExtensionModel.AttachedProperties.IProperty}})">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="store"></param>
+            <param name="source"></param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.AttachedProperties.Property`2.#ctor(ExtendedXmlSerializer.Core.Specifications.ISpecification{System.Reflection.TypeInfo},ExtendedXmlSerializer.Core.Sources.ITableSource{`0,`1},System.Linq.Expressions.Expression{System.Func{ExtendedXmlSerializer.ExtensionModel.AttachedProperties.IProperty}})">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="specification"></param>
+            <param name="store"></param>
+            <param name="source"></param>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.AttachedProperties.Property`2.Metadata">
+            <inheritdoc />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.AttachedProperties.Property`2.IsSatisfiedBy(`0)">
+            <inheritdoc cref="T:ExtendedXmlSerializer.Core.Specifications.ISpecification`1" />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.AttachedProperties.Property`2.Get(`0)">
+            <inheritdoc cref="T:ExtendedXmlSerializer.Core.Sources.ITableSource`2" />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.AttachedProperties.Property`2.Assign(`0,`1)">
+            <inheritdoc cref="T:ExtendedXmlSerializer.Core.Sources.ITableSource`2" />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.AttachedProperties.Property`2.Get">
+            <inheritdoc cref="T:ExtendedXmlSerializer.Core.Sources.ISource`1" />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.AttachedProperties.Property`2.IsSatisfiedBy(System.Reflection.TypeInfo)">
+            <inheritdoc />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.AttachedProperties.Property`2.Remove(`0)">
+            <inheritdoc cref="T:ExtendedXmlSerializer.Core.Sources.ITableSource`2" />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.AttachedProperties.ReferenceProperty`2">
+            <summary>
+            Represents a referenced-based attached property.
+            </summary>
+            <typeparam name="TType">The hosting type.</typeparam>
+            <typeparam name="TValue">The property's value.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.AttachedProperties.ReferenceProperty`2.#ctor(System.Linq.Expressions.Expression{System.Func{ExtendedXmlSerializer.ExtensionModel.AttachedProperties.IProperty}})">
+            <inheritdoc />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.AttachedProperties.ReferenceProperty`2.#ctor(System.Linq.Expressions.Expression{System.Func{ExtendedXmlSerializer.ExtensionModel.AttachedProperties.IProperty}},System.Runtime.CompilerServices.ConditionalWeakTable{`0,`1}.CreateValueCallback)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.AttachedProperties.StructureProperty`2">
+            <summary>
+            Represents a structure-based attached property.
+            </summary>
+            <typeparam name="TType">The hosting type.</typeparam>
+            <typeparam name="TValue">The property's value.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.AttachedProperties.StructureProperty`2.#ctor(System.Linq.Expressions.Expression{System.Func{ExtendedXmlSerializer.ExtensionModel.AttachedProperties.IProperty}})">
+            <inheritdoc />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.AttachedProperties.StructureProperty`2.#ctor(System.Linq.Expressions.Expression{System.Func{ExtendedXmlSerializer.ExtensionModel.AttachedProperties.IProperty}},System.Func{`0,`1})">
+            <inheritdoc />
+        </member>
         <member name="T:ExtendedXmlSerializer.ExtensionModel.CachingExtension">
             <summary>
             Used to cache commonly used components that are selected during serialization.
@@ -3679,12 +3758,58 @@
             Used to register a specific serializer with the container so that it is used for fall back serialization.
             </summary>
         </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Instances.ISerializationMonitor">
+            <summary>
+            Provides a generalized mechanism to listen in to important events during the serialization process.
+            </summary>
+        </member>
         <member name="T:ExtendedXmlSerializer.ExtensionModel.Instances.ISerializationMonitor`1">
             <summary>
             Provides a mechanism to listen in to important events during the serialization process.
             </summary>
             <typeparam name="T">The type to monitor.</typeparam>
             <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264#issuecomment-544104668"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Instances.ISerializationMonitor`1.OnSerializing(ExtendedXmlSerializer.ContentModel.Format.IFormatWriter,`0)">
+            <summary>
+            Called when an instance is about to be serialized.
+            </summary>
+            <param name="writer">The writer performing the writing to the destination.</param>
+            <param name="instance">The instance about to be serialized.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Instances.ISerializationMonitor`1.OnSerialized(ExtendedXmlSerializer.ContentModel.Format.IFormatWriter,`0)">
+            <summary>
+            Called when an instance is serialized.
+            </summary>
+            <param name="writer">The writer performing the writing to the destination.</param>
+            <param name="instance">The instance that was serialized.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Instances.ISerializationMonitor`1.OnDeserializing(ExtendedXmlSerializer.ContentModel.Format.IFormatReader,System.Type)">
+            <summary>
+            Called when a reader is about to deserialize an identified type.
+            </summary>
+            <param name="reader">The reader representing the source document.</param>
+            <param name="instanceType">The identified type about to be deserialized.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Instances.ISerializationMonitor`1.OnActivating(ExtendedXmlSerializer.ContentModel.Format.IFormatReader,System.Type)">
+            <summary>
+            Called when a particular type is about to be activated/instantiated.
+            </summary>
+            <param name="reader">The reader representing the source document.</param>
+            <param name="instanceType">The identified type about to be activated.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Instances.ISerializationMonitor`1.OnActivated(`0)">
+            <summary>
+            Called when an instance of the monitored type is activated/instantiated.
+            </summary>
+            <param name="instance">Instance that was activated.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Instances.ISerializationMonitor`1.OnDeserialized(ExtendedXmlSerializer.ContentModel.Format.IFormatReader,`0)">
+            <summary>
+            Called when an instance has been fully deserialized.
+            </summary>
+            <param name="reader">The reader representing the source document.</param>
+            <param name="instance">The instance that was deserialized.</param>
         </member>
         <member name="T:ExtendedXmlSerializer.ExtensionModel.IRegistration">
             <summary>
@@ -3866,6 +3991,103 @@
             Represents a services container for the extension model.  This is responsible for querying and registering
             services, as well as finally disposing and cleaning all resources once the serializer has been constructed.  This
             is passed in as the parameter to post-registration during the extension processing.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Markup.IMarkupExtension">
+            <summary>
+            Represents a markup extension, modeled after System.Xaml.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Markup.IMarkupExtension.ProvideValue(System.IServiceProvider)">
+            <summary>
+            Given the service provided, retrieves a value.
+            </summary>
+            <param name="serviceProvider">The service provider for any necessary service location.</param>
+            <returns>The resulting value of the request.</returns>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Markup.NullExtension">
+            <summary>
+            Markup extension to return a `null` value.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Markup.NullExtension.ProvideValue(System.IServiceProvider)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Markup.StaticExtension">
+            <summary>
+            Markup extension that resolves a static member type from a namespace and member expression.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Markup.StaticExtension.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="typeName">The expression that resolves to the type that holds the static member.</param>
+            <param name="memberName">The name of the public static member.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Markup.StaticExtension.#ctor(System.String)">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="memberPath">The qualified path to the public static member.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Markup.StaticExtension.ProvideValue(System.IServiceProvider)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Markup.TypeExtension">
+            <summary>
+            Markup Extension that resolves to a type.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Markup.TypeExtension.#ctor(System.String)">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="typeName">The qualified type name.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Markup.TypeExtension.ProvideValue(System.IServiceProvider)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.References.DefaultReferencesExtension">
+            <summary>
+            A default extension that provides basic support for circular reference detection, which by default throws when it
+            is encountered.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.References.DefaultReferencesExtension.#ctor">
+            <summary>
+             Creates a new instance with an empty blacklist.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.References.DefaultReferencesExtension.#ctor(System.Collections.Generic.ICollection{System.Reflection.TypeInfo})">
+            <summary>
+            Creates a new instance with the specified blacklist and empty whitelist.
+            </summary>
+            <param name="blacklist">The list of prohibited types.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.References.DefaultReferencesExtension.#ctor(System.Collections.Generic.ICollection{System.Reflection.TypeInfo},System.Collections.Generic.ICollection{System.Reflection.TypeInfo})">
+            <summary>
+            Creates a new instance with provided types.
+            </summary>
+            <param name="blacklist">The list of prohibited types.</param>
+            <param name="whitelist">The list of allowed types.</param>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.References.DefaultReferencesExtension.Blacklist">
+            <summary>
+            The current list of prohibited types.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.References.DefaultReferencesExtension.Whitelist">
+            <summary>
+            The current list of allowed types.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.References.DefaultReferencesExtension.Get(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.References.IReferences">
+            <summary>
+            Specialized selector used to access references.
             </summary>
         </member>
         <member name="T:ExtendedXmlSerializer.ExtensionModel.Registrations`1">
@@ -4065,8 +4287,42 @@
         </member>
         <member name="T:ExtendedXmlSerializer.ExtensionModel.Types.TypeModelExtension">
             <summary>
-            
+            A default extension that defines the type model used for the selection, location, and instantiation of types.
             </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Types.TypeModelExtension.Default">
+            <summary>
+            The default instance.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.TypeModelExtension.Get(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Types.TypeNamesExtension">
+            <summary>
+            Default extension that tracks registrations for type names, as well as configuration of necessary components for
+            successful type name resolution.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.TypeNamesExtension.#ctor">
+            <summary>
+            Creates a new instance.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.TypeNamesExtension.#ctor(System.Collections.Generic.IDictionary{System.Reflection.TypeInfo,System.String},System.Collections.Generic.IDictionary{System.Reflection.TypeInfo,System.String})">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="names"></param>
+            <param name="defaults"></param>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Types.TypeNamesExtension.Names">
+            <summary>
+            The current store of name registrations.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.TypeNamesExtension.Get(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
+            <inheritdoc />
         </member>
         <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.Defaults">
             <summary>
