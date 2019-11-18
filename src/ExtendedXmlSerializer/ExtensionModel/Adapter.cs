@@ -1,4 +1,3 @@
-using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System.Xml.Linq;
 using XmlWriter = System.Xml.XmlWriter;

@@ -1,8 +1,7 @@
-using System.Reflection;
-using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Parsing;
 using ExtendedXmlSerializer.Core.Sources;
 using Sprache;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {

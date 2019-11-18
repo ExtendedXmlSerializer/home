@@ -1,7 +1,6 @@
-using System.Xml;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Specifications;
+using System.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
