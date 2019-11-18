@@ -1,6 +1,6 @@
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
-	struct AssemblyPath
+	readonly struct AssemblyPath
 	{
 		public AssemblyPath(string @namespace, string path)
 		{

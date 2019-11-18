@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ExtendedXmlSerializer.Core
 {
-	struct Delimiter
+	readonly struct Delimiter
 	{
 		readonly char[] _array;
 		readonly char   _first;

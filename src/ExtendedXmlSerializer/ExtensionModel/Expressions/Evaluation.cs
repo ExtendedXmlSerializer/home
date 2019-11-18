@@ -68,12 +68,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 
 			public Exception Get() => _error;
 
-			public struct Result
+			public readonly struct Result
 			{
-				public Result(object instance)
-				{
-					Instance = instance;
-				}
+				public Result(object instance) => Instance = instance;
 
 				public object Instance { get; }
 			}

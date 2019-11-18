@@ -28,7 +28,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Instances
 			}
 		}
 
-		struct Context : IDisposable
+		readonly struct Context : IDisposable
 		{
 			readonly ITableSource<XmlReader, object> _table;
 			readonly XmlReader                       _key;

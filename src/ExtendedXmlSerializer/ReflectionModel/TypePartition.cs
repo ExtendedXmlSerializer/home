@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	struct TypePartition
+	readonly struct TypePartition
 	{
 		public TypePartition(Assembly assembly, string @namespace, string name)
 		{

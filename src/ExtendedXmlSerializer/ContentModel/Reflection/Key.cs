@@ -2,7 +2,7 @@ using ExtendedXmlSerializer.ContentModel.Identification;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
-	struct Key : IIdentity
+	readonly struct Key : IIdentity
 	{
 		public Key(string name) : this(name, string.Empty) {}
 

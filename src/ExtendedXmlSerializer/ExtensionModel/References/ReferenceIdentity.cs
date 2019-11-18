@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	struct ReferenceIdentity : IEquatable<ReferenceIdentity>
+	readonly struct ReferenceIdentity : IEquatable<ReferenceIdentity>
 	{
 		readonly static TypeInfo Reference = Defaults.Reference;
 
@@ -19,10 +19,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		public ReferenceIdentity(TypeInfo type, uint identifier) : this((type.GetHashCode() * 397) ^
 		                                                                identifier.GetHashCode()) {}
 
-		ReferenceIdentity(int code)
-		{
-			_code = code;
-		}
+		ReferenceIdentity(int code) => _code = code;
 
 		public bool Equals(ReferenceIdentity other)
 		{
