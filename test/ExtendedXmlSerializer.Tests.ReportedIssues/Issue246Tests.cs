@@ -1,6 +1,12 @@
 ﻿using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ContentModel.Identification;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.Tests.ReportedIssues.Support;
 using JetBrains.Annotations;
+using System.Reflection;
+using System.Xml;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -48,7 +54,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			public string Name { [UsedImplicitly] get; set; }
 		}
 
-		/*[Fact]
+		[Fact]
 		void VerifyClosedTagsOnEmpty()
 		{
 			new ConfigurationContainer().Extend(Extension.Default)
@@ -124,7 +130,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 					_writer.Verbatim(content);
 				}
 			}
-		}*/
+		}
 
 		public class TestData
 		{
