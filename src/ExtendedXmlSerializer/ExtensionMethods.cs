@@ -92,8 +92,20 @@ namespace ExtendedXmlSerializer
 			throw new InvalidOperationException($"Could not find the member '{name}' on type '{type}'.");
 		}
 
+		/// <summary>
+		/// Gets the only element if it exists, otherwise returns the type's default.
+		/// </summary>
+		/// <typeparam name="T">The element type.</typeparam>
+		/// <param name="this">The set to query.</param>
+		/// <returns>The only element, if it exists.</returns>
 		public static T Only<T>(this ImmutableArray<T> @this) => @this.Length == 1 ? @this[0] : default;
 
+		/// <summary>
+		/// Gets the only element if it exists, otherwise returns the type's default.
+		/// </summary>
+		/// <typeparam name="T">The element type.</typeparam>
+		/// <param name="this">The set to query.</param>
+		/// <returns>The only element, if it exists.</returns>
 		public static T Only<T>(this IEnumerable<T> @this)
 		{
 			var items  = @this.ToArray();
@@ -101,8 +113,21 @@ namespace ExtendedXmlSerializer
 			return result;
 		}
 
+		/// <summary>
+		/// Convenience method to case object to requested type.  Easier for fluent expressions.
+		/// </summary>
+		/// <param name="this">The object to cast.</param>
+		/// <typeparam name="T">The requested type.</typeparam>
+		/// <returns>An instance of the request type if it can be cast.  Otherwise, the type's default is returned.</returns>
 		public static T To<T>(this object @this) => @this is T o ? o : default;
 
+		/// <summary>
+		/// Convenience method to cast instance to the requested type.  If it cannot, an <see cref="InvalidOperationException"/> is thrown.
+		/// </summary>
+		/// <typeparam name="T">The requested type</typeparam>
+		/// <param name="this">The instance to cast.</param>
+		/// <param name="message">The message to display if an exception is thrown.</param>
+		/// <returns>The casted, validated instance.</returns>
 		public static T AsValid<T>(this object @this, string message = null)
 			=> @this != null
 				   ? @this is T o

@@ -1,8 +1,29 @@
-﻿namespace ExtendedXmlSerializer.Tests.ReportedIssues
+﻿using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ContentModel.Identification;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ExtensionModel;
+using ExtendedXmlSerializer.ReflectionModel;
+using ExtendedXmlSerializer.Tests.Support;
+using FluentAssertions;
+using JetBrains.Annotations;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Xml.Serialization;
+using Xunit;
+
+namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {
 	public sealed class Issue240Tests
 	{
-		/*[Fact]
+		[Fact]
 		void Verify()
 		{
 			var subject = new ConfigurationContainer().Extend(DefaultListContentExtension.Default)
@@ -42,7 +63,7 @@
 		void VerifyRead()
 		{
 			const string content =
-				@"<?xml version=""1.0"" encoding=""utf-8""?><Issue240Tests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests.ReportedIssues""><Message>Hello</Message><Message>World</Message></Issue240Tests-Subject>";
+				@"<?xml version=""1.0"" encoding=""utf-8""?><Issue240Tests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message>Hello</Message><Message>World</Message></Issue240Tests-Subject>";
 
 			var read = new ConfigurationContainer().Extend(DefaultListContentExtension.Default)
 			                                       .Create()
@@ -326,6 +347,6 @@
 					return null;
 				}
 			}
-		}*/
+		}
 	}
 }
