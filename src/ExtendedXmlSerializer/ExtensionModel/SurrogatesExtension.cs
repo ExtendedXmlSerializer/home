@@ -8,11 +8,14 @@ using System.Runtime.Serialization;
 #if NET45 // http://www.nooooooooooooooo.com/ ... Hashtags belong on Twitter. ;)
 namespace System.Runtime.Serialization
 {
-/// <exclude />
+	/// <exclude />
 	public interface ISerializationSurrogateProvider
 	{
+		/// <exclude />
 		object GetDeserializedObject(object obj, Type t);
+		/// <exclude />
 		object GetObjectToSerialize(Object obj, Type t);
+		/// <exclude />
 		Type GetSurrogateType(Type t);
 	}
 }

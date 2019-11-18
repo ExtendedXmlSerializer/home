@@ -8,12 +8,20 @@ using Serializer = ExtendedXmlSerializer.ExtensionModel.Xml.Serializer;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
+	/// <summary>
+	/// A default extension that registers all necessary and fundamental components required for successful serialization
+	/// deserialization.
+	/// </summary>
 	public sealed class SerializationExtension : ISerializerExtension
 	{
+		/// <summary>
+		/// The default instance.
+		/// </summary>
 		public static SerializationExtension Default { get; } = new SerializationExtension();
 
 		SerializationExtension() {}
 
+		/// <inheritdoc />
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.Register<IRead, Read>()
 			            .Register<IWrite, Write>()

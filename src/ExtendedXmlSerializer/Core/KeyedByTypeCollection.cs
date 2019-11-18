@@ -1,27 +1,28 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-#pragma warning disable 1584, 1711, 1572, 1581, 1580
+//#pragma warning disable 1584, 1711, 1572, 1581, 1580
 
 namespace ExtendedXmlSerializer.Core
 {
-	// ATTRIBUTION: https://msdn.microsoft.com/en-us/library/ms404549%28v=vs.110%29.aspx?f=255&MSPPError=-2147217396
 	/// <summary>Provides a collection whose items are types that serve as keys.</summary>
 	/// <typeparam name="TItem">The item types contained in the collection that also serve as the keys for the collection.
 	/// </typeparam>
+	/// <seealso href="https://msdn.microsoft.com/en-us/library/ms404549%28v=vs.110%29.aspx?f=255&amp;MSPPError=-2147217396"/>
 	public class KeyedByTypeCollection<TItem> : KeyedCollection<Type, TItem>
 	{
 		/// <summary>Initializes a new instance of the <see cref="T:System.Collections.Generic.KeyedByTypeCollection`1" /> class.  </summary>
+		[UsedImplicitly]
 		public KeyedByTypeCollection() : base(null, 4) {}
 
 		/// <summary>Initializes a new instance of the <see cref="T:System.Collections.Generic.KeyedByTypeCollection`1" /> class for a specified enumeration of objects.</summary>
 		/// <param name="items">The <see cref="T:System.Collections.Generic.IEnumerable`1" /> of generic type <see cref="T:System.Object" /> used to initialize the collection.</param>
 		/// <exception cref="T:System.ArgumentNullException">
 		/// <paramref name="items" /> is null.</exception>
-		public KeyedByTypeCollection(IEnumerable<TItem> items)
-			: base(null, 4)
+		public KeyedByTypeCollection(IEnumerable<TItem> items) : base(null, 4)
 		{
 			if (items == null)
 				throw new ArgumentNullException(nameof(items));
@@ -66,8 +67,8 @@ namespace ExtendedXmlSerializer.Core
 		}
 
 		/// <summary>Removes all of the elements of a specified type from the collection.</summary>
-		/// <returns>The <see cref="T:System.Collections.ObjectModel.Collection`1" /> that contains the objects of type <paramref name="T" /> from the original collection.</returns>
-		/// <typeparam name="T">The type of item in the collection to remove.</typeparam>
+		/// <returns>The <see cref="T:System.Collections.ObjectModel.Collection`1" /> that contains the objects of the referenced type from the original collection.</returns>
+		/// <typeparam name="T">The referenced type of item in the collection to remove.</typeparam>
 		public KeyedByTypeCollection<TItem> RemoveAll<T>()
 		{
 			this.OfType<T>()
