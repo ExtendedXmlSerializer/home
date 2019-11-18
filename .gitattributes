@@ -1,0 +1,5 @@
+# Auto detect text files and perform LF normalization
+# httpswww.davidlaing.com20120919customise-your-gitattributes-to-become-a-git-ninja
+    text=auto
+
+.cs text diff=csharp
