@@ -39,10 +39,12 @@ namespace ExtendedXmlSerializer.Configuration
 
 		#region Obsolete
 
+		/// <exclude />
 		[Obsolete("This is considered deprecated and will be removed in a future release.  Use EmitBehaviors.WhenModified instead.")]
 		public static IEmitBehavior Assigned { get; } =
 			new EmitBehavior(new AddAlteration(AllowedAssignedInstanceValues.Default));
 
+		/// <exclude />
 		[Obsolete("This is considered deprecated and will be removed in a future release.  Use EmitBehaviors.WhenAssigned instead.")]
 		public static IEmitBehavior NotDefault { get; } =
 			new EmitBehavior(new AllowedSpecificationAlteration(AllowAssignedValues.Default));

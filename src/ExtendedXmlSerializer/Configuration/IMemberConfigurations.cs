@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using ExtendedXmlSerializer.Core.Sources;
+using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IMemberConfigurations
-		: IParameterizedSource<MemberInfo, IMemberConfiguration>,
-		  IEnumerable<IMemberConfiguration> {}
+	/// <summary>
+	/// Represents a store of member configurations.  Considered internal framework code and not to be used by external applications.
+	/// </summary>
+	public interface IMemberConfigurations : IParameterizedSource<MemberInfo, IMemberConfiguration>, IEnumerable<IMemberConfiguration> {}
 }

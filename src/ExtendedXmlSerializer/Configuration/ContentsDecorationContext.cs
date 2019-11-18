@@ -15,6 +15,10 @@ namespace ExtendedXmlSerializer.Configuration
 	{
 		readonly IServiceRepository _repository;
 
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="repository">The service repository to configure.</param>
 		public ContentsDecorationContext(IServiceRepository repository) => _repository = repository;
 
 		/// <summary>

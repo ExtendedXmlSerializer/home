@@ -15,6 +15,10 @@ namespace ExtendedXmlSerializer.Configuration
 	{
 		readonly IMemberConfiguration<T, TMember> _member;
 
+		/// <summary>
+		/// Create a new instance.
+		/// </summary>
+		/// <param name="member">The member configuration to configure.</param>
 		public MemberSerializationRegistrationContext(IMemberConfiguration<T, TMember> member) => _member = member;
 
 		/// <summary>
