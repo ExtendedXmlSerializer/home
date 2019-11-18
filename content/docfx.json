@@ -78,7 +78,7 @@
         ]
       }
     ],
-    "dest": "../docs",
+    "dest": ".wwwroot",
     "globalMetadataFiles": [],
     "fileMetadataFiles": [],
     "template": [
