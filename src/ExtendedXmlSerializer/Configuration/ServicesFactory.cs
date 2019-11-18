@@ -9,8 +9,14 @@ using IServiceProvider = System.IServiceProvider;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	sealed class ServicesFactory : IServicesFactory
+	/// <summary>
+	/// This is considered internal framework code and is not intended to be used by external applications.
+	/// </summary>
+	public sealed class ServicesFactory : IServicesFactory
 	{
+		/// <summary>
+		/// The default instance.
+		/// </summary>
 		public static ServicesFactory Default { get; } = new ServicesFactory();
 
 		ServicesFactory() : this(ConstructorSelector.Default, new ContainerOptions {EnablePropertyInjection = false}) {}
@@ -18,12 +24,18 @@ namespace ExtendedXmlSerializer.Configuration
 		readonly IConstructorSelector _selector;
 		readonly ContainerOptions     _options;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:ExtendedXmlSerializer.Configuration.ServicesFactory"/> class.
+		/// </summary>
+		/// <param name="selector">The selector.</param>
+		/// <param name="options">The options.</param>
 		public ServicesFactory(IConstructorSelector selector, ContainerOptions options)
 		{
 			_selector = selector;
 			_options  = options;
 		}
 
+		/// <inheritdoc />
 		public IServices Get(IExtensionCollection parameter)
 		{
 			var result = new Services(new ServiceContainer(_options) {ConstructorSelector = _selector});

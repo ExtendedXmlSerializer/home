@@ -35,14 +35,7 @@ namespace ExtendedXmlSerializer.Core
 			IEqualityComparer<TKey> comparer = null)
 			=> @this.ToDictionary(x => x.Key, x => x.Value, comparer);
 
-		public static T Only<T>(this ImmutableArray<T> @this) => @this.Length == 1 ? @this[0] : default;
-
-		public static T Only<T>(this IEnumerable<T> @this)
-		{
-			var items  = @this.ToArray();
-			var result = items.Length == 1 ? items[0] : default;
-			return result;
-		}
+		
 
 		public static ITypedSortOrder Sort<T>(this ITypedSortOrder @this, int sort)
 		{
@@ -188,19 +181,11 @@ namespace ExtendedXmlSerializer.Core
 			=> @this.YieldTypes()
 			        .ToImmutableArray();
 
-		public static T To<T>(this object @this) => @this is T ? (T)@this : default;
-
 		public static T Get<T>(this IServiceProvider @this)
 			=> @this is T
 				   ? (T)@this
 				   : @this.GetService(typeof(T))
 				          .To<T>();
-
-		public static T GetValid<T>(this IServiceProvider @this)
-			=> @this is T
-				   ? (T)@this
-				   : @this.GetService(typeof(T))
-				          .AsValid<T>($"Could not located service '{typeof(T)}'");
 
 		public static void ForEach<TIn, TOut>(this IEnumerable<TIn> @this, Func<TIn, TOut> select)
 		{
@@ -210,20 +195,9 @@ namespace ExtendedXmlSerializer.Core
 			}
 		}
 
-		public static T AsValid<T>(this object @this, string message = null)
-		{
-			if (@this != null)
-			{
-				if (@this is T)
-				{
-					return (T)@this;
-				}
-
-				throw new InvalidOperationException(message ??
-				                                    $"'{@this.GetType().FullName}' is not of type {typeof(T).FullName}.");
-			}
-
-			return default;
-		}
+		public static T GetValid<T>(this IServiceProvider @this)
+			=> @this is T provider
+				   ? provider
+				   : @this.GetService(typeof(T)).AsValid<T>($"Could not located service '{typeof(T)}'");
 	}
 }

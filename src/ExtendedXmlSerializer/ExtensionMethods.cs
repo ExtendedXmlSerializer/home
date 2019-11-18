@@ -1,6 +1,8 @@
 ﻿using ExtendedXmlSerializer.Core.Sources;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -64,7 +66,6 @@ namespace ExtendedXmlSerializer
 			return parameter;
 		}
 
-
 		/// <summary>
 		/// Convenience method that queries an expression to resolve a property or field expression.
 		/// </summary>
@@ -90,5 +91,24 @@ namespace ExtendedXmlSerializer
 
 			throw new InvalidOperationException($"Could not find the member '{name}' on type '{type}'.");
 		}
+
+		public static T Only<T>(this ImmutableArray<T> @this) => @this.Length == 1 ? @this[0] : default;
+
+		public static T Only<T>(this IEnumerable<T> @this)
+		{
+			var items  = @this.ToArray();
+			var result = items.Length == 1 ? items[0] : default;
+			return result;
+		}
+
+		public static T To<T>(this object @this) => @this is T o ? o : default;
+
+		public static T AsValid<T>(this object @this, string message = null)
+			=> @this != null
+				   ? @this is T o
+					     ? o
+					     : throw new InvalidOperationException(message ??
+					                                           $"'{@this.GetType().FullName}' is not of type {typeof(T).FullName}.")
+				   : default;
 	}
 }
