@@ -2,7 +2,7 @@
 
 namespace ExtendedXmlSerializer.ExtensionModel.Instances
 {
-	struct Existing
+	readonly struct Existing
 	{
 		public Existing(XmlReader reader, object instance)
 		{

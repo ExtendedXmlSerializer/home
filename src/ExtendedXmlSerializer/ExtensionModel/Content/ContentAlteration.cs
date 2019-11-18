@@ -2,7 +2,7 @@
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	public struct ContentAlteration
+	public readonly struct ContentAlteration
 	{
 		public ContentAlteration(IAlteration<object> read, IAlteration<object> write)
 		{

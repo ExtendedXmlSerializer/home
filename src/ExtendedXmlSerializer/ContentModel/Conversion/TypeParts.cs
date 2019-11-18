@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
-	struct TypeParts : IIdentity
+	readonly struct TypeParts : IIdentity
 	{
 		readonly Func<ImmutableArray<TypeParts>> _arguments;
 

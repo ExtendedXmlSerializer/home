@@ -1,6 +1,6 @@
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	struct Identifier
+	readonly struct Identifier
 	{
 		public Identifier(uint uniqueId, IEntity entity = null)
 		{

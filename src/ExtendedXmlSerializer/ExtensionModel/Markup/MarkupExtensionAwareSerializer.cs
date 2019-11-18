@@ -45,7 +45,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			}
 		}
 
-		struct CandidateResult : ISource<object>
+		readonly struct CandidateResult : ISource<object>
 		{
 			readonly Exception _error;
 

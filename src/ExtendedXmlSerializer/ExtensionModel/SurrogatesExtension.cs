@@ -52,7 +52,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 				return result;
 			}
 
-			struct Mapping
+			readonly struct Mapping
 			{
 				public Mapping(Type origin, Type surrogate)
 				{

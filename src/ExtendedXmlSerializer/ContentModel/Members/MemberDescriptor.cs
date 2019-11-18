@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	struct MemberDescriptor : IEquatable<MemberDescriptor>
+	readonly struct MemberDescriptor : IEquatable<MemberDescriptor>
 	{
 		public static implicit operator MemberDescriptor(MemberInfo member) => MemberDescriptors.Default.Get(member);
 

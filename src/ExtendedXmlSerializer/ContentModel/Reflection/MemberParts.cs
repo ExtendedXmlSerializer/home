@@ -2,7 +2,7 @@ using ExtendedXmlSerializer.ContentModel.Conversion;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
-	struct MemberParts
+	readonly struct MemberParts
 	{
 		public MemberParts(TypeParts type, string memberName)
 		{

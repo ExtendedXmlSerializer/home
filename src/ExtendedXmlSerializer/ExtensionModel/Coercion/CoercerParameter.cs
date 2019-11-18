@@ -2,7 +2,7 @@
 
 namespace ExtendedXmlSerializer.ExtensionModel.Coercion
 {
-	struct CoercerParameter
+	readonly struct CoercerParameter
 	{
 		public CoercerParameter(object instance, TypeInfo targetType)
 		{
