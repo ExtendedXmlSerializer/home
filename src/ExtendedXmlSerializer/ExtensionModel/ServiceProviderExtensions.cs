@@ -1,12 +1,11 @@
 using ExtendedXmlSerializer.Core;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 // ReSharper disable TooManyArguments
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	public static class ServiceProviderExtensions
+	static class ServiceProviderExtensions
 	{
 		public static TService GetInstance<TService>(this IServiceProvider factory)
 			=> (TService)factory.GetInstance(typeof(TService));
@@ -57,9 +56,6 @@ namespace ExtendedXmlSerializer.ExtensionModel
 
 		public static TService Create<TService>(this IServiceProvider factory) where TService : class
 			=> (TService)factory.Create(typeof(TService));
-
-		public static T AsDependency<T>(this System.IServiceProvider @this, object _, ParameterInfo __)
-			=> @this.Get<T>();
 
 		public static T Get<T>(this System.IServiceProvider @this, IServiceProvider _) => @this.Get<T>();
 
