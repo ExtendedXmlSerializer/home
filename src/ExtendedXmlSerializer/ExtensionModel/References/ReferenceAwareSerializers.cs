@@ -20,8 +20,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		// ReSharper disable once TooManyDependencies
 		public ReferenceAwareSerializers(ISpecification<object> conditions, IStaticReferenceSpecification specification,
-		                                 IReferences references,
-		                                 ISerializers serializers)
+		                                 IReferences references, ISerializers serializers)
 		{
 			_conditions    = conditions;
 			_specification = specification;
@@ -40,11 +39,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		sealed class Serializer : ContentModel.ISerializer
 		{
-			readonly ISpecification<object> _conditions;
-			readonly IReferences            _references;
-			readonly ContentModel.ISerializer            _container;
+			readonly ISpecification<object>   _conditions;
+			readonly IReferences              _references;
+			readonly ContentModel.ISerializer _container;
 
-			public Serializer(ISpecification<object> conditions, IReferences references, ContentModel.ISerializer container)
+			public Serializer(ISpecification<object> conditions, IReferences references,
+			                  ContentModel.ISerializer container)
 			{
 				_conditions = conditions;
 				_references = references;
