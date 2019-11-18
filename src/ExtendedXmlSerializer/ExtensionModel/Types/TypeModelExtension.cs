@@ -5,14 +5,18 @@ using ExtendedXmlSerializer.ReflectionModel;
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
 	/// <summary>
-	/// 
+	/// A default extension that defines the type model used for the selection, location, and instantiation of types.
 	/// </summary>
 	public sealed class TypeModelExtension : ISerializerExtension
 	{
+		/// <summary>
+		/// The default instance.
+		/// </summary>
 		public static TypeModelExtension Default { get; } = new TypeModelExtension();
 
 		TypeModelExtension() {}
 
+		/// <inheritdoc />
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.Register<ITypedSortOrder, TypedSortOrder>()
 			            .Register<IActivation, Activation>()
