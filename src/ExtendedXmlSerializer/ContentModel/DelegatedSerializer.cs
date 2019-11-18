@@ -1,8 +1,7 @@
-using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Format;
 using System;
 
-namespace ExtendedXmlSerializer
+namespace ExtendedXmlSerializer.ContentModel
 {
 	sealed class DelegatedSerializer<T> : ISerializer<T>
 	{

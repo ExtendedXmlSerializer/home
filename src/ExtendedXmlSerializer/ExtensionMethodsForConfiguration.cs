@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer
 {
@@ -112,6 +113,22 @@ namespace ExtendedXmlSerializer
 			items.ForEach(@this.Add);
 			return @this;
 		}
+
+		/// <summary>
+		/// Convenience method for objects that implement several <see cref="ISource{T}"/> to get its type-based contents
+		/// specifically.
+		/// </summary>
+		/// <param name="this">The implementing source.</param>
+		/// <returns>TypeInfo.</returns>
+		public static TypeInfo GetType(this ISource<TypeInfo> @this) => @this.Get();
+
+		/// <summary>
+		/// Convenience method for objects that implement several <see cref="ISource{T}"/> to get its member-based contents
+		/// specifically.
+		/// </summary>
+		/// <param name="this">The implementing source.</param>
+		/// <returns>MemberInfo.</returns>
+		public static MemberInfo GetMember(this ISource<MemberInfo> @this) => @this.Get();
 
 		/* Container */
 

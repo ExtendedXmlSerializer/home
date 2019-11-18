@@ -1380,7 +1380,7 @@
             Convenience class to decorate an existing serializer, usually used for construction.
             </summary>
         </member>
-        <member name="M:ExtendedXmlSerializer.DecoratedSerializer.#ctor(ExtendedXmlSerializer.IXmlSerializer)">
+        <member name="M:ExtendedXmlSerializer.DecoratedSerializer.#ctor(ExtendedXmlSerializer.ExtensionModel.Xml.ISerializer)">
             <summary>
             Creates a new instance.
             </summary>
@@ -1404,22 +1404,6 @@
             <param name="_">Not used.</param>
             <param name="result">The result.</param>
             <returns>TOut.</returns>
-        </member>
-        <member name="M:ExtendedXmlSerializer.ExtensionMethods.GetType(ExtendedXmlSerializer.Core.Sources.ISource{System.Reflection.TypeInfo})">
-            <summary>
-            Convenience method for objects that implement several <see cref="T:ExtendedXmlSerializer.Core.Sources.ISource`1"/> to get its type-based contents
-            specifically.
-            </summary>
-            <param name="this">The implementing source.</param>
-            <returns>TypeInfo.</returns>
-        </member>
-        <member name="M:ExtendedXmlSerializer.ExtensionMethods.GetMember(ExtendedXmlSerializer.Core.Sources.ISource{System.Reflection.MemberInfo})">
-            <summary>
-            Convenience method for objects that implement several <see cref="T:ExtendedXmlSerializer.Core.Sources.ISource`1"/> to get its member-based contents
-            specifically.
-            </summary>
-            <param name="this">The implementing source.</param>
-            <returns>MemberInfo.</returns>
         </member>
         <member name="M:ExtendedXmlSerializer.ExtensionMethods.Apply``1(System.Action{``0},``0)">
             <summary>
@@ -1452,6 +1436,15 @@
             <param name="this">The collection to add an element to.</param>
             <param name="parameter">The element to add.</param>
             <returns>The element.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethods.PropertyOrField(System.Linq.Expressions.UnaryExpression,System.Type,System.String)">
+            <summary>
+            Convenience method that queries an expression to resolve a property or field expression.
+            </summary>
+            <param name="expression">The expression to query.</param>
+            <param name="type">The member containing type.</param>
+            <param name="name">The member name.</param>
+            <returns>The resolved member expression.</returns>
         </member>
         <member name="T:ExtendedXmlSerializer.ExtensionMethodsForAlteration">
             <summary>
@@ -1825,6 +1818,22 @@
             <param name="this">The root context that contains the target collection of serializer extensions.</param>
             <param name="extensions">The array of extensions to add.</param>
             <returns>The configured context (usually a configuration container).</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.GetType(ExtendedXmlSerializer.Core.Sources.ISource{System.Reflection.TypeInfo})">
+            <summary>
+            Convenience method for objects that implement several <see cref="T:ExtendedXmlSerializer.Core.Sources.ISource`1"/> to get its type-based contents
+            specifically.
+            </summary>
+            <param name="this">The implementing source.</param>
+            <returns>TypeInfo.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.GetMember(ExtendedXmlSerializer.Core.Sources.ISource{System.Reflection.MemberInfo})">
+            <summary>
+            Convenience method for objects that implement several <see cref="T:ExtendedXmlSerializer.Core.Sources.ISource`1"/> to get its member-based contents
+            specifically.
+            </summary>
+            <param name="this">The implementing source.</param>
+            <returns>MemberInfo.</returns>
         </member>
         <member name="M:ExtendedXmlSerializer.ExtensionMethodsForConfiguration.Configured``1(ExtendedXmlSerializer.Configuration.IConfigurationContainer)">
             <summary>
@@ -3687,12 +3696,164 @@
             Extended Xml Serializer
             </summary>
         </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.ISerializer">
+            <summary>
+            A baseline XML-based serializer.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.ISerializer.Deserialize(System.Xml.XmlReader)">
+            <summary>
+            Performs a read operation over the provided document source and resolves an object instance from it.
+            </summary>
+            <param name="reader">The reader that represents the document source.</param>
+            <returns>The instance that is represented by the document.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.ISerializer.Serialize(System.Xml.XmlWriter,System.Object)">
+            <summary>
+            Performance a write operation with the provided object instance, and saves it to the destination, represented by
+            the provided writer.
+            </summary>
+            <param name="writer">The destination writer.</param>
+            <param name="instance">The source instance.</param>
+        </member>
+        <member name="T:ExtendedXmlSerializer.IExtendedXmlSerializer">
+            <summary>
+            The root Xml serializer component.  This is what is created by the configuration container and is used to serialize
+            objects from memory into a destination and deserialize objects into memory from a source.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ReflectionModel.IGeneric`1">
+            <summary>
+            Provides a mechanism to dynamically access a generic singleton by away of typed parameter.
+            </summary>
+            <typeparam name="T">The singleton type.</typeparam>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ReflectionModel.IGeneric`2">
+            <summary>
+            Provides a mechanism to dynamically create generic objects by way of typed parameters.
+            </summary>
+            <typeparam name="T1">The first parameter type.</typeparam>
+            <typeparam name="T">The instantiated generic type instance.</typeparam>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ReflectionModel.IGeneric`3">
+            <summary>
+            Provides a mechanism to dynamically create generic objects by way of typed parameters.
+            </summary>
+            <typeparam name="T1">The first parameter type.</typeparam>
+            <typeparam name="T2">The second parameter type.</typeparam>
+            <typeparam name="T">The instantiated generic type instance.</typeparam>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ReflectionModel.IGeneric`4">
+            <summary>
+            Provides a mechanism to dynamically create generic objects by way of typed parameters.
+            </summary>
+            <typeparam name="T1">The first parameter type.</typeparam>
+            <typeparam name="T2">The second parameter type.</typeparam>
+            <typeparam name="T3">The third parameter type.</typeparam>
+            <typeparam name="T">The instantiated generic type instance.</typeparam>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ReflectionModel.IGeneric`5">
+            <summary>
+            Provides a mechanism to dynamically create generic objects by way of typed parameters.
+            </summary>
+            <typeparam name="T1">The first parameter type.</typeparam>
+            <typeparam name="T2">The second parameter type.</typeparam>
+            <typeparam name="T3">The third parameter type.</typeparam>
+            <typeparam name="T4">The fourth parameter type.</typeparam>
+            <typeparam name="T">The instantiated generic type instance.</typeparam>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ReflectionModel.IMemberTable`1">
+            <summary>
+            Represents a store that is keyed on member metadata.
+            </summary>
+            <typeparam name="T">The value type.</typeparam>
+        </member>
         <member name="T:ExtendedXmlSerializer.ReflectionModel.IMetadataTable`2">
             <summary>
             A table that is keyed on reflection metadata.
             </summary>
             <typeparam name="TMetadata">The metadata type.</typeparam>
             <typeparam name="TValue">The value type.</typeparam>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ReflectionModel.IsAssignableSpecification`1">
+            <summary>
+            Specification that encapsulates the <see cref="M:System.Type.IsAssignableFrom(System.Type)"/> method.
+            </summary>
+            <typeparam name="T">The reference type used to call the `IsAssignableFrom`.</typeparam>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ReflectionModel.IsAssignableSpecification`1.Default">
+            <summary>
+            The default instance.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ReflectionModel.IsAssignableSpecification">
+            <summary>
+            Specification that encapsulates the <see cref="M:System.Type.IsAssignableFrom(System.Type)"/> method.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ReflectionModel.IsAssignableSpecification.Defaults">
+            <summary>
+            Store of specification instances, keyed on type.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ReflectionModel.IsAssignableSpecification.Delegates">
+            <summary>
+            Store of specification delegates, keyed on type.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ReflectionModel.IsTypeSpecification`1">
+            <summary>
+            Specification to determine if a given object is of the referenced type.
+            </summary>
+            <typeparam name="T">The referenced type.</typeparam>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ReflectionModel.IsTypeSpecification`1.Default">
+            <summary>
+            The default instance.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ReflectionModel.IsTypeSpecification`1.IsSatisfiedBy(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ReflectionModel.ITypeComparer">
+            <summary>
+            Used to compare types.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ReflectionModel.ITypedTable`1">
+            <summary>
+            Represents a store keyed on type metadata.
+            </summary>
+            <typeparam name="T">The value type.</typeparam>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ReflectionModel.MemberTable`1">
+            <inheritdoc cref="T:ExtendedXmlSerializer.ReflectionModel.IMemberTable`1" />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ReflectionModel.MemberTable`1.#ctor">
+            <inheritdoc />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ReflectionModel.MemberTable`1.#ctor(System.Collections.Generic.IDictionary{System.Reflection.MemberInfo,`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ReflectionModel.TypedTable`1">
+            <inheritdoc cref="T:ExtendedXmlSerializer.ReflectionModel.ITypedTable`1" />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ReflectionModel.TypedTable`1.#ctor">
+            <inheritdoc />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ReflectionModel.TypedTable`1.#ctor(System.Collections.Generic.IDictionary{System.Reflection.TypeInfo,`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ReflectionModel.TypeIdentityComparerBase">
+            <summary>
+            A baseline implementation of <see cref="T:ExtendedXmlSerializer.ReflectionModel.ITypeComparer"/> for type comparison.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ReflectionModel.TypeIdentityComparerBase.Equals(System.Reflection.TypeInfo,System.Reflection.TypeInfo)">
+            <inheritdoc />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ReflectionModel.TypeIdentityComparerBase.GetHashCode(System.Reflection.TypeInfo)">
+            <inheritdoc />
         </member>
     </members>
 </doc>

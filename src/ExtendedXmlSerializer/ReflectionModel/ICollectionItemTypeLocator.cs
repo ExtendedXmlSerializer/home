@@ -3,5 +3,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public interface ICollectionItemTypeLocator : IParameterizedSource<TypeInfo, TypeInfo> {}
+	interface ICollectionItemTypeLocator : IParameterizedSource<TypeInfo, TypeInfo> {}
 }
