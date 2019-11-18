@@ -1,9 +1,9 @@
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
@@ -31,10 +31,8 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		ISerializer Activate(IMember parameter)
 		{
-			var typeInfo = parameter.Metadata.GetCustomAttribute<ContentSerializerAttribute>()
-			                        .SerializerType.GetTypeInfo();
-			var instance = _activators.Get(typeInfo)
-			                          .Get();
+			var type     = parameter.Metadata.GetCustomAttribute<ContentSerializerAttribute>().SerializerType;
+			var instance = _activators.Get(type).Get();
 			var result = instance as ISerializer ?? GenericSerializers.Default.Get(parameter.MemberType)
 			                                                          .Invoke(instance);
 			return result;

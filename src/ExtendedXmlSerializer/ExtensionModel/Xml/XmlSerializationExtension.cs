@@ -9,15 +9,28 @@ using System.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
+	/// <summary>
+	/// A default extension that is used to configure all necessary components for xml-specific serialization and
+	/// deserialization.
+	/// </summary>
 	public sealed class XmlSerializationExtension : ISerializerExtension
 	{
 		readonly XmlNameTable      _names;
 		readonly XmlReaderSettings _reader;
 		readonly XmlWriterSettings _writer;
 
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
 		public XmlSerializationExtension()
 			: this(Defaults.ReaderSettings, Defaults.WriterSettings, new NameTable()) {}
 
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="reader"></param>
+		/// <param name="writer"></param>
+		/// <param name="names"></param>
 		public XmlSerializationExtension(XmlReaderSettings reader, XmlWriterSettings writer, XmlNameTable names)
 		{
 			_reader = reader;
@@ -25,6 +38,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			_names  = names;
 		}
 
+		/// <inheritdoc />
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.RegisterInstance(Encoding.UTF8)
 			            .RegisterInstance(_names)

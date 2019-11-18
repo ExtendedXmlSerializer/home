@@ -9,17 +9,26 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
+	/// <summary>
+	/// An extension used to customize prefix registration.
+	/// </summary>
+	/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/199"/>
 	public sealed class PrefixRegistryExtension : ISerializerExtension
 	{
 		readonly IDictionary<Type, string> _registry;
 
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="registry">The registry store.</param>
 		public PrefixRegistryExtension(IDictionary<Type, string> registry) => _registry = registry;
 
+		/// <inheritdoc />
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.Decorate<IFormatWriters, FormatWriters>()
 			            .RegisterInstance<IPrefixRegistry>(new PrefixRegistry(_registry));
 
-		public void Execute(IServices parameter) {}
+		void ICommand<IServices>.Execute(IServices parameter) {}
 
 		interface IPrefixRegistry : IParameterizedSource<Type, string> {}
 
