@@ -3692,6 +3692,249 @@
         <member name="M:ExtendedXmlSerializer.ExtensionModel.CachingExtension.Get(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
             <inheritdoc />
         </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Content.ContentModelExtension">
+            <summary>
+            A default serializer extension. This configures the content model, and registers all necessary components to
+            resolve serializers for different types of content.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Content.ContentModelExtension.Default">
+            <summary>
+            The default instance.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.ContentModelExtension.#ctor(ExtendedXmlSerializer.ContentModel.Content.IContentReaders,ExtendedXmlSerializer.ContentModel.Content.IContentWriters)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ExtendedXmlSerializer.ExtensionModel.Content.ContentModelExtension"/> class.
+            </summary>
+            <param name="readers">The readers.</param>
+            <param name="writers">The writers.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.ContentModelExtension.Get(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Content.Contents">
+            <summary>
+            A default serializer extension.  This extension defines necessary default components for rendering contents of different content types, such as dictionaries and arrays, etc.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Content.Contents.Default">
+            <summary>
+            The default instance.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.Contents.Get(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Content.ContentsHistory">
+            <inheritdoc cref="T:ExtendedXmlSerializer.ExtensionModel.Content.IContentsHistory" />
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Content.ContentsHistory.Default">
+            <summary>
+            The default instance.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Content.ConvertersExtension">
+            <summary>
+            A default serializer extension that manages the registration of converters used by generated serializers.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.ConvertersExtension.#ctor">
+            <summary>
+            Creates an instance.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.ConvertersExtension.#ctor(System.Collections.Generic.ICollection{ExtendedXmlSerializer.ContentModel.Conversion.IConverter})">
+            <summary>
+            Initializes a new instance of the <see cref="T:ExtendedXmlSerializer.ExtensionModel.Content.ConvertersExtension"/> class.
+            </summary>
+            <param name="converters">The converters.</param>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Content.ConvertersExtension.Converters">
+            <summary>
+            Current registry of converters.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.ConvertersExtension.Get(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Content.IContentsHistory">
+            <summary>
+            Component used to "walk the stack up" in the history of deserialized content.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Content.ISerializerComposer">
+            <summary>
+            Component used to alter content serializers created by the root serializer.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Content.ITypedSpecifications">
+            <summary>
+            A store of type specifications, keyed by type metdata.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMembersExtension">
+            <summary>
+            A default extension that is used to determine which members are allowed to be considered for serialization and
+            deserialization.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMembersExtension.#ctor(ExtendedXmlSerializer.ContentModel.Members.IMetadataSpecification)">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="specification"></param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMembersExtension.#ctor(ExtendedXmlSerializer.ContentModel.Members.IMetadataSpecification,System.Collections.Generic.ICollection{System.Reflection.MemberInfo},System.Collections.Generic.ICollection{System.Reflection.MemberInfo})">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="specification"></param>
+            <param name="blacklist"></param>
+            <param name="whitelist"></param>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMembersExtension.Blacklist">
+            <summary>
+            List of prohibited members.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMembersExtension.Whitelist">
+            <summary>
+            List of allowed members.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMembersExtension.Get(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMemberValuesExtension">
+            <summary>
+            Default serializer extension that configures when to allow, emit, and read values of members.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMemberValuesExtension.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMemberValuesExtension"/> class.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMemberValuesExtension.#ctor(ExtendedXmlSerializer.ContentModel.Members.IAllowedValueSpecification)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMemberValuesExtension"/> class.
+            </summary>
+            <param name="allowed">The allowed.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMemberValuesExtension.#ctor(ExtendedXmlSerializer.ContentModel.Members.IAllowedValueSpecification,System.Collections.Generic.IDictionary{System.Reflection.MemberInfo,ExtendedXmlSerializer.ContentModel.Members.IAllowedValueSpecification},ExtendedXmlSerializer.ContentModel.Members.IAllowedMemberValues[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMemberValuesExtension"/> class.
+            </summary>
+            <param name="allowed">The allowed.</param>
+            <param name="specifications">The specifications.</param>
+            <param name="items">The items.</param>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMemberValuesExtension.Specifications">
+            <summary>
+            Registry of allowed value specifications, keyed by member metadata.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMemberValuesExtension.Instances">
+            <summary>
+            Registry of instance value specifications, keyed by member metadata.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMemberValuesExtension.Get(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Content.Members.IMemberSpecification">
+            <summary>
+            Specialized specification for members.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Content.Members.IMemberSpecifications">
+            <summary>
+            Represents a source of member specifications.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Content.Members.IsValidMemberType">
+            <summary>
+            Used to determine if a member is valid.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.Members.IsValidMemberType.#ctor(ExtendedXmlSerializer.ContentModel.Members.IMetadataSpecification)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ExtendedXmlSerializer.ExtensionModel.Content.Members.IsValidMemberType"/> class.
+            </summary>
+            <param name="specification">The specification.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.Members.IsValidMemberType.IsSatisfiedBy(ExtendedXmlSerializer.ContentModel.Members.IMember)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Content.Members.IsWritable">
+            <summary>
+            Convenience component that encapsulates a query for the <see cref="P:ExtendedXmlSerializer.ContentModel.Members.IMember.IsWritable"/> property.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Content.Members.IsWritable.Default">
+            <summary>
+            The default instance.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Content.Members.MemberModelExtension">
+            <summary>
+            Default serializer extension that configures the member model for selecting appropriate serializers for members, as
+            well as accessing member values.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Content.Members.MemberModelExtension.Default">
+            <summary>
+            The default instance.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.Members.MemberModelExtension.Get(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Content.Members.MemberPropertiesExtension">
+            <summary>
+            Default serializer extension that is used to configure member properties such as name and ordering.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.Members.MemberPropertiesExtension.#ctor(ExtendedXmlSerializer.ContentModel.Members.INames,ExtendedXmlSerializer.Core.Sources.IParameterizedSource{System.Reflection.MemberInfo,System.Int32})">
+            <summary>
+            Initializes a new instance of the <see cref="T:ExtendedXmlSerializer.ExtensionModel.Content.Members.MemberPropertiesExtension"/> class.
+            </summary>
+            <param name="defaultNames">The default names.</param>
+            <param name="defaultMemberOrder">The default member order.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.Members.MemberPropertiesExtension.#ctor(System.Collections.Generic.IDictionary{System.Reflection.MemberInfo,System.String},System.Collections.Generic.IDictionary{System.Reflection.MemberInfo,System.Int32},ExtendedXmlSerializer.ContentModel.Members.INames,ExtendedXmlSerializer.Core.Sources.IParameterizedSource{System.Reflection.MemberInfo,System.Int32})">
+            <summary>
+            Initializes a new instance of the <see cref="T:ExtendedXmlSerializer.ExtensionModel.Content.Members.MemberPropertiesExtension"/> class.
+            </summary>
+            <param name="names">The names.</param>
+            <param name="order">The order.</param>
+            <param name="defaultNames">The default names.</param>
+            <param name="defaultMemberOrder">The default member order.</param>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Content.Members.MemberPropertiesExtension.Names">
+            <summary>
+            A registry of text names, keyed by member metadata.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Content.Members.MemberPropertiesExtension.Order">
+            <summary>
+            A registry of member order values, keyed on member metadata.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Content.Members.MemberPropertiesExtension.Get(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Content.VersionConverter">
+            <summary>
+            Converter for <see cref="T:System.Version"/> instances.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Content.VersionConverter.Default">
+            <summary>
+            The default instance.
+            </summary>
+        </member>
         <member name="T:ExtendedXmlSerializer.ExtensionModel.DefaultExtensions">
             <summary>
             Compiles a list of default extensions used in the configuration container.
@@ -4324,6 +4567,56 @@
         <member name="M:ExtendedXmlSerializer.ExtensionModel.Types.TypeNamesExtension.Get(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
             <inheritdoc />
         </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.DeclaredMemberNames">
+            <summary>
+            A default implementation that selects the name for a member from metadata attributes, specifically the
+            <see cref="T:System.Xml.Serialization.XmlAttributeAttribute"/> and <see cref="T:System.Xml.Serialization.XmlElementAttribute"/> attributes (in that order).
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Xml.DeclaredMemberNames.Default">
+            <summary>
+            The default instance.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.DeclaredMemberNames.Get(System.Reflection.MemberInfo)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.DefaultMemberOrder">
+            <summary>
+            Default order selector that looks for a <see cref="P:System.Xml.Serialization.XmlElementAttribute.Order"/> and if not specified, uses the <see cref="P:System.Reflection.MemberInfo.MetadataToken"/>.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Xml.DefaultMemberOrder.Default">
+            <summary>
+            The default instance.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.DefaultMemberOrder.Get(System.Reflection.MemberInfo)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.DefaultMetadataSpecification">
+            <summary>
+            The default implementation of the metadata specifications, determining the policies used to allow a given field or
+            property to be selected as a valid member.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Xml.DefaultMetadataSpecification.Property">
+            <summary>
+            Property specification instance that allows a property member if it's an instance (non-static) member, is public,
+            and can be read.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Xml.DefaultMetadataSpecification.Field">
+            <summary>
+            Field specification instance that allows a field member if it's an instance (non-static) member, public, or if it
+            is decorated with either the <see cref="T:System.Xml.Serialization.XmlAttributeAttribute"/> or <see cref="T:System.Xml.Serialization.XmlElementAttribute"/> attributes.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Xml.DefaultMetadataSpecification.Default">
+            <summary>
+            The default instance.
+            </summary>
+        </member>
         <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.Defaults">
             <summary>
             Convenience class to hold system defaults.
@@ -4346,6 +4639,71 @@
             Extended Xml Serializer
             </summary>
         </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.ICustomMemberSerializers">
+            <summary>
+            Specialized selector that manages custom serializer registration for a specific member.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.ICustomSerializers">
+            <summary>
+            Specialized selector that manages custom serializer registration for a specific type.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.ICustomXmlSerializers">
+            <summary>
+            Specialized selector for v1 functionality.  This is unsupported and should use the v2
+            <see cref="T:ExtendedXmlSerializer.ExtensionModel.Xml.ICustomSerializers"/> equivalent instead.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlCustomSerializer`1">
+            <summary>
+            A strongly-typed v1 custom serializer.
+            </summary>
+            <typeparam name="T">The type to serialize.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlCustomSerializer`1.Deserialize(System.Xml.Linq.XElement)">
+            <summary>
+            Deserializes the document subtree from the provided element into a new instance.
+            </summary>
+            <param name="xElement">The element subtree.</param>
+            <returns>An instance from the provided element subtree.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlCustomSerializer`1.Serializer(System.Xml.XmlWriter,`0)">
+            <summary>
+            Serializes an instance.
+            </summary>
+            <param name="xmlWriter">The writer holding the destination document.</param>
+            <param name="obj">The instance to serialize.</param>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlCustomSerializer">
+            <summary>
+            The v1 custom serializer.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlCustomSerializer.Deserialize(System.Xml.Linq.XElement)">
+            <summary>
+            Deserializes the document subtree from the provided element into a new instance.
+            </summary>
+            <param name="xElement">The element subtree.</param>
+            <returns>An instance from the provided element subtree.</returns>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.IExtendedXmlCustomSerializer.Serializer(System.Xml.XmlWriter,System.Object)">
+            <summary>
+            Serializes an instance.
+            </summary>
+            <param name="xmlWriter">The writer holding the destination document.</param>
+            <param name="instance">The instance to serialize.</param>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.IPrefix">
+            <summary>
+            A specialized selector to expand a provided prefix.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.IPrefixes">
+            <summary>
+            A prefix store, keyed by <see cref="T:System.Xml.XmlWriter"/>.
+            </summary>
+        </member>
         <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.ISerializer">
             <summary>
             A baseline XML-based serializer.
@@ -4365,6 +4723,118 @@
             </summary>
             <param name="writer">The destination writer.</param>
             <param name="instance">The source instance.</param>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.IXmlReaderFactory">
+            <summary>
+            Responsible for providing a reader per deserialization operation.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.IXmlWriterFactory">
+            <summary>
+            Responsible for providing a writer per serialization operation.
+            </summary>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.MemberFormatExtension">
+            <summary>
+            Default extension used to determine whether to format a given member as an Xml attribute or as an Xml element.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.MemberFormatExtension.#ctor">
+            <summary>
+            Creates a new instance.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.MemberFormatExtension.#ctor(System.Collections.Generic.IDictionary{System.Reflection.MemberInfo,ExtendedXmlSerializer.ContentModel.Members.IAttributeSpecification},System.Collections.Generic.ICollection{System.Reflection.MemberInfo})">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="specifications">Registry of specifications.</param>
+            <param name="registered">A collection of registered members.</param>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Xml.MemberFormatExtension.Specifications">
+            <summary>
+            Registry of specifications.
+            </summary>
+        </member>
+        <member name="P:ExtendedXmlSerializer.ExtensionModel.Xml.MemberFormatExtension.Registered">
+            <summary>
+            A collection of registered members.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.MemberFormatExtension.Get(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.MemberSpecification`1">
+            <summary>
+            A base component that is used for metadata specifications.
+            </summary>
+            <typeparam name="T">The member metadata type.</typeparam>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.MemberSpecification`1.#ctor(ExtendedXmlSerializer.Core.Specifications.ISpecification{`0})">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="specification">A supplemental specification.</param>
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.PrefixRegistryExtension">
+            <summary>
+            An extension used to customize prefix registration.
+            </summary>
+            <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/199"/>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.PrefixRegistryExtension.#ctor(System.Collections.Generic.IDictionary{System.Type,System.String})">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="registry">The registry store.</param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.PrefixRegistryExtension.Get(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.XmlReaderFactory">
+            <summary>
+            Component used to create a new <see cref="T:System.Xml.XmlReader"/> for each deserialization operation.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.XmlReaderFactory.#ctor">
+            <summary>
+            Creates a new instance.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.XmlReaderFactory.#ctor(System.Xml.XmlReaderSettings,System.Xml.XmlParserContext)">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="settings"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.XmlReaderFactory.Get(System.IO.Stream)">
+            <inheritdoc />
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.XmlReaderFactory.Get(System.IO.TextReader)">
+            <inheritdoc />
+        </member>
+        <member name="T:ExtendedXmlSerializer.ExtensionModel.Xml.XmlSerializationExtension">
+            <summary>
+            A default extension that is used to configure all necessary components for xml-specific serialization and
+            deserialization.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.XmlSerializationExtension.#ctor">
+            <summary>
+            Creates a new instance.
+            </summary>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.XmlSerializationExtension.#ctor(System.Xml.XmlReaderSettings,System.Xml.XmlWriterSettings,System.Xml.XmlNameTable)">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="reader"></param>
+            <param name="writer"></param>
+            <param name="names"></param>
+        </member>
+        <member name="M:ExtendedXmlSerializer.ExtensionModel.Xml.XmlSerializationExtension.Get(ExtendedXmlSerializer.ExtensionModel.IServiceRepository)">
+            <inheritdoc />
         </member>
         <member name="T:ExtendedXmlSerializer.IExtendedXmlSerializer">
             <summary>
@@ -4504,6 +4974,18 @@
         </member>
         <member name="M:ExtendedXmlSerializer.ReflectionModel.TypeIdentityComparerBase.GetHashCode(System.Reflection.TypeInfo)">
             <inheritdoc />
+        </member>
+        <member name="T:System.Runtime.Serialization.ISerializationSurrogateProvider">
+            <exclude />
+        </member>
+        <member name="M:System.Runtime.Serialization.ISerializationSurrogateProvider.GetDeserializedObject(System.Object,System.Type)">
+            <exclude />
+        </member>
+        <member name="M:System.Runtime.Serialization.ISerializationSurrogateProvider.GetObjectToSerialize(System.Object,System.Type)">
+            <exclude />
+        </member>
+        <member name="M:System.Runtime.Serialization.ISerializationSurrogateProvider.GetSurrogateType(System.Type)">
+            <exclude />
         </member>
     </members>
 </doc>

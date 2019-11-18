@@ -27,9 +27,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			_settings = settings;
 		}
 
+		/// <inheritdoc />
 		public System.Xml.XmlReader Get(Stream parameter)
 			=> System.Xml.XmlReader.Create(parameter, _settings, _context);
 
+		/// <inheritdoc />
 		public System.Xml.XmlReader Get(TextReader parameter)
 			=> System.Xml.XmlReader.Create(parameter, _settings, _context);
 	}

@@ -8,12 +8,19 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
+	/// <summary>
+	/// A default serializer extension.  This extension defines necessary default components for rendering contents of different content types, such as dictionaries and arrays, etc.
+	/// </summary>
 	public sealed class Contents : ISerializerExtension
 	{
+		/// <summary>
+		/// The default instance.
+		/// </summary>
 		public static Contents Default { get; } = new Contents();
 
 		Contents() {}
 
+		/// <inheritdoc />
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.RegisterConstructorDependency<IContents>((provider, info) => provider.Get<DeferredContents>())
 			            .Register<IContents, RuntimeContents>()
