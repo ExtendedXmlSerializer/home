@@ -2,5 +2,8 @@
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
+	/// <summary>
+	/// Component used to alter content serializers created by the root serializer.
+	/// </summary>
 	public interface ISerializerComposer : IAlteration<ContentModel.ISerializer> {}
 }

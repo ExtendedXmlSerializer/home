@@ -1,27 +1,43 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Members;
+﻿using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
+	/// <summary>
+	/// Default serializer extension that configures when to allow, emit, and read values of members.
+	/// </summary>
 	public sealed class AllowedMemberValuesExtension : Collection<IAllowedMemberValues>, ISerializerExtension
 	{
 		readonly static AllowAssignedValues AllowAssignedValues = AllowAssignedValues.Default;
 
 		readonly IAllowedValueSpecification _allowed;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMemberValuesExtension"/> class.
+		/// </summary>
 		public AllowedMemberValuesExtension() : this(AllowAssignedValues) {}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMemberValuesExtension"/> class.
+		/// </summary>
+		/// <param name="allowed">The allowed.</param>
 		public AllowedMemberValuesExtension(IAllowedValueSpecification allowed)
 			: this(allowed, new Dictionary<MemberInfo, IAllowedValueSpecification>()) {}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:ExtendedXmlSerializer.ExtensionModel.Content.Members.AllowedMemberValuesExtension"/> class.
+		/// </summary>
+		/// <param name="allowed">The allowed.</param>
+		/// <param name="specifications">The specifications.</param>
+		/// <param name="items">The items.</param>
 		public AllowedMemberValuesExtension(IAllowedValueSpecification allowed,
 		                                    IDictionary<MemberInfo, IAllowedValueSpecification> specifications,
 		                                    params IAllowedMemberValues[] items) : base(items.ToList())
@@ -30,11 +46,18 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 			Specifications = specifications;
 		}
 
+		/// <summary>
+		/// Registry of allowed value specifications, keyed by member metadata.
+		/// </summary>
 		public IDictionary<MemberInfo, IAllowedValueSpecification> Specifications { get; }
 
+		/// <summary>
+		/// Registry of instance value specifications, keyed by member metadata.
+		/// </summary>
 		public IDictionary<MemberInfo, ISpecification<object>> Instances { get; }
 			= new Dictionary<MemberInfo, ISpecification<object>>();
 
+		/// <inheritdoc />
 		public IServiceRepository Get(IServiceRepository parameter) => parameter.Register(Register);
 
 		IAllowedMemberValues Register(IServiceProvider arg)

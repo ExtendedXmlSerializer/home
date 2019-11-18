@@ -10,8 +10,15 @@ using VariableTypeSpecification = ExtendedXmlSerializer.ReflectionModel.Variable
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
+	/// <summary>
+	/// A default serializer extension. This configures the content model, and registers all necessary components to
+	/// resolve serializers for different types of content.
+	/// </summary>
 	public sealed class ContentModelExtension : ISerializerExtension
 	{
+		/// <summary>
+		/// The default instance.
+		/// </summary>
 		public static ContentModelExtension Default { get; } = new ContentModelExtension();
 
 		ContentModelExtension() : this(ContentReaders.Default, ContentWriters.Default) {}
@@ -19,12 +26,18 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		readonly IContentReaders _readers;
 		readonly IContentWriters _writers;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:ExtendedXmlSerializer.ExtensionModel.Content.ContentModelExtension"/> class.
+		/// </summary>
+		/// <param name="readers">The readers.</param>
+		/// <param name="writers">The writers.</param>
 		public ContentModelExtension(IContentReaders readers, IContentWriters writers)
 		{
 			_readers = readers;
 			_writers = writers;
 		}
 
+		/// <inheritdoc />
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.Register<RuntimeElement>()
 			            .Register<Element>()
