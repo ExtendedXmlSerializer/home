@@ -10,11 +10,11 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	public sealed class AllowedInstancesExtension
+	sealed class AllowedInstancesExtension
 		: TypedTable<ISpecification<object>>, ITypedSpecifications, ISerializerExtension
 	{
-		public AllowedInstancesExtension() :
-			base(new Dictionary<TypeInfo, ISpecification<object>>(ReflectionModel.Defaults.TypeComparer)) {}
+		public AllowedInstancesExtension()
+			: base(new Dictionary<TypeInfo, ISpecification<object>>(ReflectionModel.Defaults.TypeComparer)) {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.RegisterInstance<ITypedSpecifications>(this)
@@ -89,8 +89,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		sealed class Serializer : ContentModel.ISerializer
 		{
-			readonly ISpecification<object> _specification;
-			readonly ContentModel.ISerializer            _serializer;
+			readonly ISpecification<object>   _specification;
+			readonly ContentModel.ISerializer _serializer;
 
 			public Serializer(ISpecification<object> specification, ContentModel.ISerializer serializer)
 			{

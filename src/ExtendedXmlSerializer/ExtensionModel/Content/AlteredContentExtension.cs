@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	public class AlteredContentExtension : ISerializerExtension
+	sealed class AlteredContentExtension : ISerializerExtension
 	{
 		[UsedImplicitly]
 		public AlteredContentExtension() :

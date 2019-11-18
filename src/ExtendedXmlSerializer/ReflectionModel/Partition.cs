@@ -4,5 +4,5 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public delegate Func<string, ImmutableArray<TypeInfo>?> Partition(string parameter);
+	delegate Func<string, ImmutableArray<TypeInfo>?> Partition(string parameter);
 }

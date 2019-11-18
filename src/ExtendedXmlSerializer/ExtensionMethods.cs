@@ -1,6 +1,7 @@
 ﻿using ExtendedXmlSerializer.Core.Sources;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer
@@ -17,22 +18,6 @@ namespace ExtendedXmlSerializer
 		/// <param name="result">The result.</param>
 		/// <returns>TOut.</returns>
 		public static TOut Return<T, TOut>(this T _, TOut result) => result;
-
-		/// <summary>
-		/// Convenience method for objects that implement several <see cref="ISource{T}"/> to get its type-based contents
-		/// specifically.
-		/// </summary>
-		/// <param name="this">The implementing source.</param>
-		/// <returns>TypeInfo.</returns>
-		public static TypeInfo GetType(this ISource<TypeInfo> @this) => @this.Get();
-
-		/// <summary>
-		/// Convenience method for objects that implement several <see cref="ISource{T}"/> to get its member-based contents
-		/// specifically.
-		/// </summary>
-		/// <param name="this">The implementing source.</param>
-		/// <returns>MemberInfo.</returns>
-		public static MemberInfo GetMember(this ISource<MemberInfo> @this) => @this.Get();
 
 		/// <summary>
 		/// Convenience method to invoke a method and return the parameter.  This is useful for fluent-based configuration
@@ -77,6 +62,33 @@ namespace ExtendedXmlSerializer
 		{
 			@this.Add(parameter);
 			return parameter;
+		}
+
+
+		/// <summary>
+		/// Convenience method that queries an expression to resolve a property or field expression.
+		/// </summary>
+		/// <param name="expression">The expression to query.</param>
+		/// <param name="type">The member containing type.</param>
+		/// <param name="name">The member name.</param>
+		/// <returns>The resolved member expression.</returns>
+		public static MemberExpression PropertyOrField(this UnaryExpression expression, Type type, string name)
+		{
+			var typeInfo = type.GetTypeInfo();
+			var property = typeInfo.GetDeclaredProperty(name) ??
+			               typeInfo.GetProperty(name, BindingFlags.NonPublic | BindingFlags.Instance);
+			if (property != null)
+			{
+				return Expression.Property(expression, property);
+			}
+
+			var field = type.GetField(name) ?? type.GetField(name, BindingFlags.NonPublic | BindingFlags.Instance);
+			if (field != null)
+			{
+				return Expression.Field(expression, field);
+			}
+
+			throw new InvalidOperationException($"Could not find the member '{name}' on type '{type}'.");
 		}
 	}
 }

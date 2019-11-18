@@ -1,12 +1,12 @@
-using System.Reflection;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	public class CollectionSpecification : DecoratedSpecification<TypeInfo>
+	class CollectionSpecification : DecoratedSpecification<TypeInfo>
 	{
-		public CollectionSpecification(ISpecification<TypeInfo> specification) :
-			base(IsCollectionTypeSpecification.Default.And(specification)) {}
+		public CollectionSpecification(ISpecification<TypeInfo> specification)
+			: base(IsCollectionTypeSpecification.Default.And(specification)) {}
 	}
 }
