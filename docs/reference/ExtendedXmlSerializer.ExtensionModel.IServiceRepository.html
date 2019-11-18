@@ -1,0 +1,1942 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Interface IServiceRepository
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Interface IServiceRepository
+   ">
+    <meta name="generator" content="docfx 2.47.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository">
+  
+  
+  <h1 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository" class="text-break">Interface IServiceRepository
+  </h1>
+  <div class="markdown level0 summary"><p>Custom service registry.  Modeled after <span class="xref">LightInject.IServiceRegistry</span>.  If designed today, we would remove this
+interface with the LightInject version.  Perhaps in a future version we will do this as a breaking change.  For the
+default implementation, most calls pass through directly to the underlying LightInject equivalent.  For those
+operations that require a <span class="xref">LightInject.ILifetime</span>, a <span class="xref">LightInject.PerContainerLifetime</span> is used.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="ExtendedXmlSerializer.ExtensionModel.html">ExtendedXmlSerializer.ExtensionModel</a></h6>
+  <h6><strong>Assembly</strong>: ExtendedXmlSerializer.dll</h6>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IServiceRepository</code></pre>
+  </div>
+  <h3 id="properties">Properties
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_AvailableServices.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.AvailableServices%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L18">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_AvailableServices_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.AvailableServices*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_AvailableServices" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.AvailableServices">AvailableServices</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IEnumerable&lt;TypeInfo&gt; AvailableServices { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">System.Reflection.TypeInfo</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_AvailableServices_seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.AvailableServices</span></div>
+  </div>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Decorate_System_Type_System_Type_.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Decorate(System.Type%2CSystem.Type)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L96">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Decorate_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Decorate*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Decorate_System_Type_System_Type_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Decorate(System.Type,System.Type)">Decorate(Type, Type)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Decorate(Type serviceType, Type decoratorType)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Type</span></td>
+        <td><span class="parametername">serviceType</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Type</span></td>
+        <td><span class="parametername">decoratorType</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Decorate_System_Type_System_Type__seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.Decorate(System.Type,System.Type)</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Decorate__1_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___0__.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Decorate%60%601(System.Func%7BExtendedXmlSerializer.ExtensionModel.IServiceProvider%2C%60%600%2C%60%600%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L102">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Decorate_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Decorate*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Decorate__1_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___0__" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Decorate``1(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0,``0})">Decorate&lt;TService&gt;(Func&lt;IServiceProvider, TService, TService&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Decorate&lt;TService&gt;(Func&lt;IServiceProvider, TService, TService&gt; factory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceProvider.html">IServiceProvider</a>, TService, TService&gt;</td>
+        <td><span class="parametername">factory</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TService</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Decorate__1_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___0___seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.Decorate``1(System.Func{LightInject.IServiceFactory,``0,``0})</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Decorate__2.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Decorate%60%602%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L99">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Decorate_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Decorate*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Decorate__2" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Decorate``2">Decorate&lt;TService, TDecorator&gt;()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Decorate&lt;TService, TDecorator&gt;()
+    where TDecorator : TService</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TService</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TDecorator</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Decorate__2_seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.Decorate``2</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_System_Type_.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register(System.Type)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L48">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_System_Type_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register(System.Type)">Register(Type)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Register(Type serviceType)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Type</span></td>
+        <td><span class="parametername">serviceType</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_System_Type__seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.RegisterInstance(System.Type,System.Object)</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_System_Type_System_Type_.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register(System.Type%2CSystem.Type)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L21">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_System_Type_System_Type_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register(System.Type,System.Type)">Register(Type, Type)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Register(Type serviceType, Type implementingType)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Type</span></td>
+        <td><span class="parametername">serviceType</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Type</span></td>
+        <td><span class="parametername">implementingType</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_System_Type_System_Type__seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.Register(System.Type,System.Type)</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_System_Type_System_Type_System_String_.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register(System.Type%2CSystem.Type%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L24">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_System_Type_System_Type_System_String_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register(System.Type,System.Type,System.String)">Register(Type, Type, String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Register(Type serviceType, Type implementingType, string serviceName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Type</span></td>
+        <td><span class="parametername">serviceType</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Type</span></td>
+        <td><span class="parametername">implementingType</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">serviceName</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_System_Type_System_Type_System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.Register(System.Type,System.Type,System.String)</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__1.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register%60%601%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L33">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__1" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``1">Register&lt;TService&gt;()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Register&lt;TService&gt;()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TService</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__1_seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.Register``1</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__1_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0__.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register%60%601(System.Func%7BExtendedXmlSerializer.ExtensionModel.IServiceProvider%2C%60%600%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L52">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__1_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0__" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``1(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0})">Register&lt;TService&gt;(Func&lt;IServiceProvider, TService&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Register&lt;TService&gt;(Func&lt;IServiceProvider, TService&gt; factory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceProvider.html">IServiceProvider</a>, TService&gt;</td>
+        <td><span class="parametername">factory</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TService</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__1_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Uses a <span class="xref">LightInject.PerContainerLifetime</span> instance for the lifetime.</p>
+</div>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__1_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.Register``1(System.Func{LightInject.IServiceFactory,``0},LightInject.ILifetime)</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__1_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0__System_String_.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register%60%601(System.Func%7BExtendedXmlSerializer.ExtensionModel.IServiceProvider%2C%60%600%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L82">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__1_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0__System_String_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``1(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0},System.String)">Register&lt;TService&gt;(Func&lt;IServiceProvider, TService&gt;, String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Register&lt;TService&gt;(Func&lt;IServiceProvider, TService&gt; factory, string serviceName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceProvider.html">IServiceProvider</a>, TService&gt;</td>
+        <td><span class="parametername">factory</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">serviceName</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TService</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__1_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0__System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.Register``1(System.Func{LightInject.IServiceFactory,``0},System.String)</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__2.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register%60%602%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L27">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__2" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``2">Register&lt;TService, TImplementation&gt;()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Register&lt;TService, TImplementation&gt;()
+    where TImplementation : TService</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TService</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TImplementation</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__2_seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.Register``2</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__2_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1__.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register%60%602(System.Func%7BExtendedXmlSerializer.ExtensionModel.IServiceProvider%2C%60%600%2C%60%601%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L55">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__2_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1__" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``2(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0,``1})">Register&lt;T, TService&gt;(Func&lt;IServiceProvider, T, TService&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Register&lt;T, TService&gt;(Func&lt;IServiceProvider, T, TService&gt; factory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceProvider.html">IServiceProvider</a>, T, TService&gt;</td>
+        <td><span class="parametername">factory</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TService</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__2_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.Register``1(System.Func{LightInject.IServiceFactory,``0},LightInject.ILifetime)</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__2_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1__System_String_.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register%60%602(System.Func%7BExtendedXmlSerializer.ExtensionModel.IServiceProvider%2C%60%600%2C%60%601%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L58">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__2_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1__System_String_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``2(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0,``1},System.String)">Register&lt;T, TService&gt;(Func&lt;IServiceProvider, T, TService&gt;, String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Register&lt;T, TService&gt;(Func&lt;IServiceProvider, T, TService&gt; factory, string serviceName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceProvider.html">IServiceProvider</a>, T, TService&gt;</td>
+        <td><span class="parametername">factory</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">serviceName</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TService</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__2_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1__System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.Register``2(System.Func{LightInject.IServiceFactory,``0,``1},System.String)</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__2_System_String_.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register%60%602(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L30">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__2_System_String_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``2(System.String)">Register&lt;TService, TImplementation&gt;(String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Register&lt;TService, TImplementation&gt;(string serviceName)
+    where TImplementation : TService</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">serviceName</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TService</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TImplementation</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__2_System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.Register``2(System.String)</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__3_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___2__.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register%60%603(System.Func%7BExtendedXmlSerializer.ExtensionModel.IServiceProvider%2C%60%600%2C%60%601%2C%60%602%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L61">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__3_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___2__" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``3(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0,``1,``2})">Register&lt;T1, T2, TService&gt;(Func&lt;IServiceProvider, T1, T2, TService&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Register&lt;T1, T2, TService&gt;(Func&lt;IServiceProvider, T1, T2, TService&gt; factory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceProvider.html">IServiceProvider</a>, T1, T2, TService&gt;</td>
+        <td><span class="parametername">factory</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TService</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__3_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___2___seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.Register``3(System.Func{LightInject.IServiceFactory,``0,``1,``2})</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__3_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___2__System_String_.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register%60%603(System.Func%7BExtendedXmlSerializer.ExtensionModel.IServiceProvider%2C%60%600%2C%60%601%2C%60%602%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L64">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__3_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___2__System_String_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``3(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0,``1,``2},System.String)">Register&lt;T1, T2, TService&gt;(Func&lt;IServiceProvider, T1, T2, TService&gt;, String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Register&lt;T1, T2, TService&gt;(Func&lt;IServiceProvider, T1, T2, TService&gt; factory, string serviceName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceProvider.html">IServiceProvider</a>, T1, T2, TService&gt;</td>
+        <td><span class="parametername">factory</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">serviceName</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TService</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__3_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___2__System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.Register``3(System.Func{LightInject.IServiceFactory,``0,``1,``2},System.String)</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__4_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___2___3__.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register%60%604(System.Func%7BExtendedXmlSerializer.ExtensionModel.IServiceProvider%2C%60%600%2C%60%601%2C%60%602%2C%60%603%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L68">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__4_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___2___3__" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``4(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0,``1,``2,``3})">Register&lt;T1, T2, T3, TService&gt;(Func&lt;IServiceProvider, T1, T2, T3, TService&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Register&lt;T1, T2, T3, TService&gt;(Func&lt;IServiceProvider, T1, T2, T3, TService&gt; factory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceProvider.html">IServiceProvider</a>, T1, T2, T3, TService&gt;</td>
+        <td><span class="parametername">factory</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TService</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__4_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___2___3___seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.Register``4(System.Func{LightInject.IServiceFactory,``0,``1,``2,``3})</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__4_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___2___3__System_String_.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register%60%604(System.Func%7BExtendedXmlSerializer.ExtensionModel.IServiceProvider%2C%60%600%2C%60%601%2C%60%602%2C%60%603%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L71">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__4_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___2___3__System_String_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``4(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0,``1,``2,``3},System.String)">Register&lt;T1, T2, T3, TService&gt;(Func&lt;IServiceProvider, T1, T2, T3, TService&gt;, String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Register&lt;T1, T2, T3, TService&gt;(Func&lt;IServiceProvider, T1, T2, T3, TService&gt; factory, string serviceName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceProvider.html">IServiceProvider</a>, T1, T2, T3, TService&gt;</td>
+        <td><span class="parametername">factory</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">serviceName</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TService</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__4_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___2___3__System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.Register``4(System.Func{LightInject.IServiceFactory,``0,``1,``2,``3},System.String)</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__5_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___2___3___4__.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register%60%605(System.Func%7BExtendedXmlSerializer.ExtensionModel.IServiceProvider%2C%60%600%2C%60%601%2C%60%602%2C%60%603%2C%60%604%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L75">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__5_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___2___3___4__" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``5(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0,``1,``2,``3,``4})">Register&lt;T1, T2, T3, T4, TService&gt;(Func&lt;IServiceProvider, T1, T2, T3, T4, TService&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Register&lt;T1, T2, T3, T4, TService&gt;(Func&lt;IServiceProvider, T1, T2, T3, T4, TService&gt; factory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceProvider.html">IServiceProvider</a>, T1, T2, T3, T4, TService&gt;</td>
+        <td><span class="parametername">factory</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T4</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TService</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__5_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___2___3___4___seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.Register``5(System.Func{LightInject.IServiceFactory,``0,``1,``2,``3,``4})</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__5_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___2___3___4__System_String_.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register%60%605(System.Func%7BExtendedXmlSerializer.ExtensionModel.IServiceProvider%2C%60%600%2C%60%601%2C%60%602%2C%60%603%2C%60%604%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L78">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__5_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___2___3___4__System_String_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.Register``5(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,``0,``1,``2,``3,``4},System.String)">Register&lt;T1, T2, T3, T4, TService&gt;(Func&lt;IServiceProvider, T1, T2, T3, T4, TService&gt;, String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository Register&lt;T1, T2, T3, T4, TService&gt;(Func&lt;IServiceProvider, T1, T2, T3, T4, TService&gt; factory, string serviceName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceProvider.html">IServiceProvider</a>, T1, T2, T3, T4, TService&gt;</td>
+        <td><span class="parametername">factory</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">serviceName</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T4</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TService</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_Register__5_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider___0___1___2___3___4__System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.Register``5(System.Func{LightInject.IServiceFactory,``0,``1,``2,``3,``4},System.String)</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterConstructorDependency__1_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider_System_Reflection_ParameterInfo___0__.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterConstructorDependency%60%601(System.Func%7BExtendedXmlSerializer.ExtensionModel.IServiceProvider%2CSystem.Reflection.ParameterInfo%2C%60%600%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L88">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterConstructorDependency_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterConstructorDependency*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterConstructorDependency__1_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider_System_Reflection_ParameterInfo___0__" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterConstructorDependency``1(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,System.Reflection.ParameterInfo,``0})">RegisterConstructorDependency&lt;TDependency&gt;(Func&lt;IServiceProvider, ParameterInfo, TDependency&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository RegisterConstructorDependency&lt;TDependency&gt;(Func&lt;IServiceProvider, ParameterInfo, TDependency&gt; factory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceProvider.html">IServiceProvider</a>, <span class="xref">System.Reflection.ParameterInfo</span>, TDependency&gt;</td>
+        <td><span class="parametername">factory</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TDependency</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterConstructorDependency__1_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider_System_Reflection_ParameterInfo___0___seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.RegisterConstructorDependency``1(System.Func{LightInject.IServiceFactory,System.Reflection.ParameterInfo,``0})</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterConstructorDependency__1_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider_System_Reflection_ParameterInfo_System_Object_____0__.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterConstructorDependency%60%601(System.Func%7BExtendedXmlSerializer.ExtensionModel.IServiceProvider%2CSystem.Reflection.ParameterInfo%2CSystem.Object%5B%5D%2C%60%600%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L92">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterConstructorDependency_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterConstructorDependency*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterConstructorDependency__1_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider_System_Reflection_ParameterInfo_System_Object_____0__" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterConstructorDependency``1(System.Func{ExtendedXmlSerializer.ExtensionModel.IServiceProvider,System.Reflection.ParameterInfo,System.Object[],``0})">RegisterConstructorDependency&lt;TDependency&gt;(Func&lt;IServiceProvider, ParameterInfo, Object[], TDependency&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository RegisterConstructorDependency&lt;TDependency&gt;(Func&lt;IServiceProvider, ParameterInfo, object[], TDependency&gt; factory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceProvider.html">IServiceProvider</a>, <span class="xref">System.Reflection.ParameterInfo</span>, <span class="xref">System.Object</span>[], TDependency&gt;</td>
+        <td><span class="parametername">factory</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TDependency</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterConstructorDependency__1_System_Func_ExtendedXmlSerializer_ExtensionModel_IServiceProvider_System_Reflection_ParameterInfo_System_Object_____0___seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.RegisterConstructorDependency``1(System.Func{LightInject.IServiceFactory,System.Reflection.ParameterInfo,System.Object[],``0})</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterFallback_System_Func_System_Type_System_Boolean__System_Func_System_Type_System_Object__.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterFallback(System.Func%7BSystem.Type%2CSystem.Boolean%7D%2CSystem.Func%7BSystem.Type%2CSystem.Object%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L85">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterFallback_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterFallback*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterFallback_System_Func_System_Type_System_Boolean__System_Func_System_Type_System_Object__" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterFallback(System.Func{System.Type,System.Boolean},System.Func{System.Type,System.Object})">RegisterFallback(Func&lt;Type, Boolean&gt;, Func&lt;Type, Object&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository RegisterFallback(Func&lt;Type, bool&gt; predicate, Func&lt;Type, object&gt; factory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.Type</span>, <span class="xref">System.Boolean</span>&gt;</td>
+        <td><span class="parametername">predicate</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.Type</span>, <span class="xref">System.Object</span>&gt;</td>
+        <td><span class="parametername">factory</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterFallback_System_Func_System_Type_System_Boolean__System_Func_System_Type_System_Object___seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.RegisterFallback(System.Func{System.Type,System.String,System.Boolean},System.Func{LightInject.ServiceRequest,System.Object})</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterInstance_System_Type_System_Object_.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterInstance(System.Type%2CSystem.Object)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L42">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterInstance_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterInstance*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterInstance_System_Type_System_Object_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterInstance(System.Type,System.Object)">RegisterInstance(Type, Object)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository RegisterInstance(Type serviceType, object instance)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Type</span></td>
+        <td><span class="parametername">serviceType</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">instance</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterInstance_System_Type_System_Object__seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.RegisterInstance(System.Type,System.Object)</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterInstance_System_Type_System_Object_System_String_.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterInstance(System.Type%2CSystem.Object%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L45">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterInstance_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterInstance*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterInstance_System_Type_System_Object_System_String_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterInstance(System.Type,System.Object,System.String)">RegisterInstance(Type, Object, String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository RegisterInstance(Type serviceType, object instance, string serviceName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Type</span></td>
+        <td><span class="parametername">serviceType</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">instance</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">serviceName</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterInstance_System_Type_System_Object_System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.RegisterInstance(System.Type,System.Object,System.String)</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterInstance__1___0_.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterInstance%60%601(%60%600)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L36">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterInstance_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterInstance*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterInstance__1___0_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterInstance``1(``0)">RegisterInstance&lt;TService&gt;(TService)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository RegisterInstance&lt;TService&gt;(TService instance)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TService</span></td>
+        <td><span class="parametername">instance</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TService</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterInstance__1___0__seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.RegisterInstance``1(``0)</span></div>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterInstance__1___0_System_String_.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterInstance%60%601(%60%600%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L39">View Source</a>
+  </span>
+  <a id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterInstance_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterInstance*"></a>
+  <h4 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterInstance__1___0_System_String_" data-uid="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.RegisterInstance``1(``0,System.String)">RegisterInstance&lt;TService&gt;(TService, String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServiceRepository RegisterInstance&lt;TService&gt;(TService instance, string serviceName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TService</span></td>
+        <td><span class="parametername">instance</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">serviceName</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="ExtendedXmlSerializer.ExtensionModel.IServiceRepository.html">IServiceRepository</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TService</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="ExtendedXmlSerializer_ExtensionModel_IServiceRepository_RegisterInstance__1___0_System_String__seealso">See Also</h5>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry.RegisterInstance``1(``0,System.String)</span></div>
+  </div>
+  <h3 id="extensionmethods">Extension Methods</h3>
+  <div>
+      <a class="xref" href="ExtendedXmlSerializer.ExtensionMethods.html#ExtendedXmlSerializer_ExtensionMethods_Return__2___0___1_">ExtensionMethods.Return&lt;T, TOut&gt;(T, TOut)</a>
+  </div>
+  <div>
+      <a class="xref" href="ExtendedXmlSerializer.ExtensionMethods.html#ExtendedXmlSerializer_ExtensionMethods_To__1_System_Object_">ExtensionMethods.To&lt;T&gt;(Object)</a>
+  </div>
+  <div>
+      <a class="xref" href="ExtendedXmlSerializer.ExtensionMethods.html#ExtendedXmlSerializer_ExtensionMethods_AsValid__1_System_Object_System_String_">ExtensionMethods.AsValid&lt;T&gt;(Object, String)</a>
+  </div>
+  <div>
+      <a class="xref" href="ExtendedXmlSerializer.ExtensionMethodsForAttachedProperties.html#ExtendedXmlSerializer_ExtensionMethodsForAttachedProperties_Get__2___0_ExtendedXmlSerializer_ExtensionModel_AttachedProperties_Property___0___1__">ExtensionMethodsForAttachedProperties.Get&lt;TType, TValue&gt;(TType, Property&lt;TType, TValue&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="ExtendedXmlSerializer.ExtensionMethodsForAttachedProperties.html#ExtendedXmlSerializer_ExtensionMethodsForAttachedProperties_Set__2___0_ExtendedXmlSerializer_ExtensionModel_AttachedProperties_Property___0___1____1_">ExtensionMethodsForAttachedProperties.Set&lt;TType, TValue&gt;(TType, Property&lt;TType, TValue&gt;, TValue)</a>
+  </div>
+  <div>
+      <a class="xref" href="ExtendedXmlSerializer.ExtensionMethodsForContent.html#ExtendedXmlSerializer_ExtensionMethodsForContent_DecorateContentsWith__1_ExtendedXmlSerializer_ExtensionModel_IServiceRepository_">ExtensionMethodsForContent.DecorateContentsWith&lt;T&gt;(IServiceRepository)</a>
+  </div>
+  <div>
+      <a class="xref" href="ExtendedXmlSerializer.ExtensionMethodsForContent.html#ExtendedXmlSerializer_ExtensionMethodsForContent_DecorateElementWith__1_ExtendedXmlSerializer_ExtensionModel_IServiceRepository_">ExtensionMethodsForContent.DecorateElementWith&lt;T&gt;(IServiceRepository)</a>
+  </div>
+  <div>
+      <a class="xref" href="ExtendedXmlSerializer.ExtensionMethodsForContent.html#ExtendedXmlSerializer_ExtensionMethodsForContent_Decorate__1_ExtendedXmlSerializer_ExtensionModel_IServiceRepository_ExtendedXmlSerializer_Core_Specifications_ISpecification_System_Reflection_TypeInfo__">ExtensionMethodsForContent.Decorate&lt;T&gt;(IServiceRepository, ISpecification&lt;TypeInfo&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="ExtendedXmlSerializer.ExtensionMethodsForContent.html#ExtendedXmlSerializer_ExtensionMethodsForContent_DecorateContent__2_ExtendedXmlSerializer_ExtensionModel_IServiceRepository_">ExtensionMethodsForContent.DecorateContent&lt;TSpecification, T&gt;(IServiceRepository)</a>
+  </div>
+  <div>
+      <a class="xref" href="ExtendedXmlSerializer.ExtensionMethodsForContent.html#ExtendedXmlSerializer_ExtensionMethodsForContent_DecorateContent__1_ExtendedXmlSerializer_ExtensionModel_IServiceRepository_ExtendedXmlSerializer_Core_Specifications_ISpecification_System_Reflection_TypeInfo__">ExtensionMethodsForContent.DecorateContent&lt;T&gt;(IServiceRepository, ISpecification&lt;TypeInfo&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="ExtendedXmlSerializer.ExtensionMethodsForCoreSources.html#ExtendedXmlSerializer_ExtensionMethodsForCoreSources_If__2___1_ExtendedXmlSerializer_Core_Specifications_ISpecification___0__">ExtensionMethodsForCoreSources.If&lt;TParameter, TResult&gt;(TResult, ISpecification&lt;TParameter&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="ExtendedXmlSerializer.ExtensionMethodsForCoreSources.html#ExtendedXmlSerializer_ExtensionMethodsForCoreSources_Let__2___1_ExtendedXmlSerializer_Core_Specifications_ISpecification___0____1_">ExtensionMethodsForCoreSources.Let&lt;TSpecification, TInstance&gt;(TInstance, ISpecification&lt;TSpecification&gt;, TInstance)</a>
+  </div>
+  <div>
+      <a class="xref" href="ExtendedXmlSerializer.ExtensionMethodsForLocation.html#ExtendedXmlSerializer_ExtensionMethodsForLocation_RegisterWithDependencies__1_ExtendedXmlSerializer_ExtensionModel_IServiceRepository_">ExtensionMethodsForLocation.RegisterWithDependencies&lt;T&gt;(IServiceRepository)</a>
+  </div>
+  <div>
+      <a class="xref" href="ExtendedXmlSerializer.ExtensionMethodsForLocation.html#ExtendedXmlSerializer_ExtensionMethodsForLocation_RegisterWithDependencies__2_ExtendedXmlSerializer_ExtensionModel_IServiceRepository_">ExtensionMethodsForLocation.RegisterWithDependencies&lt;TFrom, TTo&gt;(IServiceRepository)</a>
+  </div>
+  <h3 id="seealso">See Also</h3>
+  <div class="seealso">
+      <div><span class="xref">LightInject.IServiceRegistry</span></div>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/new/issues/Issue284/apiSpec/new?filename=ExtendedXmlSerializer_ExtensionModel_IServiceRepository.md&amp;value=---%0Auid%3A%20ExtendedXmlSerializer.ExtensionModel.IServiceRepository%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/Mike-EEE/ExtendedXmlSerializer/blob/issues/Issue284/src/ExtendedXmlSerializer/ExtensionModel/IServiceRepository.cs/#L15" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

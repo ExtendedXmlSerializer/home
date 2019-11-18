@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>General Questions </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="General Questions ">
+    <meta name="generator" content="docfx 2.47.0.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+
+<p>Any commonly encountered issues and/or questions arrising from our issue board will make their way here.</p>
+<h2 id="general-questions">General Questions</h2>
+<p><strong>What is ExtendedXmlSerializer designed to do?</strong></p>
+<p>The primary vision and purpose of ExtendedXMLSerializer is to serialize a .NET object graph into an XML document, and then be able to read (deserialize) back into memory using the same documents created with it.</p>
+<p>You can consider this serializer a hybrid of the <code>System.Xml.XmlSerializer</code> and the powerful <code>System.Xaml</code> serializer.</p>
+<h2 id="systemxmlserializer-vs-extendedxmlserializer">System.Xml.Serializer vs. ExtendedXmlSerializer</h2>
+<p>The one area we seem to get a lot of issues is around the classical serializer vs. the ExtendedXmlSerializer.  Here are some questions that dive into the area.</p>
+<p><strong>I can do <em>xyz</em> with the classic <code>System.Xml.XmlSerializer</code>.  Can I do the same with ExtendedXmlSerializer?</strong></p>
+<p><em>It Should</em>.™  The primary intended purpose of ExtendedXMLSerializer is to work with .NET object graphs, not to parse XML documents, manipulate an XML document model, or to work with legacy XML functionality.</p>
+<p>That stated, we do support a lot of classic functionality, but it isn't a focus.  There is a lot to be desired about how the classic serializer handles .NET object graphs and subsequent activation.  Rectifying these rough spots was the main motivation behind ExtendedXMLSerializer.</p>
+<p>If you would like to talk about support of a classic feature that does not appear to be supported, please do a <a href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues?utf8=%E2%9C%93&amp;q=is%3Aissue+sort%3Aupdated-desc+">search through our issues list first</a>, and if it has not been discussed, <a href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/new">open a new issue</a> and we'll meet you there. 👍</p>
+<p><strong>I have documents that were serialized with the classic <code>System.Xml.XmlSerializer</code>.  Can they be read with ExtendedXMLSerializer?</strong></p>
+<p>Typically, yes.  But some features are not supported -- either because they have not yet been brought to our attention or we cannot due to current designs.  For instance, lists serialized with an element name configured via the <code>ElementAttributeAttribute</code> <a href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/240">don't do so well with ExtendedXmlSerializer</a>.  <code>XmlTextAttribute</code> also <a href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/242">gets a little grumpy</a>.</p>
+<p>If you find that you run into an incompatibility, our recommendation is to:</p>
+<ul>
+<li>Serialize the graph using ExtendedXmlSerializer to see what the expected XML should look like.</li>
+<li>Create an XSLT transformation to transform the classically-serialized XML document.</li>
+<li>Run classic-serialized document through XSLT to create the ExtendedXmlSerializer-friendly document.</li>
+</ul>
+<p><strong>It would seem you focused on serializing .NET object graphs and not on preserving classic legacy functionality.</strong></p>
+<p>That's exactly what we did. :)  Along the way, we introduced a highly adaptable extension model to boot.  In fact, most issues submitted to our repository are solved by way of adding a new extension.</p>
+<p><strong>I would like a legacy feature that is not currently supported with ExtendedXMLSerializer.  Can I submit a PR for this feature?</strong></p>
+<p>Yes. :)  We certainly welcome any PRs for our project, having to do with implementing missing legacy functionality and/or otherwise.  Feel free to fire one up and we will meet you there. 👍</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>
