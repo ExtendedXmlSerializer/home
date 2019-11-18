@@ -82,9 +82,12 @@
     "globalMetadataFiles": [],
     "fileMetadataFiles": [],
     "template": [
+      "default"
+    ],
+	/*"template": [
       "default",
       "mathew/src"
-    ],
+    ],*/
     "postProcessors": [],
     "markdownEngineName": "markdig",
     "noLangKeyword": false,

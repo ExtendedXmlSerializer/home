@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Xml Settings </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Xml Settings ">
+    <meta name="generator" content="docfx 2.47.0.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+
+<p>Everything in ExtendedXmlSerializer begins with a configuration
+container, from which you can use to configure the serializer and
+ultimately create it:</p>
+<pre><code class="lang-csharp">    IExtendedXmlSerializer serializer = new ConfigurationContainer()
+                                                // Configure...
+                                                .Create();
+</code></pre>
+<p>Using this simple subject class:</p>
+<pre><code class="lang-csharp">    public sealed class Subject
+    {
+        public string Message { get; set; }
+    
+        public int Count { get; set; }
+    }
+</code></pre>
+<p>The results of the default serializer will look like this:</p>
+<pre><code class="lang-xml">    &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+    &lt;Subject xmlns=&quot;clr-namespace:ExtendedXmlSerializer.Samples.Introduction;assembly=ExtendedXmlSerializer.Samples&quot;&gt;
+      &lt;Message&gt;Hello World!&lt;/Message&gt;
+      &lt;Count&gt;6776&lt;/Count&gt;
+    &lt;/Subject&gt;
+</code></pre>
+<p>We can take this a step further by configuring the <code>Subject</code>'s <code>Type</code> and
+<code>Member</code> properties, which will effect how its Xml is emitted. Here is an
+example of configuring the <code>Subject</code>'s element name to emit as
+<code>ModifiedSubject</code>:</p>
+<pre><code class="lang-csharp">    IExtendedXmlSerializer serializer = new ConfigurationContainer().ConfigureType&lt;Subject&gt;()
+                                                                    .Name(&quot;ModifiedSubject&quot;)
+                                                                    .Create();
+</code></pre>
+<pre><code class="lang-xml">    &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+    &lt;ModifiedSubject xmlns=&quot;clr-namespace:ExtendedXmlSerializer.Samples.Introduction;assembly=ExtendedXmlSerializer.Samples&quot;&gt;
+      &lt;Message&gt;Hello World!&lt;/Message&gt;
+      &lt;Count&gt;6776&lt;/Count&gt;
+    &lt;/ModifiedSubject&gt;
+</code></pre>
+<p>Diving a bit further, we can also configure the type's member
+information. For example, configuring <code>Subject.Message</code> to emit as <code>Text</code>
+instead:</p>
+<pre><code class="lang-csharp">    IExtendedXmlSerializer serializer = new ConfigurationContainer().ConfigureType&lt;Subject&gt;()
+                                                                    .Member(x =&gt; x.Message)
+                                                                    .Name(&quot;Text&quot;)
+                                                                    .Create();
+
+</code></pre>
+<pre><code class="lang-xml">    &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+    &lt;Subject xmlns=&quot;clr-namespace:ExtendedXmlSerializer.Samples.Introduction;assembly=ExtendedXmlSerializer.Samples&quot;&gt;
+      &lt;Text&gt;Hello World!&lt;/Text&gt;
+      &lt;Count&gt;6776&lt;/Count&gt;
+    &lt;/Subject&gt;
+</code></pre>
+<h2 id="xml-settings">Xml Settings</h2>
+<p>In case you want to configure the XML write and read settings via
+<code>XmlWriterSettings</code> and <code>XmlReaderSettings</code> respectively, you can do that
+via extension methods created for you to do so:</p>
+<pre><code class="lang-csharp">    Subject subject = new Subject{ Count = 6776, Message = &quot;Hello World!&quot; };
+    IExtendedXmlSerializer serializer = new ConfigurationContainer().Create();
+    string contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
+    // ...
+</code></pre>
+<p>And for reading:</p>
+<pre><code class="lang-csharp">    Subject instance = serializer.Deserialize&lt;Subject&gt;(new XmlReaderSettings{IgnoreWhitespace = false}, contents);
+    // ...
+</code></pre>
+<h2 id="serialization">Serialization</h2>
+<p>Now that your configuration container has been configured and your
+serializer has been created, it's time to get to the serialization.</p>
+<pre><code class="lang-csharp">    IExtendedXmlSerializer serializer = new ConfigurationContainer().Create();
+    TestClass obj = new TestClass();
+    string xml = serializer.Serialize(obj);
+</code></pre>
+<h2 id="deserialization">Deserialization</h2>
+<pre><code class="lang-csharp">    TestClass obj2 = serializer.Deserialize&lt;TestClass&gt;(xml);
+</code></pre>
+<h2 id="classic-serializationdeserialization-patterns">Classic Serialization/Deserialization Patterns</h2>
+<p>Most of the code examples that you see in this documentation make use of
+useful extension methods that make serialization and deserialization a
+snap with ExtendedXmlSerializer.  However, if you would like to break down
+into the basic, classical pattern of serialization, and deserialization,
+this is supported too, as seen by the following examples.  Here's serialization:</p>
+<pre><code class="lang-csharp">    IExtendedXmlSerializer serializer = new ConfigurationContainer().Create();
+    TestClass              instance   = new TestClass();
+    MemoryStream           stream     = new MemoryStream();
+    using (XmlWriter writer = XmlWriter.Create(stream))
+    {
+        serializer.Serialize(writer, instance);
+        writer.Flush();
+    }
+
+    stream.Seek(0, SeekOrigin.Begin);
+    string contents = new StreamReader(stream).ReadToEnd();
+</code></pre>
+<p>And here's how to deserialize:</p>
+<pre><code class="lang-csharp">    TestClass deserialized;
+    MemoryStream contentStream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
+    using (XmlReader reader = XmlReader.Create(contentStream))
+    {
+        deserialized = (TestClass)serializer.Deserialize(reader);
+    }
+</code></pre>
+<h3 id="w-settings-overrides">w/ Settings Overrides</h3>
+<p>Additionally, ExtendedXmlSerializer also supports overrides for
+serialization and deserialization that allow you to pass in
+<code>XmlWriterSettings</code> and <code>XmlReaderSettings</code> respectively. Here's an example
+of this for serialization:</p>
+<pre><code class="lang-csharp">    IExtendedXmlSerializer serializer = new ConfigurationContainer().Create();
+    TestClass              instance   = new TestClass();
+    MemoryStream           stream     = new MemoryStream();
+    
+    string contents = serializer.Serialize(new XmlWriterSettings { /* ... */ }, stream, instance);
+</code></pre>
+<p>And for deserialization:</p>
+<pre><code class="lang-csharp">    MemoryStream contentStream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
+    TestClass deserialized = serializer.Deserialize&lt;TestClass&gt;(new XmlReaderSettings{ /* ... */ }, contentStream);
+</code></pre>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>
