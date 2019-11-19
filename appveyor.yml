@@ -45,9 +45,13 @@ on_success:
   - ps: |
         if(-Not $env:APPVEYOR_PULL_REQUEST_TITLE)
         {
+            git config user.email "ExtendedXmlSerializer@users.github.com"
+            git config user.name "Extended Xml Serializer AppVeyor Automation"
+
             git clone https://github.com/ExtendedXmlSerializer/Documentation.git -b gh-pages .wwwroot -q
+            git submodule update --init
             Copy-Item .wwroot/.git content/.wwwroot -recurse
-            CD _site
+            CD content/.wwwroot
             git add -A 2>&1
             git commit -m "AppVeyor Continuous Deployment Documentation Update v$($env:APPVEYOR_BUILD_VERSION).$($env:APPVEYOR_BUILD_NUMBER)" -q
             git push origin gh-pages -q
