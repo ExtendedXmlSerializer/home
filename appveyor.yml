@@ -37,7 +37,7 @@ build_script:
             & dotnet pack $env:BUILD_SOLUTION_PATH -c Release --version-suffix=$suffix
         }
 
-        if ($release)
+        if ($documentation)
         {
             Exec { & docfx $env:BUILD_DOCUMENTATION_PATH }
         }

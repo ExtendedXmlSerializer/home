@@ -12,7 +12,7 @@ if($release)
     Invoke-RestMethod -Method Put "https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/settings/build-number" -Body $json -Headers $headers
 }
 
-if($release -or $env:APPVEYOR_REPO_BRANCH  -eq "build")
+if($documentation)
 {
     # $key = ("-----BEGIN RSA PRIVATE KEY-----`n" +
     #        $env:DOCUMENTATION_KEY.Replace(' ', "`n") +
