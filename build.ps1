@@ -48,7 +48,7 @@ function Exec
     }
 }
 
-EnsurePsbuildInstalled
+# EnsurePsbuildInstalled
 
 $solution = ".\ExtendedXmlSerializer.sln"
 $release  = $env:APPVEYOR_REPO_TAG -eq "true" -and $env:APPVEYOR_REPO_TAG_NAME;

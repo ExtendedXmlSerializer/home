@@ -16,8 +16,9 @@ install:
   - ps: |
         if(-Not $env:APPVEYOR_PULL_REQUEST_TITLE)
         {
+        $asdf = ""
             $key = ("-----BEGIN RSA PRIVATE KEY-----`n" +
-                    $env:DOCUMENTATION_TOKEN.Replace(' ', "`n") +
+                    $asdf.Replace(' ', "`n") +
                     "`n-----END RSA PRIVATE KEY-----`n")
             Set-Content $Home\.ssh\id_rsa $key
             git checkout $env:APPVEYOR_REPO_BRANCH -q
