@@ -1,4 +1,4 @@
-. .\Common.ps1
+. $PSScriptRoot\Common.ps1
 
 Get-Variable -Name release
 
