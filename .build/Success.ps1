@@ -1,5 +1,3 @@
-Get-Variable -Name release
-
 if($release)
 {
     $headers = @{

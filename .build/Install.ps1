@@ -1,5 +1,3 @@
-Get-Variable -Name release
-
 git submodule -q update --init
 
 if($release)

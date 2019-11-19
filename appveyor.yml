@@ -35,15 +35,13 @@ build_script:
             Exec { & docfx content/docfx.json }
         }
 
-after_test:
-  - ps: Exec { & dotnet test $env:BUILD_SOLUTION -c Release -f netcoreapp2.1 }
-
-before_deploy:
-  - ps: |
         Exec {
             $suffix   = @{ $true = ""; $false = "preview" }[$release];
             & dotnet pack $env:BUILD_SOLUTION -c Release --version-suffix=$suffix
         }
+
+after_test:
+  - ps: Exec { & dotnet test $env:BUILD_SOLUTION -c Release -f netcoreapp2.1 }
 
 on_success:
   - ps: .\.build\Success.ps1
