@@ -38,7 +38,7 @@ build_script:
 after_test:
   - ps: Exec { & dotnet test $env:BUILD_SOLUTION -c Release -f netcoreapp2.1 }
 
-before_package:
+before_deploy:
   - ps: |
         Exec {
             $suffix   = @{ $true = ""; $false = "preview" }[$release];
