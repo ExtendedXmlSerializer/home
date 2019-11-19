@@ -20,3 +20,5 @@ function Exec
         throw ("Exec: " + $errorMessage)
     }
 }
+
+$release = $env:APPVEYOR_REPO_TAG -eq "true" -and $env:APPVEYOR_REPO_TAG_NAME;

@@ -1,5 +1,3 @@
-. $PSScriptRoot\Common.ps1
-
 git submodule -q update --init
 
 if($release)
