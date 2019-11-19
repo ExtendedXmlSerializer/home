@@ -29,15 +29,15 @@ dotnet_csproj:
 
 build_script:
   - ps: |
-        Exec { & dotnet build $env:BUILD_SOLUTION -c Release }
-        if ($release)
-        {
-            Exec { & docfx content/docfx.json }
-        }
-
+        # Exec { & dotnet build $env:BUILD_SOLUTION -c Release }
         Exec {
             $suffix   = @{ $true = ""; $false = "preview" }[$release];
             & dotnet pack $env:BUILD_SOLUTION -c Release --version-suffix=$suffix
+        }
+
+        if ($release)
+        {
+            Exec { & docfx content/docfx.json }
         }
 
 after_test:
