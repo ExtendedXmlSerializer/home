@@ -1,6 +1,8 @@
 version: '2.1.25.{build}'
 environment:
-  BUILD_SOLUTION: '.\ExtendedXmlSerializer.sln'
+  BUILD_SOLUTION_PATH: '.\ExtendedXmlSerializer.sln'
+  BUILD_DOCUMENTATION_PATH: '.\content\docfx.json'
+
   APPVEYOR_TOKEN:
     secure: xQR4THytwto+UTuQtpj5N5RcD4pDHIJVnahrbQ7Xqjs=
   DOCUMENTATION_KEY:
@@ -29,19 +31,19 @@ dotnet_csproj:
 
 build_script:
   - ps: |
-        # Exec { & dotnet build $env:BUILD_SOLUTION -c Release }
+        Exec { & dotnet build $env:BUILD_SOLUTION_PATH -c Release }
         Exec {
             $suffix   = @{ $true = ""; $false = "preview" }[$release];
-            & dotnet pack $env:BUILD_SOLUTION -c Release --version-suffix=$suffix
+            & dotnet pack $env:BUILD_SOLUTION_PATH -c Release --version-suffix=$suffix
         }
 
         if ($release)
         {
-            Exec { & docfx content/docfx.json }
+            Exec { & docfx $env:BUILD_DOCUMENTATION_PATH }
         }
 
 after_test:
-  - ps: Exec { & dotnet test $env:BUILD_SOLUTION -c Release -f netcoreapp2.1 }
+  - ps: Exec { & dotnet test $env:BUILD_SOLUTION_PATH -c Release -f netcoreapp2.1 }
 
 on_success:
   - ps: .\.build\Success.ps1
