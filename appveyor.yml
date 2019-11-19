@@ -15,7 +15,7 @@ pull_requests:
 install:
   - ps: |
 
-        $env:DOCUMENTATION_TOKEN.Replace(' ', "`n")
+        $env:APPVEYOR_TOKEN.Replace(' ', "`n")
         if(-Not $env:APPVEYOR_PULL_REQUEST_TITLE)
         {
         $asdf = ""
