@@ -2,7 +2,7 @@ version: '2.1.25.{build}'
 environment:
   APPVEYOR_TOKEN:
     secure: xQR4THytwto+UTuQtpj5N5RcD4pDHIJVnahrbQ7Xqjs=
-  DOCUMENTATION_TOKEN:
+  DOCUMENTATION_KEY:
     secure: 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
   DOCUMENTATION_EMAIL:
     secure: BM0MeF+PjbDw8L9zNCMmTIVDetKlC6PMtFTyyEuqwQw=
@@ -11,6 +11,7 @@ image: Visual Studio 2019
 branches:
   only:
   - master
+  - build
 pull_requests:
   do_not_increment_build_number: true
 
@@ -20,11 +21,31 @@ install:
         if(-Not $env:APPVEYOR_PULL_REQUEST_TITLE)
         {
             $key = ("-----BEGIN RSA PRIVATE KEY-----`n" +
-                    $env:DOCUMENTATION_TOKEN.Replace(' ', "`n") +
+                    $env:DOCUMENTATION_KEY.Replace(' ', "`n") +
                     "`n-----END RSA PRIVATE KEY-----`n")
             Set-Content $Home\.ssh\id_rsa $key
             git checkout $env:APPVEYOR_REPO_BRANCH -q
             choco install docfx -y
+
+            & docfx content/docfx.json
+            if ($lastexitcode -ne 0){
+              throw [System.Exception] "docfx build failed with exit code $lastexitcode."
+            }
+
+
+            git clone https://github.com/ExtendedXmlSerializer/Documentation.git -b gh-pages .wwwroot -q
+            Copy-Item .wwwroot/.git content/.wwwroot -recurse
+            CD content/.wwwroot
+            git config credential.helper store
+            # Add-Content "$HOME\.git-credentials" "https://$($env:DOCUMENTATION_TOKEN):x-oauth-basic@github.com`n"
+            git config user.email $env:DOCUMENTATION_EMAIL
+            git config user.name "Mike-EEE"
+            git config core.safecrlf false
+            git add -A 2>&1
+            git commit -m "AppVeyor Continuous Deployment Documentation Update v$($env:APPVEYOR_BUILD_VERSION).$($env:APPVEYOR_BUILD_NUMBER)" -q
+            git status
+            git remote show origin
+            git push origin gh-pages
         }
 
 dotnet_csproj:
@@ -38,23 +59,7 @@ after_build:
   - ps: |
         if(-Not $env:APPVEYOR_PULL_REQUEST_TITLE)
         {
-            & docfx content/docfx.json
-            if ($lastexitcode -ne 0){
-              throw [System.Exception] "docfx build failed with exit code $lastexitcode."
-            }
 
-
-            git clone https://github.com/ExtendedXmlSerializer/Documentation.git -b gh-pages .wwwroot -q
-            Copy-Item .wwwroot/.git content/.wwwroot -recurse
-            CD content/.wwwroot
-            git config user.email $env:DOCUMENTATION_EMAIL
-            git config user.name "Mike-EEE"
-            git config core.safecrlf false
-            git add -A 2>&1
-            git commit -m "AppVeyor Continuous Deployment Documentation Update v$($env:APPVEYOR_BUILD_VERSION).$($env:APPVEYOR_BUILD_NUMBER)" -q
-            git status
-            git remote show origin
-            git push origin gh-pages
         }
 
 on_success:
