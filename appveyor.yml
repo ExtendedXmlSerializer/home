@@ -40,12 +40,8 @@ after_build:
             if ($lastexitcode -ne 0){
               throw [System.Exception] "docfx build failed with exit code $lastexitcode."
             }
-        }
 
-on_success:
-  - ps: |
-        if(-Not $env:APPVEYOR_PULL_REQUEST_TITLE)
-        {
+
             git clone https://github.com/ExtendedXmlSerializer/Documentation.git -b gh-pages .wwwroot -q
             Copy-Item .wwwroot/.git content/.wwwroot -recurse
             CD content/.wwwroot
@@ -57,6 +53,13 @@ on_success:
             git status
             git remote show origin
             git push origin gh-pages
+        }
+
+on_success:
+  - ps: |
+        if(-Not $env:APPVEYOR_PULL_REQUEST_TITLE)
+        {
+
         }
 
 nuget:
