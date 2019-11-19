@@ -1,4 +1,5 @@
-git submodule -q update --init
+git submodule update --rebase --remote
+# git submodule -q update --init
 
 if($documentation)
 {

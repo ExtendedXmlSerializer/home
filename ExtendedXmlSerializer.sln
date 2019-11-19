@@ -5,12 +5,9 @@ VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2859812B-6D27-4A85-AC4A-8D3A55D9E3CD}"
 	ProjectSection(SolutionItems) = preProject
-		appveyor.yml = appveyor.yml
 		content\docfx.json = content\docfx.json
-		.build\Install.ps1 = .build\Install.ps1
 		LICENSE = LICENSE
 		README.md = README.md
-		.build\Success.ps1 = .build\Success.ps1
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendedXmlSerializer", "src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj", "{474C8CF3-1FBB-4507-9156-D5DC153F4EB8}"
