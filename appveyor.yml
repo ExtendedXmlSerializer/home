@@ -9,24 +9,17 @@ image: Visual Studio 2019
 branches:
   only:
   - master
-# skip_commits:
-#   files:
-#   - docs/**/*
 pull_requests:
   do_not_increment_build_number: true
 
 install:
   - ps: |
-        $key = ("-----BEGIN RSA PRIVATE KEY-----`n" +
-                $env:DOCUMENTATION_TOKEN.Replace(' ', "`n") +
-                "`n-----END RSA PRIVATE KEY-----`n")
-        Set-Content $Home\.ssh\id_rsa $key
-
-
-before_build:
-  - ps: |
         if(-Not $env:APPVEYOR_PULL_REQUEST_TITLE)
         {
+            $key = ("-----BEGIN RSA PRIVATE KEY-----`n" +
+                    $env:DOCUMENTATION_TOKEN.Replace(' ', "`n") +
+                    "`n-----END RSA PRIVATE KEY-----`n")
+            Set-Content $Home\.ssh\id_rsa $key
             git checkout $env:APPVEYOR_REPO_BRANCH -q
             choco install docfx -y
         }
@@ -37,7 +30,8 @@ dotnet_csproj:
   version_prefix: '{version}'
 build_script:
   - ps: .\Build.ps1
-on_success:
+
+after_build:
   - ps: |
         if(-Not $env:APPVEYOR_PULL_REQUEST_TITLE)
         {
@@ -45,11 +39,12 @@ on_success:
             if ($lastexitcode -ne 0){
               throw [System.Exception] "docfx build failed with exit code $lastexitcode."
             }
+        }
 
-            # git config --global credential.helper store
-            # Add-Content "$HOME\.git-credentials" "https://$($env:DOCUMENTATION_TOKEN):x-oauth-basic@github.com`n"
-            # git config --global user.email $env:DOCUMENTATION_EMAIL
-            # git config --global user.name $env:DOCUMENTATION_USERNAME
+on_success:
+  - ps: |
+        if(-Not $env:APPVEYOR_PULL_REQUEST_TITLE)
+        {
             git clone https://github.com/ExtendedXmlSerializer/Documentation.git -b gh-pages .wwwroot -q
             Copy-Item .wwroot/.git content/.wwwroot -recurse
             CD _site
