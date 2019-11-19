@@ -21,6 +21,5 @@ function Exec
     }
 }
 
-$release = $env:APPVEYOR_REPO_TAG -eq "true" -and $env:APPVEYOR_REPO_TAG_NAME
-
-$documentation = $release -or $env:APPVEYOR_REPO_BRANCH  -eq "build" # TODO: remove specialized condition.
+$release       = $env:APPVEYOR_REPO_TAG -eq "true" -and $env:APPVEYOR_REPO_TAG_NAME
+$documentation = $release #-or $env:APPVEYOR_REPO_BRANCH  -eq "build"
