@@ -16,14 +16,14 @@ install:
   - ps: |
         if(-Not $env:APPVEYOR_PULL_REQUEST_TITLE)
         {
+            git submodule update --init
+
             $key = ("-----BEGIN RSA PRIVATE KEY-----`n" +
                     $env:DOCUMENTATION_TOKEN.Replace(' ', "`n") +
                     "`n-----END RSA PRIVATE KEY-----`n")
             Set-Content $Home\.ssh\id_rsa $key
             git checkout $env:APPVEYOR_REPO_BRANCH -q
             choco install docfx -y
-
-            git submodule update --init
         }
 
 dotnet_csproj:
