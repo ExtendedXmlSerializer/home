@@ -22,6 +22,8 @@ install:
             Set-Content $Home\.ssh\id_rsa $key
             git checkout $env:APPVEYOR_REPO_BRANCH -q
             choco install docfx -y
+
+            git submodule update --init
         }
 
 dotnet_csproj:
@@ -49,12 +51,11 @@ on_success:
             git config user.name "Extended Xml Serializer AppVeyor Automation"
 
             git clone https://github.com/ExtendedXmlSerializer/Documentation.git -b gh-pages .wwwroot -q
-            git submodule update --init
-            Copy-Item .wwroot/.git content/.wwwroot -recurse
+            Copy-Item .wwwroot/.git content/.wwwroot -recurse
             CD content/.wwwroot
             git add -A 2>&1
             git commit -m "AppVeyor Continuous Deployment Documentation Update v$($env:APPVEYOR_BUILD_VERSION).$($env:APPVEYOR_BUILD_NUMBER)" -q
-            git push origin gh-pages -q
+            # git push origin gh-pages -q
         }
 
 nuget:
