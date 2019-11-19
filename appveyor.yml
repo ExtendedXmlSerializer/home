@@ -3,6 +3,9 @@ environment:
   BUILD_SOLUTION_PATH: '.\ExtendedXmlSerializer.sln'
   BUILD_DOCUMENTATION_PATH: '.\content\docfx.json'
 
+  APPVEYOR_RDP_PASSWORD:
+    secure: 0mv2CQlDK4I7j6Nn7inCj5zMgVMEqeStux2+snU7d3y5hOy3cxl91z/09MT9SMh6
+
   APPVEYOR_TOKEN:
     secure: xQR4THytwto+UTuQtpj5N5RcD4pDHIJVnahrbQ7Xqjs=
   DOCUMENTATION_KEY:
