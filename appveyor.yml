@@ -51,7 +51,7 @@ nuget:
   disable_publish_on_pr: true
 artifacts:
 - path: src\**\*.nupkg
-  name: 'Preview Package {version}'
+  name: 'Preview Package $(APPVEYOR_BUILD_VERSION)'
 deploy:
 - provider: NuGet
   name: production
