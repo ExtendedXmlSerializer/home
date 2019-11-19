@@ -16,8 +16,6 @@ install:
   - ps: |
         if(-Not $env:APPVEYOR_PULL_REQUEST_TITLE)
         {
-            git submodule update --init
-
             $key = ("-----BEGIN RSA PRIVATE KEY-----`n" +
                     $env:DOCUMENTATION_TOKEN.Replace(' ', "`n") +
                     "`n-----END RSA PRIVATE KEY-----`n")
@@ -37,6 +35,7 @@ after_build:
   - ps: |
         if(-Not $env:APPVEYOR_PULL_REQUEST_TITLE)
         {
+            git submodule -q update --init
             & docfx content/docfx.json
             if ($lastexitcode -ne 0){
               throw [System.Exception] "docfx build failed with exit code $lastexitcode."
@@ -47,12 +46,12 @@ on_success:
   - ps: |
         if(-Not $env:APPVEYOR_PULL_REQUEST_TITLE)
         {
-            git config user.email "ExtendedXmlSerializer@users.github.com"
-            git config user.name "Extended Xml Serializer AppVeyor Automation"
-
             git clone https://github.com/ExtendedXmlSerializer/Documentation.git -b gh-pages .wwwroot -q
             Copy-Item .wwwroot/.git content/.wwwroot -recurse
             CD content/.wwwroot
+            git config user.email "ExtendedXmlSerializer@users.github.com"
+            git config user.name "Extended Xml Serializer AppVeyor Automation"
+            git config core.autocrlf true
             git add -A 2>&1
             git commit -m "AppVeyor Continuous Deployment Documentation Update v$($env:APPVEYOR_BUILD_VERSION).$($env:APPVEYOR_BUILD_NUMBER)" -q
             # git push origin gh-pages -q
