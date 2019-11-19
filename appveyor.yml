@@ -18,11 +18,10 @@ branches:
 pull_requests:
   do_not_increment_build_number: true
 
+init:
+  - ps: . .\.build\Common.ps1
 install:
-  - ps: |
-        . .\.build\Common.ps1
-        Get-Variable -Name release
-        .\.build\Install.ps1
+  - ps: .\.build\Install.ps1
 
 dotnet_csproj:
   patch: true
