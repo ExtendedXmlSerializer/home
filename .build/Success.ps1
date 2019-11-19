@@ -1,3 +1,5 @@
+. .\Common.ps1
+
 Get-Variable -Name release
 
 if($release)
