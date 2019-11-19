@@ -18,7 +18,7 @@ if($documentation)
     #        $env:DOCUMENTATION_KEY.Replace(' ', "`n") +
     #        "`n-----END RSA PRIVATE KEY-----`n")
     # Set-Content $Home\.ssh\id_rsa $key
-    git clone https://github.com/ExtendedXmlSerializer/Documentation.git -b gh-pages .wwwroot -q
+    git clone https://github.com/ExtendedXmlSerializer/documentation.git -b gh-pages .wwwroot -q
     Copy-Item .wwwroot/.git content/.wwwroot -recurse
     CD content/.wwwroot
     git config credential.helper store
