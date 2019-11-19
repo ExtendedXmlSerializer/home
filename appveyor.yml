@@ -54,8 +54,9 @@ on_success:
             git config core.safecrlf false
             git add -A 2>&1
             git commit -m "AppVeyor Continuous Deployment Documentation Update v$($env:APPVEYOR_BUILD_VERSION).$($env:APPVEYOR_BUILD_NUMBER)" -q
+            git status
             git remote show origin
-            # git push origin gh-pages
+            git push origin gh-pages
         }
 
 nuget:
