@@ -21,11 +21,13 @@ notifications:
   - provider: GitHubPullRequest
     template: |
       {{#passed}}:white_check_mark:{{/passed}}{{#failed}}:x:{{/failed}} [Build {{&projectName}} {{buildVersion}} {{status}}]({{buildUrl}}) (commit {{commitUrl}} by @{{&commitAuthorUsername}})
-      
+
       {{#passed}}
-      Install it by running the following command in Package Manager Console:
-      
-      `Install-Package ExtendedXmlSerializer -Version {{buildVersion}} -Source https://ci.appveyor.com/nuget/extendedxmlserializer-preview`      
+      Install it by running the following command in [Package Manager Console](https://docs.microsoft.com/en-us/nuget/consume-packages/install-use-packages-powershell):
+
+      ```
+      Install-Package ExtendedXmlSerializer -Version {{buildVersion}} -Source https://ci.appveyor.com/nuget/extendedxmlserializer-preview
+      ```
       {{/passed}}
     on_build_success: true
 pull_requests:
@@ -43,11 +45,7 @@ dotnet_csproj:
 build_script:
   - ps: |
         Exec { & dotnet build $env:BUILD_SOLUTION_PATH -c Release }
-        Exec {
-            $preview = -Not $env:APPVEYOR_PULL_REQUEST_TITLE
-            $suffix   = @{ $true = "preview"; $false = "" }[$preview];
-            & dotnet pack $env:BUILD_SOLUTION_PATH -c Release --version-suffix=$suffix
-        }
+        Exec { & dotnet pack $env:BUILD_SOLUTION_PATH -c Release }
 
         if ($documentation)
         {
