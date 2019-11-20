@@ -72,3 +72,12 @@ deploy:
   on:
     branch: master
     appveyor_repo_tag: true
+- provider: GitHub
+  release: ExtendedXmlSerializer v$(appveyor_build_version)
+  description: 'Release description'
+  artifact: src\**\*.nupkg
+  draft: true
+  prerelease: true
+  on:
+    branch: master                 # release from master branch only
+    APPVEYOR_REPO_TAG: false        # deploy on tag push only
