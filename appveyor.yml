@@ -17,6 +17,17 @@ branches:
   - master
   # - documentation-debug
 
+notifications:
+  - provider: GitHubPullRequest
+    template: |
+      {{#passed}}:white_check_mark:{{/passed}}{{#failed}}:x:{{/failed}} [Build {{&projectName}} {{buildVersion}} {{status}}]({{buildUrl}}) (commit {{commitUrl}} by @{{&commitAuthorUsername}})
+      
+      {{#passed}}
+      Install it by running the following command in Package Manager Console:
+      
+      `Install-Package ExtendedXmlSerializer -Version {{buildVersion}} -Source https://ci.appveyor.com/nuget/extendedxmlserializer-preview`      
+      {{/passed}}
+    on_build_success: true
 pull_requests:
   do_not_increment_build_number: true
 
