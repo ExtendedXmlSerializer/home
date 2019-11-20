@@ -19,9 +19,8 @@ if($documentation)
             "`n-----END RSA PRIVATE KEY-----`n")
     Set-Content "$Home\.ssh\id_rsa" $key
     git clone "git@github.com:ExtendedXmlSerializer/documentation.git" -b gh-pages .wwwroot -q
-    Copy-Item .wwwroot/.git content/.wwwroot -recurse
-    CD content/.wwwroot
-    #git config credential.helper store
+    Copy-Item .wwwroot/.git documentation/.wwwroot -recurse
+    CD documentation/.wwwroot
     git config user.email $env:DOCUMENTATION_EMAIL
     git config user.name $env:DOCUMENTATION_USER
     git config core.safecrlf false
