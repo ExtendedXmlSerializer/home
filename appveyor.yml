@@ -2,7 +2,6 @@ version: '2.1.25.{build}'
 environment:
   BUILD_SOLUTION_PATH: '.\ExtendedXmlSerializer.sln'
   BUILD_DOCUMENTATION_PATH: '.\content\docfx.json'
-
   APPVEYOR_TOKEN:
     secure: xQR4THytwto+UTuQtpj5N5RcD4pDHIJVnahrbQ7Xqjs=
   DOCUMENTATION_KEY:
@@ -16,7 +15,8 @@ image: Visual Studio 2019
 branches:
   only:
   - master
-  - build
+  - documentation-debug
+
 pull_requests:
   do_not_increment_build_number: true
 
