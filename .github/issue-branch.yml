@@ -1,0 +1,9 @@
+branchName: tiny
+
+branches:
+  - label: enhancement
+    prefix: issues/
+  - label: bug
+    prefix: issues/
+  - label: other
+    prefix: issues/
