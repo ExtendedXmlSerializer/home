@@ -15,7 +15,7 @@ image: Visual Studio 2019
 branches:
   only:
   - master
-  - documentation-debug
+  # - documentation-debug
 
 pull_requests:
   do_not_increment_build_number: true
@@ -51,7 +51,7 @@ on_success:
 
 nuget:
   project_feed: true
-  disable_publish_on_pr: true
+  disable_publish_on_pr: false
 artifacts:
 - path: src\**\*.nupkg
   name: 'Preview Package $(APPVEYOR_BUILD_VERSION)'
