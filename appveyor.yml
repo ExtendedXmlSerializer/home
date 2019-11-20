@@ -33,7 +33,8 @@ build_script:
   - ps: |
         Exec { & dotnet build $env:BUILD_SOLUTION_PATH -c Release }
         Exec {
-            $suffix   = @{ $true = ""; $false = "preview" }[$release];
+            $preview = -Not $env:APPVEYOR_PULL_REQUEST_TITLE
+            $suffix   = @{ $true = "preview"; $false = "" }[$preview];
             & dotnet pack $env:BUILD_SOLUTION_PATH -c Release --version-suffix=$suffix
         }
 
