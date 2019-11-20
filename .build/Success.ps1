@@ -14,19 +14,20 @@ if($release)
 
 if($documentation)
 {
-    # $key = ("-----BEGIN RSA PRIVATE KEY-----`n" +
-    #        $env:DOCUMENTATION_KEY.Replace(' ', "`n") +
-    #        "`n-----END RSA PRIVATE KEY-----`n")
-    # Set-Content $Home\.ssh\id_rsa $key
+    $key = ("-----BEGIN RSA PRIVATE KEY-----`n" +
+            $env:DOCUMENTATION_KEY.Replace(' ', "`n") +
+            "`n-----END RSA PRIVATE KEY-----`n")
+    Set-Content "$HOME\.ssh\id_rsa" $key
     git clone https://github.com/ExtendedXmlSerializer/documentation.git -b gh-pages .wwwroot -q
     Copy-Item .wwwroot/.git content/.wwwroot -recurse
     CD content/.wwwroot
-    git config credential.helper store
-    Add-Content "$HOME\.git-credentials" "https://$($env:DOCUMENTATION_TOKEN):x-oauth-basic@github.com`n"
+    #git config credential.helper store
+    #Add-Content "$HOME\.git-credentials" "https://$($env:DOCUMENTATION_TOKEN):x-oauth-basic@github.com`n"
     git config user.email $env:DOCUMENTATION_EMAIL
     git config user.name $env:DOCUMENTATION_USER
     git config core.safecrlf false
     git add -A 2>&1
     git commit -m "AppVeyor Continuous Deployment Documentation Update v$($env:APPVEYOR_BUILD_VERSION)" -q
+    iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
     git push origin gh-pages -q
 }
