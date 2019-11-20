@@ -1,7 +1,7 @@
 version: '2.1.25.{build}'
 environment:
   BUILD_SOLUTION_PATH: '.\ExtendedXmlSerializer.sln'
-  BUILD_DOCUMENTATION_PATH: '.\content\docfx.json'
+  BUILD_DOCUMENTATION_PATH: '.\documentation\docfx.json'
   APPVEYOR_TOKEN:
     secure: xQR4THytwto+UTuQtpj5N5RcD4pDHIJVnahrbQ7Xqjs=
   DOCUMENTATION_KEY:
