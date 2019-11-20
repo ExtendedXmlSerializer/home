@@ -78,6 +78,8 @@ deploy:
   artifact: src\**\*.nupkg
   draft: true
   prerelease: true
+  auth_token:
+    secure: AIMPdWIjySNICkwenfSFusr9QvBjPq0GdN7GL5UpOrVQFAeT+coVCmJL4JH/K1HL
   on:
     branch: master                 # release from master branch only
     APPVEYOR_REPO_TAG: false        # deploy on tag push only
