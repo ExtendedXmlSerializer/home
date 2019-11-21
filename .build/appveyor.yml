@@ -59,15 +59,22 @@ after_test:
 on_success:
   - ps: .\.build\Success.ps1
 
-before_deploy:
-  - ps: |
-        Set-AppveyorBuildVariable "DEPLOY_RELEASE_DESCRIPTION" "Hello World!"
 nuget:
   project_feed: true
   disable_publish_on_pr: false
 artifacts:
 - path: src\**\*.nupkg
   name: 'Preview Package $(APPVEYOR_BUILD_VERSION)'
+
+before_deploy:
+  - ps: |
+        Set-AppveyorBuildVariable "DEPLOY_RELEASE_DESCRIPTION" "Hello World!"
+        
+        if (-Not $env:APPVEYOR_REPO_TAG_NAME)
+        {
+            Write-Host "Assigning"
+            Set-AppveyorBuildVariable "APPVEYOR_REPO_TAG_NAME" $env:appveyor_build_version
+        }
 deploy:
 - provider: NuGet
   name: production
@@ -90,9 +97,9 @@ deploy:
     appveyor_repo_tag: true
     
 - provider: GitHub
-  tag: 'Testing: $(appveyor_build_version)'
+  tag: $(APPVEYOR_REPO_TAG_NAME)
   release: ExtendedXmlSerializer v$(appveyor_build_version)
-  description: 'Again: $(DEPLOY_RELEASE_DESCRIPTION)'
+  description: $(DEPLOY_RELEASE_DESCRIPTION)
   artifact: /.*\.nupkg/
   draft: true
   prerelease: true
