@@ -1,0 +1,10 @@
+feature: issues/feat/*
+fix: issues/fix/*
+chore: issues/chore/*
+docs: issues/docs/*
+style: issues/style/*
+refactor: issues/refactor/*
+perf: issues/perf/*
+test: issues/test/*
+ci: issues/ci/*
+revert: issues/revert/*

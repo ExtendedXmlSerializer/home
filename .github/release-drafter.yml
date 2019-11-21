@@ -1,0 +1,23 @@
+name-template: 'ExtendedXmlSerializer v$NEXT_PATCH_VERSION ⚙'
+tag-template: 'v$NEXT_PATCH_VERSION'
+categories:
+  - title: '😱 Breaking Changes 💥'
+    labels:
+      - breaking change
+  - title: '🚀 Features'
+    labels:
+      - enhancement
+  - title: '🐰 Performance'
+    labels:
+      - performance
+  - title: '🐛 Bug Fixes'
+    labels:
+      - bug
+  - title: '🧰 Maintenance'
+    label:
+      - housekeeping
+      - refactoring
+template: |
+  ## What's New
+
+  $CHANGES
