@@ -59,7 +59,7 @@ after_test:
 on_success:
   - ps: .\.build\Success.ps1
 
-before_deploy: 
+before_deploy:
   - ps: [System.Environment]::SetEnvironmentVariable("DEPLOY_RELEASE_DESCRIPTION", "Hello World!", "User")
 
 nuget:
