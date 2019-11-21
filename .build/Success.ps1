@@ -32,5 +32,5 @@ if($documentation)
 if ($env:DEPLOY_RELEASE_URL)
 {
 	Write-Host "Deleting previous draft release: $env:DEPLOY_RELEASE_URL"
-	Invoke-RestMethod -Method DELETE -Headers @{ 'Authorization'="token $env:DEPLOY_RELEASE_URL" } -Uri $env:DEPLOY_RELEASE_URL
+	Invoke-RestMethod -Method DELETE -Headers @{ 'Authorization'="token $env:API_GITHUB_TOKEN" } -Uri $env:DEPLOY_RELEASE_URL
 }
