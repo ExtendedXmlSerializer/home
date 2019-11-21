@@ -1,3 +1,5 @@
+Install-Module -Name PowerShellForGitHub
+
 if($documentation)
 {
     git checkout $env:APPVEYOR_REPO_BRANCH -q
