@@ -2,14 +2,14 @@ version: '2.1.25.{build}'
 environment:
   BUILD_SOLUTION_PATH: '.\ExtendedXmlSerializer.sln'
   BUILD_DOCUMENTATION_PATH: '.\documentation\docfx.json'
-  APPVEYOR_TOKEN:
+  API_GITHUB_TOKEN:
+    secure: TwIPP2tyN8poDWztk5Iw7C+w5yd8UfeQdg91B/O4gEUkVtyQwbPQpJYdHH3PnAWs
+  API_APPVEYOR_TOKEN:
     secure: xQR4THytwto+UTuQtpj5N5RcD4pDHIJVnahrbQ7Xqjs=
-  DOCUMENTATION_KEY:
+  DEPLOY_KEY:
     secure: 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
-  DOCUMENTATION_USER: Extended Xml Serializer AppVeyor Automation
-  DOCUMENTATION_EMAIL: ExtendedXmlSerializer@users.noreply.github.com
-  DOCUMENTATION_TOKEN:
-    secure: L9NuKZzr7PapMaa2eTB3ng6CkPbGDcxcXBHEU21+8gfXvrINWg1fV9S0NhvTttr9
+  DEPLOY_USER: Extended Xml Serializer AppVeyor Automation
+  DEPLOY_EMAIL: ExtendedXmlSerializer@users.noreply.github.com
 
 image: Visual Studio 2019
 branches:
@@ -56,15 +56,28 @@ build_script:
 after_test:
   - ps: Exec { & dotnet test $env:BUILD_SOLUTION_PATH -c Release -f netcoreapp2.1 }
 
-on_success:
-  - ps: .\.build\Success.ps1
-
 nuget:
   project_feed: true
   disable_publish_on_pr: false
 artifacts:
 - path: src\**\*.nupkg
   name: 'Preview Package $(APPVEYOR_BUILD_VERSION)'
+
+before_deploy:
+  - ps: |
+        if ($release)
+        {
+            $view = Get-GitHubRelease -OwnerName ExtendedXmlSerializer -RepositoryName ExtendedXmlSerializer -AccessToken $env:API_GITHUB_TOKEN | Where-Object {$_.tag_name.StartsWith("untagged-")} | Sort-Object created_at -Descending | Select-Object url, body -First 1
+            if ($view)
+            {
+                Set-AppveyorBuildVariable "DEPLOY_RELEASE_DESCRIPTION" $view.body
+                Set-AppveyorBuildVariable "DEPLOY_RELEASE_URL" $view.url
+            }
+            
+            $name = @{ $true = $env:appveyor_build_version; $false = $env:APPVEYOR_REPO_TAG_NAME }[-Not $env:APPVEYOR_REPO_TAG_NAME]
+            Write-Host "Assigning Build Tag Name: $name"        
+            Set-AppveyorBuildVariable "DEPLOY_TAG_NAME" $name
+        }
 deploy:
 - provider: NuGet
   name: production
@@ -74,27 +87,16 @@ deploy:
     branch: master
     appveyor_repo_tag: true
 - provider: GitHub
-  tag: v$(appveyor_build_version)
+  tag: v$(DEPLOY_TAG_NAME)
   release: ExtendedXmlSerializer v$(appveyor_build_version)
-  description: 'Release description'
+  description: $(DEPLOY_RELEASE_DESCRIPTION)
   artifact: /.*\.nupkg/
-  draft: true
-  prerelease: true
-  auth_token:
-    secure: AIMPdWIjySNICkwenfSFusr9QvBjPq0GdN7GL5UpOrVQFAeT+coVCmJL4JH/K1HL
+  draft: false
+  prerelease: false
+  auth_token: $(API_GITHUB_TOKEN)
   on:
     branch: master
     appveyor_repo_tag: true
     
-- provider: GitHub
-  tag: v$(appveyor_build_version)
-  release: ExtendedXmlSerializer v$(appveyor_build_version)
-  description: 'Release description'
-  artifact: /.*\.nupkg/
-  draft: true
-  prerelease: true
-  auth_token:
-    secure: AIMPdWIjySNICkwenfSFusr9QvBjPq0GdN7GL5UpOrVQFAeT+coVCmJL4JH/K1HL
-  on:
-    branch: debug/deployment                 # release from master branch only
-    appveyor_repo_tag: false        # deploy on tag push only
+on_success:
+  - ps: .\.build\Success.ps1

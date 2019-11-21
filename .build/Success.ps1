@@ -1,7 +1,7 @@
 if($release)
 {
     $headers = @{
-        "Authorization" = "Bearer $env:APPVEYOR_TOKEN"
+        "Authorization" = "Bearer $env:API_APPVEYOR_TOKEN"
         "Content-type" = "application/json"
         "Accept" = "application/json"
     }
@@ -15,16 +15,22 @@ if($release)
 if($documentation)
 {
     $key = ("-----BEGIN RSA PRIVATE KEY-----`n" +
-            $env:DOCUMENTATION_KEY.Replace(' ', "`n") +
+            $env:DEPLOY_KEY.Replace(' ', "`n") +
             "`n-----END RSA PRIVATE KEY-----`n")
     Set-Content "$Home\.ssh\id_rsa" $key
     git clone "git@github.com:ExtendedXmlSerializer/documentation.git" -b gh-pages .wwwroot -q
     Copy-Item .wwwroot/.git documentation/.wwwroot -recurse
     CD documentation/.wwwroot
-    git config user.email $env:DOCUMENTATION_EMAIL
-    git config user.name $env:DOCUMENTATION_USER
+    git config user.email $env:DEPLOY_EMAIL
+    git config user.name $env:DEPLOY_USER
     git config core.safecrlf false
     git add -A 2>&1
     git commit -m "AppVeyor Continuous Deployment Documentation Update v$($env:APPVEYOR_BUILD_VERSION)" -q
     git push origin gh-pages -q
+}
+
+if ($env:DEPLOY_RELEASE_URL)
+{
+	Write-Host "Deleting previous draft release: $env:DEPLOY_RELEASE_URL"
+	Invoke-RestMethod -Method DELETE -Headers @{ 'Authorization'="token $env:API_GITHUB_TOKEN" } -Uri $env:DEPLOY_RELEASE_URL
 }
