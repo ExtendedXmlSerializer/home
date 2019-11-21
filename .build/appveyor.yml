@@ -15,7 +15,8 @@ image: Visual Studio 2019
 branches:
   only:
   - master
-  # - documentation-debug
+  - debug/documentation
+  - debug/deployment
 
 notifications:
   - provider: GitHubPullRequest
@@ -73,13 +74,27 @@ deploy:
     branch: master
     appveyor_repo_tag: true
 - provider: GitHub
+  tag: v$(appveyor_build_version)
   release: ExtendedXmlSerializer v$(appveyor_build_version)
   description: 'Release description'
-  artifact: src\**\*.nupkg
+  artifact: /.*\.nupkg/
   draft: true
   prerelease: true
   auth_token:
     secure: AIMPdWIjySNICkwenfSFusr9QvBjPq0GdN7GL5UpOrVQFAeT+coVCmJL4JH/K1HL
   on:
-    branch: master                 # release from master branch only
-    APPVEYOR_REPO_TAG: false        # deploy on tag push only
+    branch: master
+    appveyor_repo_tag: true
+    
+- provider: GitHub
+  tag: v$(appveyor_build_version)
+  release: ExtendedXmlSerializer v$(appveyor_build_version)
+  description: 'Release description'
+  artifact: /.*\.nupkg/
+  draft: true
+  prerelease: true
+  auth_token:
+    secure: AIMPdWIjySNICkwenfSFusr9QvBjPq0GdN7GL5UpOrVQFAeT+coVCmJL4JH/K1HL
+  on:
+    branch: debug/deployment                 # release from master branch only
+    appveyor_repo_tag: false        # deploy on tag push only
