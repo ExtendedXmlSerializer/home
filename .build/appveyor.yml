@@ -59,6 +59,9 @@ after_test:
 on_success:
   - ps: .\.build\Success.ps1
 
+before_deploy: 
+  - ps: [Environment]::SetEnvironmentVariable("DEPLOY_RELEASE_DESCRIPTION", "Hello World!", "User")
+
 nuget:
   project_feed: true
   disable_publish_on_pr: false
@@ -87,9 +90,9 @@ deploy:
     appveyor_repo_tag: true
     
 - provider: GitHub
-  tag: v$(appveyor_build_version)
+  tag: $(APPVEYOR_REPO_TAG_NAME)
   release: ExtendedXmlSerializer v$(appveyor_build_version)
-  description: 'Release description'
+  description: $(DEPLOY_RELEASE_DESCRIPTION)
   artifact: /.*\.nupkg/
   draft: true
   prerelease: true
