@@ -61,7 +61,7 @@ on_success:
 
 before_deploy:
   - ps: |
-        [System.Environment]::SetEnvironmentVariable("DEPLOY_RELEASE_DESCRIPTION", "Hello World!", "Machine")
+        Set-AppveyorBuildVariable "DEPLOY_RELEASE_DESCRIPTION" "Hello World!"
 nuget:
   project_feed: true
   disable_publish_on_pr: false
