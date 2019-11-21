@@ -2,8 +2,22 @@ branchName: tiny
 
 branches:
   - label: enhancement
-    prefix: issues/
+    prefix: issues/feat/
   - label: bug
-    prefix: issues/
-  - label: other
-    prefix: issues/
+    prefix: issues/fix/
+  - label: documentation
+    prefix: issues/docs/
+  - label: style
+    prefix: issues/style/
+  - label: refactoring
+    prefix: issues/refactor/
+  - label: preformance
+    prefix: issues/perf/
+  - label: testing
+    prefix: issues/test/
+  - label: continuous integration
+    prefix: issues/ci/
+  - label: housekeeping
+    prefix: issues/chore/
+  - label: revert
+    prefix: issues/revert/
