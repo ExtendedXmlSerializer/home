@@ -31,5 +31,6 @@ if($documentation)
 
 if ($env:DEPLOY_RELEASE_URL)
 {
-	Invoke-RestMethod -Method DELETE -Headers @{ 'Authorization'="token $env:DEPLOY_RELEASE_URL" } -Uri $view.url
+	Write-Host "Deleting previous draft release: $env:DEPLOY_RELEASE_URL"
+	Invoke-RestMethod -Method DELETE -Headers @{ 'Authorization'="token $env:DEPLOY_RELEASE_URL" } -Uri $env:DEPLOY_RELEASE_URL
 }
