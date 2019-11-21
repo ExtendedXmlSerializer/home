@@ -1,4 +1,7 @@
-Install-Module -Name PowerShellForGitHub
+# if ($release)
+{
+	Install-Module -Name PowerShellForGitHub
+}
 
 if($documentation)
 {
