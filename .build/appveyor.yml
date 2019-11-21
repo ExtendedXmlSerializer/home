@@ -56,9 +56,6 @@ build_script:
 after_test:
   - ps: Exec { & dotnet test $env:BUILD_SOLUTION_PATH -c Release -f netcoreapp2.1 }
 
-on_success:
-  - ps: .\.build\Success.ps1
-
 nuget:
   project_feed: true
   disable_publish_on_pr: false
@@ -68,18 +65,19 @@ artifacts:
 
 before_deploy:
   - ps: |
-        $view = Get-GitHubRelease -OwnerName ExtendedXmlSerializer -RepositoryName ExtendedXmlSerializer -AccessToken $env:API_GITHUB_TOKEN | Where-Object {$_.tag_name.StartsWith("untagged-")} | Sort-Object created_at -Descending | Select-Object url, body -First 1
-        if ($view)
+        if ($release)
         {
-            Set-AppveyorBuildVariable "DEPLOY_RELEASE_DESCRIPTION" $view.body
-            Set-AppveyorBuildVariable "DEPLOY_RELEASE_URL" $view.url
+            $view = Get-GitHubRelease -OwnerName ExtendedXmlSerializer -RepositoryName ExtendedXmlSerializer -AccessToken $env:API_GITHUB_TOKEN | Where-Object {$_.tag_name.StartsWith("untagged-")} | Sort-Object created_at -Descending | Select-Object url, body -First 1
+            if ($view)
+            {
+                Set-AppveyorBuildVariable "DEPLOY_RELEASE_DESCRIPTION" $view.body
+                Set-AppveyorBuildVariable "DEPLOY_RELEASE_URL" $view.url
+            }
             
-            Write-Host "The Draft URL to delete is: $env:DEPLOY_RELEASE_URL"
+            $name = @{ $true = $env:appveyor_build_version; $false = $env:APPVEYOR_REPO_TAG_NAME }[-Not $env:APPVEYOR_REPO_TAG_NAME]
+            Write-Host "Assigning Build Tag Name: $name"        
+            Set-AppveyorBuildVariable "DEPLOY_TAG_NAME" $name
         }
-        
-        $name = @{ $true = $env:appveyor_build_version; $false = $env:APPVEYOR_REPO_TAG_NAME }[-Not $env:APPVEYOR_REPO_TAG_NAME]
-        Write-Host "Assigning Build Tag Name: $name"        
-        Set-AppveyorBuildVariable "DEPLOY_TAG_NAME" $name
 deploy:
 - provider: NuGet
   name: production
@@ -89,26 +87,16 @@ deploy:
     branch: master
     appveyor_repo_tag: true
 - provider: GitHub
-  tag: v$(appveyor_build_version)
-  release: ExtendedXmlSerializer v$(appveyor_build_version)
-  description: 'Release description'
-  artifact: /.*\.nupkg/
-  draft: true
-  prerelease: true
-  auth_token:
-    secure: AIMPdWIjySNICkwenfSFusr9QvBjPq0GdN7GL5UpOrVQFAeT+coVCmJL4JH/K1HL
-  on:
-    branch: master
-    appveyor_repo_tag: true
-    
-- provider: GitHub
   tag: v$(DEPLOY_TAG_NAME)
   release: ExtendedXmlSerializer v$(appveyor_build_version)
   description: $(DEPLOY_RELEASE_DESCRIPTION)
   artifact: /.*\.nupkg/
-  draft: true
-  prerelease: true
+  draft: false
+  prerelease: false
   auth_token: $(API_GITHUB_TOKEN)
   on:
-    branch: debug/deployment                 # release from master branch only
-    appveyor_repo_tag: false        # deploy on tag push only
+    branch: master
+    appveyor_repo_tag: true
+    
+on_success:
+  - ps: .\.build\Success.ps1

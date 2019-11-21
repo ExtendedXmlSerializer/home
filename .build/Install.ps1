@@ -1,9 +1,7 @@
 if ($release)
 {
-
+	Install-Module -Name PowerShellForGitHub
 }
-
-Install-Module -Name PowerShellForGitHub
 
 if($documentation)
 {
