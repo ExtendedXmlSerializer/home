@@ -60,8 +60,8 @@ on_success:
   - ps: .\.build\Success.ps1
 
 before_deploy:
-  - ps: [System.Environment]::SetEnvironmentVariable("DEPLOY_RELEASE_DESCRIPTION", "Hello World!", "User")
-
+  - ps: |
+        [System.Environment]::SetEnvironmentVariable("DEPLOY_RELEASE_DESCRIPTION", "Hello World!", "User")
 nuget:
   project_feed: true
   disable_publish_on_pr: false
