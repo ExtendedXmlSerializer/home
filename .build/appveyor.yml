@@ -70,11 +70,9 @@ before_deploy:
   - ps: |
         Set-AppveyorBuildVariable "DEPLOY_RELEASE_DESCRIPTION" "Hello World!"
         
-        if (-Not $env:APPVEYOR_REPO_TAG_NAME)
-        {
-            Write-Host "Assigning"
-            Set-AppveyorBuildVariable "APPVEYOR_REPO_TAG_NAME" $env:appveyor_build_version
-        }
+        $name = @{ $true = $env:appveyor_build_version; $false = $env:APPVEYOR_REPO_TAG_NAME }[-Not $env:APPVEYOR_REPO_TAG_NAME]
+        Write-Host "Assigning Build Tag Name: $name"        
+        Set-AppveyorBuildVariable "DEPLOY_TAG_NAME" $name
 deploy:
 - provider: NuGet
   name: production
@@ -97,7 +95,7 @@ deploy:
     appveyor_repo_tag: true
     
 - provider: GitHub
-  tag: $(APPVEYOR_REPO_TAG_NAME)
+  tag: v$(DEPLOY_TAG_NAME)
   release: ExtendedXmlSerializer v$(appveyor_build_version)
   description: $(DEPLOY_RELEASE_DESCRIPTION)
   artifact: /.*\.nupkg/
