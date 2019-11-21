@@ -70,10 +70,7 @@ before_deploy:
   - ps: |
         $view = Get-GitHubRelease -OwnerName ExtendedXmlSerializer -RepositoryName ExtendedXmlSerializer -AccessToken $env:API_GITHUB_TOKEN | Where-Object {$_.tag_name.StartsWith("untagged-")} | Sort-Object created_at -Descending | Select-Object url, body -First 1
 
-        $view.url
-        $view.body
-
-        # Invoke-RestMethod -Method DELETE -Headers @{ 'Authorization'="token $env:API_GITHUB_TOKEN" } -Uri $view.url
+        Invoke-RestMethod -Method DELETE -Headers @{ 'Authorization'="token $env:API_GITHUB_TOKEN" } -Uri $view.url
         Set-AppveyorBuildVariable "DEPLOY_RELEASE_DESCRIPTION" $view.body
         
         $name = @{ $true = $env:appveyor_build_version; $false = $env:APPVEYOR_REPO_TAG_NAME }[-Not $env:APPVEYOR_REPO_TAG_NAME]
