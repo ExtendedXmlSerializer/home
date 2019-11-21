@@ -3,7 +3,7 @@ environment:
   BUILD_SOLUTION_PATH: '.\ExtendedXmlSerializer.sln'
   BUILD_DOCUMENTATION_PATH: '.\documentation\docfx.json'
   API_GITHUB_TOKEN:
-    secure: gCXYmAWaDQA2SjSKLrv5C3VgQ0boYWoatpbRzxZ2tv0wSTvpXieZFE4erHkUB7KQ
+    secure: TwIPP2tyN8poDWztk5Iw7C+w5yd8UfeQdg91B/O4gEUkVtyQwbPQpJYdHH3PnAWs
   API_APPVEYOR_TOKEN:
     secure: xQR4THytwto+UTuQtpj5N5RcD4pDHIJVnahrbQ7Xqjs=
   DEPLOY_KEY:
@@ -112,5 +112,3 @@ deploy:
   on:
     branch: debug/deployment                 # release from master branch only
     appveyor_repo_tag: false        # deploy on tag push only
-after_deploy:
-    - ps: Invoke-RestMethod -Method DELETE -Headers @{ 'Authorization'="token $env:DEPLOY_RELEASE_URL" } -Uri $view.url
