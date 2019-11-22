@@ -1,4 +1,3 @@
-version: '2.1.25.{build}'
 environment:
   BUILD_SOLUTION_PATH: '.\ExtendedXmlSerializer.sln'
   BUILD_DOCUMENTATION_PATH: '.\documentation\docfx.json'
