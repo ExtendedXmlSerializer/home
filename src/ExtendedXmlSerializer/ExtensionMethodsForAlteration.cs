@@ -123,7 +123,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The type configuration to configure.</param>
 		/// <param name="compose">The delegate used to alterate the created serializer.</param>
 		/// <returns>The configured type configuration.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264#issuecomment-531491807"/>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/264#issuecomment-531491807"/>
 		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
 		                                                                  Func<ISerializer<T>, ISerializer<T>> compose)
 			=> @this.RegisterContentComposition(new SerializerComposer<T>(compose).Get);
@@ -137,7 +137,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The type configuration to configure.</param>
 		/// <param name="compose">The delegate used to alterate the created serializer.</param>
 		/// <returns>The configured type configuration.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264#issuecomment-531491807"/>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/264#issuecomment-531491807"/>
 		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
 		                                                                  Func<ISerializer, ISerializer> compose)
 			=> @this.RegisterContentComposition(new SerializerComposer(compose));
@@ -151,7 +151,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The type configuration to configure.</param>
 		/// <param name="composer">The composer that is used to alter the serializer upon creation.</param>
 		/// <returns>The configured type configuration.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264#issuecomment-531491807"/>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/264#issuecomment-531491807"/>
 		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
 		                                                                  ISerializerComposer composer)
 			=> @this.Root.With<RegisteredCompositionExtension>()

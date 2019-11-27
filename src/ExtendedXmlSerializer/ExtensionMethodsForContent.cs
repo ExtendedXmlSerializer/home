@@ -57,7 +57,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The configuration container to configure.</param>
 		/// <param name="monitor">The monitor to assign as the default monitor.</param>
 		/// <returns>The configured container.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264"/>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/264"/>
 		public static IConfigurationContainer WithDefaultMonitor(this IConfigurationContainer @this,
 		                                                         ISerializationMonitor monitor)
 			=> @this.Extend(new SerializationMonitorExtension(monitor));
@@ -75,7 +75,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The type configuration to configure.</param>
 		/// <param name="monitor">The monitor to apply to the specified type.</param>
 		/// <returns>The configured type configuration.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264" />
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/264" />
 		public static ITypeConfiguration<T> WithMonitor<T>(this ITypeConfiguration<T> @this,
 		                                                   ISerializationMonitor<T> monitor)
 			=> @this.Root.With<SerializationMonitorExtension>()
@@ -99,7 +99,7 @@ namespace ExtendedXmlSerializer
 		/// </summary>
 		/// <param name="this">The container to configure.</param>
 		/// <returns>The configured container.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/wiki/04.-Features#immutable-classes-and-content"/>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/wiki/04.-Features#immutable-classes-and-content"/>
 		public static IConfigurationContainer EnableParameterizedContent(this IConfigurationContainer @this)
 			=> @this.Extend(ParameterizedMembersExtension.Default);
 

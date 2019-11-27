@@ -51,7 +51,7 @@ namespace ExtendedXmlSerializer
 		/// </summary>
 		/// <param name="this">The configuration container to configure.</param>
 		/// <returns>The configured configuration container.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/261"/>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/261"/>
 		public static IConfigurationContainer EnableClassicSchemaTyping(this IConfigurationContainer @this)
 			=> @this.Extend(SchemaTypeExtension.Default);
 
@@ -75,7 +75,7 @@ namespace ExtendedXmlSerializer
 		/// <typeparam name="T">The subject type to inspect.</typeparam>
 		/// <param name="this">The configuration container to configure.</param>
 		/// <returns>The configured configuration container.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/175" />
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/175" />
 		public static IConfigurationContainer InspectingType<T>(this IConfigurationContainer @this)
 			=> @this.InspectingTypes(Support<T>.Key.Yield());
 
@@ -92,7 +92,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The configuration container to configure.</param>
 		/// <param name="types">The list of types to inspect.</param>
 		/// <returns>The configured configuration container.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/175"/>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/175"/>
 		public static IConfigurationContainer InspectingTypes(this IConfigurationContainer @this,
 		                                                      IEnumerable<Type> types)
 			=> @this.Extend(new ClassicIdentificationExtension(types.YieldMetadata().ToList()));
@@ -104,7 +104,7 @@ namespace ExtendedXmlSerializer
 		/// </summary>
 		/// <param name="this">The configuration container to configure.</param>
 		/// <returns>The configured configuration container.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/192"/>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/192"/>
 		public static IConfigurationContainer EnableXmlText(this IConfigurationContainer @this)
 			=> @this.Extend(XmlTextExtension.Default);
 	}

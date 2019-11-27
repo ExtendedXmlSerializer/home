@@ -11,7 +11,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 	/// provided fallback serializer is selected instead.  By default the provided fallback serializer does nothing for
 	/// serializer and returns a null instance for deserialization.
 	/// </summary>
-	/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/197"/>
+	/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/197"/>
 	public class FallbackSerializationExtension : ISerializerExtension
 	{
 		/// <summary>

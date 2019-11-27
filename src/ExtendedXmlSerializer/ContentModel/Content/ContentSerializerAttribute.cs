@@ -5,7 +5,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 	/// <summary>
 	/// Used to configure a serializer for a type member.
 	/// </summary>
-	/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/150"/>
+	/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/150"/>
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 	public class ContentSerializerAttribute : Attribute
 	{
