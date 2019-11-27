@@ -79,6 +79,29 @@ for:
     - path: src\**\*.nupkg
       name: 'Preview Package $(APPVEYOR_BUILD_VERSION)'
 
+- # Debug
+  skip_non_tags: false
+  branches:
+    only:
+      - /debug\/\w*/
+  
+  cache:
+    - '%USERPROFILE%\.ssh\known_hosts'
+
+  install:
+    - ps: . .\.build\Install.ps1
+    - ps: .\.build\Prepare-Deployment.ps1
+  
+  build_script:
+    - ps: Exec { & dotnet pack $env:BUILD_SOLUTION_PATH -c Release }
+    - ps: Exec { & docfx $env:BUILD_DOCUMENTATION_PATH }
+  
+  test: off
+  
+  on_success:
+    - ps: .\.build\Deploy-Documentation.ps1 
+
+
 - # Deploy
   skip_tags: false
   branches:
