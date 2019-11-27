@@ -9,7 +9,7 @@ namespace ExtendedXmlSerializer.Configuration
 	/// container.  These operations configure the serializer(s) created by the container so that they handle unknown
 	/// content -- content that isn't recognized in the deserialized document -- in the configured manner.
 	/// </summary>
-	/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/271" />
+	/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/271" />
 	public sealed class UnknownContentContext
 	{
 		readonly IConfigurationContainer _container;

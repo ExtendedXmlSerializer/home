@@ -44,7 +44,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The serializer</param>
 		/// <param name="instance">The instance to deserialize</param>
 		/// <returns>A deserialization context that will assign values to the provided instance.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/230" />
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/230" />
 		public static ReferencedDeserializationContext<T> UsingTarget<T>(this IExtendedXmlSerializer @this, T instance)
 			where T : class
 			=> new ReferencedDeserializationContext<T>(@this, instance);
@@ -75,7 +75,7 @@ namespace ExtendedXmlSerializer
 		/// </summary>
 		/// <param name="this">The configuration container to configure.</param>
 		/// <returns>The UnknownContentContext for further action and configuration.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/271#issuecomment-550976753" />
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/271#issuecomment-550976753" />
 		public static UnknownContentContext WithUnknownContent(this IConfigurationContainer @this)
 			=> new UnknownContentContext(@this);
 
@@ -110,8 +110,8 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The configuration container to configure.</param>
 		/// <returns>The configured configuration container.</returns>
 		/// <seealso href="https://docs.microsoft.com/en-us/dotnet/framework/wpf/advanced/markup-extensions-and-wpf-xaml"/>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/wiki/04.-Features#xaml-ness-markup-extensions"/>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/blob/25514a768f7dc6b3166119254a1bd80ea13e1dbe/test/ExtendedXmlSerializer.Tests/ExtensionModel/Markup/MarkupExtensionTests.cs"/>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/wiki/04.-Features#xaml-ness-markup-extensions"/>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/blob/25514a768f7dc6b3166119254a1bd80ea13e1dbe/test/ExtendedXmlSerializer.Tests/ExtensionModel/Markup/MarkupExtensionTests.cs"/>
 		public static IConfigurationContainer EnableMarkupExtensions(this IConfigurationContainer @this)
 			=> @this.EnableExpressions()
 			        .Alter(MarkupExtensionConverterAlteration.Default)

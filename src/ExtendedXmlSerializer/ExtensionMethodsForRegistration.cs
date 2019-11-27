@@ -25,7 +25,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The configuration container to configure.</param>
 		/// <param name="provider">The provider to register.</param>
 		/// <returns>The configured configuration container.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/161" />
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/161" />
 		public static IConfigurationContainer Register(this IConfigurationContainer @this,
 		                                               ISerializationSurrogateProvider provider)
 			=> @this.Extend(new SurrogatesExtension(provider));

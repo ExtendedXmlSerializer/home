@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Product>ExtendedXmlSerializer</Product>
     <Company>ExtendedXmlSerializer</Company>
-    <Description>Extended Xml Serializer for .NET</Description>
+    <Description>An extensible Xml Serializer for .NET that builds on the functionality of the classic XmlSerializer with a powerful and robust extension model.</Description>
     <AssemblyTitle>ExtendedXmlSerializer</AssemblyTitle>
     <Authors>Wojciech Nagórski;Michael DeMond</Authors>
     <ClassicFrameworkVersion>net45</ClassicFrameworkVersion>
@@ -19,24 +19,15 @@
     <PackageProjectUrl>https://extendedxmlserializer.github.io/</PackageProjectUrl>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/ExtendedXmlSerializer/home.git</RepositoryUrl>
     <PackageIcon>Logo.png</PackageIcon>
     <VersionPrefix>2.1.0.0</VersionPrefix>
     <PackageReleaseNotes>
-Features addressed in this release (where applicable):
-https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues?q=is%3Aissue+sort%3Aupdated-desc+milestone%3A$(VersionPrefix)+label%3Aenhancement
+      Latest release notes with downloads are available here:
+      https://github.com/ExtendedXmlSerializer/home/releases
 
-Bugs addressed in this release:
-https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues?q=is%3Aissue+sort%3Aupdated-desc+milestone%3A$(VersionPrefix)+label%3Abug
-
-To create a new discussion around this release, please feel free to comment on one of the above issues, or visit:
-https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/new?milestone=$(VersionPrefix)&amp;labels=discussion
-
-If you would like to report a new issue altogether, please do so here:
-https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/new?labels=bug
-
-Or if you have a question and/or would like to discuss a topic around ExtendedXmlSerializer:
-https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/new?labels=question
+      Single-file CHANGELOG is available here:
+      https://github.com/ExtendedXmlSerializer/home/CHANGELOG.md
     </PackageReleaseNotes>
 
     <!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->

@@ -12,7 +12,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Instances
 	/// Provides a mechanism to listen in to important events during the serialization process.
 	/// </summary>
 	/// <typeparam name="T">The type to monitor.</typeparam>
-	/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/264#issuecomment-544104668"/>
+	/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/264#issuecomment-544104668"/>
 	public interface ISerializationMonitor<in T>
 	{
 		/// <summary>

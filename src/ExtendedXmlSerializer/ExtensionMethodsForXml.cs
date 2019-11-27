@@ -68,7 +68,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The configuration container to configure.</param>
 		/// <returns>The configured configuration container.</returns>
 		/// <seealso href="https://stackoverflow.com/a/961504/3602057"/>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/167" />
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/167" />
 		public static IConfigurationContainer WithValidCharacters(this IConfigurationContainer @this)
 			=> @this.Type<string>().Alter(ValidContentCharacters.Default.Get);
 
@@ -80,7 +80,7 @@ namespace ExtendedXmlSerializer
 		/// <typeparam name="T">The type under configuration.</typeparam>
 		/// <param name="this">The type configuration to configure.</param>
 		/// <returns>The configured type configuration.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/268" />
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/268" />
 		public static ITypeConfiguration<T> UseClassicSerialization<T>(this ITypeConfiguration<T> @this)
 			where T : ISerializable
 			=> @this.Register().Serializer().Of<ClassicSerializationAdapter<T>>();
@@ -93,7 +93,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The member configuration to configure.</param>
 		/// <returns>The configured member configuration.</returns>
 		/// <seealso href="https://stackoverflow.com/a/961504/3602057"/>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/167" />
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/167" />
 		public static IMemberConfiguration<T, string> WithValidCharacters<T>(this IMemberConfiguration<T, string> @this)
 			=> @this.Alter(ValidContentCharacters.Default.Get);
 

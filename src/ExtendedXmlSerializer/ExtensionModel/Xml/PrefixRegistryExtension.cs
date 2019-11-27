@@ -12,7 +12,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 	/// <summary>
 	/// An extension used to customize prefix registration.
 	/// </summary>
-	/// <seealso href="https://github.com/ExtendedXmlSerializer/ExtendedXmlSerializer/issues/199"/>
+	/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/199"/>
 	public sealed class PrefixRegistryExtension : ISerializerExtension
 	{
 		readonly IDictionary<Type, string> _registry;
