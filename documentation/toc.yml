@@ -3,3 +3,7 @@
   homepage: reference/index.md
 - name: Concepts and Topics
   href: conceptual/
+- name: Releases
+  href: https://github.com/ExtendedXmlSerializer/home/releases
+- name: CHANGELOG
+  href: https://github.com/ExtendedXmlSerializer/home/blob/master/CHANGELOG.md
