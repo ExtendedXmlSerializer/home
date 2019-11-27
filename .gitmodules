@@ -1,3 +1,6 @@
 [submodule "documentation/conceptual/documents"]
 	path = documentation/conceptual/documents
 	url = https://github.com/ExtendedXmlSerializer/home.wiki.git
+[submodule "documentation/templates/mathew"]
+	path = documentation/templates/mathew
+	url = https://github.com/ExtendedXmlSerializer/docfx-tmpl.git
