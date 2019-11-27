@@ -3,7 +3,6 @@ $view = Get-GitHubRelease -OwnerName $parts[0] -RepositoryName $parts[1] -Access
 		   
 $enabled = !($view -eq $null)
 Write-Host "Deploy GitHub Release: $enabled"        
-Set-AppveyorBuildVariable "DEPLOY_RELEASE_ENABLED" $enabled
 
 if ($enabled)
 {
