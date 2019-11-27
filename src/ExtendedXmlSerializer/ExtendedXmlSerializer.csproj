@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Product>ExtendedXmlSerializer</Product>
     <Company>ExtendedXmlSerializer</Company>
-    <Description>An extensible Xml Serializer for .NET</Description>
+    <Description>An extensible Xml Serializer for .NET that builds on the functionality of the classic XmlSerializer with a powerful and robust extension model.</Description>
     <AssemblyTitle>ExtendedXmlSerializer</AssemblyTitle>
     <Authors>Wojciech Nagórski;Michael DeMond</Authors>
     <ClassicFrameworkVersion>net45</ClassicFrameworkVersion>
@@ -23,7 +23,7 @@
     <PackageIcon>Logo.png</PackageIcon>
     <VersionPrefix>2.1.0.0</VersionPrefix>
     <PackageReleaseNotes>
-      Latest release notes with downloads is available here:
+      Latest release notes with downloads are available here:
       https://github.com/ExtendedXmlSerializer/home/releases
 
       Single-file CHANGELOG is available here:
