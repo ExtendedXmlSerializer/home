@@ -9,7 +9,7 @@ env:
   DEPLOY_EMAIL: "ExtendedXmlSerializer@users.noreply.github.com"
   DEPLOY_COMMIT_MESSAGE: Adding CHANGELOG.md
   DEPLOY_ACCOUNT: ExtendedXmlSerializer
-  DEPLOY_SLUG: nextrelease
+  DEPLOY_SLUG: extendedxmlserializer
   DEPLOY_BRANCH: master
 
 jobs:
