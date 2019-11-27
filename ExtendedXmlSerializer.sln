@@ -5,7 +5,6 @@ VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2859812B-6D27-4A85-AC4A-8D3A55D9E3CD}"
 	ProjectSection(SolutionItems) = preProject
-		content\docfx.json = content\docfx.json
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
@@ -20,6 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{DE813C
 	ProjectSection(SolutionItems) = preProject
 		appveyor.yml = appveyor.yml
 		.build\Common.ps1 = .build\Common.ps1
+		documentation\docfx.json = documentation\docfx.json
 		.build\Install.ps1 = .build\Install.ps1
 		.build\Success.ps1 = .build\Success.ps1
 	EndProjectSection
