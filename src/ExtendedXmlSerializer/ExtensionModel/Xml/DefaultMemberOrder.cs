@@ -16,17 +16,21 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		/// </summary>
 		public static DefaultMemberOrder Default { get; } = new DefaultMemberOrder();
 
-		DefaultMemberOrder() : this(Members.Default) {}
+		DefaultMemberOrder() : this(DefaultXmlElementAttribute.Default.Get, Members.Default.Get) {}
 
-
-		readonly IParameterizedSource<MemberInfo, List<MemberInfo>> _members;
-
-		/// <inheritdoc />
-		public DefaultMemberOrder(IParameterizedSource<MemberInfo, List<MemberInfo>> members) => _members = members;
+		readonly Func<MemberInfo, XmlElementAttribute> _attribute;
+		readonly Func<MemberInfo, List<MemberInfo>> _members;
 
 		/// <inheritdoc />
-		public int Get(MemberInfo parameter)
-			=> DefaultXmlElementAttribute.Default.Get(parameter)?.Order ?? Resolve(parameter);
+		public DefaultMemberOrder(Func<MemberInfo, XmlElementAttribute> attribute,
+		                          Func<MemberInfo, List<MemberInfo>> members)
+		{
+			_attribute = attribute;
+			_members = members;
+		}
+
+		/// <inheritdoc />
+		public int Get(MemberInfo parameter) => _attribute(parameter)?.Order ?? Resolve(parameter);
 
 		int Resolve(MemberInfo parameter)
 		{
@@ -36,7 +40,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			}
 			catch (InvalidOperationException) // UWP Throws, because UWP: https://github.com/ExtendedXmlSerializer/home/issues/269#issuecomment-559485714
 			{
-				return _members.Get(parameter).IndexOf(parameter);
+				return _members(parameter).IndexOf(parameter);
 			}
 		}
 	}

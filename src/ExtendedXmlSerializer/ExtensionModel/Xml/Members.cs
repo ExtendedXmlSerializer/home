@@ -1,14 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using ExtendedXmlSerializer.Core.Sources;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class Members : ReferenceCache<MemberInfo, List<MemberInfo>>
+	sealed class Members : ReferenceCache<Type, List<MemberInfo>>, IParameterizedSource<MemberInfo, List<MemberInfo>>
 	{
 		public static Members Default { get; } = new Members();
 
-		Members() : base(x => x.ReflectedType.GetMembers().ToList()) {}
+		Members() : base(x => x.GetMembers().ToList()) {}
+
+		public List<MemberInfo> Get(MemberInfo parameter) => base.Get(parameter.ReflectedType);
 	}
 }
