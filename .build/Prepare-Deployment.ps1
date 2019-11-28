@@ -1,7 +1,7 @@
 choco install docfx -y
 Install-Module -Name PowerShellForGitHub
 
-$env:APPVEYOR_REPO_BRANCH = "master";
-git checkout $env:APPVEYOR_REPO_BRANCH -q
+$branch = @{ $true = "master"; $false = $env:APPVEYOR_REPO_BRANCH; }[[bool]$env:APPVEYOR_FORCED_BUILD]
+git checkout $branch -q
 
 git submodule update --rebase --remote
