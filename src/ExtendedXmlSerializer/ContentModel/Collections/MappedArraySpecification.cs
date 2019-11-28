@@ -12,10 +12,7 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 
 		public MappedArraySpecification() : this(IsValueTypeSpecification.Default) {}
 
-		public MappedArraySpecification(ISpecification<TypeInfo> specification)
-		{
-			_specification = specification;
-		}
+		public MappedArraySpecification(ISpecification<TypeInfo> specification) => _specification = specification;
 
 		public bool IsSatisfiedBy(TypeInfo parameter) => parameter.GetArrayRank() > 1 &&
 		                                                 _specification.IsSatisfiedBy(parameter.GetElementType());
