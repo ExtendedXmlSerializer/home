@@ -64,7 +64,7 @@
     "resource": [
       {
         "files": [
-          "images/**"
+          "images/**", "logo.png"
         ]
       }
     ],
@@ -82,12 +82,8 @@
     "globalMetadataFiles": [],
     "fileMetadataFiles": [],
     "template": [
-      "default",
-      "templates/mathew/src"
+      "templates/default"
     ],
-	/*"template": [
-      "default"
-    ],*/
     "postProcessors": [],
     "markdownEngineName": "markdig",
     "noLangKeyword": false,
