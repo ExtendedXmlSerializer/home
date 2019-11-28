@@ -2,11 +2,11 @@
 
 Welcome to the ExtendedXmlSerializer documentation site.  This is an automated site that is part of our continuous integration workflow and is generated on each new release.
 
-### [Conceptual Topics](/conceptual/)
+### [Conceptual Topics](conceptual/)
 
 If you are new to ExtendedXmlSerializer, you might benefit most by [reviewing our conceptual topics](/conceptual/) first to get an overview of our offering.
 
-### [API Reference](/reference/)
+### [API Reference](reference/)
 
 Our [API reference](/reference/) is generated from the our publicly-accessible code.
 
