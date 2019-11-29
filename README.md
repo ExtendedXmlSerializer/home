@@ -60,7 +60,7 @@ Featured Documentation
 
 - [FAQs](https://github.com/ExtendedXmlSerializer/home/wiki/FAQs) - Probably the first place to go if you have a question.
 
-- [Concepts and Wiki](https://github.com/ExtendedXmlSerializer/home/wiki)
+- [Conceptual Topics](https://github.com/ExtendedXmlSerializer/home/wiki) - From our wiki.
   - [The Basics](https://github.com/ExtendedXmlSerializer/home/wiki/The-Basics)
   - [Features](https://github.com/ExtendedXmlSerializer/home/wiki/Features#experimental)
   - [API Overview](https://github.com/ExtendedXmlSerializer/home/wiki/API-Overview)
