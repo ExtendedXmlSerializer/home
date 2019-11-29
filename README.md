@@ -40,6 +40,45 @@ Supported platforms:
 - .NET Standard 2.0
 - .NET 4.5.2 ([as of #273](https://github.com/ExtendedXmlSerializer/home/issues/273))
 
+Usage
+=====
+
+ExtendedXmlSerializer uses a `ConfigurationContainer` to store configurations and extensions.  Once this container is configured as desired, call its `Create` method to create a serializer and serialize!
+
+Example class:
+
+``` csharp
+class Subject {
+    public int Number { get; set; }
+    public string Message { get; set; }
+}
+```
+
+Configure:
+
+``` csharp
+IExtendedXmlSerializer serializer = new ConfigurationContainer().UseAutoFormatting()
+                                                                .EnableImplicitTyping(typeof(Subject))
+                                                                .Create();
+```
+
+MAKE THE PRETTY XML!!! 😁😁😁
+
+``` csharp
+var instance = new Subject {Message = "Hello World!", Number = 42};
+var document = serializer.Serialize(new XmlWriterSettings {Indent = true},
+                                    instance);
+```
+
+(contents of the `document` variable above:)
+
+``` xml
+<?xml version="1.0" encoding="utf-8"?>
+<Subject Number="42" Message="Hello World!" />
+```
+
+The above demonstrated code can be found in the form of [a passing test within our test suite here](https://github.com/ExtendedXmlSerializer/home/blob/a7667b3f56ce15e3146f0ca061e7dae162b1a448/test/ExtendedXmlSerializer.Tests.ReportedIssues/Issue282Tests_README.cs#L11-L33).
+
 Installation
 ============
 
