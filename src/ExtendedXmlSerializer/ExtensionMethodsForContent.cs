@@ -25,7 +25,7 @@ namespace ExtendedXmlSerializer
 		/// Convenience method for extension authors.  This is used to establish a context to decorate the container's
 		/// <see cref="IContents"/> component.
 		/// </summary>
-		/// <typeparam name="T">The implementation type, of type IContent.</typeparam>
+		/// <typeparam name="T">The implementation type, of type <see cref="IContents"/>.</typeparam>
 		/// <param name="this">The repository to configure (used within an extension).</param>
 		/// <returns>The configured repository.</returns>
 		public static ContentsDecorationContext<T> DecorateContentsWith<T>(this IServiceRepository @this)
