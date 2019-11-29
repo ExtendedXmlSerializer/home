@@ -110,7 +110,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The configuration container to configure.</param>
 		/// <returns>The configured configuration container.</returns>
 		/// <seealso href="https://docs.microsoft.com/en-us/dotnet/framework/wpf/advanced/markup-extensions-and-wpf-xaml"/>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/wiki/04.-Features#xaml-ness-markup-extensions"/>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/wiki/Features#xaml-ness-markup-extensions"/>
 		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/blob/25514a768f7dc6b3166119254a1bd80ea13e1dbe/test/ExtendedXmlSerializer.Tests/ExtensionModel/Markup/MarkupExtensionTests.cs"/>
 		public static IConfigurationContainer EnableMarkupExtensions(this IConfigurationContainer @this)
 			=> @this.EnableExpressions()

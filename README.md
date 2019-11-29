@@ -33,7 +33,7 @@ ExtendedXmlSerializer addresses a lot of these problems and much much more!
 -   Property encryption
 -   Support `XmlElementAttribute`, `XmlRootAttribute`, and `XmlTypeAttribute` for identity resolution
 -   Additional attribute support: `XmlIgnoreAttribute`, `XmlAttributeAttribute`, and `XmlEnumAttribute`
--   Deserialization xml from classic `XmlSerializer` (mostly, [details in FAQ](https://github.com/ExtendedXmlSerializer/home/wiki/01.-FAQs#systemxmlserializer-vs-extendedxmlserializer))
+-   Deserialization xml from classic `XmlSerializer` (mostly, [details in FAQ](https://github.com/ExtendedXmlSerializer/home/wiki/FAQs#systemxmlserializer-vs-extendedxmlserializer))
 
 Supported platforms:
 
