@@ -9,7 +9,7 @@ ExtendedXmlSerializer
 Welcome!
 ========
 
-Welcome to ExtendedXMLSerializer's GitHub Repository.  Here you will find a .NET serializer that features a powerful extension model and works in the tried-and-trusted dependable XML format. 💖
+Welcome to ExtendedXMLSerializer's GitHub Repository.  Here you will find a .NET serializer that specializes in [POCO](https://en.wikipedia.org/wiki/Plain_old_CLR_object)-based object graph serialization, features a powerful extension model, and works in the tried-and-trusted dependable XML format. 💖
 
 Why ExtendedXmlSerializer?  Classic `System.Xml.XmlSerializer` poses some challenges:
 
