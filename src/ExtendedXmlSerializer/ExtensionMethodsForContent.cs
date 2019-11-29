@@ -98,7 +98,7 @@ namespace ExtendedXmlSerializer
 		/// </summary>
 		/// <param name="this">The container to configure.</param>
 		/// <returns>The configured container.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/wiki/04.-Features#immutable-classes-and-content"/>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/wiki/Features#immutable-classes-and-content"/>
 		public static IConfigurationContainer EnableParameterizedContent(this IConfigurationContainer @this)
 			=> @this.Extend(ParameterizedMembersExtension.Default);
 
