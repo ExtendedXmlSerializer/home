@@ -88,14 +88,13 @@ namespace ExtendedXmlSerializer
 		/// required, even -- if your model is comprised of immutable objects.
 		///
 		/// Note that there are several requirements for a class to be successfully processed:
-		/// <list type="number">
-		///		<item>only public fields / properties are considered</item>
-		///		<item>any public fields (spit) must be readonly</item>
-		///		<item>any public properties must have a get but not a set (on the public API, at least)</item>
-		///		<item>there must be exactly one interesting constructor, with parameters that are a case-insensitive match for
-		///		each field/property in some order (i.e. there must be an obvious 1:1 mapping between members and constructor
-		///		parameter names)</item>
-		/// </list>
+		///
+		///	1. only public fields / properties are considered
+		///	1. any public fields (spit) must be readonly
+		///	1. any public properties must have a get but not a set (on the public API, at least)
+		///	1. there must be exactly one interesting constructor, with parameters that are a case-insensitive match for
+		///    each field/property in some order (i.e. there must be an obvious 1:1 mapping between members and constructor
+		///	   parameter names)
 		/// </summary>
 		/// <param name="this">The container to configure.</param>
 		/// <returns>The configured container.</returns>
