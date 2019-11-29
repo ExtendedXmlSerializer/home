@@ -4,10 +4,10 @@ using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel;
-using ExtendedXmlSerializer.Tests.ReportedIssues.Support;
 using FluentAssertions;
 using System.Reflection;
 using Xunit;
+
 // ReSharper disable UnusedMember.Local
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -17,17 +17,18 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		void Verify()
 		{
-			var container = new ConfigurationContainer().EnableImplicitTyping(typeof(Subject))
-			                                            .Extend(Extension.Default)
-			                                            .Create()
-			                                            .ForTesting();
+			IExtendedXmlSerializer serializer = new ConfigurationContainer().EnableImplicitTyping(typeof(Subject))
+			                                                                .Extend(Extension.Default)
+			                                                                .Create();
 
 			var instance = new Subject {Number = 10};
 
-			container.Assert(instance,
-			                 @"<?xml version=""1.0"" encoding=""utf-8""?><Issue282Tests_Extension-Subject><Number>52</Number></Issue282Tests_Extension-Subject>")
-			         .Number.Should()
-			         .Be(94);
+			var content = serializer.Serialize(instance);
+			content.Should()
+			       .Be(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue282Tests_Extension-Subject><Number>52</Number></Issue282Tests_Extension-Subject>");
+
+			var number = serializer.Deserialize<Subject>(content).Number;
+			number.Should().Be(94);
 		}
 
 		sealed class Subject
