@@ -24,7 +24,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			serializer.Cycle(instance).Should().BeEquivalentTo(instance);
 		}
 
-		public sealed class SubjectSerializer : ISerializer<Subject>
+		sealed class SubjectSerializer : ISerializer<Subject>
 		{
 			public static SubjectSerializer Default { get; } = new SubjectSerializer();
 
