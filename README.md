@@ -13,7 +13,7 @@ Welcome to ExtendedXMLSerializer's GitHub repository.  Here you will find a .NET
 
 - Specializes in [POCO](https://en.wikipedia.org/wiki/Plain_old_CLR_object)-based object graph serialization
 - Features a powerful extension model
-- Works in the tried-and-trusted dependable XML format. 💖
+- Operates in the tried-and-trusted dependable XML format. 💖
 
 "But why?"
 ==========
