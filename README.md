@@ -61,21 +61,21 @@ class Subject {
 }
 ```
 
-Configure:
+Configure, create, and serialize:
 
 ``` csharp
 IExtendedXmlSerializer serializer = new ConfigurationContainer().UseAutoFormatting()
+                                                                .UseOptimizedNamespaces()
                                                                 .EnableImplicitTyping(typeof(Subject))
+                                                                // Additional configurations...
                                                                 .Create();
-```
 
-MAKE THE PRETTY XML!!! 😁😁😁
-
-``` csharp
 var instance = new Subject {Message = "Hello World!", Number = 42};
 var document = serializer.Serialize(new XmlWriterSettings {Indent = true},
                                     instance);
 ```
+
+MAKE THE PRETTY XML!!! 😁😁😁
 
 (contents of the `document` variable above:)
 
