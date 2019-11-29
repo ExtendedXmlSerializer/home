@@ -9,31 +9,38 @@ ExtendedXmlSerializer
 Welcome!
 ========
 
-Welcome to ExtendedXMLSerializer's GitHub Repository.  Here you will find a .NET serializer that specializes in [POCO](https://en.wikipedia.org/wiki/Plain_old_CLR_object)-based object graph serialization, features a powerful extension model, and works in the tried-and-trusted dependable XML format. 💖
+Welcome to ExtendedXMLSerializer's GitHub repository.  Here you will find a .NET serializer that:
 
-Why ExtendedXmlSerializer?  Classic `System.Xml.XmlSerializer` poses some challenges:
+- Specializes in [POCO](https://en.wikipedia.org/wiki/Plain_old_CLR_object)-based object graph serialization
+- Features a powerful extension model
+- Works in the tried-and-trusted dependable XML format. 💖
 
--   Does not support properties that are defined with interface types
--   Does not support read-only collection properties (like Xaml does)
--   Does not support parameterized constructors (immutable objects)
--   Does not support private constructors
--   Does not support serialization of class with circular reference or class with interface property
--   If you want create custom serializer, your class must inherit from `IXmlSerializable` or `ISerializable`. 
-    This takes the "plain" out of [POCO](https://en.wikipedia.org/wiki/Plain_old_CLR_object). 😁
--   No migration mechanism for XML based on older code
+"But why?"
+==========
+
+The classic `System.Xml.XmlSerializer` poses some challenges:
+
+- Does not support properties that are defined with interface types
+- Does not support read-only collection properties (like Xaml does)
+- Does not support parameterized constructors (immutable objects)
+- Does not support private constructors
+- Does not support serialization of class with circular reference or class with interface property
+- If you want create custom serializer, your class must inherit from `IXmlSerializable` or `ISerializable`.  This takes the "plain" out of [POCO](https://en.wikipedia.org/wiki/Plain_old_CLR_object). 😁
+- No migration mechanism for XML based on older code model
 
 ExtendedXmlSerializer addresses a lot of these problems and much much more!
 
--   Serializes and deserializes pretty much any POCO you throw at it: `class`, `struct`, generics, primitives, generic `List` and `Dictionary`, `Array`, `Enum` and much much more! If you find a class that doesn't get serialized, [let us know](https://github.com/ExtendedXmlSerializer/home/issues/new) and we'll take a look at it.
-    - Yes, this even and especially means classes with property interface! 
--   Custom serializer registration by type or member
--   Serialization of references, handling circular references without endlessly looping
--   All configurations (migrations, custom serializer...) are outside the class and not coupled to attributes or messy, arcane conventions
--   Migrate old XML based on an older schema to a current schema
--   Property encryption
--   Support `XmlElementAttribute`, `XmlRootAttribute`, and `XmlTypeAttribute` for identity resolution
--   Additional attribute support: `XmlIgnoreAttribute`, `XmlAttributeAttribute`, and `XmlEnumAttribute`
--   Deserialization xml from classic `XmlSerializer` (mostly, [details in FAQ](https://github.com/ExtendedXmlSerializer/home/wiki/FAQs#systemxmlserializer-vs-extendedxmlserializer))
+- Serializes and deserializes pretty much any POCO you throw at it*: `class`, `struct`, generics, primitives, generic `List` and `Dictionary`, `Array`, `Enum` and much much more! If you find a class that doesn't get serialized, [let us know](https://github.com/ExtendedXmlSerializer/home/issues/new) and we'll take a look at it.
+- Custom serializer registration by type or member
+- Serialization of references, handling circular references without endlessly looping
+- All configurations (migrations, custom serializer...) are outside the class and not coupled to attributes or messy, arcane conventions
+- Migrate old XML based on an older schema to a current schema
+- Property encryption
+- Support `XmlElementAttribute`, `XmlRootAttribute`, and `XmlTypeAttribute` for identity resolution
+- Additional attribute support: `XmlIgnoreAttribute`, `XmlAttributeAttribute`, and `XmlEnumAttribute`
+- Deserialization xml from classic `XmlSerializer` (mostly, [details in FAQ](https://github.com/ExtendedXmlSerializer/home/wiki/FAQs#systemxmlserializer-vs-extendedxmlserializer))
+
+(\*Yes, this even -- and *especially* -- means classes with properties that have an interface property type!)
 
 Supported platforms:
 
