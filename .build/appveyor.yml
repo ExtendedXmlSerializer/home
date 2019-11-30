@@ -1,5 +1,5 @@
 environment:
-  BUILD_SOLUTION_PATH: '.\ExtendedXmlSerializer.sln'
+  BUILD_SOLUTION_PATH: '.\ExtendedXmlSerializer Build.sln'
   BUILD_DOCUMENTATION_PATH: '.\documentation\docfx.json'
   API_GITHUB_TOKEN:
     secure: TwIPP2tyN8poDWztk5Iw7C+w5yd8UfeQdg91B/O4gEUkVtyQwbPQpJYdHH3PnAWs
