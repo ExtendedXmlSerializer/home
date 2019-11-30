@@ -50,29 +50,29 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                          .EnableImplicitTyping(typeof(Subject))
 			                          .UseOptimizedNamespaces()
 			                          .Create();
-			var instance = new Subject {Message = "Hello World!"};
+			var instance = new Subject {Message = "Hello World!", Number = 123};
 			var document = serializer.Serialize(instance);
 
 			document.Should()
-			        .Be(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue282Tests_Profiles-Subject NewNumber=""0"" NewMessage=""Hello World!"" />");
+			        .Be(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue282Tests_Profiles-Subject NewNumber=""123"" NewMessage=""Hello World!"" />");
 		}
 
-		sealed class ComplexProfile : CompositeConfigurationProfile
-		{
-			public static ComplexProfile Default { get; } = new ComplexProfile();
+	sealed class ComplexProfile : CompositeConfigurationProfile
+	{
+		public static ComplexProfile Default { get; } = new ComplexProfile();
 
-			ComplexProfile() : base(SimpleProfile.Default, NumberProfile.Default) {}
-		}
+		ComplexProfile() : base(SimpleProfile.Default, NumberProfile.Default) {}
+	}
 
-		sealed class NumberProfile : IConfigurationProfile
-		{
-			public static NumberProfile Default { get; } = new NumberProfile();
+	sealed class NumberProfile : IConfigurationProfile
+	{
+		public static NumberProfile Default { get; } = new NumberProfile();
 
-			NumberProfile() {}
+		NumberProfile() {}
 
-			public IConfigurationContainer Get(IConfigurationContainer parameter) => parameter.Type<Subject>()
-			                                                                                  .Member(x => x.Number)
-			                                                                                  .Name("NewNumber");
-		}
+		public IConfigurationContainer Get(IConfigurationContainer parameter) => parameter.Type<Subject>()
+		                                                                                  .Member(x => x.Number)
+		                                                                                  .Name("NewNumber");
+	}
 	}
 }
