@@ -5,7 +5,7 @@
     <Description>An extensible Xml Serializer for .NET that builds on the functionality of the classic XmlSerializer with a powerful and robust extension model.</Description>
     <AssemblyTitle>ExtendedXmlSerializer</AssemblyTitle>
     <Authors>Wojciech Nagórski;Michael DeMond</Authors>
-    <ClassicFrameworkVersion>net45</ClassicFrameworkVersion>
+    <ClassicFrameworkVersion>net452</ClassicFrameworkVersion>
     <TargetFrameworks>netstandard2.0;$(ClassicFrameworkVersion)</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer</AssemblyName>
   </PropertyGroup>
@@ -40,14 +40,14 @@
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == '$(ClassicFrameworkVersion)' ">
-    <DefineConstants>$(DefineConstants);NET45</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup Condition="$(Configuration) == 'Release'">
     <None Include="..\..\$(PackageLicenseFile)" Pack="true" Visible="false" PackagePath="" />
     <None Include="..\..\Logo.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == '$(ClassicFrameworkVersion)' ">
+    <DefineConstants>$(DefineConstants);NET45</DefineConstants>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" PrivateAssets="All" />
