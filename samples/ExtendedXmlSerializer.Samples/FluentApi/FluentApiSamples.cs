@@ -6,8 +6,6 @@ namespace ExtendedXmlSerializer.Samples.FluentApi
 	using Configuration;
 	using CustomSerializator;
 	using Encrypt;
-	using ExtensionModel.Encryption;
-	using ExtensionModel.Xml;
 	using System.Linq;
 
 	public class FluentApiSamples
