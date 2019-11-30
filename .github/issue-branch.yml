@@ -21,3 +21,5 @@ branches:
     prefix: issues/chore/
   - label: revert
     prefix: issues/revert/
+  - label: '*'
+    prefix: issues/other/
