@@ -52,6 +52,7 @@ article h4 {
   .sidetoc, .sidefilter {
     margin-left: -15px;
   }
+  .row { margin-left: unset; margin-right: unset; }
 }
 
 @media (max-width: 767px) {

@@ -2,6 +2,7 @@
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content;
+using System;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
@@ -41,6 +42,18 @@ namespace ExtendedXmlSerializer.Configuration
 		/// <returns>The configured repository.</returns>
 		public IServiceRepository When(ISpecification<TypeInfo> specification)
 			=> new ConditionalContentDecoration<T>(specification).Get(_repository);
+
+		/// <summary>
+		/// Configures the <see cref="IContents"/> to use the configured context type when the provided specification delegate
+		/// is satisfied.
+		/// </summary>
+		/// <param name="specification">The delegate to use for determining which IContents to use.  When this delegate
+		/// evaluates to true, the currently configured context type will be used.  Otherwise, the previous IContents will be
+		/// utilized instead.</param>
+		/// <returns>The configured repository.</returns>
+		public IServiceRepository When(Func<TypeInfo, bool> specification)
+			=> new ConditionalContentDecoration<T>(new DelegatedSpecification<TypeInfo>(specification))
+				.Get(_repository);
 
 		/// <summary>
 		/// Decorates <see cref="IContents"/> with the currently configured context type and returns the configured service

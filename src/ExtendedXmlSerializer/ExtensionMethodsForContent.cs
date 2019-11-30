@@ -25,7 +25,7 @@ namespace ExtendedXmlSerializer
 		/// Convenience method for extension authors.  This is used to establish a context to decorate the container's
 		/// <see cref="IContents"/> component.
 		/// </summary>
-		/// <typeparam name="T">The implementation type, of type IContent.</typeparam>
+		/// <typeparam name="T">The implementation type, of type <see cref="IContents"/>.</typeparam>
 		/// <param name="this">The repository to configure (used within an extension).</param>
 		/// <returns>The configured repository.</returns>
 		public static ContentsDecorationContext<T> DecorateContentsWith<T>(this IServiceRepository @this)
@@ -88,18 +88,17 @@ namespace ExtendedXmlSerializer
 		/// required, even -- if your model is comprised of immutable objects.
 		///
 		/// Note that there are several requirements for a class to be successfully processed:
-		/// <list type="number">
-		///		<item>only public fields / properties are considered</item>
-		///		<item>any public fields (spit) must be readonly</item>
-		///		<item>any public properties must have a get but not a set (on the public API, at least)</item>
-		///		<item>there must be exactly one interesting constructor, with parameters that are a case-insensitive match for
-		///		each field/property in some order (i.e. there must be an obvious 1:1 mapping between members and constructor
-		///		parameter names)</item>
-		/// </list>
+		///
+		///	1. only public fields / properties are considered
+		///	1. any public fields (spit) must be readonly
+		///	1. any public properties must have a get but not a set (on the public API, at least)
+		///	1. there must be exactly one interesting constructor, with parameters that are a case-insensitive match for
+		///    each field/property in some order (i.e. there must be an obvious 1:1 mapping between members and constructor
+		///	   parameter names)
 		/// </summary>
 		/// <param name="this">The container to configure.</param>
 		/// <returns>The configured container.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/wiki/04.-Features#immutable-classes-and-content"/>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/wiki/Features#immutable-classes-and-content"/>
 		public static IConfigurationContainer EnableParameterizedContent(this IConfigurationContainer @this)
 			=> @this.Extend(ParameterizedMembersExtension.Default);
 

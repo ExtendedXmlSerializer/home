@@ -1,6 +1,12 @@
 - name: Introduction
-  href: intro.md
+  href: index.md
 - name: FAQs
-  href: documents/01.-FAQs.md
+  href: documents/FAQs.md
 - name: The Basics
-  href: documents/02.-The-Basics.md
+  href: documents/The-Basics.md
+- name: Features
+  href: documents/Features.md  
+- name: API Overview
+  href: documents/API-Overview.md
+- name: Example Scenarios
+  href: documents/Example-Scenarios.md  
