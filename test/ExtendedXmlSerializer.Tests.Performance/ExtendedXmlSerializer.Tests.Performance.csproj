@@ -5,6 +5,7 @@
     <OutputType>Exe</OutputType>
     <PackageId>ExtendedXmlSerializer.Tests.Performance</PackageId>
     <IsPackable>false</IsPackable>
+    <VersionPrefix>0.0.0.0</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
