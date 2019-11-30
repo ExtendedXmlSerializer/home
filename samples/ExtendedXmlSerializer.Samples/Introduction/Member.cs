@@ -1,6 +1,5 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System.IO;
 using System.Xml;
 
@@ -14,7 +13,7 @@ namespace ExtendedXmlSerializer.Samples.Introduction
 		public void Execute(object parameter)
 		{
 // Member
-IExtendedXmlSerializer serializer = new ConfigurationContainer().ConfigureType<Subject>()
+IExtendedXmlSerializer serializer = new ConfigurationContainer().Type<Subject>()
                                                                 .Member(x => x.Message)
                                                                 .Name("Text")
                                                                 .Create();

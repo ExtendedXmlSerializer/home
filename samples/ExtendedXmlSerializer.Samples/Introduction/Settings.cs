@@ -1,6 +1,5 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System.Xml;
 // ReSharper disable UnusedVariable
 

@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,7 +30,7 @@ namespace ExtendedXmlSerializer.Samples.MigrationMap
 {
 	// TestClassMigrations
 
-public class TestClassMigrations : IEnumerable<Action<XElement>>
+	public class TestClassMigrations : IEnumerable<Action<XElement>>
 {
 	public static void MigrationV0(XElement node)
 	{

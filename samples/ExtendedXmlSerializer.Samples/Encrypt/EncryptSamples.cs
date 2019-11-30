@@ -23,7 +23,6 @@
 
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Encryption;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +39,7 @@ namespace ExtendedXmlSerializer.Samples.Encrypt
 // Configuration
 
 IExtendedXmlSerializer serializer = new ConfigurationContainer().UseEncryptionAlgorithm(new CustomEncryption())
-																.ConfigureType<Person>()
+																.Type<Person>()
 																.Member(p => p.Password)
 																.Encrypt()
 																.Create();

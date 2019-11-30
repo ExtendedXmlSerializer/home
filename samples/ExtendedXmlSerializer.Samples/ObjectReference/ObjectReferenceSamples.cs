@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,7 +37,7 @@ namespace ExtendedXmlSerializer.Samples.ObjectReference
 
 // Configure
 
-IExtendedXmlSerializer serializer = new ConfigurationContainer().ConfigureType<Person>()
+IExtendedXmlSerializer serializer = new ConfigurationContainer().Type<Person>()
                                                                 .EnableReferences(p => p.Id)
                                                                 .Create();
 // EndConfigure
