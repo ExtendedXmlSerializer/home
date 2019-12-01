@@ -138,4 +138,8 @@ Mentions
 
 ExtendedXmlSerializer is proudly developed and maintained with ReSharper Ultimate.
 
-[<img src="https://blog.dragonspark.us/images/ReSharper.png" height="200px"></a>](https://www.jetbrains.com/resharper/download/)
+[<img src="https://github.com/DragonSpark/blog.dragonspark.us/blob/a49ead8aa87f61dd6c4d6f5999e6d01b8823d57b/static/images/ReSharper.png?raw=true" height="200" width="200" />](https://www.jetbrains.com/resharper/download/)
+
+Magical debugging is courtesy of OzCode.
+
+[<img src="https://raw.githubusercontent.com/DragonSpark/blog.dragonspark.us/a49ead8aa87f61dd6c4d6f5999e6d01b8823d57b/static/images/OzCode.svg?sanitize=true" height="200" />](https://www.oz-code.com/)
