@@ -1,6 +1,5 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System;
 using System.IO;
 using System.Text;

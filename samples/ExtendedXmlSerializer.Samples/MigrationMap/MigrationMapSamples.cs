@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System;
 using System.IO;
 using System.Xml;
@@ -36,7 +35,7 @@ namespace ExtendedXmlSerializer.Samples.MigrationMap
 			Program.PrintHeader("Deserialization old version of xml");
 // MigrationsConfiguration
 
-IExtendedXmlSerializer serializer = new ConfigurationContainer().ConfigureType<TestClass>()
+IExtendedXmlSerializer serializer = new ConfigurationContainer().Type<TestClass>()
 																.AddMigration(new TestClassMigrations())
 																.Create();
 // EndMigrationsConfiguration

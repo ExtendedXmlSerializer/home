@@ -1,16 +1,9 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Content;
-using ExtendedXmlSerializer.ExtensionModel.Types;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExtendedXmlSerializer.Samples.Parametrized
 {
-    public static class ParametrizedConstructors
+	public static class ParametrizedConstructors
     {
         public static void SerializeAndDeserialize()
         {

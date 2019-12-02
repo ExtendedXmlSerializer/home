@@ -1,15 +1,10 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Content;
-using ExtendedXmlSerializer.ExtensionModel.Types;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 
 namespace ExtendedXmlSerializer.Samples.Generics
 {
-    public class GenericSerializer
+	public class GenericSerializer
     {
         private IExtendedXmlSerializer serializer;
 
@@ -136,10 +131,6 @@ namespace ExtendedXmlSerializer.Samples.Generics
             public override string Name => nameof(FirstRecipe);
 
             public double Lenght { get; set; } = 23;
-
-            public FirstRecipe()
-            {
-            }
         }
 
         public class SecondRecipe : RecipeBase
@@ -147,10 +138,6 @@ namespace ExtendedXmlSerializer.Samples.Generics
             public override string Name => nameof(SecondRecipe);
 
             public double Thickness { get; set; } = 100;
-
-            public SecondRecipe()
-            {
-            }
         }
 
         public interface IActivityParameters

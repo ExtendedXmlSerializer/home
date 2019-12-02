@@ -4,11 +4,8 @@
     <AssemblyName>ExtendedXmlSerializer.Tests.Performance</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>ExtendedXmlSerializer.Tests.Performance</PackageId>
-    <!--<NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>-->
-    <!--<RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">1.0.4</RuntimeFrameworkVersion>-->
-    <!--<GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>-->
+    <IsPackable>false</IsPackable>
+    <VersionPrefix>0.0.0.0</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,9 +13,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" />
-    <PackageReference Include="BenchmarkDotNet" Version="0.11.5" />
-    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Condition="'$(TargetFramework)' == 'net462'" Version="0.11.5" />
-    <PackageReference Include="ExtendedXmlSerializer.Legacy" Version="2.0.0" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.12.0" />
+    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Condition="'$(TargetFramework)' == 'net462'" Version="0.12.0" />
+    <PackageReference Include="ExtendedXmlSerializer.Legacy" Version="2.1.1" />
   </ItemGroup>
 
 </Project>

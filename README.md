@@ -136,6 +136,20 @@ Notable Contributors
 Mentions
 ========
 
+[<img src="https://github.com/DragonSpark/blog.dragonspark.us/blob/a49ead8aa87f61dd6c4d6f5999e6d01b8823d57b/static/images/ReSharper.png?raw=true" height="200" width="200" />](https://www.jetbrains.com/resharper/download/)
+
 ExtendedXmlSerializer is proudly developed and maintained with ReSharper Ultimate.
 
-[<img src="https://blog.dragonspark.us/images/ReSharper.png" height="200px"></a>](https://www.jetbrains.com/resharper/download/)
+<br />
+<br />
+
+[<img src="https://raw.githubusercontent.com/DragonSpark/blog.dragonspark.us/a49ead8aa87f61dd6c4d6f5999e6d01b8823d57b/static/images/OzCode.svg?sanitize=true" height="200" />](https://www.oz-code.com/)
+
+Magical debugging is courtesy of OzCode.
+
+<br />
+<br />
+
+[<img src="https://raw.githubusercontent.com/SuperDotNet/superdotnet.run/c83812c7120c1d6a1cb0db13bee2d4ff0a5fc526/static/images/CodeCompare.svg?sanitize=true" height="200" />](https://www.devart.com/codecompare/)
+
+File comparison and conflict resolution handled by DevArt's Code Compare.

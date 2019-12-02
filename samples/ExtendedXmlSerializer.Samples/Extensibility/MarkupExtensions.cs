@@ -1,7 +1,6 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.Markup;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System;
 
 namespace ExtendedXmlSerializer.Samples.Extensibility
