@@ -1,0 +1,76 @@
+name: Update the CHANGELOG
+
+on:
+  release:
+    types: [unpublished, edited, deleted]
+
+env:
+  DEPLOY_USER: "ExtendedXmlSerializer's GitHub Action Automation Agent"
+  DEPLOY_EMAIL: "ExtendedXmlSerializer@users.noreply.github.com"
+  DEPLOY_COMMIT_MESSAGE: Generated CHANGELOG.md
+
+jobs:
+  generate_and_save:
+    runs-on: ubuntu-latest
+    steps:
+    - id: generate
+      name: Generate CHANGELOG
+      uses: dragonspark/action-changelog-dawg@master
+      with:
+        access_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload CHANGELOG
+      uses: actions/upload-artifact@v1
+      with:
+        name: store
+        path: '${{ steps.generate.outputs.filename }}'
+
+  load_and_push:
+    runs-on: ubuntu-latest
+    needs: [generate_and_save]    
+    steps:
+      - uses: actions/checkout@master
+        with:
+          ref: refs/heads/master
+      - name: Download the CHANGELOG
+        uses: actions/download-artifact@v1
+        with:
+          name: store
+          path: ./
+      - name: Add and Commit
+        run: |
+             git config user.email $env:DEPLOY_EMAIL
+             git config user.name $env:DEPLOY_USER
+             git add -A 2>&1
+             git commit -m $env:DEPLOY_COMMIT_MESSAGE
+        shell: pwsh
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  load_and_push_to_wiki:
+    runs-on: ubuntu-latest
+    needs: [generate_and_save]    
+    steps:
+      - uses: actions/checkout@master
+        with:
+          repository: ${{ github.repository }}.wiki
+          ref: refs/heads/master
+          path: ./${{ github.event.repository.name }}
+      - name: Download the CHANGELOG
+        uses: actions/download-artifact@v1
+        with:
+          name: store
+          path: ./
+      - name: Add and Commit
+        run: |
+             git config user.email $env:DEPLOY_EMAIL
+             git config user.name $env:DEPLOY_USER
+             git add -A 2>&1
+             git commit -m $env:DEPLOY_COMMIT_MESSAGE
+        shell: pwsh
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          repository: ${{ github.repository }}.wiki
+          github_token: ${{ secrets.GITHUB_TOKEN }}
