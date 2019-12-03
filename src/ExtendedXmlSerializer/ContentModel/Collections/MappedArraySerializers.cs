@@ -8,7 +8,7 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
@@ -16,10 +16,7 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 	{
 		readonly IContents _contents;
 
-		public MappedArraySerializers(IContents contents)
-		{
-			_contents = contents;
-		}
+		public MappedArraySerializers(IContents contents) => _contents = contents;
 
 		public ISerializer Get(TypeInfo parameter)
 		{
@@ -53,25 +50,12 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 			}
 		}
 
-		sealed class SizeOf<T> : ISource<int>
+		sealed class SizeOf<T> : DelegatedSource<int>
 		{
 			[UsedImplicitly]
 			public static SizeOf<T> Default { get; } = new SizeOf<T>();
 
-			SizeOf() {}
-
-			public int Get()
-			{
-				var dm = new DynamicMethod("func", typeof(int), Type.EmptyTypes);
-
-				ILGenerator il = dm.GetILGenerator();
-				il.Emit(OpCodes.Sizeof, typeof(T));
-				il.Emit(OpCodes.Ret);
-
-				var factory = (Func<int>)dm.CreateDelegate(typeof(Func<int>));
-				var result  = factory();
-				return result;
-			}
+			SizeOf() : base(Unsafe.SizeOf<T>) {}
 		}
 
 		sealed class Sizes : StructureCache<TypeInfo, int>
