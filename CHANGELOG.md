@@ -1,7 +1,7 @@
 # [ExtendedXmlSerializer v3.0.1](https://github.com/ExtendedXmlSerializer/home/releases/tag/3.0.1)
-> 12/03/2019 09:56:37 UTC
+> 12/03/2019 10:09:25 UTC
 ##### ``3.0.1``
-Every major release has one. &#128517;  This minor patch fixing release is basically ironing out identified issues found during the deployment process of `v3.0.0`.
+Every major release has one. &#128517; This minor patch fixing release is basically ironing out identified issues found during the deployment process of version `3.0.0`.
 
 ### Other Changes
 - Fixed deployment issues #334 @Mike-EEE
