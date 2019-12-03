@@ -7,7 +7,7 @@ on:
 env:
   DEPLOY_USER: "ExtendedXmlSerializer's GitHub Action Automation Agent"
   DEPLOY_EMAIL: "ExtendedXmlSerializer@users.noreply.github.com"
-  DEPLOY_COMMIT_MESSAGE: Adding CHANGELOG.md
+  DEPLOY_COMMIT_MESSAGE: Generated CHANGELOG.md
   DEPLOY_ACCOUNT: ExtendedXmlSerializer
   DEPLOY_SLUG: extendedxmlserializer
   DEPLOY_BRANCH: master

@@ -103,10 +103,16 @@ for:
 
 
 - # Deploy
-  skip_tags: false
   branches:
     only:
       - /\d*\.\d*\.\d*/
+  
+  init:
+    - ps: |
+          if (!$env:APPVEYOR_FORCED_BUILD)
+          {
+            throw "This configuration should only be called from external workflows."
+          }
   
   cache:
     - '%USERPROFILE%\.ssh\known_hosts'
@@ -138,9 +144,9 @@ for:
       prerelease: $(DEPLOY_RELEASE_IS_PRERELEASE)
       auth_token: $(API_GITHUB_TOKEN)
       force_update: true
-    # - provider: NuGet
-    #   name: production
-    #   api_key:
-    #     secure: kExW39+W8VRwk3UMReJiT7h2ySKqC9ZpbSPJ87zFNn8uTSLMsZNMCVn/VMrY+7Q7
+    - provider: NuGet
+      name: production
+      api_key:
+        secure: kExW39+W8VRwk3UMReJiT7h2ySKqC9ZpbSPJ87zFNn8uTSLMsZNMCVn/VMrY+7Q7
   on_success:
     - ps: .\.build\Deploy-Documentation.ps1 
