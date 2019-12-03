@@ -1,6 +1,6 @@
 # Welcome!
 
-Welcome to the ExtendedXmlSerializer documentation site.  This is an automated site that is part of our continuous integration workflow and is generated on each new release.
+Welcome to the ExtendedXmlSerializer documentation site.  This is a generated site that is part of our continuous integration workflow and is deployed on each new release.
 
 ### [Conceptual Topics](https://extendedxmlserializer.github.io/documentation/conceptual/)
 
@@ -16,7 +16,7 @@ Want to see a history of our product?  Then [check out our releases](https://git
 
 ### [CHANGELOG](https://github.com/ExtendedXmlSerializer/home/blob/master/CHANGELOG.md)
 
-A [single-page history](https://github.com/ExtendedXmlSerializer/home/blob/master/CHANGELOG.md) of our releases starting with `v2.2.0`.
+A [single-page history](https://github.com/ExtendedXmlSerializer/home/blob/master/CHANGELOG.md) of our releases starting with `v3.0.0`.
 
 ### [README](https://github.com/ExtendedXmlSerializer/home/blob/master/README.md)
 

@@ -23,11 +23,11 @@
     <PackageIcon>Logo.png</PackageIcon>
     <VersionPrefix>0.0.0.0</VersionPrefix>
     <PackageReleaseNotes>
-      Latest release notes with downloads are available here:
-      https://github.com/ExtendedXmlSerializer/home/releases
+Latest release notes with downloads are available here:
+https://github.com/ExtendedXmlSerializer/home/releases
 
-      Single-file CHANGELOG featuring overview and history of changes since v2.2.0:
-      https://github.com/ExtendedXmlSerializer/home/blob/master/CHANGELOG.md
+Single-file CHANGELOG featuring overview and history of changes since v3.0.0:
+https://github.com/ExtendedXmlSerializer/home/blob/master/CHANGELOG.md
     </PackageReleaseNotes>
 
     <!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
