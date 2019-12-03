@@ -2,7 +2,8 @@ name: Update the CHANGELOG
 
 on:
   release:
-    types: [unpublished, edited, deleted]
+    types: []
+    #types: [unpublished, edited, deleted]
 
 env:
   DEPLOY_USER: "ExtendedXmlSerializer's GitHub Action Automation Agent"
