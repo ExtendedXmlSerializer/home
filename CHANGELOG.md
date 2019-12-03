@@ -51,6 +51,7 @@ With that, I would like to sign off on this release and send a BIG thank you to 
 - Provided code used for README. #326 @Mike-EEE
 - Added tests for demonstrating configuration profiles in documentation. #327 @Mike-EEE
 - Added code/documentation example for converters. #329 @Mike-EEE
-- Updated submodule reference. #330 @Mike-EEE- Modified Build Solution to Include Other Projects #332 @Mike-EEE
+- Updated submodule reference. #330 @Mike-EEE
+- Modified Build Solution to Include Other Projects #332 @Mike-EEE
 - Removed dependency to System.Reflection.Emit.Lightweight. #319 @Mike-EEE
 
