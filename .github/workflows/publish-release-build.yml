@@ -2,9 +2,10 @@ name: Publish Release Build
 
 on:
   release:
-    types: [published]
+    types: [created]
 
 env:
+  BRANCH_REFERENCE: refs/heads/master
   DEPLOY_USER: "ExtendedXmlSerializer's GitHub Action Automation Agent"
   DEPLOY_EMAIL: "ExtendedXmlSerializer@users.noreply.github.com"
   DEPLOY_COMMIT_MESSAGE: Generated CHANGELOG.md
@@ -33,53 +34,32 @@ jobs:
     steps:
       - uses: actions/checkout@master
         with:
-          ref: refs/heads/master
+          ref: ${{ env.BRANCH_REFERENCE }}
       - name: Download the CHANGELOG
         uses: actions/download-artifact@v1
         with:
           name: store
           path: ./
-      - name: Add and Commit
-        run: |
-             git config user.email $env:DEPLOY_EMAIL
-             git config user.name $env:DEPLOY_USER
-             git add -A 2>&1
-             git commit -m $env:DEPLOY_COMMIT_MESSAGE
-        shell: pwsh
-      - name: Push changes
-        uses: ad-m/github-push-action@master
+      - name: Create Pull Request for CHANGELOG
+        uses: peter-evans/create-pull-request@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: ${{ env.DEPLOY_COMMIT_MESSAGE }}
+          author-email: ${{ env.DEPLOY_EMAIL }}
+          author-name: ${{ env.DEPLOY_USER }}
+          title: '[Automated] ${{ env.DEPLOY_COMMIT_MESSAGE }}'
+          body: |
+            Automated Pull Request
+            - Event Name: ${{ github.event_name }}
+            - Event Type: ${{ github.event.action }}
+            - Proudly Auto-generated using [create-pull-request][1]
 
-  load_and_push_to_wiki:
-    runs-on: ubuntu-latest
-    needs: [generate_and_save]    
-    steps:
-      - uses: actions/checkout@master
-        with:
-          repository: ${{ github.repository }}.wiki
-          ref: refs/heads/master
-          path: ./${{ github.event.repository.name }}
-      - name: Download the CHANGELOG
-        uses: actions/download-artifact@v1
-        with:
-          name: store
-          path: ./
-      - name: Add and Commit
-        run: |
-             git config user.email $env:DEPLOY_EMAIL
-             git config user.name $env:DEPLOY_USER
-             git add -A 2>&1
-             git commit -m $env:DEPLOY_COMMIT_MESSAGE
-        shell: pwsh
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          repository: ${{ github.repository }}.wiki
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-  
+            [1]: https://github.com/peter-evans/create-pull-request
+          labels: automerge
+          base: ${{ env.BRANCH_REFERENCE }}
+          branch: automated/changelog
   build:
-    needs: [load_and_push, load_and_push_to_wiki]
+    needs: [load_and_push]
     
     runs-on: ubuntu-latest
     
