@@ -56,7 +56,7 @@ https://github.com/ExtendedXmlSerializer/home/blob/master/CHANGELOG.md
     <PackageReference Include="NReco.LambdaParser" Version="1.0.10" />
     <PackageReference Include="Sprache" Version="2.2.0" />
     <PackageReference Include="System.Interactive" Version="4.0.0" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.6.0" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.6.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.7.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.0" />
   </ItemGroup>
 </Project>
