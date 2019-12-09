@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Reflection;
+﻿using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
@@ -52,7 +52,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		{
 			readonly IEnumerable<T> _other;
 
-			public Specification(IEnumerable<T> other) => _other = other;
+			public Specification(IEnumerable<T> other) => _other = other ?? Enumerable.Empty<T>();
 
 			public bool IsSatisfiedBy(object parameter)
 				=> parameter is IEnumerable<T> other && other.SequenceEqual(_other);
