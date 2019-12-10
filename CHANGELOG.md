@@ -1,3 +1,12 @@
+# [ExtendedXmlSerializer v3.0.2](https://github.com/ExtendedXmlSerializer/home/releases/tag/3.0.2)
+> 12/10/2019 08:28:04 UTC
+##### ``3.0.2``
+A patch release that addresses reported issues since the 3.0.0 release.
+### &#128027; Bug Fixes &#128295; 
+- Fixed bug with null arrays when EmitBehaviors.WhenModified is used. #338 @Mike-EEE 
+### Other Changes 
+- Updated NuGet references. #336 @Mike-EEE 
+
 # [ExtendedXmlSerializer v3.0.1](https://github.com/ExtendedXmlSerializer/home/releases/tag/3.0.1)
 > 12/03/2019 10:09:25 UTC
 ##### ``3.0.1``
