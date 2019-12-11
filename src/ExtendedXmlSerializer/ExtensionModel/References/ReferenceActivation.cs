@@ -1,10 +1,10 @@
-using System;
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using JetBrains.Annotations;
+using System;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -63,10 +63,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 			public object Get(IFormatReader parameter)
 			{
-				var declared = Identity(parameter);
+				var element = !string.IsNullOrEmpty(parameter.Identifier);
+
+				var declared = element ? Identity(parameter) : null;
 				var result   = _activator.Get(parameter);
 
-				var identity = declared ?? (result != null ? Entity(parameter, result) : null);
+				var identity = declared ?? (element && result != null ? Entity(parameter, result) : null);
 
 				if (identity != null)
 				{

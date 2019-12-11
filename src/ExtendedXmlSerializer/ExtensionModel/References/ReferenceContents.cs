@@ -24,8 +24,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		[UsedImplicitly]
 		public ReferenceContents(IReferenceEncounters identifiers, IReferenceMaps maps, IEntities entities,
-		                         IContents option,
-		                         IClassification classification, IConverters converters)
+		                         IContents option, IClassification classification, IConverters converters)
 			: this(Specification, converters.IfAssigned(), identifiers, maps, entities, option, classification) {}
 
 		public ReferenceContents(ISpecification<TypeInfo> specification, ISpecification<TypeInfo> convertible,

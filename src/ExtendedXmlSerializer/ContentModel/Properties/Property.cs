@@ -8,18 +8,11 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 		readonly ISerializer<T> _serializer;
 
 		public Property(IReader<T> reader, IWriter<T> writer, IIdentity identity)
-			: this(
-			       new Serializer<T>(
-			                         identity is FrameworkIdentity
-				                         ? new ConfiguredReader<T>(reader, SetContentCommand.Default)
-				                         : reader,
-			                         writer),
+			: this(new Serializer<T>(identity is FrameworkIdentity ? new TrackingReader<T>(reader) : reader, writer),
 			       identity) {}
 
 		public Property(ISerializer<T> serializer, IIdentity identity) : base(identity.Name, identity.Identifier)
-		{
-			_serializer = serializer;
-		}
+			=> _serializer = serializer;
 
 		public T Get(IFormatReader parameter) => _serializer.Get(parameter);
 
