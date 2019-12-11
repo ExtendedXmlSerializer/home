@@ -27,18 +27,20 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		ReferenceIdentity? GetReference(IFormatReader parameter)
 		{
-			var identity = ReferenceIdentity.Get(parameter);
-			if (identity.HasValue)
+			if (!string.IsNullOrEmpty(parameter.Identifier))
 			{
-				return new ReferenceIdentity(identity.Value);
-			}
+				var identity = ReferenceIdentity.Get(parameter);
+				if (identity.HasValue)
+				{
+					return new ReferenceIdentity(identity.Value);
+				}
 
-			var type = _classification.GetClassification(parameter, _definition);
-			var entity = _entities.Get(type)
-			                      ?.Reference(parameter);
-			if (entity != null)
-			{
-				return new ReferenceIdentity(type, entity);
+				var type = _classification.GetClassification(parameter, _definition);
+				var entity = _entities.Get(type)?.Reference(parameter);
+				if (entity != null)
+				{
+					return new ReferenceIdentity(type, entity);
+				}
 			}
 
 			return null;
@@ -49,13 +51,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			var identity = GetReference(parameter);
 			if (identity != null)
 			{
-				var map       = _maps.Get(parameter);
-				var reference = map.Get(identity.Value);
-				return reference;
+				var result = _maps.Get(parameter).Get(identity.Value);
+				return result;
 			}
 
-			var result = base.Get(parameter);
-			return result;
+			{
+				var result = base.Get(parameter);
+				return result;
+			}
 		}
 	}
 }
