@@ -46,6 +46,18 @@ namespace ExtendedXmlSerializer
 		/* Extension Model: */
 
 		/// <summary>
+		/// Adds support for instances and property types that are explicitly specified as `IEnumerable{T}`.  If an object is
+		/// of a type of `IEnumerable` (essentially, a deferred query), it will be evaluated as a <see cref="List{T}"/> and
+		/// saved as such as required by either the instance or property in the object graph.
+		/// </summary>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <returns>The configured configuration container.</returns>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/340" />
+		/// <seealso href="https://twitter.com/vcsjones/status/1204432274000879619" />
+		public static IConfigurationContainer WithEnumerableSupport(this IConfigurationContainer @this)
+			=> @this.Extend(EnumerableSupportExtension.Default);
+
+		/// <summary>
 		/// Assigns a default serialization monitor for a configuration container.  A serialization monitor is a component
 		/// that gets notified whenever there is a serialization such as OnSerializing, OnSerialized, as well as
 		/// deserialization events such as OnDeserializing, OnDeserialized, etc.

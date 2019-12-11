@@ -17,8 +17,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 				var length = members.Length;
 				for (var i = 0; i < length; i++)
 				{
-					members[i]
-						.Write(writer, instance);
+					members[i].Write(writer, instance);
 				}
 			}
 			else

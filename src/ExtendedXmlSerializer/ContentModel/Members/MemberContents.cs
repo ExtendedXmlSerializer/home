@@ -1,15 +1,24 @@
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
+using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	sealed class MemberContents : DecoratedSource<IMember, ISerializer>, IMemberContents
+	interface IMemberContentsCore : IMemberContents {}
+
+	[UsedImplicitly]
+	sealed class MemberContentsCore : DecoratedSource<IMember, ISerializer>, IMemberContentsCore
 	{
 		readonly static ISpecification<IMember> Specification = VariableTypeMemberSpecifications.Default.IfAssigned();
 
-		public MemberContents(DefaultMemberContents @default, VariableTypeMemberContents variable,
-		                      RegisteredMemberContents registered)
-			: base(@default.Let(Specification, variable)
-			               .Let(registered, registered)) {}
+		public MemberContentsCore(DefaultMemberContents @default, VariableTypeMemberContents variable)
+			: base(@default.Let(Specification, variable)) {}
+	}
+
+	[UsedImplicitly]
+	sealed class MemberContents : DecoratedSource<IMember, ISerializer>, IMemberContents
+	{
+		public MemberContents(IMemberContentsCore core, RegisteredMemberContents registered)
+			: base(core.Let(registered, registered)) {}
 	}
 }

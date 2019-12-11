@@ -5,9 +5,8 @@ using VariableTypeSpecification = ExtendedXmlSerializer.ReflectionModel.Variable
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	sealed class VariableTypeMemberSpecifications
-		: ReferenceCacheBase<IMember, IVariableTypeSpecification>,
-		  IVariableTypeMemberSpecifications
+	sealed class VariableTypeMemberSpecifications : ReferenceCacheBase<IMember, IVariableTypeSpecification>,
+	                                                IVariableTypeMemberSpecifications
 	{
 		public static VariableTypeMemberSpecifications Default { get; } = new VariableTypeMemberSpecifications();
 

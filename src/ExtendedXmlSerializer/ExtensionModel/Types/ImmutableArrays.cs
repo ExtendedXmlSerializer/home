@@ -5,7 +5,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
 	sealed class ImmutableArrays : Collections
 	{
-		public ImmutableArrays(RuntimeSerializers serializers, ImmutableArrayContents contents) :
-			base(serializers, contents) {}
+		public ImmutableArrays(RuntimeSerializers serializers, ImmutableArrayContents contents) 
+			: base(serializers, contents) {}
 	}
 }

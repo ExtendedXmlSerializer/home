@@ -28,6 +28,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			            .Register<ISerializer, Serializer>()
 			            .Register<IRuntimeSerialization, RuntimeSerialization>()
 			            .Register<ContentModel.ISerializer, RuntimeSerializer>()
+
 			            .Register<RuntimeSerializers>()
 			            .Register<ISerializers, Serializers>()
 			            .RegisterInstance(RuntimeSerializationExceptionMessage.Default)

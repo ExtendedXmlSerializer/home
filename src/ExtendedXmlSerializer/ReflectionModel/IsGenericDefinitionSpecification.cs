@@ -1,6 +1,6 @@
+using ExtendedXmlSerializer.Core.Specifications;
 using System;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {

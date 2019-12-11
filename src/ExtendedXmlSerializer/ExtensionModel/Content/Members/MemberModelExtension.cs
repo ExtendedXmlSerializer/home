@@ -26,9 +26,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 			            .Register<IMemberAccessors, MemberAccessors>()
 			            .Register<WritableMemberAccessors>()
 			            .Register<ReadOnlyCollectionAccessors>()
-			            .Register<VariableTypeMemberContents>()
-			            .Register<DefaultMemberContents>()
-			            .Register<IMemberContents, MemberContents>()
+			            .RegisterWithDependencies<IMemberContentsCore, MemberContentsCore>()
+			            .RegisterWithDependencies<IMemberContents, MemberContents>()
 			            .Register<IMemberSerializers, MemberSerializers>()
 			            .Register<IMemberSerializations, MemberSerializations>()
 			            .Register<IInstanceMemberSerializations, InstanceMemberSerializations>();

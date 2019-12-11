@@ -6,7 +6,6 @@ using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
-using VariableTypeSpecification = ExtendedXmlSerializer.ReflectionModel.VariableTypeSpecification;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -42,8 +41,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			=> parameter.Register<RuntimeElement>()
 			            .Register<Element>()
 			            .Register<IElement, Element>()
-			            .DecorateElementWith<VariableTypeElement>()
-			            .When(VariableTypeSpecification.Default)
 			            .DecorateElementWith<GenericElement>()
 			            .When(IsGenericTypeSpecification.Default)
 			            .DecorateElementWith<ArrayElement>()

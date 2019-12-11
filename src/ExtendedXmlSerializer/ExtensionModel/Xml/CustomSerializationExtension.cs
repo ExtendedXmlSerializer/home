@@ -1,6 +1,5 @@
 ﻿using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,15 +27,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public ICustomMemberSerializers Members { get; }
 
-		public IServiceRepository Get(IServiceRepository parameter) => Extensions()
-		                                                               .Aggregate(parameter,
-		                                                                          (repository, serializer) =>
-			                                                                          serializer.Get(repository))
-		                                                               .RegisterInstance(XmlSerializers)
-		                                                               .RegisterInstance(Types)
-		                                                               .RegisterInstance(Members)
-		                                                               .Register<RegisteredMemberContents>()
-		                                                               .Decorate<IContents, Contents>();
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> Extensions().Aggregate(parameter, (repository, serializer) => serializer.Get(repository))
+			               .RegisterInstance(XmlSerializers)
+			               .RegisterInstance(Types)
+			               .RegisterInstance(Members)
+			               .Decorate<IContents, Contents>();
 
 		void ICommand<IServices>.Execute(IServices parameter)
 		{

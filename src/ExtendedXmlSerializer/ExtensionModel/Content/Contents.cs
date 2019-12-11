@@ -24,22 +24,31 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.RegisterConstructorDependency<IContents>((provider, info) => provider.Get<DeferredContents>())
 			            .Register<IContents, RuntimeContents>()
+
 			            .DecorateContentsWith<MemberedContents>()
 			            .When<IActivatingTypeSpecification>()
+
 			            .DecorateContentsWith<DefaultCollections>()
 			            .When<DefaultCollectionSpecification>()
+
 			            .Register<IDictionaryEntries, DictionaryEntries>()
 			            .DecorateContentsWith<DictionaryContents>()
 			            .When<DictionaryContentSpecification>()
+
 			            .DecorateContentsWith<Arrays>()
 			            .When(ArraySpecification.Default)
+
 			            .DecorateContentsWith<MappedArrayContents>()
 			            .Then()
+
 			            .RegisterInstance(ReflectionSerializer.Default)
+
 			            .DecorateContentsWith<ReflectionContents>()
 			            .When(ReflectionContentSpecification.Default)
+
 			            .DecorateContentsWith<NullableContents>()
 			            .When(IsNullableTypeSpecification.Default)
+
 			            .DecorateContentsWith<ConverterContents>()
 			            .When<ConverterSpecification>()
 			            .DecorateContentsWith<RegisteredContents>()
