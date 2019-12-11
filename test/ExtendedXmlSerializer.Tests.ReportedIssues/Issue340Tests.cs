@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
+
 // ReSharper disable PossibleMultipleEnumeration
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -14,7 +15,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		void Verify()
 		{
-			var instance = new Subject { Contents = new[] {"Hello", "World!"}.Select(x => x) };
+			var instance = new Subject {Contents = new[] {"Hello", "World!"}.Select(x => x)};
 			new ConfigurationContainer().WithEnumerableSupport()
 			                            .ForTesting()
 			                            .Cycle(instance)
@@ -43,6 +44,18 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                            .Cycle(instance)
 			                            .Should()
 			                            .BeEquivalentTo(instance);
+		}
+
+		[Fact]
+		void VerifyImmutableEnumerable()
+		{
+			var instance = new ImmutableSubject(new[] {"Hello", "World!"}.Select(x => x));
+			var subject = new ConfigurationContainer().EnableParameterizedContent()
+			                                          .WithEnumerableSupport()
+			                                          .ForTesting()
+			                                          .Cycle(instance);
+			subject.Should().BeEquivalentTo(instance);
+			subject.Contents.Should().BeAssignableTo<List<string>>();
 		}
 
 		sealed class Subject
