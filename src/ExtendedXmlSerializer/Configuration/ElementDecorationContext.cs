@@ -31,5 +31,14 @@ namespace ExtendedXmlSerializer.Configuration
 		/// <returns>The configured repository.</returns>
 		public IServiceRepository When(ISpecification<TypeInfo> specification)
 			=> new ConditionalElementDecoration<T>(specification).Get(_repository);
+
+		/// <summary>
+		/// Configures the container's <see cref="IElement"/> to use the decorated type when the provided specification is
+		/// satisfied.
+		/// </summary>
+		/// <typeparam name="TSpecification">The type of specification to activate via service location.</typeparam>
+		/// <returns>The configured repository</returns>
+		public IServiceRepository When<TSpecification>() where TSpecification : ISpecification<TypeInfo>
+			=> ConditionalElementDecoration<TSpecification, T>.Default.Get(_repository);
 	}
 }

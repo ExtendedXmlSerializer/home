@@ -21,6 +21,4 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 			=> new Serializer(new ArrayReader(_contents, _classification, parameter.Classification, parameter.Item),
 			                  new EnumerableWriter(_enumerators, parameter.Item).Adapt());
 	}
-
-	// ATTRIBUTION: https://stackoverflow.com/a/1183019/3602057
 }

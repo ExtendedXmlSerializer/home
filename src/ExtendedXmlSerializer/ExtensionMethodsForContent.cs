@@ -46,6 +46,14 @@ namespace ExtendedXmlSerializer
 		/* Extension Model: */
 
 		/// <summary>
+		///
+		/// </summary>
+		/// <param name="this"></param>
+		/// <returns></returns>
+		public static IConfigurationContainer WithEnumerableSupport(this IConfigurationContainer @this)
+			=> @this.Extend(EnumerableSupportExtension.Default);
+
+		/// <summary>
 		/// Assigns a default serialization monitor for a configuration container.  A serialization monitor is a component
 		/// that gets notified whenever there is a serialization such as OnSerializing, OnSerialized, as well as
 		/// deserialization events such as OnDeserializing, OnDeserialized, etc.
