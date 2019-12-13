@@ -14,7 +14,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var instance = new MyClass
 				{SomeAttributeProperty = "Hello World!", SomeOtherProperty = new DateTime(2019, 12, 13)};
 
-			new ConfigurationContainer().ForTesting()
+			new ConfigurationContainer().Create()
+			                            .ForTesting()
 			                            .Cycle(instance)
 			                            .Should()
 			                            .BeEquivalentTo(instance);
@@ -29,7 +30,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				SomeOtherProperty     = new MyClass {SomeAttributeProperty = "Hello World Again!"}
 			};
 
-			new ConfigurationContainer().ForTesting()
+			new ConfigurationContainer().Create()
+			                            .ForTesting()
 			                            .Cycle(instance)
 			                            .Should()
 			                            .BeEquivalentTo(instance);
