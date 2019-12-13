@@ -1,4 +1,5 @@
-﻿using ExtendedXmlSerializer.Core.Sources;
+﻿using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -28,10 +29,24 @@ namespace ExtendedXmlSerializer
 		/// <typeparam name="T">The parameter type.</typeparam>
 		/// <param name="this">The delegate to call.</param>
 		/// <param name="parameter">The parameter to pass to the delegate and return.</param>
-		/// <returns>The delegate.</returns>
+		/// <returns>The provided parameter.</returns>
 		public static T Apply<T>(this Action<T> @this, T parameter)
 		{
 			@this(parameter);
+			return parameter;
+		}
+
+		/// <summary>
+		/// Convenience method to invoke a command and return the parameter.  This is useful for fluent-based configuration
+		/// method calls.
+		/// </summary>
+		/// <typeparam name="T">The parameter type.</typeparam>
+		/// <param name="this">The command to call.</param>
+		/// <param name="parameter">The parameter to pass to the command and return.</param>
+		/// <returns>The provided parameter.</returns>
+		public static T Apply<T>(this ICommand<T> @this, T parameter)
+		{
+			@this.Execute(parameter);
 			return parameter;
 		}
 
