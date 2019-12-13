@@ -178,7 +178,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="this"></param>
 		/// <param name="serializerType"></param>
 		/// <returns></returns>
-		/// /// <seealso cref="TypeSerializationRegistrationContext{T}.Of"/>
+		/// <seealso cref="TypeSerializationRegistrationContext{T}.Of"/>
 		public static ITypeConfiguration<T> CustomSerializer<T>(this IConfigurationContainer @this, Type serializerType)
 			=> @this.Type<T>()
 			        .CustomSerializer(new ActivatedXmlSerializer(serializerType, Support<T>.Metadata));

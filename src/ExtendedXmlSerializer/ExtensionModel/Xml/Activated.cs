@@ -15,9 +15,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		readonly Type              _objectType;
 		readonly TypeInfo          _targetType;
 
-		public Activated(Type objectType, TypeInfo targetType, Type definition) : this(SingletonLocator.Default,
-		                                                                               objectType,
-		                                                                               targetType, definition) {}
+		public Activated(Type objectType, TypeInfo targetType, Type definition)
+			: this(SingletonLocator.Default, objectType, targetType, definition) {}
 
 		// ReSharper disable once TooManyDependencies
 		public Activated(ISingletonLocator locator, Type objectType, TypeInfo targetType, Type definition)
@@ -32,9 +31,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		{
 			var service = parameter.GetService(_objectType);
 
-			var result = service as T ?? Get(_targetType.Yield()
-			                                            .ToImmutableArray())
-				             .Invoke(service);
+			var result = service as T ?? Get(_targetType.Yield().ToImmutableArray())(service);
 			return result;
 		}
 

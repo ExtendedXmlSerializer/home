@@ -116,49 +116,6 @@ namespace ExtendedXmlSerializer
 			        .Return(@this);
 
 		/// <summary>
-		/// Used to alter a serializer whenever one is created for a specific type.  This allows the scenario of decorating
-		/// a serializer to override or monitor serialization and/or deserialization.
-		/// </summary>
-		/// <typeparam name="T">The type that the serializer processes.</typeparam>
-		/// <param name="this">The type configuration to configure.</param>
-		/// <param name="compose">The delegate used to alterate the created serializer.</param>
-		/// <returns>The configured type configuration.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/264#issuecomment-531491807"/>
-		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
-		                                                                  Func<ISerializer<T>, ISerializer<T>> compose)
-			=> @this.RegisterContentComposition(new SerializerComposer<T>(compose).Get);
-
-		/// <summary>
-		/// Used to alter a serializer whenever one is created for a specific type.  This allows the scenario of decorating
-		/// a serializer to override or monitor serialization and/or deserialization.  This override accepts a generalized
-		/// serializer delegate.
-		/// </summary>
-		/// <typeparam name="T">The type that the serializer processes.</typeparam>
-		/// <param name="this">The type configuration to configure.</param>
-		/// <param name="compose">The delegate used to alterate the created serializer.</param>
-		/// <returns>The configured type configuration.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/264#issuecomment-531491807"/>
-		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
-		                                                                  Func<ISerializer, ISerializer> compose)
-			=> @this.RegisterContentComposition(new SerializerComposer(compose));
-
-		/// <summary>
-		/// Used to alter a serializer whenever one is created for a specific type.  This allows the scenario of decorating a
-		/// serializer to override or monitor serialization and/or deserialization.  This override accepts an
-		/// <see cref="ISerializerComposer"/> that performs the alteration on the created serializer.
-		/// </summary>
-		/// <typeparam name="T">The type that the serializer processes.</typeparam>
-		/// <param name="this">The type configuration to configure.</param>
-		/// <param name="composer">The composer that is used to alter the serializer upon creation.</param>
-		/// <returns>The configured type configuration.</returns>
-		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/264#issuecomment-531491807"/>
-		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
-		                                                                  ISerializerComposer composer)
-			=> @this.Root.With<RegisteredCompositionExtension>()
-			        .Apply(Support<T>.Metadata, composer)
-			        .Return(@this);
-
-		/// <summary>
 		/// Provides a way to alter converters when they are accessed by the serializer.  This provides a mechanism to
 		/// decorate converters.  Alterations only occur once per converter per serializer.
 		/// </summary>
@@ -170,5 +127,53 @@ namespace ExtendedXmlSerializer
 			=> @this.Root.With<ConverterAlterationsExtension>()
 			        .Alterations.Apply(alteration)
 			        .Return(@this);
+
+		#region Obsolete
+
+		/// <summary>
+		/// Used to alter a serializer whenever one is created for a specific type.  This allows the scenario of decorating
+		/// a serializer to override or monitor serialization and/or deserialization.
+		/// </summary>
+		/// <typeparam name="T">The type that the serializer processes.</typeparam>
+		/// <param name="this">The type configuration to configure.</param>
+		/// <param name="compose">The delegate used to alterate the created serializer.</param>
+		/// <returns>The configured type configuration.</returns>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/264#issuecomment-531491807"/>
+		[Obsolete("This method is considered obsolete and will be removed in a future release.  Its new equivalent is ITypeConfiguration<T>.Register().Composition().ByCalling.")]
+		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
+		                                                                  Func<ISerializer<T>, ISerializer<T>> compose)
+			=> @this.Register().Composition().ByCalling(compose);
+
+		/// <summary>
+		/// Used to alter a serializer whenever one is created for a specific type.  This allows the scenario of decorating
+		/// a serializer to override or monitor serialization and/or deserialization.  This override accepts a generalized
+		/// serializer delegate.
+		/// </summary>
+		/// <typeparam name="T">The type that the serializer processes.</typeparam>
+		/// <param name="this">The type configuration to configure.</param>
+		/// <param name="compose">The delegate used to alterate the created serializer.</param>
+		/// <returns>The configured type configuration.</returns>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/264#issuecomment-531491807"/>
+		[Obsolete("This method is considered obsolete and will be removed in a future release.  Its new equivalent is ITypeConfiguration<T>.Register().Composition().ByCalling.")]
+		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
+		                                                                  Func<ISerializer, ISerializer> compose)
+			=> @this.Register().Composition().ByCalling(compose);
+
+		/// <summary>
+		/// Used to alter a serializer whenever one is created for a specific type.  This allows the scenario of decorating a
+		/// serializer to override or monitor serialization and/or deserialization.  This override accepts an
+		/// <see cref="ISerializerComposer"/> that performs the alteration on the created serializer.
+		/// </summary>
+		/// <typeparam name="T">The type that the serializer processes.</typeparam>
+		/// <param name="this">The type configuration to configure.</param>
+		/// <param name="composer">The composer that is used to alter the serializer upon creation.</param>
+		/// <returns>The configured type configuration.</returns>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/264#issuecomment-531491807"/>
+		[Obsolete("This method is considered obsolete and will be removed in a future release.  Its new equivalent is ITypeConfiguration<T>.Register().Composition().Using.")]
+		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
+		                                                                  ISerializerComposer composer)
+			=> @this.Register().Composition().Using(composer);
+
+		#endregion
 	}
 }

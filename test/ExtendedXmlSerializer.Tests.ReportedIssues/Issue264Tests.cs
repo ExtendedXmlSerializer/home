@@ -17,7 +17,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void Verify()
 		{
 			new ConfigurationContainer().Type<string>()
-			                            .RegisterContentComposition(x => new Serializer(x))
+			                            .Register()
+			                            .Composition()
+			                            .ByCalling(x => new Serializer(x))
 			                            .Create()
 			                            .Cycle("Hello World!")
 			                            .Should()

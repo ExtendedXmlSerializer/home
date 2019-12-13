@@ -15,8 +15,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void Verify()
 		{
 			var serializer = new ConfigurationContainer().Type<RootClass>()
+			                                             .Register()
+			                                             .Composition()
+			                                             .ByCalling(x => new Serializer(x))
 			                                             .Member(x => x.SomeAttributeProperty).Attribute()
-			                                             .RegisterContentComposition(x => new Serializer(x))
 			                                             .Create()
 			                                             .ForTesting();
 			var instance = new RootClass
@@ -38,7 +40,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			var serializer = new ConfigurationContainer().UseAutoFormatting()
 			                                             .Type<RootClass>()
-			                                             .RegisterContentComposition(x => new Serializer(x))
+			                                             .Register()
+			                                             .Composition()
+			                                             .ByCalling(x => new Serializer(x))
 			                                             .Create()
 			                                             .ForTesting();
 			var instance = new RootClass
