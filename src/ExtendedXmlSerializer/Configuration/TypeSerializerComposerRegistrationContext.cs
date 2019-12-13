@@ -10,12 +10,12 @@ namespace ExtendedXmlSerializer.Configuration
 	/// Provides a context for registering content composers for a particular type.
 	/// </summary>
 	/// <typeparam name="T">The type under configuration.</typeparam>
-	public sealed class TypeContentCompositionRegistrationContext<T>
+	public sealed class TypeSerializerComposerRegistrationContext<T>
 	{
 		readonly ITypeConfiguration<T> _configuration;
 
 		/// <inheritdoc />
-		public TypeContentCompositionRegistrationContext(ITypeConfiguration<T> configuration)
+		public TypeSerializerComposerRegistrationContext(ITypeConfiguration<T> configuration)
 			=> _configuration = configuration;
 
 		/// <summary>
@@ -24,7 +24,7 @@ namespace ExtendedXmlSerializer.Configuration
 		/// <typeparam name="TComposer">The type of the content composer to register.</typeparam>
 		/// <returns>The configured type configuration.</returns>
 		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/264#issuecomment-531491807"/>
-		public ITypeConfiguration<T> Of<TComposer>() where TComposer : ISerializerComposer
+		public ITypeConfiguration<T> Of<TComposer>() where TComposer : ISerializerComposer<T>
 			=> Of(Support<TComposer>.Key);
 
 		/// <summary>

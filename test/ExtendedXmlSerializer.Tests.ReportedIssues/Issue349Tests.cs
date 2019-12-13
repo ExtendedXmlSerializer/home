@@ -17,7 +17,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			var serializer = new ConfigurationContainer().Type<RootClass>()
 			                                             .Register()
-			                                             .Composition()
+			                                             .Composer()
 			                                             .Of<Composer>()
 			                                             .Member(x => x.SomeAttributeProperty).Attribute()
 			                                             .Create()
@@ -35,7 +35,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			          .BeEquivalentTo(instance);
 		}
 
-		sealed class Composer : ISerializerComposer
+		sealed class Composer : ISerializerComposer<RootClass>
 		{
 			readonly IIdentity _name;
 
@@ -44,8 +44,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			public Composer(IIdentity name) => _name = name;
 
-			public ISerializer Get(ISerializer parameter)
-				=> new Serializer(parameter.For<RootClass>(), _name).Adapt();
+			public ISerializer<RootClass> Get(ISerializer<RootClass> parameter) => new Serializer(parameter, _name);
 		}
 
 		sealed class Serializer : ISerializer<RootClass>

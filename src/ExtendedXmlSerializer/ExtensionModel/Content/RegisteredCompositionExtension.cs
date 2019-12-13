@@ -11,49 +11,20 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	interface ISerializerComposerResult
-		: IParameterizedSource<IServices, ISerializerComposer>, IAlteration<IServiceRepository> {}
-
-	interface ISerializerComposerResults : ITypedTable<ISerializerComposerResult>, ISerializerExtension {}
-
-	sealed class ResultContainer : ITypedTable<ISerializerComposer>, ICommand<ITypedTable<ISerializerComposer>>
-	{
-		readonly ITypedTable<ISerializerComposer>[] _store;
-
-		public ResultContainer() : this(new ITypedTable<ISerializerComposer>[1]) {}
-
-		public ResultContainer(ITypedTable<ISerializerComposer>[] store) => _store = store;
-
-		public bool IsSatisfiedBy(TypeInfo parameter) => _store[0].IsSatisfiedBy(parameter);
-
-		public ISerializerComposer Get(TypeInfo parameter) => _store[0].Get(parameter);
-
-		public void Assign(TypeInfo key, ISerializerComposer value)
-		{
-			_store[0].Assign(key, value);
-		}
-
-		public bool Remove(TypeInfo key) => _store[0].Remove(key);
-
-		public void Execute(ITypedTable<ISerializerComposer> parameter)
-		{
-			_store[0] = parameter;
-		}
-	}
-
-	sealed class RegisteredCompositionExtension : ISerializerExtension,
-	                                              IAssignable<TypeInfo, ISerializerComposer>,
-	                                              IAssignable<TypeInfo, Type>,
-												  ICommand<TypeInfo>
+	sealed class RegisteredCompositionExtension
+		: ISerializerExtension,
+		  IAssignable<TypeInfo, ISerializerComposer>,
+		  IAssignable<TypeInfo, Type>,
+		  ICommand<TypeInfo>
 
 	{
-		readonly ITypedTable<ISerializerComposer>           _table;
-		readonly ISerializerComposerResults                 _composers;
+		readonly ITypedTable<ISerializerComposer> _table;
+		readonly ISerializerComposerResults       _composers;
 
 		[UsedImplicitly]
 		public RegisteredCompositionExtension() : this(new ResultContainer()) {}
 
-		public RegisteredCompositionExtension(ResultContainer container)
+		RegisteredCompositionExtension(ResultContainer container)
 			: this(container, new SerializerComposerResults(container)) {}
 
 		public RegisteredCompositionExtension(ITypedTable<ISerializerComposer> table,
@@ -70,6 +41,36 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		void ICommand<IServices>.Execute(IServices parameter)
 		{
 			_composers.Execute(parameter);
+		}
+
+		public interface ISerializerComposerResult
+			: IParameterizedSource<IServices, ISerializerComposer>, IAlteration<IServiceRepository> {}
+
+		public interface ISerializerComposerResults : ITypedTable<ISerializerComposerResult>, ISerializerExtension {}
+
+		sealed class ResultContainer : ITypedTable<ISerializerComposer>, ICommand<ITypedTable<ISerializerComposer>>
+		{
+			readonly ITypedTable<ISerializerComposer>[] _store;
+
+			public ResultContainer() : this(new ITypedTable<ISerializerComposer>[1]) {}
+
+			public ResultContainer(ITypedTable<ISerializerComposer>[] store) => _store = store;
+
+			public bool IsSatisfiedBy(TypeInfo parameter) => _store[0].IsSatisfiedBy(parameter);
+
+			public ISerializerComposer Get(TypeInfo parameter) => _store[0].Get(parameter);
+
+			public void Assign(TypeInfo key, ISerializerComposer value)
+			{
+				_store[0].Assign(key, value);
+			}
+
+			public bool Remove(TypeInfo key) => _store[0].Remove(key);
+
+			public void Execute(ITypedTable<ISerializerComposer> parameter)
+			{
+				_store[0] = parameter;
+			}
 		}
 
 		sealed class SerializerComposerResults : TypedTable<ISerializerComposerResult>, ISerializerComposerResults
@@ -112,15 +113,19 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		sealed class LocatedSerializerComposerResult : ISerializerComposerResult
 		{
-			readonly ISingletonLocator _locator;
-			readonly Type              _composerType;
+			readonly ISingletonLocator                 _locator;
+			readonly Type                              _composerType;
+			readonly Func<object, ISerializerComposer> _composer;
 
-			public LocatedSerializerComposerResult(Type composerType) : this(SingletonLocator.Default, composerType) {}
+			public LocatedSerializerComposerResult(Type composerType, TypeInfo elementType)
+				: this(SingletonLocator.Default, composerType, Composers.Default.Get(elementType)) {}
 
-			public LocatedSerializerComposerResult(ISingletonLocator locator, Type composerType)
+			public LocatedSerializerComposerResult(ISingletonLocator locator, Type composerType,
+			                                       Func<object, ISerializerComposer> composer)
 			{
 				_locator      = locator;
 				_composerType = composerType;
+				_composer     = composer;
 			}
 
 			public IServiceRepository Get(IServiceRepository parameter)
@@ -132,8 +137,19 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 				return result;
 			}
 
-			public ISerializerComposer Get(IServices parameter) => parameter.GetService(_composerType)
-			                                                                .AsValid<ISerializerComposer>();
+			public ISerializerComposer Get(IServices parameter)
+			{
+				var service = parameter.GetService(_composerType);
+				var result = service as ISerializerComposer ?? _composer(service);
+				return result;
+			}
+
+			sealed class Composers : Generic<object, ISerializerComposer>
+			{
+				public static Composers Default { get; } = new Composers();
+
+				Composers() : base(typeof(SerializerComposer<>)) {}
+			}
 		}
 
 		sealed class Contents : IContents
@@ -164,7 +180,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		public void Assign(TypeInfo key, Type value)
 		{
-			_composers.Assign(key, new LocatedSerializerComposerResult(value));
+			_composers.Assign(key, new LocatedSerializerComposerResult(value, key));
 		}
 
 		public void Execute(TypeInfo parameter)
