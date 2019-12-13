@@ -18,7 +18,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			new ConfigurationContainer().Type<string>()
 			                            .Register()
-			                            .Composition()
+			                            .Composer()
 			                            .ByCalling(x => new Serializer(x))
 			                            .Create()
 			                            .Cycle("Hello World!")

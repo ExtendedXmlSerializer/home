@@ -20,9 +20,9 @@ namespace ExtendedXmlSerializer.ReflectionModel
 		public Expression Get(TypeInfo parameter)
 		{
 			var constructor = parameter.DeclaredConstructors.Only() ??
-			                  parameter.GetConstructors()
-			                           .Only() ??
-			                  parameter.GetConstructor(_types.ToArray());
+			                  parameter.GetConstructors().Only() ??
+			                  parameter.GetConstructor(_types.ToArray()) ??
+			                  parameter.DeclaredConstructors.First();
 			var expressions = _expressions.ToArray();
 			var types = constructor.GetParameters()
 			                       .Select(x => x.ParameterType);

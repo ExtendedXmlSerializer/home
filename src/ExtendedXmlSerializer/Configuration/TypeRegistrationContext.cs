@@ -34,7 +34,7 @@
 		/// </summary>
 		/// <returns>A context to perform operations for registering content serializer composition for the type under
 		/// configuration.</returns>
-		public TypeContentCompositionRegistrationContext<T> Composition()
-			=> new TypeContentCompositionRegistrationContext<T>(_configuration);
+		public TypeSerializerComposerRegistrationContext<T> Composer()
+			=> new TypeSerializerComposerRegistrationContext<T>(_configuration);
 	}
 }

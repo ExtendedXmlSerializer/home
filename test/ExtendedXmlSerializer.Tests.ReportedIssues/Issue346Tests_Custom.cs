@@ -16,7 +16,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			var serializer = new ConfigurationContainer().Type<RootClass>()
 			                                             .Register()
-			                                             .Composition()
+			                                             .Composer()
 			                                             .ByCalling(x => new Serializer(x))
 			                                             .Member(x => x.SomeAttributeProperty).Attribute()
 			                                             .Create()
@@ -41,7 +41,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var serializer = new ConfigurationContainer().UseAutoFormatting()
 			                                             .Type<RootClass>()
 			                                             .Register()
-			                                             .Composition()
+			                                             .Composer()
 			                                             .ByCalling(x => new Serializer(x))
 			                                             .Create()
 			                                             .ForTesting();
