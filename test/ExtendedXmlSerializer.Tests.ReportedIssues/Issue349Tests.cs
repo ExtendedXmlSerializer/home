@@ -17,9 +17,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			var serializer = new ConfigurationContainer().Type<RootClass>()
 			                                             .Register()
+			                                             .Serializer()
 			                                             .Composer()
 			                                             .Of<Composer>()
-			                                             .Member(x => x.SomeAttributeProperty).Attribute()
+			                                             .Member(x => x.SomeAttributeProperty)
+			                                             .Attribute()
 			                                             .Create()
 			                                             .ForTesting();
 			var instance = new RootClass
@@ -28,7 +30,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				OneToManyReference    = new B {Name                                      = "B"}
 			};
 
-			serializer.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><Issue349Tests-RootClass Name=""A"" SomeAttributeProperty=""Hello World!"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests.ReportedIssues""><ManyToOneReference><Name>A</Name></ManyToOneReference><OneToManyReference><Name>B</Name></OneToManyReference></Issue349Tests-RootClass>");
+			serializer.Assert(instance,
+			                  @"<?xml version=""1.0"" encoding=""utf-8""?><Issue349Tests-RootClass Name=""A"" SomeAttributeProperty=""Hello World!"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests.ReportedIssues""><ManyToOneReference><Name>A</Name></ManyToOneReference><OneToManyReference><Name>B</Name></OneToManyReference></Issue349Tests-RootClass>");
 
 			serializer.Cycle(instance)
 			          .Should()

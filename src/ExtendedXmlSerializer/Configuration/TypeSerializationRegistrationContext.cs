@@ -23,6 +23,14 @@ namespace ExtendedXmlSerializer.Configuration
 			=> _configuration = configuration;
 
 		/// <summary>
+		/// Establishes a content-composition context.
+		/// </summary>
+		/// <returns>A context to perform operations for registering content serializer composition for the type under
+		/// configuration.</returns>
+		public TypeSerializerComposerRegistrationContext<T> Composer()
+			=> new TypeSerializerComposerRegistrationContext<T>(_configuration);
+
+		/// <summary>
 		/// Used to activate the specified type and register it as this type's serializer.  Doing so will allow you to design your serializer to import dependencies into its constructor.
 		/// </summary>
 		/// <typeparam name="TSerializer">The serializer type to activate.</typeparam>

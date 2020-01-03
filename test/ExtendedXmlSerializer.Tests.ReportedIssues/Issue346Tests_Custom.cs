@@ -5,6 +5,7 @@ using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Tests.ReportedIssues.Support;
 using FluentAssertions;
 using Xunit;
+
 // ReSharper disable UnusedVariable
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -16,9 +17,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			var serializer = new ConfigurationContainer().Type<RootClass>()
 			                                             .Register()
+			                                             .Serializer()
 			                                             .Composer()
 			                                             .ByCalling(x => new Serializer(x))
-			                                             .Member(x => x.SomeAttributeProperty).Attribute()
+			                                             .Member(x => x.SomeAttributeProperty)
+			                                             .Attribute()
 			                                             .Create()
 			                                             .ForTesting();
 			var instance = new RootClass
@@ -27,12 +30,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				OneToManyReference    = new B {Name                                      = "B"}
 			};
 
-			serializer.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><Issue346Tests_Custom-RootClass Name=""A"" SomeAttributeProperty=""Hello World!"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests.ReportedIssues""><ManyToOneReference><Name>A</Name></ManyToOneReference><OneToManyReference><Name>B</Name></OneToManyReference></Issue346Tests_Custom-RootClass>");
+			serializer.Assert(instance,
+			                  @"<?xml version=""1.0"" encoding=""utf-8""?><Issue346Tests_Custom-RootClass Name=""A"" SomeAttributeProperty=""Hello World!"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests.ReportedIssues""><ManyToOneReference><Name>A</Name></ManyToOneReference><OneToManyReference><Name>B</Name></OneToManyReference></Issue346Tests_Custom-RootClass>");
 
 			serializer.Cycle(instance)
 			          .Should()
 			          .BeEquivalentTo(instance);
-
 		}
 
 		[Fact]
@@ -41,6 +44,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var serializer = new ConfigurationContainer().UseAutoFormatting()
 			                                             .Type<RootClass>()
 			                                             .Register()
+			                                             .Serializer()
 			                                             .Composer()
 			                                             .ByCalling(x => new Serializer(x))
 			                                             .Create()
@@ -51,12 +55,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				OneToManyReference    = new B {Name                                      = "B"}
 			};
 
-			serializer.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><Issue346Tests_Custom-RootClass Name=""A"" SomeAttributeProperty=""Hello World!"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests.ReportedIssues""><ManyToOneReference Name=""A"" /><OneToManyReference Name=""B"" /></Issue346Tests_Custom-RootClass>");
+			serializer.Assert(instance,
+			                  @"<?xml version=""1.0"" encoding=""utf-8""?><Issue346Tests_Custom-RootClass Name=""A"" SomeAttributeProperty=""Hello World!"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests.ReportedIssues""><ManyToOneReference Name=""A"" /><OneToManyReference Name=""B"" /></Issue346Tests_Custom-RootClass>");
 
 			serializer.Cycle(instance)
 			          .Should()
 			          .BeEquivalentTo(instance);
-
 		}
 
 		sealed class Serializer : ISerializer<RootClass>
