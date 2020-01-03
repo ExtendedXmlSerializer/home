@@ -7,7 +7,10 @@ namespace ExtendedXmlSerializer.Core.Specifications
 	{
 		readonly ImmutableArray<ISpecification<T>> _specifications;
 
-		/// <inheritdoc />
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="specifications"></param>
 		public AllSpecification(params ISpecification<T>[] specifications)
 			=> _specifications = specifications.ToImmutableArray();
 

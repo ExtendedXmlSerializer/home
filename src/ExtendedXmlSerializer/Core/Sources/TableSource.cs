@@ -13,7 +13,10 @@ namespace ExtendedXmlSerializer.Core.Sources
 		/// <inheritdoc />
 		public TableSource(IEqualityComparer<TKey> comparer) : this(new Dictionary<TKey, TValue>(comparer)) {}
 
-		/// <inheritdoc />
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="store"></param>
 		public TableSource(IDictionary<TKey, TValue> store) => _store = store;
 
 		/// <inheritdoc />

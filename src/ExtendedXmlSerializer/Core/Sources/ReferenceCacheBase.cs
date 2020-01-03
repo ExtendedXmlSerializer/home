@@ -16,7 +16,10 @@ namespace ExtendedXmlSerializer.Core.Sources
 		/// <inheritdoc />
 		protected ReferenceCacheBase() : this(new ConditionalWeakTable<TKey, TValue>()) {}
 
-		/// <inheritdoc />
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="cache"></param>
 		protected ReferenceCacheBase(ConditionalWeakTable<TKey, TValue> cache)
 		{
 			_cache    = cache;
