@@ -16,7 +16,6 @@ namespace ExtendedXmlSerializer.ContentModel.Identification
 		}
 
 		public string Get(TypeInfo parameter)
-			=> _known.Get(parameter.Assembly)
-			         ?.Identifier ?? _formatter.Get(parameter);
+			=> _known.Get(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
 	}
 }
