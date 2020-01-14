@@ -5,7 +5,10 @@ namespace ExtendedXmlSerializer.Core.Specifications
 	{
 		readonly ISpecification<T> _specification;
 
-		/// <inheritdoc />
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="specification"></param>
 		public DecoratedSpecification(ISpecification<T> specification) => _specification = specification;
 
 		/// <inheritdoc />

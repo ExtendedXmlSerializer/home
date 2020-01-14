@@ -7,7 +7,10 @@ namespace ExtendedXmlSerializer.Core.Specifications
 	{
 		readonly Func<T, bool> _delegate;
 
-		/// <inheritdoc />
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="delegate"></param>
 		public DelegatedSpecification(Func<T, bool> @delegate) => _delegate = @delegate;
 
 		/// <inheritdoc />

@@ -21,7 +21,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		readonly Func<MemberInfo, XmlElementAttribute> _attribute;
 		readonly Func<MemberInfo, List<MemberInfo>> _members;
 
-		/// <inheritdoc />
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="attribute"></param>
+		/// <param name="members"></param>
 		public DefaultMemberOrder(Func<MemberInfo, XmlElementAttribute> attribute,
 		                          Func<MemberInfo, List<MemberInfo>> members)
 		{

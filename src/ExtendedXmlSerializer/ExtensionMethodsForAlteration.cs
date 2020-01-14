@@ -139,10 +139,10 @@ namespace ExtendedXmlSerializer
 		/// <param name="compose">The delegate used to alterate the created serializer.</param>
 		/// <returns>The configured type configuration.</returns>
 		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/264#issuecomment-531491807"/>
-		[Obsolete("This method is considered obsolete and will be removed in a future release.  Its new equivalent is ITypeConfiguration<T>.Register().Composer().ByCalling.")]
+		[Obsolete("This method is considered obsolete and will be removed in a future release.  Its new equivalent is ITypeConfiguration<T>.Register().Serializer().Composer().ByCalling.")]
 		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
 		                                                                  Func<ISerializer<T>, ISerializer<T>> compose)
-			=> @this.Register().Composer().ByCalling(compose);
+			=> @this.Register().Serializer().Composer().ByCalling(compose);
 
 		/// <summary>
 		/// Used to alter a serializer whenever one is created for a specific type.  This allows the scenario of decorating
@@ -154,10 +154,10 @@ namespace ExtendedXmlSerializer
 		/// <param name="compose">The delegate used to alterate the created serializer.</param>
 		/// <returns>The configured type configuration.</returns>
 		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/264#issuecomment-531491807"/>
-		[Obsolete("This method is considered obsolete and will be removed in a future release.  Its new equivalent is ITypeConfiguration<T>.Register().Composer().ByCalling.")]
+		[Obsolete("This method is considered obsolete and will be removed in a future release.  Its new equivalent is ITypeConfiguration<T>.Register().Serializer().Composer().ByCalling.")]
 		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
 		                                                                  Func<ISerializer, ISerializer> compose)
-			=> @this.Register().Composer().ByCalling(compose);
+			=> @this.Register().Serializer().Composer().ByCalling(compose);
 
 		/// <summary>
 		/// Used to alter a serializer whenever one is created for a specific type.  This allows the scenario of decorating a
@@ -169,10 +169,10 @@ namespace ExtendedXmlSerializer
 		/// <param name="composer">The composer that is used to alter the serializer upon creation.</param>
 		/// <returns>The configured type configuration.</returns>
 		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/264#issuecomment-531491807"/>
-		[Obsolete("This method is considered obsolete and will be removed in a future release.  Its new equivalent is ITypeConfiguration<T>.Register().Composer().Using.")]
+		[Obsolete("This method is considered obsolete and will be removed in a future release.  Its new equivalent is ITypeConfiguration<T>.Register().Serializer().Composer().Using.")]
 		public static ITypeConfiguration<T> RegisterContentComposition<T>(this ITypeConfiguration<T> @this,
 		                                                                  ISerializerComposer composer)
-			=> @this.Register().Composer().Using(composer);
+			=> @this.Register().Serializer().Composer().Using(composer);
 
 		#endregion
 	}

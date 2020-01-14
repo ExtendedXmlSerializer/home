@@ -20,7 +20,11 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		/// <inheritdoc />
 		public Registrations(ICollection<T> instances) : this(instances, new HashSet<Type>()) {}
 
-		/// <inheritdoc />
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="instances"></param>
+		/// <param name="types"></param>
 		public Registrations(ICollection<T> instances, ICollection<Type> types)
 		{
 			Instances = instances;

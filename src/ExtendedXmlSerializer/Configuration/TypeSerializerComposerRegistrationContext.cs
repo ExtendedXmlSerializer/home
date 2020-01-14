@@ -14,7 +14,10 @@ namespace ExtendedXmlSerializer.Configuration
 	{
 		readonly ITypeConfiguration<T> _configuration;
 
-		/// <inheritdoc />
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="configuration"></param>
 		public TypeSerializerComposerRegistrationContext(ITypeConfiguration<T> configuration)
 			=> _configuration = configuration;
 

@@ -28,13 +28,5 @@
 		/// <returns>A context to perform operations on converter registrations for the captured type configuration.</returns>
 		public TypeConverterRegistrationContext<T> Converter()
 			=> new TypeConverterRegistrationContext<T>(_configuration);
-
-		/// <summary>
-		/// Establishes a content-composition context.
-		/// </summary>
-		/// <returns>A context to perform operations for registering content serializer composition for the type under
-		/// configuration.</returns>
-		public TypeSerializerComposerRegistrationContext<T> Composer()
-			=> new TypeSerializerComposerRegistrationContext<T>(_configuration);
 	}
 }

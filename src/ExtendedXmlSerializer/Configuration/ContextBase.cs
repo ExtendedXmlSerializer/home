@@ -8,7 +8,11 @@
 		/// <inheritdoc />
 		protected ContextBase(IContext parent) : this(parent.Root, parent) {}
 
-		/// <inheritdoc />
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="root"></param>
+		/// <param name="parent"></param>
 		protected ContextBase(IRootContext root, IContext parent)
 		{
 			Root   = root;

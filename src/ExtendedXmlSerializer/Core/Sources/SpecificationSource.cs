@@ -12,7 +12,11 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public SpecificationSource(IParameterizedSource<TParameter, TResult> source) :
 			this(source.IfAssigned(), source) {}
 
-		/// <inheritdoc />
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="specification"></param>
+		/// <param name="source"></param>
 		public SpecificationSource(ISpecification<TParameter> specification,
 		                           IParameterizedSource<TParameter, TResult> source)
 		{

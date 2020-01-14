@@ -14,7 +14,9 @@ namespace ExtendedXmlSerializer.Core.Sources
 			new ConditionalWeakTable<TKey, Structure>();
 		readonly ConditionalWeakTable<TKey, Structure>.CreateValueCallback _callback;
 
-		/// <inheritdoc />
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
 		protected StructureCacheBase() => _callback = CreateStructure;
 
 		Structure CreateStructure(TKey parameter) => new Structure(Create(parameter));

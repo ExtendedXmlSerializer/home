@@ -7,7 +7,10 @@ namespace ExtendedXmlSerializer.Core.Sources
 	{
 		readonly IEnumerable<IAlteration<T>> _alterations;
 
-		/// <inheritdoc />
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="alterations"></param>
 		public CompositeAlteration(IEnumerable<IAlteration<T>> alterations) => _alterations = alterations;
 
 		/// <inheritdoc />
