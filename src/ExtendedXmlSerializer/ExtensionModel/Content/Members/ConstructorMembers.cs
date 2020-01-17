@@ -36,12 +36,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 				) // Turning into a game of Jenga here.
 				{
 					var result = source.Select(x => x.Name)
-					                   .Select(_locator.Get(type)
-					                                   .Get)
+					                   .Select(_locator.Get(type).Get)
 					                   .Where(x => x.HasValue)
 					                   .Select(x => x.Value)
 					                   .Select(_members.Get)
 					                   .Where(_member)
+					                   .OrderBy(x => x.Order)
 					                   .Select(x => new ParameterizedMember(x))
 					                   .ToImmutableArray<IMember>();
 					if (result.Length == source.Length)
