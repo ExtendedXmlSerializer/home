@@ -2,7 +2,7 @@ name: Publish Release Build
 
 on:
   release:
-    types: [created, published]
+    types: [published]
 
 env:
   BRANCH_REFERENCE: refs/heads/master
