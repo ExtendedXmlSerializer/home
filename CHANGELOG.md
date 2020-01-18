@@ -1,3 +1,25 @@
+# [ExtendedXmlSerializer v3.1.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/3.1.0)
+> 01/18/2020 06:18:13 UTC
+##### ``3.1.0``
+### ✨ New Features &#128640;
+
+  - Added basic support for IEnumerable&lt;T&gt; for both instance and member property definitions. #343 @Mike-EEE 
+  - Added additional testing around Enumerable property support. #344 @Mike-EEE 
+  - Further adjusted and improved type content composer API. #351 @Mike-EEE 
+  - Further improved serializer registration #353 @Mike-EEE 
+  
+### &#128027; Bug Fixes &#128295;
+  
+  - Removed attribute values from reference-based reading. #342 @Mike-EEE 
+  - Added ordering to parameterized content members. #356 @Mike-EEE 
+  - Fixed type resolution issue with conflicting member name having the... #354 @Mike-EEE 
+  
+### Other Changes
+  
+  - Updated nuget reference for NReco.LambdaParser. #347 @Mike-EEE 
+  - Improved content serializer composition API. #350 @Mike-EEE 
+  - Added example code. #348 @Mike-EEE 
+
 # [ExtendedXmlSerializer v3.0.2](https://github.com/ExtendedXmlSerializer/home/releases/tag/3.0.2)
 > 12/10/2019 08:28:04 UTC
 ##### ``3.0.2``
