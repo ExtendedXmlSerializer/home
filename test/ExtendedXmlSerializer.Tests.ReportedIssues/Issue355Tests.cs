@@ -1,5 +1,6 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Tests.ReportedIssues.Support;
+using JetBrains.Annotations;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -39,6 +40,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		sealed class CombinedProfile : CompositeConfigurationProfile
 		{
+			[UsedImplicitly]
 			public static CombinedProfile Default { get; } = new CombinedProfile();
 
 			CombinedProfile() : base(OuterProfile.Default) {}
