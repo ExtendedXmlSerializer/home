@@ -1,5 +1,5 @@
-using System.Collections.Immutable;
 using ExtendedXmlSerializer.ContentModel.Format;
+using System.Collections.Immutable;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -14,6 +14,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_root       = root;
 		}
 
-		public ImmutableArray<object> Get(IFormatWriter parameter) => _references.Get(_root.Get(parameter.Get()));
+		public ImmutableArray<object> Get(IFormatWriter parameter)
+		{
+			var root   = _root.Get(parameter.Get());
+			var result = root != null ? _references.Get(root) : ImmutableArray<object>.Empty;
+			return result;
+		}
 	}
 }
