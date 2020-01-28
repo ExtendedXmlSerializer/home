@@ -1,6 +1,7 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.ReportedIssues.Support;
+using JetBrains.Annotations;
 using System.Xml;
 using System.Xml.Linq;
 using Xunit;
@@ -34,7 +35,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		class AdornedImage
 		{
-			public vector Vector { get; set; }
+			public vector Vector { [UsedImplicitly] get; set; }
 
 			public AdornedImage()
 			{
@@ -50,7 +51,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				Value = value;
 			}
 
-			public int Value { get; }
+			public int Value { [UsedImplicitly] get; }
 		}
 
 		private struct vector
@@ -61,8 +62,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				L2 = l2;
 			}
 
-			public length L1 { get; }
-			public length L2 { get; }
+			public length L1 { [UsedImplicitly] get; }
+			public length L2 { [UsedImplicitly] get; }
 		}
 	}
 }
