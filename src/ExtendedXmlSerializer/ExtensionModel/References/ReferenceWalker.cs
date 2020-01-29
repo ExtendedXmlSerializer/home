@@ -1,5 +1,6 @@
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -12,12 +13,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 	{
 		readonly IReferencesPolicy _policy;
 		readonly IMemberAccessors  _accessors;
+		readonly ISpecification<TypeInfo> _default;
 
 		// ReSharper disable once TooManyDependencies
-		public ReferenceWalker(IReferencesPolicy policy, ITypeMembers members, IEnumeratorStore enumerators,
+		public ReferenceWalker(ISpecification<TypeInfo> @default, IReferencesPolicy policy, ITypeMembers members, IEnumeratorStore enumerators,
 		                       IMemberAccessors accessors, object root)
 			: base(members, enumerators, root)
 		{
+			_default = @default;
 			_policy    = policy;
 			_accessors = accessors;
 		}
@@ -37,9 +40,20 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		bool Check(object instance)
 		{
 			var info = instance?.GetType()
-			                   .GetTypeInfo();
+							   .GetTypeInfo();
+			
 			var check = info != null && !info.IsValueType && _policy.IsSatisfiedBy(info);
 			return check;
+		}
+
+		protected override IEnumerable<object> Members(object input, TypeInfo parameter)
+		{
+			if (_default.IsSatisfiedBy(parameter))
+			{
+				return base.Members(input, parameter);
+			}
+
+			return Enumerable.Empty<object>();
 		}
 
 		public ImmutableArray<object> Get() => this.SelectMany(x => x)

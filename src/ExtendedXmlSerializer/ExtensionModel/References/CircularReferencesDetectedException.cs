@@ -3,7 +3,7 @@ using ExtendedXmlSerializer.ContentModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	class CircularReferencesDetectedException : Exception
+	public class CircularReferencesDetectedException : Exception
 	{
 		public CircularReferencesDetectedException(string message, IWriter writer) : base(message)
 		{

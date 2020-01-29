@@ -1,7 +1,10 @@
 ﻿using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.ReportedIssues.Support;
 using JetBrains.Annotations;
+using System;
 using System.Xml;
 using System.Xml.Linq;
 using Xunit;
@@ -11,26 +14,45 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 	public sealed class Issue361Tests
 	{
 		[Fact]
-		void Verify()
+		void VerifyCustomSerialization_CircularReferenceInsideObjectGraph_DoesNotThrow()
 		{
 			var serializer = new ConfigurationContainer().EnableParameterizedContentWithPropertyAssignments()
-			                                             .Type<AdornedImage>()
-			                                             .CustomSerializer(new AdornedImageSerializer())
+														 .Type<AdornedImage>()
+														 .Register().Serializer().Using(new AdornedImageSerializer())
 			                                             .Create()
 			                                             .ForTesting();
 
-			serializer.Assert(new AdornedImage(),
-			                  @"<?xml version=""1.0"" encoding=""utf-8""?><Issue361Tests-AdornedImage xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests.ReportedIssues"" />");
+			var image = new AdornedImage();
+
+			serializer.Assert(new DataHolder() { Image1 = image },
+							  @"<?xml version=""1.0"" encoding=""utf-8""?><Issue361Tests-DataHolder xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests.ReportedIssues""><Name>name</Name><Image1 /><Index>13</Index></Issue361Tests-DataHolder>");
 		}
 
-		class AdornedImageSerializer : IExtendedXmlCustomSerializer<AdornedImage>
+		[Fact]
+		void VerifyCustomSerialization_CircularReferenceOfRoot_DoesThrow()
 		{
-			public AdornedImage Deserialize(XElement xElement)
+			var serializer = new ConfigurationContainer().EnableParameterizedContentWithPropertyAssignments()
+														 .Type<AdornedImage>()
+														 .Register().Serializer().Using(new AdornedImageSerializer())
+														 .Create()
+														 .ForTesting();
+
+			var image = new AdornedImage();
+
+			Assert.Throws<CircularReferencesDetectedException >(() => serializer.Serialize(new DataHolder() { Image1 = image, Image2 = image }));
+		}
+
+		class AdornedImageSerializer : ContentModel.ISerializer<AdornedImage>
+		{
+			public AdornedImage Get(IFormatReader parameter)
 			{
 				return new AdornedImage();
 			}
 
-			public void Serializer(XmlWriter xmlWriter, AdornedImage obj) {}
+			public void Write(IFormatWriter writer, AdornedImage instance)
+			{
+				
+			}
 		}
 
 		class AdornedImage
@@ -41,6 +63,20 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			{
 				var data = new length(23);
 				Vector = new vector(data, data);
+			}
+		}
+
+		class DataHolder
+		{
+			public string Name { get; set; }
+			public AdornedImage Image1 { get; set; }
+			public AdornedImage Image2 { get; set; }
+			public int Index { get; set; }
+
+			public DataHolder()
+			{
+				Name = "name";
+				Index = 13;
 			}
 		}
 
