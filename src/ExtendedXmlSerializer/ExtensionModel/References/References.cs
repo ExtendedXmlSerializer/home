@@ -10,24 +10,30 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 {
 	sealed class References : StructureCacheBase<object, ImmutableArray<object>>, IReferences
 	{
-		readonly IReferencesPolicy _policy;
-		readonly ITypeMembers      _members;
-		readonly IEnumeratorStore  _enumerators;
-		readonly IMemberAccessors  _accessors;
-		readonly ISpecification<TypeInfo> _contains;
+		readonly ISpecification<TypeInfo> _allow;
+		readonly IReferencesPolicy        _policy;
+		readonly ITypeMembers             _members;
+		readonly IEnumeratorStore         _enumerators;
+		readonly IMemberAccessors         _accessors;
 
 		// ReSharper disable once TooManyDependencies
-		public References(IReferencesPolicy policy, ITypeMembers members, IEnumeratorStore enumerators,
-		                  IMemberAccessors accessors, IContainsCustomSerialization custom)
-		{			
+		public References(IContainsCustomSerialization custom, IReferencesPolicy policy, ITypeMembers members,
+		                  IEnumeratorStore enumerators, IMemberAccessors accessors)
+			: this(AssignedSpecification<TypeInfo>.Default.And(custom.Inverse()), policy, members, enumerators,
+			       accessors) {}
+
+		// ReSharper disable once TooManyDependencies
+		public References(ISpecification<TypeInfo> allow, IReferencesPolicy policy, ITypeMembers members,
+		                  IEnumeratorStore enumerators, IMemberAccessors accessors)
+		{
+			_allow       = allow;
 			_policy      = policy;
 			_members     = members;
 			_enumerators = enumerators;
 			_accessors   = accessors;
-			_contains = custom;
 		}
 
 		protected override ImmutableArray<object> Create(object parameter)
-			=> new ReferenceWalker(AssignedSpecification<TypeInfo>.Default.And(_contains.Inverse()), _policy, _members, _enumerators, _accessors, parameter).Get();
+			=> new ReferenceWalker(_allow, _policy, _members, _enumerators, _accessors, parameter).Get();
 	}
 }

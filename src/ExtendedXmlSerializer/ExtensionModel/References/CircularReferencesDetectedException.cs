@@ -1,14 +1,11 @@
-using System;
 using ExtendedXmlSerializer.ContentModel;
+using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	public class CircularReferencesDetectedException : Exception
+	sealed class CircularReferencesDetectedException : Exception
 	{
-		public CircularReferencesDetectedException(string message, IWriter writer) : base(message)
-		{
-			Writer = writer;
-		}
+		public CircularReferencesDetectedException(string message, IWriter writer) : base(message) => Writer = writer;
 
 		public IWriter Writer { get; }
 	}

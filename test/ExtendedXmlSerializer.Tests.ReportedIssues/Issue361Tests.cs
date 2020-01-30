@@ -1,10 +1,7 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.ReportedIssues.Support;
 using JetBrains.Annotations;
-using System;
 using System.Xml;
 using System.Xml.Linq;
 using Xunit;
@@ -14,45 +11,50 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 	public sealed class Issue361Tests
 	{
 		[Fact]
-		void VerifyCustomSerialization_CircularReferenceInsideObjectGraph_DoesNotThrow()
+		void Verify()
 		{
 			var serializer = new ConfigurationContainer().EnableParameterizedContentWithPropertyAssignments()
-														 .Type<AdornedImage>()
-														 .Register().Serializer().Using(new AdornedImageSerializer())
+			                                             .Type<AdornedImage>()
+			                                             .CustomSerializer(new AdornedImageSerializer())
 			                                             .Create()
 			                                             .ForTesting();
 
-			var image = new AdornedImage();
-
-			serializer.Assert(new DataHolder() { Image1 = image },
-							  @"<?xml version=""1.0"" encoding=""utf-8""?><Issue361Tests-DataHolder xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests.ReportedIssues""><Name>name</Name><Image1 /><Index>13</Index></Issue361Tests-DataHolder>");
+			serializer.Assert(new AdornedImage(),
+			                  @"<?xml version=""1.0"" encoding=""utf-8""?><Issue361Tests-AdornedImage xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests.ReportedIssues"" />");
 		}
 
 		[Fact]
-		void VerifyCustomSerialization_CircularReferenceOfRoot_DoesThrow()
+		void VerifyContainer()
 		{
 			var serializer = new ConfigurationContainer().EnableParameterizedContentWithPropertyAssignments()
-														 .Type<AdornedImage>()
-														 .Register().Serializer().Using(new AdornedImageSerializer())
-														 .Create()
-														 .ForTesting();
+			                                             .Type<AdornedImage>()
+			                                             .CustomSerializer(new AdornedImageSerializer())
+			                                             .Create()
+			                                             .ForTesting();
 
-			var image = new AdornedImage();
-
-			Assert.Throws<CircularReferencesDetectedException >(() => serializer.Serialize(new DataHolder() { Image1 = image, Image2 = image }));
+			var instance = new DataHolder { Image = new AdornedImage() };
+			serializer.Assert(instance,
+			                  @"<?xml version=""1.0"" encoding=""utf-8""?><Issue361Tests-DataHolder xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests.ReportedIssues""><Image /><Index>0</Index></Issue361Tests-DataHolder>");
 		}
 
-		class AdornedImageSerializer : ContentModel.ISerializer<AdornedImage>
+		class DataHolder
 		{
-			public AdornedImage Get(IFormatReader parameter)
+			[UsedImplicitly]
+			public string Name { get; set; }
+			public AdornedImage Image { [UsedImplicitly] get; set; }
+			[UsedImplicitly]
+			public int Index { get; set; }
+		}
+
+
+		class AdornedImageSerializer : IExtendedXmlCustomSerializer<AdornedImage>
+		{
+			public AdornedImage Deserialize(XElement xElement)
 			{
 				return new AdornedImage();
 			}
 
-			public void Write(IFormatWriter writer, AdornedImage instance)
-			{
-				
-			}
+			public void Serializer(XmlWriter xmlWriter, AdornedImage obj) {}
 		}
 
 		class AdornedImage
@@ -63,20 +65,6 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			{
 				var data = new length(23);
 				Vector = new vector(data, data);
-			}
-		}
-
-		class DataHolder
-		{
-			public string Name { get; set; }
-			public AdornedImage Image1 { get; set; }
-			public AdornedImage Image2 { get; set; }
-			public int Index { get; set; }
-
-			public DataHolder()
-			{
-				Name = "name";
-				Index = 13;
 			}
 		}
 
