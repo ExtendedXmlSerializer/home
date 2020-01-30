@@ -1,3 +1,11 @@
+# [ExtendedXmlSerializer v3.1.1](https://github.com/ExtendedXmlSerializer/home/releases/tag/3.1.1)
+> 01/30/2020 15:29:34 UTC
+##### ``3.1.1``
+### &#128027; Bug Fixes &#128295;
+
+  - Accounted for struct root instances when references are enabled. #359 @Mike-EEE 
+  - Removed recursion check for types that have custom serializers defin… #362 @Mike-EEE 
+
 # [ExtendedXmlSerializer v3.1.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/3.1.0)
 > 01/18/2020 06:18:13 UTC
 ##### ``3.1.0``
