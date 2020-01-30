@@ -1,21 +1,32 @@
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
 using System.Collections.Immutable;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
 	sealed class References : StructureCacheBase<object, ImmutableArray<object>>, IReferences
 	{
-		readonly IReferencesPolicy _policy;
-		readonly ITypeMembers      _members;
-		readonly IEnumeratorStore  _enumerators;
-		readonly IMemberAccessors  _accessors;
+		readonly ISpecification<TypeInfo> _allow;
+		readonly IReferencesPolicy        _policy;
+		readonly ITypeMembers             _members;
+		readonly IEnumeratorStore         _enumerators;
+		readonly IMemberAccessors         _accessors;
 
 		// ReSharper disable once TooManyDependencies
-		public References(IReferencesPolicy policy, ITypeMembers members, IEnumeratorStore enumerators,
-		                  IMemberAccessors accessors)
+		public References(IContainsCustomSerialization custom, IReferencesPolicy policy, ITypeMembers members,
+		                  IEnumeratorStore enumerators, IMemberAccessors accessors)
+			: this(AssignedSpecification<TypeInfo>.Default.And(custom.Inverse()), policy, members, enumerators,
+			       accessors) {}
+
+		// ReSharper disable once TooManyDependencies
+		public References(ISpecification<TypeInfo> allow, IReferencesPolicy policy, ITypeMembers members,
+		                  IEnumeratorStore enumerators, IMemberAccessors accessors)
 		{
+			_allow       = allow;
 			_policy      = policy;
 			_members     = members;
 			_enumerators = enumerators;
@@ -23,6 +34,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		}
 
 		protected override ImmutableArray<object> Create(object parameter)
-			=> new ReferenceWalker(_policy, _members, _enumerators, _accessors, parameter).Get();
+			=> new ReferenceWalker(_allow, _policy, _members, _enumerators, _accessors, parameter).Get();
 	}
 }

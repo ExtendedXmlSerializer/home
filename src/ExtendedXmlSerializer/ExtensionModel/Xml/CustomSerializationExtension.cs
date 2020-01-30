@@ -28,11 +28,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public ICustomMemberSerializers Members { get; }
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> Extensions().Aggregate(parameter, (repository, serializer) => serializer.Get(repository))
-			               .RegisterInstance(XmlSerializers)
-			               .RegisterInstance(Types)
-			               .RegisterInstance(Members)
-			               .Decorate<IContents, Contents>();
+			=> Extensions()
+			   .Aggregate(parameter, (repository, serializer) => serializer.Get(repository))
+			   .RegisterInstance(XmlSerializers)
+			   .RegisterInstance(Types)
+			   .RegisterInstance(Members)
+			   .Register<IContainsCustomSerialization, ContainsCustomSerialization>()
+			   .Decorate<IContents, Contents>();
 
 		void ICommand<IServices>.Execute(IServices parameter)
 		{
