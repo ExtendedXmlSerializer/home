@@ -29,18 +29,6 @@
     <PackageReference Include="xunit" Version="2.4.1" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' != 'netcoreapp2.1' ">
-    <Reference Include="WindowsBase" />
-    <Reference Include="System.Data">
-      <Private>True</Private>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
-    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-  </ItemGroup>
-
   <ItemGroup Condition=" '$(TargetFramework)' != 'net471' ">
     <ProjectReference Include="..\..\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj" />
   </ItemGroup>
