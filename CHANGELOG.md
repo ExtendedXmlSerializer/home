@@ -1,9 +1,7 @@
-# [ExtendedXmlSerializer v3.1.2](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.1.2)
-> 02/07/2020 09:50:18 UTC
+# [$(DEPLOY_RELEASE_NAME)](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.1.2)
+> 02/07/2020 09:56:47 UTC
 ##### ``v3.1.2``
-### &#128027; Bug Fixes &#128295; 
-- Adjusted assembly-loading to be a bit more robust for .NETFramework-b… #367 @Mike-EEE 
-
+$(DEPLOY_RELEASE_DESCRIPTION)
 # [ExtendedXmlSerializer v3.1.1](https://github.com/ExtendedXmlSerializer/home/releases/tag/3.1.1)
 > 01/30/2020 15:29:34 UTC
 ##### ``3.1.1``
