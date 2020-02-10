@@ -14,8 +14,19 @@ env:
   DEPLOY_BRANCH: master
 
 jobs:
+  information:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Output Information
+      run: |
+        echo "****************************************************"
+        echo "Event name: ${{ github.event_name }}"
+        echo "Action type: ${{ github.event.action }}"
+        echo "****************************************************"
+
   generate_and_save:
     runs-on: ubuntu-latest
+    needs: [information]
     steps:
     - id: generate
       name: Generate CHANGELOG
