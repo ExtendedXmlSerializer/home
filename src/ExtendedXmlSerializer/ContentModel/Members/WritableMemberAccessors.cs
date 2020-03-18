@@ -1,9 +1,10 @@
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	class WritableMemberAccessors : IMemberAccessors
+	class WritableMemberAccessors : ReferenceCacheBase<IMember, IMemberAccess>, IMemberAccessors
 	{
 		readonly IAllowedMemberValues _emit;
 		readonly IGetterFactory       _getter;
@@ -22,7 +23,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			_setter = setter;
 		}
 
-		public IMemberAccess Get(IMember parameter)
+		protected override IMemberAccess Create(IMember parameter)
 			=> new MemberAccess(_emit.Get(parameter.Metadata), _getter.Get(parameter.Metadata),
 			                    _setter.Get(parameter.Metadata));
 	}

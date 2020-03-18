@@ -50,11 +50,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			Collection<string> _names;
 
-			public Dto()
-			{
-				_names = new Collection<string>();
-			}
+			public Dto() => _names = new Collection<string>();
 
+			[UsedImplicitly]
 			public Collection<string> Names
 			{
 				get => _names;
