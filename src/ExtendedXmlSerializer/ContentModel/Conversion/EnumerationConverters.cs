@@ -1,14 +1,14 @@
-using System;
-using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
+using System;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
 	sealed class EnumerationConverters : ConditionalSource<TypeInfo, IConverter>, IConverters
 	{
-		public EnumerationConverters(IConverters converters) : base(IsAssignableSpecification<Enum>.Default,
-		                                                            Converters.Default, converters) {}
+		public EnumerationConverters(IConverters converters)
+			: base(IsAssignableSpecification<Enum>.Default, Converters.Default, converters) {}
 
 		sealed class Converters : IConverters
 		{
