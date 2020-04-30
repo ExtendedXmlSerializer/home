@@ -1,5 +1,5 @@
-using System.Reflection;
 using Sprache;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
