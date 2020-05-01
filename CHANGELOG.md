@@ -1,3 +1,9 @@
+# [ExtendedXmlSerializer v3.1.4](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.1.4)
+> 04/28/2020 06:37:20 UTC
+##### ``v3.1.4``
+### &#128027; Bug Fixes &#128295; 
+- Added support for Flags-based enumerations. #387 @Mike-E-wins 
+
 # [ExtendedXmlSerializer v3.1.3](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.1.3)
 > 03/25/2020 12:57:39 UTC
 ##### ``v3.1.3``
