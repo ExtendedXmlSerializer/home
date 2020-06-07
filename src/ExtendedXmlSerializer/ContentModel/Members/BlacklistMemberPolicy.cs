@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using System.Reflection;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {

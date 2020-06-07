@@ -5,8 +5,9 @@ namespace ExtendedXmlSerializer.ReflectionModel
 {
 	static class Defaults
 	{
-		public static ITypeComparer TypeComparer { get; } = new CompositeTypeComparer(ImplementedTypeComparer.Default,
-		                                                                              TypeIdentityComparer.Default);
+		public static ITypeComparer TypeComparer { get; }
+			= new CompositeTypeComparer(ImplementedTypeComparer.Default,
+			                            TypeIdentityComparer.Default);
 
 		public static Func<Type, ParameterExpression> Parameter { get; } = Expression.Parameter;
 

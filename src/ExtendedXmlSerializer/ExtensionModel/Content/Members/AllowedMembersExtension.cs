@@ -13,7 +13,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 	/// A default extension that is used to determine which members are allowed to be considered for serialization and
 	/// deserialization.
 	/// </summary>
-	public sealed class AllowedMembersExtension : ISerializerExtension
+	public sealed class AllowedMembersExtension : IAllowedMembersExtension
 	{
 		readonly static Collection<MemberInfo> DefaultBlacklist =
 			new Collection<MemberInfo>
