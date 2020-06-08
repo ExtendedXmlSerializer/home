@@ -2,6 +2,7 @@ using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using System.Reflection;
+using System.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -27,7 +28,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		ReferenceIdentity? GetReference(IFormatReader parameter)
 		{
-			if (!string.IsNullOrEmpty(parameter.Identifier))
+			if (parameter.Get().To<XmlReader>().NodeType != XmlNodeType.Attribute)
 			{
 				var identity = ReferenceIdentity.Get(parameter);
 				if (identity.HasValue)
@@ -35,7 +36,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 					return new ReferenceIdentity(identity.Value);
 				}
 
-				var type = _classification.GetClassification(parameter, _definition);
+				var type   = _classification.GetClassification(parameter, _definition);
 				var entity = _entities.Get(type)?.Reference(parameter);
 				if (entity != null)
 				{

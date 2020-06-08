@@ -5,6 +5,7 @@ using ExtendedXmlSerializer.ContentModel.Reflection;
 using JetBrains.Annotations;
 using System;
 using System.Reflection;
+using System.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -13,13 +14,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		readonly Func<TypeInfo, IReader> _activation;
 		readonly IEntities               _entities;
 		readonly IReferenceMaps          _maps;
-
+		
 		[UsedImplicitly]
-		public ReferenceActivation(IActivation activation, IEntities entities) : this(activation.Get, entities) {}
+		public ReferenceActivation(IActivation activation, IEntities entities)
+			: this(activation.Get, entities) {}
 
 		public ReferenceActivation(Func<TypeInfo, IReader> activation, IEntities entities)
 			: this(activation, entities, ReferenceMaps.Default) {}
 
+		// ReSharper disable once TooManyDependencies
 		public ReferenceActivation(Func<TypeInfo, IReader> activation, IEntities entities, IReferenceMaps maps)
 		{
 			_activation = activation;
@@ -35,6 +38,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			readonly IEntities      _entities;
 			readonly IReferenceMaps _maps;
 
+			// ReSharper disable once TooManyDependencies
 			public Activator(IReader activator, IEntities entities, IReferenceMaps maps)
 			{
 				_activator = activator;
@@ -63,7 +67,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 			public object Get(IFormatReader parameter)
 			{
-				var element = !string.IsNullOrEmpty(parameter.Identifier);
+				var element = parameter.Get().To<XmlReader>().NodeType != XmlNodeType.Attribute;
 
 				var declared = element ? Identity(parameter) : null;
 				var result   = _activator.Get(parameter);
