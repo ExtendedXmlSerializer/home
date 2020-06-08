@@ -14,10 +14,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		void Verify()
 		{
-			var sw         = Stopwatch.StartNew();
-			var serializer = new ConfigurationContainer().Create();
-			var elapsed    = sw.ElapsedMilliseconds;
-			_output.WriteLine($"{elapsed} ms");
+			var sw = Stopwatch.StartNew();
+			new ConfigurationContainer().Create();
+			_output.WriteLine($"{sw.ElapsedMilliseconds} ms");
 		}
 	}
 }

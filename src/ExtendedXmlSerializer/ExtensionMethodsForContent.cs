@@ -277,7 +277,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="member">The member to ignore.</param>
 		/// <returns>The configured container.</returns>
 		public static IConfigurationContainer Ignore(this IConfigurationContainer @this, MemberInfo member)
-			=> @this.Root.With<AllowedMembersExtension>()
+			=> @this.Root.With<IAllowedMembersExtension>()
 			        .Blacklist.Apply(member)
 			        .Return(@this);
 
@@ -302,7 +302,7 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The member to configure.</param>
 		/// <returns>The configured member.</returns>
 		public static IMemberConfiguration Include(this IMemberConfiguration @this)
-			=> @this.Root.With<AllowedMembersExtension>()
+			=> @this.Root.With<IAllowedMembersExtension>()
 			        .Whitelist.Apply(@this.GetMember())
 			        .Return(@this);
 
