@@ -1,9 +1,9 @@
-﻿using System;
+﻿using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ReflectionModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
@@ -24,10 +24,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		{
 			var parameter = input.GetType()
 			                     .GetTypeInfo();
-			var result = Members(input, parameter)
-				.Concat(Enumerate(input)
-				        .Select(_selector)
-				        .SelectMany(x => x));
+			var result = Members(input, parameter).Concat(Enumerate(input).Select(_selector).SelectMany(x => x));
 			return result;
 		}
 

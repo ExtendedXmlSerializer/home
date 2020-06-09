@@ -32,7 +32,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                            .Create()
 			                            .ForTesting()
 			                            .Assert(instance,
-			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><Issue218Tests-SerializedObject xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:identity=""1"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests.ReportedIssues""><MyListImpl><Owner exs:type=""Issue218Tests-SerializedObject"" exs:reference=""1"" /><Capacity>4</Capacity><sys:string>Test</sys:string><sys:string>One</sys:string><sys:string>Two</sys:string></MyListImpl></Issue218Tests-SerializedObject>");
+			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><Issue218Tests-SerializedObject xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system"" exs:identity=""1"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests.ReportedIssues""><MyListImpl><Owner exs:type=""Issue218Tests-SerializedObject"" exs:reference=""1"" /><Capacity>4</Capacity><sys:string>Test</sys:string><sys:string>One</sys:string><sys:string>Two</sys:string></MyListImpl></Issue218Tests-SerializedObject>");
 		}
 
 		[Fact]
