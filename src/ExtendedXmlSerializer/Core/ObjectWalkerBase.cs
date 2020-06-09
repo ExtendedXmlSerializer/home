@@ -53,8 +53,7 @@ namespace ExtendedXmlSerializer.Core
 			return false;
 		}
 
-		bool First(object candidate) => _conditions.Get(candidate)
-		                                           .Apply();
+		protected bool First(object candidate) => _conditions.Get(candidate).Apply();
 
 		protected abstract TResult Select(TInput input);
 

@@ -30,12 +30,18 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 
 		protected override IEnumerable<TypeInfo> Yield(IMember member, object instance)
 		{
-			var variable = _specifications.Get(member);
-			if (variable != null)
+			var current = _accessors.Get(member).Get(instance);
+			if (current != null)
 			{
-				var current = _accessors.Get(member)
-				                        .Get(instance);
-				if (Schedule(current) && variable.IsSatisfiedBy(current.GetType()))
+				var variable = _specifications.Get(member);
+				if (variable != null)
+				{
+					if (!Schedule(current) || variable.IsSatisfiedBy(current.GetType()))
+					{
+						yield return Defaults.FrameworkType;
+					}
+				}
+				else if (!First(current))
 				{
 					yield return Defaults.FrameworkType;
 				}
@@ -44,15 +50,15 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 
 		protected override IEnumerable<TypeInfo> Yield(object instance)
 		{
-			Schedule(instance);
-			yield break;
+			if (!Schedule(instance))
+			{
+				yield return Defaults.FrameworkType;
+			}
 		}
 
 		protected override IEnumerable<TypeInfo> Members(object input, TypeInfo parameter)
-			=> parameter.Yield()
-			            .Concat(base.Members(input, parameter));
+			=> parameter.Yield().Concat(base.Members(input, parameter));
 
-		public IEnumerable<TypeInfo> Get() => this.SelectMany(x => x)
-		                                          .Distinct();
+		public IEnumerable<TypeInfo> Get() => this.SelectMany(x => x).Distinct();
 	}
 }
