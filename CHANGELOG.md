@@ -1,3 +1,18 @@
+# [ExtendedXmlSerializer v3.2.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.0)
+> 06/16/2020 07:28:35 UTC
+##### ``v3.2.0``
+### ✨ New Features &#128640; 
+- Allowed members to be configured from base classes. #399 @Mike-E-wins 
+- Ensured exs xmlns is applied to root for optimized namespace + enabled-reference scenarios. #402 @Mike-E-wins 
+### &#128027; Bug Fixes &#128295; 
+- Demonstrated WithUnknownContent().Continue() #395 @Mike-E-wins 
+- Adjusted reference detection to be more accurate in the case of attri… #400 @Mike-E-wins 
+### Other Changes 
+- Added basic (throw) support for anonymous/dynamic types. #389 @Mike-E-wins 
+- [Automated] Generated CHANGELOG.md #390 @github-actions[bot] 
+- Emit initialization times. #394 @Mike-E-wins 
+- Sample code for documentation demonstrating implicit and explicit ref… #404 @Mike-E-wins 
+
 # [ExtendedXmlSerializer v3.1.4](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.1.4)
 > 04/28/2020 06:37:20 UTC
 ##### ``v3.1.4``
