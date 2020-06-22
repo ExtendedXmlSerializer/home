@@ -3,6 +3,7 @@ using ExtendedXmlSerializer.Tests.ReportedIssues.Support;
 using FluentAssertions;
 using System.Collections.Generic;
 using Xunit;
+// ReSharper disable UnusedAutoPropertyAccessor.Local
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {
@@ -18,8 +19,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				{
 					Models = new List<PathogenDto>
 					{
-						new Pathogen{ PathogenType = type },
-						new Pathogen{ PathogenType = type }
+						new Pathogen{ ScientificName = "Phellinus igniarius", LocalizedName = "Phellinus igniarius", PathogenType = type },
+						new Pathogen{ ScientificName = "Pholiota destruens", LocalizedName = "Pholiota destruens", PathogenType = type }
 					}
 				},
 				new LookupTable<PathogenTypeDto>
@@ -47,6 +48,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		class PathogenDto
 		{
+			public string ScientificName { get; set; }
+			public string LocalizedName { get; set; }
+
+			// ReSharper disable once MemberHidesStaticFromOuterClass
 			public PathogenTypeDto PathogenType { get; set; }
 		}
 
