@@ -1,3 +1,9 @@
+# [ExtendedXmlSerializer v3.2.1](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.1)
+> 06/22/2020 14:51:17 UTC
+##### ``v3.2.1``
+### &#128027; Bug Fixes &#128295; 
+- Fixed bug with references w/ exs:member=&quot;&quot; attributes #408 @Mike-E-wins 
+
 # [ExtendedXmlSerializer v3.2.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.0)
 > 06/16/2020 07:28:35 UTC
 ##### ``v3.2.0``
