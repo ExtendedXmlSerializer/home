@@ -18,6 +18,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				{
 					Models = new List<PathogenDto>
 					{
+						new Pathogen{ PathogenType = type },
 						new Pathogen{ PathogenType = type }
 					}
 				},
@@ -29,10 +30,14 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var serializer = new ConfigurationContainer().EnableReferences().ForTesting();
 			var cycled = serializer.Cycle(instance);
-			cycled[0].To<LookupTable<PathogenDto>>()
-			         .Models.Only()
-			         .PathogenType.Should()
-			         .BeSameAs(cycled[1].To<LookupTable<PathogenTypeDto>>().Models.Only());
+			var expected = cycled[1].To<LookupTable<PathogenTypeDto>>().Models.Only();
+
+			var table = cycled[0].To<LookupTable<PathogenDto>>();
+			table.Models[0].PathogenType.Should()
+			     .BeSameAs(expected);
+			table.Models[1].PathogenType.Should()
+			     .BeSameAs(expected);
+
 		}
 
 		sealed class LookupTable<T>
