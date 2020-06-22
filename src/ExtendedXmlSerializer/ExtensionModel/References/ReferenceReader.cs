@@ -1,4 +1,5 @@
 using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using System.Reflection;
@@ -28,7 +29,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		ReferenceIdentity? GetReference(IFormatReader parameter)
 		{
-			if (parameter.Get().To<XmlReader>().NodeType != XmlNodeType.Attribute)
+			if (parameter.Get().To<XmlReader>().NodeType != XmlNodeType.Attribute || MemberProperty.Default.Get(parameter))
 			{
 				var identity = ReferenceIdentity.Get(parameter);
 				if (identity.HasValue)

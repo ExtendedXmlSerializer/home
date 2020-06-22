@@ -1,4 +1,5 @@
 using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Reflection;
@@ -67,7 +68,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 			public object Get(IFormatReader parameter)
 			{
-				var element = parameter.Get().To<XmlReader>().NodeType != XmlNodeType.Attribute;
+				var element =  parameter.Get().To<XmlReader>().NodeType != XmlNodeType.Attribute || MemberProperty.Default.Get(parameter);
 
 				var declared = element ? Identity(parameter) : null;
 				var result   = _activator.Get(parameter);
