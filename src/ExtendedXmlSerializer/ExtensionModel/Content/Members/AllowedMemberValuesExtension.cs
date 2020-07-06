@@ -63,11 +63,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 		IAllowedMemberValues Register(IServiceProvider arg)
 		{
 			IParameterizedSource<MemberInfo, IAllowedValueSpecification>
-				seed = new MappedAllowedMemberValues(Specifications
-				                                     .ToDictionary(x => x.Key, x => (ISpecification<object>)x.Value)
-				                                     .Concat(Instances)
-				                                     .GroupBy(x => x.Key)
-				                                     .ToDictionary(x => x.Key, Create, Defaults.MemberComparer)),
+				seed = Seed(),
 				fallback = _allowed == AllowAssignedValues
 					           ? Source.Default
 					           : new FixedInstanceSource<MemberInfo, IAllowedValueSpecification>(_allowed);
@@ -75,6 +71,34 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 			                 .Aggregate(seed, (current, item) => current.Or(item));
 			var result = new AllowedMemberValues(source);
 			return result;
+		}
+
+		MappedAllowedMemberValues Seed()
+		{
+			var primary = Specifications.ToDictionary(x => x.Key, x => (ISpecification<object>)x.Value)
+			                            .Concat(Instances)
+			                            .GroupBy(x => x.Key)
+			                            .ToDictionary(x => x.Key, Create);
+			var result = new MappedAllowedMemberValues(primary);
+			return result;
+		}
+
+		IAllowedValueSpecification Create(
+			IGrouping<MemberInfo, KeyValuePair<MemberInfo, ISpecification<object>>> parameter)
+		{
+			var item = parameter.Select(x => x.Value)
+			                    .ToArray();
+
+			var only = item.Only();
+			if (only != null)
+			{
+				return new InstanceAwareValueSpecification(only is IAllowedValueSpecification allow ? allow : _allowed,
+				                                           Instances.ContainsKey(parameter.Key)
+					                                           ? Instances[parameter.Key]
+					                                           : AlwaysSpecification<object>.Default);
+			}
+
+			return new InstanceAwareValueSpecification(item.First(), item.Last());
 		}
 
 		sealed class Source : IParameterizedSource<MemberInfo, IAllowedValueSpecification>
@@ -123,24 +147,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 					   : parameter is ICollection collection
 						   ? collection.Count > 0
 						   : _previous.IsSatisfiedBy(parameter);
-		}
-
-		IAllowedValueSpecification Create(
-			IGrouping<MemberInfo, KeyValuePair<MemberInfo, ISpecification<object>>> parameter)
-		{
-			var item = parameter.Select(x => x.Value)
-			                    .ToArray();
-
-			var only = item.Only();
-			if (only != null)
-			{
-				return new InstanceAwareValueSpecification(only is IAllowedValueSpecification allow ? allow : _allowed,
-				                                           Instances.ContainsKey(parameter.Key)
-					                                           ? Instances[parameter.Key]
-					                                           : AlwaysSpecification<object>.Default);
-			}
-
-			return new InstanceAwareValueSpecification(item.First(), item.Last());
 		}
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
