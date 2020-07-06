@@ -19,6 +19,19 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			serializer.Cycle(new Subject {Message = "Hello World!"}).Message.Should().BeNull();
 		}
 
+
+		[Fact]
+		public void VerifyInstance()
+		{
+			var serializer = new ConfigurationContainer().Type<SubjectBase>()
+			                                             .Member(x => x.Message)
+			                                             .EmitWhenInstance(x => false)
+			                                             .Create()
+			                                             .ForTesting();
+
+			serializer.Cycle(new Subject {Message = "Hello World!"}).Message.Should().BeNull();
+		}
+
 		sealed class Subject : SubjectBase
 		{
 			public override string Message { get; set; }
