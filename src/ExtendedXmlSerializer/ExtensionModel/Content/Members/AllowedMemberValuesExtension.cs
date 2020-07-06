@@ -67,7 +67,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 				                                     .ToDictionary(x => x.Key, x => (ISpecification<object>)x.Value)
 				                                     .Concat(Instances)
 				                                     .GroupBy(x => x.Key)
-				                                     .ToDictionary(x => x.Key, Create)),
+				                                     .ToDictionary(x => x.Key, Create, Defaults.MemberComparer)),
 				fallback = _allowed == AllowAssignedValues
 					           ? Source.Default
 					           : new FixedInstanceSource<MemberInfo, IAllowedValueSpecification>(_allowed);
