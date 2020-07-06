@@ -63,7 +63,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 		IAllowedMemberValues Register(IServiceProvider arg)
 		{
 			IParameterizedSource<MemberInfo, IAllowedValueSpecification>
-				seed = Seed(),
+				seed = new Seeding(Specifications, Instances, _allowed).Get(),
 				fallback = _allowed == AllowAssignedValues
 					           ? Source.Default
 					           : new FixedInstanceSource<MemberInfo, IAllowedValueSpecification>(_allowed);
@@ -73,32 +73,56 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 			return result;
 		}
 
-		MappedAllowedMemberValues Seed()
+		sealed class Seeding : ISource<IAllowedMemberValues>
 		{
-			var primary = Specifications.ToDictionary(x => x.Key, x => (ISpecification<object>)x.Value)
-			                            .Concat(Instances)
-			                            .GroupBy(x => x.Key)
-			                            .ToDictionary(x => x.Key, Create);
-			var result = new MappedAllowedMemberValues(primary);
-			return result;
-		}
+			readonly IDictionary<MemberInfo, ISpecification<object>> _specifications;
+			readonly IDictionary<MemberInfo, ISpecification<object>> _instances;
+			readonly IAllowedValueSpecification                      _allowed;
 
-		IAllowedValueSpecification Create(
-			IGrouping<MemberInfo, KeyValuePair<MemberInfo, ISpecification<object>>> parameter)
-		{
-			var item = parameter.Select(x => x.Value)
-			                    .ToArray();
+			public Seeding(IDictionary<MemberInfo, IAllowedValueSpecification> specifications,
+			               IDictionary<MemberInfo, ISpecification<object>> instances,
+			               IAllowedValueSpecification allowed)
+				: this(specifications.ToDictionary(x => x.Key, x => (ISpecification<object>)x.Value),
+				       instances, allowed) {}
 
-			var only = item.Only();
-			if (only != null)
+			public Seeding(IDictionary<MemberInfo, ISpecification<object>> specifications,
+			               IDictionary<MemberInfo, ISpecification<object>> instances,
+			               IAllowedValueSpecification allowed)
 			{
-				return new InstanceAwareValueSpecification(only is IAllowedValueSpecification allow ? allow : _allowed,
-				                                           Instances.ContainsKey(parameter.Key)
-					                                           ? Instances[parameter.Key]
-					                                           : AlwaysSpecification<object>.Default);
+				_specifications = specifications;
+				_instances      = instances;
+				_allowed        = allowed;
 			}
 
-			return new InstanceAwareValueSpecification(item.First(), item.Last());
+			public IAllowedMemberValues Get()
+			{
+				var primary = _specifications.Concat(_instances).GroupBy(x => x.Key).ToDictionary(x => x.Key, Create);
+				var result  = new MappedAllowedMemberValues(new Dictionary(primary));
+				return result;
+			}
+
+			IAllowedValueSpecification Create(
+				IGrouping<MemberInfo, KeyValuePair<MemberInfo, ISpecification<object>>> parameter)
+			{
+				var item = parameter.Select(x => x.Value).ToArray();
+
+				var only = item.Only();
+				if (only != null)
+				{
+					return new
+						InstanceAwareValueSpecification(only is IAllowedValueSpecification allow ? allow : _allowed,
+						                                _instances.ContainsKey(parameter.Key)
+							                                ? _instances[parameter.Key]
+							                                : AlwaysSpecification<object>.Default);
+				}
+
+				return new InstanceAwareValueSpecification(item.First(), item.Last());
+			}
+		}
+
+		sealed class Dictionary : MetadataDictionary<IAllowedValueSpecification>
+		{
+			public Dictionary(IDictionary<MemberInfo, IAllowedValueSpecification> primary) : base(primary) {}
 		}
 
 		sealed class Source : IParameterizedSource<MemberInfo, IAllowedValueSpecification>
