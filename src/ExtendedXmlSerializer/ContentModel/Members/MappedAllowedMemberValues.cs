@@ -1,18 +1,29 @@
+using ExtendedXmlSerializer.Core.Sources;
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	sealed class MappedAllowedMemberValues
-		: TableSource<MemberInfo, IAllowedValueSpecification>,
-		  IAllowedMemberValues
+	sealed class MappedAllowedMemberValues : IAllowedMemberValues
 	{
-		public MappedAllowedMemberValues(IDictionary<MemberInfo, IAllowedValueSpecification> store) : base(store) {}
+		readonly Table _primary;
 
-		public override IAllowedValueSpecification Get(MemberInfo parameter) => From(parameter);
+		public MappedAllowedMemberValues(IDictionary<MemberInfo, IAllowedValueSpecification> primary)
+			: this(new Table(new TableSource<MemberInfo, IAllowedValueSpecification>(primary))) {}
 
-		IAllowedValueSpecification From(MemberDescriptor parameter)
-			=> base.Get(parameter.Metadata) ?? base.Get(parameter.MemberType);
+		MappedAllowedMemberValues(Table primary) => _primary   = primary;
+
+		public IAllowedValueSpecification Get(MemberInfo parameter)
+			=> _primary.Get(parameter);
+
+		sealed class Table : IParameterizedSource<MemberDescriptor, IAllowedValueSpecification>
+		{
+			readonly IParameterizedSource<MemberInfo, IAllowedValueSpecification> _source;
+
+			public Table(IParameterizedSource<MemberInfo, IAllowedValueSpecification> source) => _source = source;
+
+			public IAllowedValueSpecification Get(MemberDescriptor parameter)
+				=> _source.Get(parameter.Metadata) ?? _source.Get(parameter.MemberType);
+		}
 	}
 }
