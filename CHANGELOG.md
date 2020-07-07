@@ -1,3 +1,9 @@
+# [ExtendedXmlSerializer v3.2.2](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.2)
+> 07/07/2020 07:25:26 UTC
+##### ``v3.2.2``
+### &#128027; Bug Fixes &#128295; 
+- Enabled member comparison by base-type on EmitWhen call. #412 @Mike-E-wins 
+
 # [ExtendedXmlSerializer v3.2.1](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.1)
 > 06/22/2020 14:51:17 UTC
 ##### ``v3.2.1``
