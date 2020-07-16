@@ -33,14 +33,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
-		public void Add(TypeInfo key, params Action<XElement>[] items)
-		{
-			var current = Get(key)
-				              ?.ToArray() ?? Enumerable.Empty<Action<XElement>>();
-			Assign(key, current.Appending(items)
-			                   .Fixed());
-		}
-
 		sealed class Contents : IContents
 		{
 			readonly IFormatReaders                             _factory;
@@ -76,12 +68,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			{
 				readonly static MigrationVersionIdentity Identity = MigrationVersionIdentity.Default;
 
-				readonly IFormatReaders _factory;
-				readonly TypeInfo                             _type;
-				readonly IClassification                      _classification;
-				readonly ImmutableArray<Action<XElement>>     _migrations;
-				readonly uint                                 _version;
-				readonly IProperty<uint>                      _property;
+				readonly IFormatReaders                   _factory;
+				readonly TypeInfo                         _type;
+				readonly IClassification                  _classification;
+				readonly ImmutableArray<Action<XElement>> _migrations;
+				readonly uint                             _version;
+				readonly IProperty<uint>                  _property;
 
 				public Migrator(IFormatReaders factory, TypeInfo type, IClassification classification,
 				                ImmutableArray<Action<XElement>> migrations)
@@ -109,9 +101,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 						throw new XmlException($"Unknown varsion number {version} for type {typeInfo}.");
 					}
 
-					var element = XElement.Load(parameter.Get()
-					                                     .AsValid<System.Xml.XmlReader>()
-					                                     .ReadSubtree());
+					var reader  = parameter.Get().AsValid<System.Xml.XmlReader>();
+					var element = XElement.Load(reader.ReadSubtree());
 					for (var i = version; i < _version; i++)
 					{
 						var index     = (int)i;
@@ -124,6 +115,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 					}
 
 					var xmlReader = element.CreateReader();
+					XmlParserContexts.Default.Assign(xmlReader.NameTable,
+					                                 XmlParserContexts.Default.Get(reader.NameTable));
 					var result    = _factory.Get(xmlReader);
 					AssociatedReaders.Default.Assign(result, parameter);
 					return result;
@@ -134,7 +127,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 			sealed class Serializer : ContentModel.ISerializer
 			{
-				readonly IMigrator   _migrator;
+				readonly IMigrator                _migrator;
 				readonly ContentModel.ISerializer _serializer;
 
 				public Serializer(IMigrator migrator, ContentModel.ISerializer serializer)

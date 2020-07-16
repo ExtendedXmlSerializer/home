@@ -1,21 +1,20 @@
-using System.Xml;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
+using System.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class FormatReaderContexts
-		: ReferenceCacheBase<System.Xml.XmlReader, IFormatReaderContext>,
-		  IFormatReaderContexts
+	sealed class FormatReaderContexts : ReferenceCacheBase<System.Xml.XmlReader, IFormatReaderContext>,
+	                                    IFormatReaderContexts
 	{
 		readonly IIdentityStore     _store;
 		readonly IXmlParserContexts _contexts;
 		readonly ITypes             _types;
 
-		public FormatReaderContexts(IIdentityStore store, ITypes types) :
-			this(store, types, XmlParserContexts.Default) {}
+		public FormatReaderContexts(IIdentityStore store, ITypes types)
+			: this(store, types, XmlParserContexts.Default) {}
 
 		public FormatReaderContexts(IIdentityStore store, ITypes types, IXmlParserContexts contexts)
 		{
