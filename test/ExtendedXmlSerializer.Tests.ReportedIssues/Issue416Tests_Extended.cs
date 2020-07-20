@@ -36,7 +36,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			{
 				IgnoreThisEverywhere = "Should NOT see this"
 			};
-			/*var subjectB = new SubjectB {
+			var subjectB = new SubjectB {
 				IgnoreThisForSubset  = "Should see this",
 				IgnoreThisEverywhere = "Should NOT see this"
 			};
@@ -47,10 +47,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 					subjectA,
 					subjectB
 				}
-			};*/
+			};
 
-			var cycled = serializer.Cycle(subjectA);
+			var cycled = serializer.Cycle(parent);
 			cycled.IgnoreThisEverywhere.Should().BeNull();
+			cycled.Commands[0].IgnoreThisEverywhere.Should().BeNull();
+			cycled.Commands[1].IgnoreThisEverywhere.Should().BeNull();
+
 		}
 
 		public interface ISubject
