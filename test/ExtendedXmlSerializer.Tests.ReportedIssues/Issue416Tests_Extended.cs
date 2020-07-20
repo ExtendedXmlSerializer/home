@@ -70,7 +70,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		public class Parent : BaseSubject
 		{
-			public List<ISubject> Commands { get; set; } = new List<ISubject> {};
+			public List<ISubject> Commands { get; set; } = new List<ISubject>();
 		}
 
 		public class SubjectA : BaseSubject {}
