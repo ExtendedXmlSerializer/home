@@ -1,6 +1,7 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Tests.ReportedIssues.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -29,7 +30,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				Value = value;
 			}
 
-			public int Value { get; }
+			public int Value { [UsedImplicitly] get; }
 		}
 
 		class vector
