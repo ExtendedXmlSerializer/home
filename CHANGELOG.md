@@ -1,3 +1,9 @@
+# [ExtendedXmlSerializer v3.2.3](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.3)
+> 07/21/2020 14:12:24 UTC
+##### ``v3.2.3``
+### &#128027; Bug Fixes &#128295; 
+- Assigned parser contexts for migrations. #415 @Mike-E-wins 
+
 # [ExtendedXmlSerializer v3.2.2](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.2)
 > 07/07/2020 07:25:26 UTC
 ##### ``v3.2.2``
