@@ -1,4 +1,5 @@
 ﻿using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +14,16 @@ namespace ExtendedXmlSerializer.ReflectionModel
 
 		public static DefaultActivators Default { get; } = new DefaultActivators();
 
-		DefaultActivators() : this(ConstructorLocator.Default) {}
+		DefaultActivators() : this(ConstructorLocator.Default, IsCollectionType.Instance) {}
 
-		readonly IConstructorLocator _locator;
+		readonly IConstructorLocator      _locator;
+		readonly ISpecification<TypeInfo> _collection;
 
-		public DefaultActivators(IConstructorLocator locator) => _locator = locator;
+		public DefaultActivators(IConstructorLocator locator, ISpecification<TypeInfo> collection)
+		{
+			_locator    = locator;
+			_collection = collection;
+		}
 
 		protected override IActivator Create(Type parameter)
 		{
@@ -35,10 +41,10 @@ namespace ExtendedXmlSerializer.ReflectionModel
 
 		NewExpression Reference(Type parameter, TypeInfo typeInfo)
 		{
-			var accounted = typeInfo.IsInterface && IsCollectionTypeSpecification.Default.IsSatisfiedBy(parameter)
+			var accounted = typeInfo.IsInterface && _collection.IsSatisfiedBy(parameter)
 				                ? typeof(List<>).MakeGenericType(CollectionItemTypeLocator.Default.Get(typeInfo))
 				                : typeInfo;
-			var constructor = _locator.Get(accounted);
+			var constructor = _locator.Get(accounted) ?? _locator.Get(typeInfo);
 			var parameters  = constructor.GetParameters();
 			var result = parameters.Length > 0
 				             ? Expression.New(constructor, parameters.Select(Selector))
@@ -62,6 +68,14 @@ namespace ExtendedXmlSerializer.ReflectionModel
 						                                         InvalidOperationException("Element Type not found."),
 					                                         Initializers)
 					   : Expression.Default(parameter.ParameterType);
+		}
+
+		sealed class IsCollectionType : AnySpecification<TypeInfo>
+		{
+			public static IsCollectionType Instance { get; } = new IsCollectionType();
+
+			IsCollectionType() : base(IsCollectionTypeSpecification.Default,
+			                          new IsAssignableGenericSpecification(typeof(IReadOnlyCollection<>))) {}
 		}
 	}
 }

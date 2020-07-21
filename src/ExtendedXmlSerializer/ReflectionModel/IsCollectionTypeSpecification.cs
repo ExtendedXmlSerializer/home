@@ -10,7 +10,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 		public static IsCollectionTypeSpecification Default { get; } = new IsCollectionTypeSpecification();
 
 		IsCollectionTypeSpecification()
-			: base(IsAssignableSpecification<IList>.Default, new IsAssignableGenericSpecification(typeof(ICollection<>))
-			      ) {}
+			: base(IsAssignableSpecification<IList>.Default,
+			       new IsAssignableGenericSpecification(typeof(ICollection<>))) {}
 	}
 }
