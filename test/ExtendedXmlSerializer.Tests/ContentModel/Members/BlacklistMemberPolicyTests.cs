@@ -51,6 +51,52 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Members
 		[Fact]
 		void Overrides()
 		{
+			var member = Get<ButtonBase, bool>(x => x.AutoSize);
+
+			var list = new HashSet<MemberInfo>(MemberComparer.Default) {member};
+
+			list.Contains(typeof(Button).GetTypeInfo()
+			                            .GetRuntimeProperty(nameof(Control.AutoSize)))
+			    .Should()
+			    .BeFalse();
+
+			list.Contains(typeof(ButtonBase).GetTypeInfo()
+			                                .GetRuntimeProperty(nameof(Control.AutoSize)))
+			    .Should()
+			    .BeTrue();
+
+			list.Contains(typeof(Control).GetTypeInfo()
+			                             .GetRuntimeProperty(nameof(Control.AutoSize)))
+			    .Should()
+			    .BeFalse();
+		}
+
+		[Fact]
+		void Overrides_Inherited()
+		{
+			var member = Get<ButtonBase, bool>(x => x.AutoSize);
+
+			var list = new HashSet<MemberInfo>(InheritedMemberComparer.Default.Get()) {member};
+
+			list.Contains(typeof(Button).GetTypeInfo()
+			                            .GetRuntimeProperty(nameof(Control.AutoSize)))
+			    .Should()
+			    .BeTrue();
+
+			list.Contains(typeof(ButtonBase).GetTypeInfo()
+			                                .GetRuntimeProperty(nameof(Control.AutoSize)))
+			    .Should()
+			    .BeTrue();
+
+			list.Contains(typeof(Control).GetTypeInfo()
+			                             .GetRuntimeProperty(nameof(Control.AutoSize)))
+			    .Should()
+			    .BeFalse();
+		}
+
+		[Fact]
+		void Overrides_Implemented()
+		{
 			var member = Get<Button, bool>(x => x.AutoSize);
 
 			var list = new HashSet<MemberInfo>(MemberComparer.Default) {member};
@@ -63,7 +109,30 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Members
 			list.Contains(typeof(ButtonBase).GetTypeInfo()
 			                                .GetRuntimeProperty(nameof(Control.AutoSize)))
 			    .Should()
+			    .BeFalse();
+
+			list.Contains(typeof(Control).GetTypeInfo()
+			                             .GetRuntimeProperty(nameof(Control.AutoSize)))
+			    .Should()
+			    .BeFalse();
+		}
+
+		[Fact]
+		void Overrides_Implemented_Inherited()
+		{
+			var member = Get<Button, bool>(x => x.AutoSize);
+
+			var list = new HashSet<MemberInfo>(InheritedMemberComparer.Default.Get()) {member};
+
+			list.Contains(typeof(Button).GetTypeInfo()
+			                            .GetRuntimeProperty(nameof(Control.AutoSize)))
+			    .Should()
 			    .BeTrue();
+
+			list.Contains(typeof(ButtonBase).GetTypeInfo()
+			                                .GetRuntimeProperty(nameof(Control.AutoSize)))
+			    .Should()
+			    .BeFalse();
 
 			list.Contains(typeof(Control).GetTypeInfo()
 			                             .GetRuntimeProperty(nameof(Control.AutoSize)))
