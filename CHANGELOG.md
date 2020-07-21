@@ -1,3 +1,11 @@
+# [ExtendedXmlSerializer v3.2.4](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.4)
+> 07/21/2020 17:47:55 UTC
+##### ``v3.2.4``
+### &#128027; Bug Fixes &#128295; 
+- Member resolution now uses ReflectedType first, then DeclaredType. #417 @Mike-E-wins 
+- Fixed references resolution bugs during deserialization #420 @Mike-E-wins 
+- Added support for IReadOnlyList properties. #421 @Mike-E-wins 
+
 # [ExtendedXmlSerializer v3.2.3](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.3)
 > 07/21/2020 14:12:24 UTC
 ##### ``v3.2.3``
