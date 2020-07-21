@@ -1,6 +1,7 @@
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using System.Reflection;
 using System.Xml;
@@ -29,7 +30,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		ReferenceIdentity? GetReference(IFormatReader parameter)
 		{
-			if (parameter.Get().To<XmlReader>().NodeType != XmlNodeType.Attribute || MemberProperty.Default.Get(parameter))
+			if (parameter.Get().To<XmlReader>().NodeType != XmlNodeType.Attribute ||
+			    MemberProperty.Default.Get(parameter))
 			{
 				var identity = ReferenceIdentity.Get(parameter);
 				if (identity.HasValue)
@@ -50,17 +52,49 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		public override object Get(IFormatReader parameter)
 		{
-			var identity = GetReference(parameter);
-			if (identity != null)
+			var reference = GetReference(parameter);
+			if (reference != null)
 			{
-				var result = _maps.Get(parameter).Get(identity.Value);
+				var result = _maps.Get(parameter).Get(reference.Value);
 				return result;
 			}
 
 			{
-				var result = base.Get(parameter);
+				var element = parameter.Get().To<XmlReader>().NodeType != XmlNodeType.Attribute ||
+				              MemberProperty.Default.Get(parameter);
+				var declared = element ? Identity(parameter) : null;
+				var result   = base.Get(parameter);
+				var identity = declared ?? (element && result != null ? Entity(parameter, result) : null);
+				if (identity != null)
+				{
+					var map = _maps.Get(parameter);
+					if (map.Get(identity.Value) != result)
+					{
+						map.Assign(identity.Value, result);
+					}
+				}
+
 				return result;
 			}
+		}
+
+		static ReferenceIdentity? Identity(IFormatReader reader)
+		{
+			var identity = IdentityProperty.Default.Get(reader);
+			var result   = identity.HasValue ? new ReferenceIdentity(identity.Value) : (ReferenceIdentity?)null;
+			return result;
+		}
+
+		ReferenceIdentity? Entity(IFormatReader reader, object instance)
+		{
+			var typeInfo = instance.GetType()
+			                       .GetTypeInfo();
+			var entity = _entities.Get(typeInfo)
+			                      ?.Get(reader);
+			var result = entity != null
+				             ? (ReferenceIdentity?)new ReferenceIdentity(typeInfo, entity)
+				             : null;
+			return result;
 		}
 	}
 }
