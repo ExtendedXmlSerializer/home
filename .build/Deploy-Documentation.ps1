@@ -9,6 +9,6 @@ CD documentation/.wwwroot
 git config user.email $env:DEPLOY_EMAIL
 git config user.name $env:DEPLOY_USER
 git config core.safecrlf false
-Exec { git add -A 2>&1 }
-Exec { git commit -m "AppVeyor Continuous Deployment Documentation Update v$($env:APPVEYOR_BUILD_VERSION)" -q }
-Exec { git push origin gh-pages -q }
+git add -A 2>&1
+git commit -m "AppVeyor Continuous Deployment Documentation Update v$($env:APPVEYOR_BUILD_VERSION)" -q
+git push origin gh-pages -q 
