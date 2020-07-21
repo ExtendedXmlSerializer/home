@@ -14,16 +14,11 @@ namespace ExtendedXmlSerializer.ReflectionModel
 
 		public static DefaultActivators Default { get; } = new DefaultActivators();
 
-		DefaultActivators() : this(ConstructorLocator.Default, IsCollectionType.Instance) {}
+		DefaultActivators() : this(ConstructorLocator.Default) {}
 
-		readonly IConstructorLocator      _locator;
-		readonly ISpecification<TypeInfo> _collection;
+		readonly IConstructorLocator _locator;
 
-		public DefaultActivators(IConstructorLocator locator, ISpecification<TypeInfo> collection)
-		{
-			_locator    = locator;
-			_collection = collection;
-		}
+		public DefaultActivators(IConstructorLocator locator) => _locator = locator;
 
 		protected override IActivator Create(Type parameter)
 		{
@@ -41,7 +36,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 
 		NewExpression Reference(Type parameter, TypeInfo typeInfo)
 		{
-			var accounted = typeInfo.IsInterface && _collection.IsSatisfiedBy(parameter)
+			var accounted = typeInfo.IsInterface && IsCollectionType.Instance.IsSatisfiedBy(parameter)
 				                ? typeof(List<>).MakeGenericType(CollectionItemTypeLocator.Default.Get(typeInfo))
 				                : typeInfo;
 			var constructor = _locator.Get(accounted) ?? _locator.Get(typeInfo);
