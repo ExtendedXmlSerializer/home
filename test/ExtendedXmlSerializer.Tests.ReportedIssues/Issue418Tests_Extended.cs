@@ -19,10 +19,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var b5 = new Book();
 			var b6 = new Book();
 
-			var historyBooks = new[] { b1, b2, };
-			var artBooks     = new[] { b3, b4, };
-			var scienceBooks = new[] { b5 };
-			var comics       = new[] { b6 };
+			var historyBooks = new[] {b1, b2,};
+			var artBooks     = new[] {b3, b4,};
+			var scienceBooks = new[] {b5};
+			var comics       = new[] {b6};
 
 			var all = historyBooks.Concat(artBooks).Concat(scienceBooks).Concat(comics).ToList();
 
@@ -65,7 +65,21 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			cycled.Genres.ElementAt(2).Books.ElementAt(1).Should().BeSameAs(cycled.AllBooks.ElementAt(3));
 			cycled.Genres.ElementAt(3).Books.ElementAt(0).Should().BeSameAs(cycled.AllBooks.ElementAt(4));
 			cycled.Genres.ElementAt(4).Books.ElementAt(0).Should().BeSameAs(cycled.AllBooks.ElementAt(5));
+		}
 
+		[Fact]
+		public void VerifyIdentity()
+		{
+			var b1 = new Book {Id = 123};
+
+			var serializer = new ConfigurationContainer().Type<Book>(b => b.EnableReferences(book => book.Id))
+			                                             .Create()
+			                                             .ForTesting();
+
+			var instance = new[] {b1, b1};
+
+			serializer.Assert(instance,
+			                  @"<?xml version=""1.0"" encoding=""utf-8""?><Array xmlns:ns1=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests.ReportedIssues"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:item=""ns1:Issue418Tests_Extended-Book"" xmlns=""https://extendedxmlserializer.github.io/system""><ns1:Issue418Tests_Extended-Book Id=""123"" /><ns1:Issue418Tests_Extended-Book exs:entity=""123"" /></Array>");
 		}
 
 		class BookStore
@@ -76,12 +90,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		class Book
 		{
+			public int Id { get; set; }
 		}
 
 		class Genre
 		{
 			public IEnumerable<Book> Books { get; set; }
 		}
-
 	}
 }
