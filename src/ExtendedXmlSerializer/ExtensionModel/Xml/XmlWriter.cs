@@ -122,7 +122,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 				Add(string.Empty, parameter);
 			}
 
-			var result = parameter == this.Get(string.Empty) ? string.Empty : lookup;
+			var result = parameter == this.Get(string.Empty) || parameter == null ? string.Empty : lookup;
 			return result;
 		}
 
