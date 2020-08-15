@@ -5,15 +5,16 @@ using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Parsing;
 using ExtendedXmlSerializer.Core.Sources;
-using Sprache;
 using ExtendedXmlSerializer.ExtensionModel.Expressions;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ReflectionModel;
+using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+
 // ReSharper disable TooManyDependencies
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
@@ -79,7 +80,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			                           .Zip(candidates, (info, evaluation) => evaluation.Get(info))
 			                           .ToArray();
 			var activator = new ConstructedActivator(constructor, arguments);
-			var extension = new ActivationContexts(_accessors, members, activator).Get(dictionary)
+			var context   = new MemberContext(constructor.ReflectedType.GetTypeInfo(), members);
+			var extension = new ActivationContexts(_accessors, context, activator).Get(dictionary)
 			                                                                      .Get()
 			                                                                      .AsValid<IMarkupExtension>();
 			var result = extension.ProvideValue(new Provider(_provider, _services.Appending(parameter)
