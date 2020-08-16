@@ -1,6 +1,6 @@
-using System.Collections;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Collections;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {

@@ -19,11 +19,11 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		public bool IsSatisfiedBy(IInnerContent parameter)
 		{
-			var content = parameter.Get();
-			var key     = _formatter.Get(content);
-			var member = _serialization.Get(parameter.Current)
-			                           .Get(key);
-			var result = member != null;
+			var content             = parameter.Get();
+			var key                 = _formatter.Get(content);
+			var memberSerialization = _serialization.Get(parameter.Current);
+			var member              = memberSerialization.Get(key);
+			var result              = member != null;
 			if (result)
 			{
 				_handler.Handle(parameter, member);

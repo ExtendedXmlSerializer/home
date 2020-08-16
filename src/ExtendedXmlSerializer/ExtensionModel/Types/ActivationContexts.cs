@@ -5,7 +5,6 @@ using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
@@ -13,22 +12,23 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 	sealed class ActivationContexts : IActivationContexts
 	{
 		readonly IMemberAccessors                       _accessors;
-		readonly ImmutableArray<IMember>                _members;
+		readonly MemberContext                          _members;
 		readonly ITableSource<string, IMember>          _table;
 		readonly Func<Func<string, object>, IActivator> _activator;
 
-		public ActivationContexts(IMemberAccessors accessors, ImmutableArray<IMember> members, IActivator activator)
+		public ActivationContexts(IMemberAccessors accessors, MemberContext members, IActivator activator)
 			: this(accessors, members, activator.Accept) {}
 
-		public ActivationContexts(IMemberAccessors accessors, ImmutableArray<IMember> members,
+		public ActivationContexts(IMemberAccessors accessors, MemberContext members,
 		                          Func<Func<string, object>, IActivator> activator)
 			: this(accessors, members,
-			       new TableSource<string, IMember>(members.ToDictionary(x => x.Name,
+			       new TableSource<string, IMember>(members.Members
+			                                               .ToDictionary(x => x.Name,
 			                                                             StringComparer.InvariantCultureIgnoreCase)),
 			       activator) {}
 
 		// ReSharper disable once TooManyDependencies
-		public ActivationContexts(IMemberAccessors accessors, ImmutableArray<IMember> members,
+		public ActivationContexts(IMemberAccessors accessors, MemberContext members,
 		                          ITableSource<string, IMember> table,
 		                          Func<Func<string, object>, IActivator> activator)
 		{
@@ -42,12 +42,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		{
 			var source = new TableSource<string, object>(parameter);
 			var list   = new List<object>();
-			var command = new CompositeCommand<object>(new ApplyMemberValuesCommand(_accessors, _members, source),
+			var command = new CompositeCommand<object>(new ApplyMemberValuesCommand(_accessors, _members.Members,
+			                                                                        source),
 			                                           new AddItemsCommand(list));
 			var alteration = new ConfiguringAlteration<object>(command);
 			var activator  = new AlteringActivator(alteration, _activator(new Store(source, _table).Get));
-			var result = new ActivationContext(source, activator.Singleton()
-			                                                    .Get, list);
+			var result     = new ActivationContext(_members.ReflectedType, source, activator.Singleton().Get, list);
 			return result;
 		}
 

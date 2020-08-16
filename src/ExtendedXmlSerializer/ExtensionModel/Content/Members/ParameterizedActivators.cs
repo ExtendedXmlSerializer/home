@@ -41,7 +41,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 		ActivationContextActivator Activator(ConstructorInfo constructor, ImmutableArray<IMember> members)
 		{
 			var activator = new Source(constructor).ToSelectionDelegate();
-			var contexts  = new ActivationContexts(_accessors, members, activator);
+			var context   = new MemberContext(constructor.ReflectedType.GetTypeInfo(), members);
+			var contexts  = new ActivationContexts(_accessors, context, activator);
 			var defaults = constructor.GetParameters()
 			                          .Where(x => x.IsOptional)
 			                          .Select(x => Pairs.Create(x.Name, x.DefaultValue))

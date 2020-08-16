@@ -1,7 +1,7 @@
-using System.Collections.Immutable;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using System.Collections.Immutable;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
@@ -23,8 +23,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 		{
 			foreach (var member in _members)
 			{
-				var isSatisfiedBy = _values.IsSatisfiedBy(member.Name);
-				if (isSatisfiedBy)
+				if (_values.IsSatisfiedBy(member.Name))
 				{
 					var access = _accessors.Get(member);
 					var value  = _values.Get(member.Name);

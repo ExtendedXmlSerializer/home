@@ -1,6 +1,7 @@
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ExtensionModel.Types;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
@@ -23,8 +24,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		public IMemberSerialization Get(object parameter)
 		{
-			var type = parameter.GetType()
-			                    .GetTypeInfo();
+			var type   = parameter is ITypeAware aware ? aware.Get() : parameter.GetType().GetTypeInfo();
 			var result = _specification.IsSatisfiedBy(type) ? _serializations.Get(type) : _serialization;
 			return result;
 		}

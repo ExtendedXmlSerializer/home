@@ -1,17 +1,22 @@
+using ExtendedXmlSerializer.Core.Sources;
 using System;
 using System.Collections;
-using ExtendedXmlSerializer.Core.Sources;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class ActivationContext : IActivationContext
+	sealed class ActivationContext : IActivationContext, ITypeAware
 	{
+		readonly TypeInfo                     _subject;
 		readonly ITableSource<string, object> _source;
 		readonly Func<object>                 _activator;
 		readonly IList                        _list;
 
-		public ActivationContext(ITableSource<string, object> source, Func<object> activator, IList list)
+		// ReSharper disable once TooManyDependencies
+		public ActivationContext(TypeInfo subject, ITableSource<string, object> source, Func<object> activator,
+		                         IList list)
 		{
+			_subject   = subject;
 			_source    = source;
 			_activator = activator;
 			_list      = list;
@@ -60,5 +65,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			get => _list[index];
 			set => _list[index] = value;
 		}
+
+		TypeInfo ISource<TypeInfo>.Get() => _subject;
 	}
 }
