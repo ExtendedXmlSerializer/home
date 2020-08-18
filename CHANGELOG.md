@@ -1,3 +1,10 @@
+# [ExtendedXmlSerializer v3.2.5](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.5)
+> 08/18/2020 07:24:58 UTC
+##### ``v3.2.5``
+### &#128027; Bug Fixes &#128295; 
+- Accounted for rare state when namespace prefix is `null`. #424 @Mike-E-angelo 
+- Improved member resolution for parameterized content #428 @Mike-E-angelo 
+
 # [ExtendedXmlSerializer v3.2.4](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.4)
 > 07/21/2020 17:47:55 UTC
 ##### ``v3.2.4``
