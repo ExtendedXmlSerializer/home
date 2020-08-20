@@ -40,14 +40,11 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 			=> _types.Get(parameter)
 			         .Where(_specification)
 			         .ToLookup(_key)
-			         .Where(x => !string.IsNullOrWhiteSpace(x.Key))
-			         .ToDictionary(x => x.Key, _format)
+			         .ToDictionary(x => x.Key ?? string.Empty, _format)
 			         .Get;
 
 		public ImmutableArray<TypeInfo>? Get(TypePartition parameter)
-			=> Get(parameter.Assembly)
-			   .Invoke(parameter.Namespace)
-			   ?.Invoke(parameter.Name);
+			=> Get(parameter.Assembly)(parameter.Namespace ?? string.Empty)?.Invoke(parameter.Name);
 
 		Func<string, ImmutableArray<TypeInfo>?> Format(IGrouping<string, TypeInfo> grouping)
 			=> grouping.ToLookup(_formatter)
