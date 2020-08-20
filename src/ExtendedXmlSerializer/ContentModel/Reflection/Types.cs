@@ -25,7 +25,6 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 		}
 
 		protected override TypeInfo Create(IIdentity parameter)
-			=> _aliased.Get(parameter) ?? _candidates.Get(parameter)
-			                                         .SingleOrDefault();
+			=> _aliased.Get(parameter) ?? _candidates.Get(parameter).SingleOrDefault();
 	}
 }

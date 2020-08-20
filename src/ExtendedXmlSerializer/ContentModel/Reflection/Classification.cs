@@ -28,10 +28,9 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 		}
 
 		public TypeInfo Get(IFormatReader parameter)
-			=> FromAttributes(parameter) ??
-			   (!parameter.IsSatisfiedBy(MemberIdentity.Default)
-				    ? _types.Get(_identities.Get(parameter.Name, parameter.Identifier))
-				    : null);
+			=> FromAttributes(parameter) ?? (!parameter.IsSatisfiedBy(MemberIdentity.Default)
+				                                 ? _types.Get(_identities.Get(parameter.Name, parameter.Identifier))
+				                                 : null);
 
 		TypeInfo FromAttributes(IFormatReader parameter)
 			=> _specification.IsSatisfiedBy(parameter)
