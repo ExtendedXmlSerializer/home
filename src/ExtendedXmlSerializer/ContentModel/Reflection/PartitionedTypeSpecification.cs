@@ -25,6 +25,6 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 		public NotHappy(Assembly assembly) => _assembly = assembly;
 
 		public bool IsSatisfiedBy(TypeInfo parameter)
-			=> parameter.Assembly != _assembly || !parameter.Namespace.Contains("System.Runtime.Remoting");
+			=> parameter?.Assembly != _assembly;
 	}
 }
