@@ -21,7 +21,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			parent.Children.Add(new Child(parent));
 
 			var cycled = serializer.Cycle(parent);
-			Debugger.Break();*/
+			cycled.Children.Only().Parent.Should().NotBeNull();*/
 
 		}
 
