@@ -1,5 +1,4 @@
 using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
@@ -8,7 +7,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class References : StructureCacheBase<object, ImmutableArray<object>>, IReferences
+	sealed class References : IReferences
 	{
 		readonly ISpecification<TypeInfo> _allow;
 		readonly IReferencesPolicy        _policy;
@@ -33,7 +32,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_accessors   = accessors;
 		}
 
-		protected override ImmutableArray<object> Create(object parameter)
+		public ImmutableArray<object> Get(object parameter)
 			=> new ReferenceWalker(_allow, _policy, _members, _enumerators, _accessors, parameter).Get();
+
 	}
 }
