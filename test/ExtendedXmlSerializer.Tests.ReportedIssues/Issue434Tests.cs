@@ -11,19 +11,6 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 	public sealed class Issue434Tests
 	{
 		[Fact]
-		public void Verify()
-		{
-			/*var serializer = CreateDefaultSerializer().ForTesting();
-
-			var node = new Node(Guid.NewGuid());
-			var link = new NodeLink(Guid.NewGuid()) {Node1 = node};
-			node.NodeLinks.Add(link);
-			serializer.WriteLine(node);
-			var cycled = serializer.Cycle(node);
-			Debugger.Break();*/
-		}
-
-		[Fact]
 		public void EndlessRecursionOnSecondCallToSerialize()
 		{
 			var serializer = CreateDefaultSerializer().ForTesting();
@@ -43,15 +30,15 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			serializer.Serialize(map).Should().NotBeEmpty();
 		}
 
-		private static IExtendedXmlSerializer CreateDefaultSerializer() =>
-			new ConfigurationContainer() //.UseOptimizedNamespaces()
-				.EnableParameterizedContentWithPropertyAssignments()
-				//.UseAutoFormatting()
-				.Type<Node>()
-				.EnableReferences(node => node.Id)
-				.Type<NodeLink>()
-				.EnableReferences(nodeLink => nodeLink.Id)
-				.Create();
+		static IExtendedXmlSerializer CreateDefaultSerializer() =>
+			new ConfigurationContainer().UseOptimizedNamespaces()
+			                            .EnableParameterizedContentWithPropertyAssignments()
+			                            .UseAutoFormatting()
+			                            .Type<Node>()
+			                            .EnableReferences(node => node.Id)
+			                            .Type<NodeLink>()
+			                            .EnableReferences(nodeLink => nodeLink.Id)
+			                            .Create();
 
 		public abstract class Entity : IEquatable<Entity>
 		{
@@ -114,7 +101,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		public sealed class Node : Entity
 		{
-			private List<NodeLink>? _nodeLinks;
+			public Node() : this(Guid.NewGuid()) {}
 
 			public Node(Guid id) : base(id) {}
 
@@ -123,6 +110,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				get => _nodeLinks ??= new List<NodeLink>();
 				set => _nodeLinks = value;
 			}
+
+			List<NodeLink>? _nodeLinks;
 
 			public void AddNodeLink(NodeLink nodeLink)
 			{
@@ -137,6 +126,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		public sealed class NodeLink : Entity
 		{
+			public NodeLink() : this(Guid.NewGuid()) {}
+
 			public NodeLink(Guid id) : base(id) {}
 
 			public Node? Node1 { get; set; }
