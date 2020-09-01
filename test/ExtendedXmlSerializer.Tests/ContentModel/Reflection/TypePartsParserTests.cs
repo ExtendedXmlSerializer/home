@@ -2,8 +2,8 @@
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core.Parsing;
-using Sprache;
 using FluentAssertions;
+using Sprache;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -111,6 +111,16 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Reflection
 			                                .Parse(input);
 			Assert.Equal("ExtendedXmlSerializer.Tests.TestObject", path.Namespace);
 			Assert.Equal("ExtendedXmlSerializer.Tests", path.Path);
+		}
+
+		[Fact]
+		public void AssemblyPathParserWithNullNamespace()
+		{
+			const string input = "clr-namespace:;assembly=ExtendedXmlSerializer.Tests";
+			var path = ExtendedXmlSerializer.ContentModel.Reflection.AssemblyPathParser.Default.ToParser()
+			                                .Parse(input);
+			path.Namespace.Should().BeNull();
+			path.Path.Should().Be("ExtendedXmlSerializer.Tests");
 		}
 
 		[Fact]

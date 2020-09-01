@@ -12,12 +12,12 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 
 		public static AssemblyPathParser Default { get; } = new AssemblyPathParser();
 
-		AssemblyPathParser() : base(
-		                            Parse.String("clr-namespace:")
-		                                 .Then(Namespace.Accept)
-		                                 .SelectMany(Parse.String(";assembly=")
-		                                                  .Accept, (ns, _) => ns)
-		                                 .SelectMany(Assembly.Accept, (ns, assembly) => new AssemblyPath(ns, assembly))
-		                           ) {}
+		AssemblyPathParser()
+			: base(Parse.String("clr-namespace:")
+			            .Then(Namespace.Optional().Accept)
+			            .SelectMany(Parse.String(";assembly=")
+			                             .Accept, (ns, _) => ns)
+			            .SelectMany(Assembly.Accept, (ns, assembly)
+				                                         => new AssemblyPath(ns.GetOrDefault(), assembly))) {}
 	}
 }
