@@ -1,3 +1,11 @@
+# [ExtendedXmlSerializer v3.2.6](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.6)
+> 09/01/2020 08:58:59 UTC
+##### ``v3.2.6``
+### &#128027; Bug Fixes &#128295; 
+- Allowed `null` Namespace for Framework Types #430 @oliver-chime 
+- Allowed `null`/Empty Namespaces for Custom/Non-system Assemblies #432 @Mike-E-angelo 
+- Removed Caching from Reference Resolution #437 @Mike-E-angelo 
+
 # [ExtendedXmlSerializer v3.2.5](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.5)
 > 08/18/2020 07:24:58 UTC
 ##### ``v3.2.5``
