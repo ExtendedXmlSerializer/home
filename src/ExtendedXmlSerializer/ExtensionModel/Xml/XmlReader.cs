@@ -1,8 +1,8 @@
-using System.Reflection;
-using System.Xml;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
+using System.Reflection;
+using System.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -43,6 +43,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		{
 			switch (_reader.NodeType)
 			{
+
 				case XmlNodeType.Attribute:
 					return _reader.Value;
 				default:
@@ -61,7 +62,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 					var result = isNull ? null : _reader.Value;
 
-					if (!string.IsNullOrEmpty(result))
+					if (!string.IsNullOrEmpty(result) || _reader.NodeType == XmlNodeType.CDATA)
 					{
 						_reader.Read();
 						Set();
