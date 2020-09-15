@@ -1,3 +1,10 @@
+# [ExtendedXmlSerializer v3.2.7](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.7)
+> 09/15/2020 13:28:08 UTC
+##### ``v3.2.7``
+### &#128027; Bug Fixes &#128295; 
+- Accounted for empty CDATA elements. #444 @Mike-E-angelo 
+- Accounted for successive CDATA blocks. #448 @Mike-E-angelo 
+
 # [ExtendedXmlSerializer v3.2.6](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.6)
 > 09/01/2020 08:58:59 UTC
 ##### ``v3.2.6``
