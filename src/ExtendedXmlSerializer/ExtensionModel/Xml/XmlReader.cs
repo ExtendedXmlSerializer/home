@@ -2,6 +2,7 @@ using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using System.Reflection;
+using System.Text;
 using System.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
@@ -43,7 +44,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		{
 			switch (_reader.NodeType)
 			{
-
 				case XmlNodeType.Attribute:
 					return _reader.Value;
 				default:
@@ -62,14 +62,40 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 					var result = isNull ? null : _reader.Value;
 
-					if (!string.IsNullOrEmpty(result) || _reader.NodeType == XmlNodeType.CDATA)
+					if (_reader.NodeType == XmlNodeType.CDATA)
+					{
+						return CharacterData(result);
+					}
+					else if (!string.IsNullOrEmpty(result))
 					{
 						_reader.Read();
 						Set();
 					}
 
+
 					return result;
 			}
+		}
+
+		string CharacterData(string result)
+		{
+			_reader.Read();
+			Set();
+
+			if (_reader.NodeType == XmlNodeType.CDATA)
+			{
+				var builder = new StringBuilder(result);
+				while (_reader.NodeType == XmlNodeType.CDATA)
+				{
+					builder.Append(_reader.Value);
+					_reader.Read();
+					Set();
+				}
+
+				return builder.ToString();
+			}
+
+			return result;
 		}
 
 		public void Set() => _reader.MoveToContent();
