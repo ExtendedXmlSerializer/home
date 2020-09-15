@@ -123,7 +123,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				}
 			}
 
-			private List<SampleItem> listOfItems = null;
+			List<SampleItem> listOfItems;
 
 			public List<SampleItem> ListOfItems
 			{
