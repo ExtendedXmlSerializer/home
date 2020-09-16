@@ -11,11 +11,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			_depth  = depth;
 		}
 
-		public bool MoveNext()
-		{
-			var isStartElement = _reader.Read() && _reader.IsStartElement() && _reader.Depth == _depth;
-			return isStartElement;
-		}
+		public bool MoveNext() => _reader.Read() && _reader.IsStartElement() && _reader.Depth == _depth;
 
 		public object Current => _reader;
 	}
