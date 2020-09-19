@@ -104,7 +104,7 @@ namespace ExtendedXmlSerializer
 		/// <returns>The configured type configuration.</returns>
 		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/451" />
 		public static ITypeConfiguration<T> WithInterceptor<T>(this ITypeConfiguration<T> @this,
-		                                                        ISerializationInterceptor<T> interceptor)
+		                                                       ISerializationInterceptor<T> interceptor)
 			=> @this.Root.With<SerializationInterceptionExtension>()
 			        .Apply(Support<T>.Metadata, new SerializationInterceptor<T>(interceptor))
 			        .Return(@this);
@@ -325,7 +325,7 @@ namespace ExtendedXmlSerializer
 
 		/// <exclude />
 		[Obsolete(
-			"This method is being deprecated and will be removed in a future release. Use Decorate.Element.When instead.")]
+			         "This method is being deprecated and will be removed in a future release. Use Decorate.Element.When instead.")]
 		public static IServiceRepository Decorate<T>(this IServiceRepository @this,
 		                                             ISpecification<TypeInfo> specification)
 			where T : IElement
@@ -333,7 +333,7 @@ namespace ExtendedXmlSerializer
 
 		/// <exclude />
 		[Obsolete(
-			"This method is being deprecated and will be removed in a future release. Use Decorate.Contents.When instead.")]
+			         "This method is being deprecated and will be removed in a future release. Use Decorate.Contents.When instead.")]
 		public static IServiceRepository DecorateContent<TSpecification, T>(this IServiceRepository @this)
 			where TSpecification : ISpecification<TypeInfo>
 			where T : IContents
@@ -341,7 +341,7 @@ namespace ExtendedXmlSerializer
 
 		/// <exclude />
 		[Obsolete(
-			"This method is being deprecated and will be removed in a future release. Use Decorate.Contents.When instead.")]
+			         "This method is being deprecated and will be removed in a future release. Use Decorate.Contents.When instead.")]
 		public static IServiceRepository DecorateContent<T>(this IServiceRepository @this,
 		                                                    ISpecification<TypeInfo> specification) where T : IContents
 			=> new ConditionalContentDecoration<T>(specification).Get(@this);
@@ -359,13 +359,13 @@ namespace ExtendedXmlSerializer
 
 		/// <exclude />
 		[Obsolete(
-			"This method will be removed in a future release.  Use IConfigurationContainer.IncludeConfiguredMembers instead.")]
+			         "This method will be removed in a future release.  Use IConfigurationContainer.IncludeConfiguredMembers instead.")]
 		public static IConfigurationContainer OnlyConfiguredProperties(this IConfigurationContainer @this)
 			=> @this.IncludeConfiguredMembers();
 
 		/// <exclude />
 		[Obsolete(
-			"This method will be removed in a future release.  Use ITypeConfiguration<T>.IncludeConfiguredMembers instead.")]
+			         "This method will be removed in a future release.  Use ITypeConfiguration<T>.IncludeConfiguredMembers instead.")]
 		public static ITypeConfiguration<T> OnlyConfiguredProperties<T>(this ITypeConfiguration<T> @this)
 			=> @this.IncludeConfiguredTypeMembers()
 			        .Return(@this);
