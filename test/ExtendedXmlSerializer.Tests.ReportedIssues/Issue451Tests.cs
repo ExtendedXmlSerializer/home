@@ -13,8 +13,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		public void Verify()
 		{
+			var provider = new ServiceLocator();
 			var serializer = new ConfigurationContainer().Type<Subject>()
-			                                             .WithInterceptor(Interceptor.Default)
+			                                             .WithInterceptor(new Interceptor(provider))
 			                                             .Create()
 			                                             .ForTesting();
 
@@ -31,11 +32,18 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			cycled.Count.Should().Be(2);
 		}
 
+		sealed class ServiceLocator : IServiceProvider
+		{
+			public object GetService(Type serviceType) => typeof(Subject).IsAssignableFrom(serviceType)
+				                                              ? new ActivatedSubject()
+				                                              : throw new InvalidOperationException();
+		}
+
 		sealed class Interceptor : ISerializationInterceptor<Subject>
 		{
-			public static Interceptor Default { get; } = new Interceptor();
+			readonly IServiceProvider _provider;
 
-			Interceptor() {}
+			public Interceptor(IServiceProvider provider) => _provider = provider;
 
 			public Subject Serializing(IFormatWriter writer, Subject instance)
 			{
@@ -43,7 +51,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				return instance;
 			}
 
-			public Subject Activating(Type instanceType) => new ActivatedSubject();
+			public Subject Activating(Type instanceType) => (Subject)_provider.GetService(instanceType);
 
 			public Subject Deserialized(IFormatReader reader, Subject instance)
 			{
