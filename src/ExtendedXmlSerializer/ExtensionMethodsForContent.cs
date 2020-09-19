@@ -94,6 +94,15 @@ namespace ExtendedXmlSerializer
 			        .Apply(Support<T>.Metadata, new SerializationMonitor<T>(monitor))
 			        .Return(@this);
 
+		/// <summary>
+		/// Applies an interceptor for type configuration.  An interceptor participates in the serialization pipeline by being
+		/// introduced during key serialization and deserialization events.
+		/// </summary>
+		/// <param name="this">The type to intercept.</param>
+		/// <param name="interceptor">The interceptor to apply to a type.</param>
+		/// <typeparam name="T">The type argument of the type configuration being configured.</typeparam>
+		/// <returns>The configured type configuration.</returns>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/451" />
 		public static ITypeConfiguration<T> WithInterceptor<T>(this ITypeConfiguration<T> @this,
 		                                                        ISerializationInterceptor<T> interceptor)
 			=> @this.Root.With<SerializationInterceptionExtension>()
