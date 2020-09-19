@@ -94,6 +94,12 @@ namespace ExtendedXmlSerializer
 			        .Apply(Support<T>.Metadata, new SerializationMonitor<T>(monitor))
 			        .Return(@this);
 
+		public static ITypeConfiguration<T> WithInterceptor<T>(this ITypeConfiguration<T> @this,
+		                                                        ISerializationInterceptor<T> interceptor)
+			=> @this.Root.With<SerializationInterceptionExtension>()
+			        .Apply(Support<T>.Metadata, new SerializationInterceptor<T>(interceptor))
+			        .Return(@this);
+
 		/// <summary>
 		/// Allows content to be read as parameters for a constructor call to activate an object, rather than the more
 		/// traditional route of activating an object and its content read as property assignments.  This is preferred --
