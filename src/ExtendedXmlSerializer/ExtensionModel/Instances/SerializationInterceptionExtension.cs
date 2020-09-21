@@ -3,6 +3,7 @@ using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
 using System;
@@ -21,14 +22,25 @@ namespace ExtendedXmlSerializer.ExtensionModel.Instances
 		public SerializationInterceptionExtension(ITypedTable<ISerializationInterceptor> registrations)
 			=> _registrations = registrations;
 
-		public IServiceRepository Get(IServiceRepository parameter) => parameter.Decorate<IActivators>(Register)
-		                                                                        .Decorate<IContents>(Register);
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.Decorate<IActivatingTypeSpecification>(Register)
+			            .Decorate<IActivators>(Register)
+			            .Decorate<IContents>(Register);
 
 		IContents Register(IServiceProvider _, IContents previous) => new Contents(_registrations, previous);
+
+		IActivatingTypeSpecification Register(IServiceProvider _, IActivatingTypeSpecification previous)
+			=> new IsActivatingType(_registrations, previous);
 
 		IActivators Register(IServiceProvider _, IActivators previous) => new Activators(_registrations, previous);
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
+
+		sealed class IsActivatingType : AnySpecification<TypeInfo>, IActivatingTypeSpecification
+		{
+			public IsActivatingType(ISpecification<TypeInfo> specification, IActivatingTypeSpecification previous)
+				: base(specification, previous) {}
+		}
 
 		sealed class Contents : IContents
 		{
@@ -59,31 +71,33 @@ namespace ExtendedXmlSerializer.ExtensionModel.Instances
 		sealed class Activators : IActivators
 		{
 			readonly ITypedTable<ISerializationInterceptor> _table;
-			readonly IActivators                            _activators;
+			readonly IActivators                            _previous;
 
-			public Activators(ITypedTable<ISerializationInterceptor> table, IActivators activators)
+			public Activators(ITypedTable<ISerializationInterceptor> table, IActivators previous)
 			{
-				_table      = table;
-				_activators = activators;
+				_table    = table;
+				_previous = previous;
 			}
 
 			public IActivator Get(Type parameter)
-				=> new Activator(parameter, _activators.Get(parameter), _table.Get(parameter));
+				=> _table.IsSatisfiedBy(parameter)
+					   ? new Activator(parameter, _previous.Build(parameter), _table.Get(parameter))
+					   : _previous.Get(parameter);
 
 			sealed class Activator : IActivator
 			{
 				readonly Type                      _instanceType;
-				readonly IActivator                _activator;
+				readonly Func<IActivator>          _activator;
 				readonly ISerializationInterceptor _interceptor;
 
-				public Activator(Type instanceType, IActivator activator, ISerializationInterceptor interceptor)
+				public Activator(Type instanceType, Func<IActivator> activator, ISerializationInterceptor interceptor)
 				{
 					_instanceType = instanceType;
 					_activator    = activator;
 					_interceptor  = interceptor;
 				}
 
-				public object Get() => _interceptor.Activating(_instanceType) ?? _activator.Get();
+				public object Get() => _interceptor.Activating(_instanceType) ?? _activator().Get();
 			}
 		}
 
