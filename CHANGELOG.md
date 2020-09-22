@@ -1,3 +1,9 @@
+# [ExtendedXmlSerializer v3.3.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.3.0)
+> 09/22/2020 06:05:26 UTC
+##### ``v3.3.0``
+### ✨ New Features &#128640; 
+- Introduced type-based serialization interception. #452 @Mike-E-angelo 
+
 # [ExtendedXmlSerializer v3.2.7](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.7)
 > 09/15/2020 13:28:08 UTC
 ##### ``v3.2.7``
