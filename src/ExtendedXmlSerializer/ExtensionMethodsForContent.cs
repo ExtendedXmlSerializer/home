@@ -95,6 +95,34 @@ namespace ExtendedXmlSerializer
 			        .Return(@this);
 
 		/// <summary>
+		/// Applies an interceptor for type configuration.  An interceptor participates in the serialization pipeline by being
+		/// introduced during key serialization and deserialization events.
+		/// </summary>
+		/// <param name="this">The type to intercept.</param>
+		/// <param name="interceptor">The interceptor to apply to a type.</param>
+		/// <typeparam name="T">The type argument of the type configuration being configured.</typeparam>
+		/// <returns>The configured type configuration.</returns>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/451" />
+		public static ITypeConfiguration<T> WithInterceptor<T>(this ITypeConfiguration<T> @this,
+		                                                       ISerializationInterceptor<T> interceptor)
+			=> @this.WithInterceptor(new SerializationInterceptor<T>(interceptor));
+
+		/// <summary>
+		/// Applies a generalized interceptor for type configuration.  An interceptor participates in the serialization pipeline by being
+		/// introduced during key serialization and deserialization events.
+		/// </summary>
+		/// <param name="this">The type to intercept.</param>
+		/// <param name="interceptor">The interceptor to apply to a type.</param>
+		/// <typeparam name="T">The type argument of the type configuration being configured.</typeparam>
+		/// <returns>The configured type configuration.</returns>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/451" />
+		public static ITypeConfiguration<T> WithInterceptor<T>(this ITypeConfiguration<T> @this,
+		                                                       ISerializationInterceptor interceptor)
+			=> @this.Root.With<SerializationInterceptionExtension>()
+			        .Apply(Support<T>.Metadata, interceptor)
+			        .Return(@this);
+
+		/// <summary>
 		/// Allows content to be read as parameters for a constructor call to activate an object, rather than the more
 		/// traditional route of activating an object and its content read as property assignments.  This is preferred --
 		/// required, even -- if your model is comprised of immutable objects.
@@ -310,7 +338,7 @@ namespace ExtendedXmlSerializer
 
 		/// <exclude />
 		[Obsolete(
-			"This method is being deprecated and will be removed in a future release. Use Decorate.Element.When instead.")]
+			         "This method is being deprecated and will be removed in a future release. Use Decorate.Element.When instead.")]
 		public static IServiceRepository Decorate<T>(this IServiceRepository @this,
 		                                             ISpecification<TypeInfo> specification)
 			where T : IElement
@@ -318,7 +346,7 @@ namespace ExtendedXmlSerializer
 
 		/// <exclude />
 		[Obsolete(
-			"This method is being deprecated and will be removed in a future release. Use Decorate.Contents.When instead.")]
+			         "This method is being deprecated and will be removed in a future release. Use Decorate.Contents.When instead.")]
 		public static IServiceRepository DecorateContent<TSpecification, T>(this IServiceRepository @this)
 			where TSpecification : ISpecification<TypeInfo>
 			where T : IContents
@@ -326,7 +354,7 @@ namespace ExtendedXmlSerializer
 
 		/// <exclude />
 		[Obsolete(
-			"This method is being deprecated and will be removed in a future release. Use Decorate.Contents.When instead.")]
+			         "This method is being deprecated and will be removed in a future release. Use Decorate.Contents.When instead.")]
 		public static IServiceRepository DecorateContent<T>(this IServiceRepository @this,
 		                                                    ISpecification<TypeInfo> specification) where T : IContents
 			=> new ConditionalContentDecoration<T>(specification).Get(@this);
@@ -344,13 +372,13 @@ namespace ExtendedXmlSerializer
 
 		/// <exclude />
 		[Obsolete(
-			"This method will be removed in a future release.  Use IConfigurationContainer.IncludeConfiguredMembers instead.")]
+			         "This method will be removed in a future release.  Use IConfigurationContainer.IncludeConfiguredMembers instead.")]
 		public static IConfigurationContainer OnlyConfiguredProperties(this IConfigurationContainer @this)
 			=> @this.IncludeConfiguredMembers();
 
 		/// <exclude />
 		[Obsolete(
-			"This method will be removed in a future release.  Use ITypeConfiguration<T>.IncludeConfiguredMembers instead.")]
+			         "This method will be removed in a future release.  Use ITypeConfiguration<T>.IncludeConfiguredMembers instead.")]
 		public static ITypeConfiguration<T> OnlyConfiguredProperties<T>(this ITypeConfiguration<T> @this)
 			=> @this.IncludeConfiguredTypeMembers()
 			        .Return(@this);
