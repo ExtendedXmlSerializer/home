@@ -50,13 +50,13 @@ https://github.com/ExtendedXmlSerializer/home/blob/master/CHANGELOG.md
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" PrivateAssets="All" />
-    <PackageReference Include="LightInject" Version="6.2.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" PrivateAssets="All" />
+    <PackageReference Include="LightInject" Version="6.3.5" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-    <PackageReference Include="NReco.LambdaParser" Version="1.0.11" />
-    <PackageReference Include="Sprache" Version="2.2.0" />
-    <PackageReference Include="System.Interactive" Version="4.0.0" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.7.0" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.0" />
+    <PackageReference Include="NReco.LambdaParser" Version="1.0.12" />
+    <PackageReference Include="Sprache" Version="2.3.1" />
+    <PackageReference Include="System.Interactive" Version="4.1.1" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.1" />
   </ItemGroup>
 </Project>
