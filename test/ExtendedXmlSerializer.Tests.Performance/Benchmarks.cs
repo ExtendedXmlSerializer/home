@@ -105,7 +105,7 @@ namespace ExtendedXmlSerializer.Tests.Performance
 		{
 			public Configuration()
 			{
-				Add(Job.Default.WithWarmupCount(5).WithIterationCount(10));
+				AddJob(Job.Default.WithWarmupCount(5).WithIterationCount(10));
 			}
 		}
 	}
