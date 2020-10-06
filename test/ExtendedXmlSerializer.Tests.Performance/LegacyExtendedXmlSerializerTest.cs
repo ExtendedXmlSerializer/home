@@ -26,6 +26,7 @@ using ExtendedXmlSerializer.Tests.Performance.Model;
 
 namespace ExtendedXmlSerializer.Tests.Performance
 {
+	[ShortRunJob]
 	public class LegacyExtendedXmlSerializerTest
 	{
 		readonly TestClassOtherClass _obj = new TestClassOtherClass();

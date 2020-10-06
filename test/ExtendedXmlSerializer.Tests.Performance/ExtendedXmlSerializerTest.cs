@@ -33,7 +33,7 @@ using ExtendedXmlSerializer.Tests.Performance.Model;
 
 namespace ExtendedXmlSerializer.Tests.Performance
 {
-    [Config(typeof(Configuration))]
+    [ShortRunJob]
     public class ExtendedXmlSerializerTest
     {
         readonly IExtendedXmlSerializer _serializer = new ConfigurationContainer().EnableClassicMode().Create();
@@ -74,14 +74,6 @@ namespace ExtendedXmlSerializer.Tests.Performance
                 {
                     return _serializer.Deserialize(reader);
                 }
-            }
-        }
-
-        sealed class Configuration : ManualConfig
-        {
-            public Configuration()
-            {
-                Add(Job.Default.WithWarmupCount(5).WithIterationCount(10));
             }
         }
     }
