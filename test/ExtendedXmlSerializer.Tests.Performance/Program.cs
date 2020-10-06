@@ -25,14 +25,8 @@ using BenchmarkDotNet.Running;
 
 namespace ExtendedXmlSerializer.Tests.Performance
 {
-	class Program
+	public class Program
 	{
-		// ReSharper disable once UnusedMember.Local
-		static void Main(string[] args) => new BenchmarkSwitcher(new[]
-		                                                         {
-			                                                         typeof(ExtendedXmlSerializerTest),
-			                                                         typeof(ExtendedXmlSerializerV2Test),
-			                                                         typeof(XmlSerializerTest)
-		                                                         }).Run(args);
+		public static void Main(string[] args) => BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
 	}
 }
