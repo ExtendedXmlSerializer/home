@@ -1,5 +1,5 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ExtendedXmlSerializer.ReflectionModel
@@ -10,11 +10,22 @@ namespace ExtendedXmlSerializer.ReflectionModel
 
 		DictionaryEnumerators() : this(Enumerable.Empty<DictionaryEntry>()) {}
 
-		readonly IEnumerable<DictionaryEntry> _entries;
+		readonly IEnumerable               _default;
+		readonly Func<object, IDictionary> _dictionaries;
 
-		public DictionaryEnumerators(IEnumerable<DictionaryEntry> entries) => _entries = entries;
+		public DictionaryEnumerators(IEnumerable @default) : this(@default, Dictionaries.Default.Get) {}
 
-		public IEnumerator Get(IEnumerable parameter) => (IEnumerator)((IDictionary)parameter)?.GetEnumerator()
-		                                                 ?? _entries.GetEnumerator();
+		public DictionaryEnumerators(IEnumerable @default, Func<object, IDictionary> dictionaries)
+		{
+			_default      = @default;
+			_dictionaries = dictionaries;
+		}
+
+		public IEnumerator Get(IEnumerable parameter)
+		{
+			var dictionary = _dictionaries(parameter);
+			var result     = dictionary?.GetEnumerator() ?? _default.GetEnumerator();
+			return result;
+		}
 	}
 }

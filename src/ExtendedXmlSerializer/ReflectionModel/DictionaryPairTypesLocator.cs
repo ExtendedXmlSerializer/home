@@ -1,7 +1,7 @@
+using ExtendedXmlSerializer.Core;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
@@ -15,7 +15,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 
 		public DictionaryPairTypesLocator(Type type) => _type = type;
 
-		public DictionaryPairTypes Get(TypeInfo parameter)
+		public DictionaryPairTypes? Get(TypeInfo parameter)
 		{
 			foreach (var it in parameter.GetInterfaces()
 			                            .ToMetadata()
@@ -24,9 +24,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 				if (it.IsGenericType && it.GetGenericTypeDefinition() == _type)
 				{
 					var arguments = it.GetGenericArguments();
-					var mapping = new DictionaryPairTypes(arguments[0]
-						                                      .GetTypeInfo(), arguments[1]
-						                                      .GetTypeInfo());
+					var mapping   = new DictionaryPairTypes(arguments[0].GetTypeInfo(), arguments[1].GetTypeInfo());
 					return mapping;
 				}
 			}

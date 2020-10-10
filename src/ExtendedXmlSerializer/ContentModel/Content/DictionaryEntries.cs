@@ -48,7 +48,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 
 		public ISerializer Get(TypeInfo parameter)
 		{
-			var pair          = _locator.Get(parameter);
+			var pair          = _locator.Get(parameter) ?? throw new InvalidOperationException();
 			var serializers   = new[] {Create(Key, pair.KeyType), Create(Value, pair.ValueType)};
 			var serialization = new FixedInstanceMemberSerialization(_builder(serializers));
 
