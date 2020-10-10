@@ -21,9 +21,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 			_locator      = locator;
 		}
 
-		protected override IDictionary Create(object parameter) => parameter as IDictionary ?? Locate(parameter);
-
-		IDictionary Locate(object parameter)
+		protected override IDictionary Create(object parameter)
 		{
 			var pair = _locator.Get(parameter.GetType());
 			var result = pair.HasValue

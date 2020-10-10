@@ -23,7 +23,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 
 		public IEnumerator Get(IEnumerable parameter)
 		{
-			var dictionary = _dictionaries(parameter);
+			var dictionary = parameter as IDictionary ?? _dictionaries(parameter);
 			var result     = dictionary?.GetEnumerator() ?? _default.GetEnumerator();
 			return result;
 		}

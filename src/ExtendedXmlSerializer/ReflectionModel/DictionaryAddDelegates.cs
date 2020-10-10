@@ -21,7 +21,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 
 		public Action<object, object> Get(TypeInfo parameter) => _action;
 
-		void Add(object dictionary, object item) => Add(_dictionaries(dictionary), (DictionaryEntry)item);
+		void Add(object dictionary, object item) => Add(dictionary as IDictionary ?? _dictionaries(dictionary), (DictionaryEntry)item);
 
 		static void Add(IDictionary dictionary, DictionaryEntry entry) => dictionary.Add(entry.Key, entry.Value);
 
