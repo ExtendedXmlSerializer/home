@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.Core
 {
-	sealed class DictionaryPairTypes
+	readonly struct DictionaryPairTypes
 	{
 		public DictionaryPairTypes(TypeInfo keyType, TypeInfo valueType)
 		{

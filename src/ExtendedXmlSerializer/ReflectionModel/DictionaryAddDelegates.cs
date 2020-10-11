@@ -6,19 +6,24 @@ namespace ExtendedXmlSerializer.ReflectionModel
 {
 	class DictionaryAddDelegates : IAddDelegates
 	{
-		readonly Action<object, object> _action;
+		readonly Func<object, IDictionary> _dictionaries;
+		readonly         Action<object, object>    _action;
 
 		public static DictionaryAddDelegates Default { get; } = new DictionaryAddDelegates();
 
-		DictionaryAddDelegates()
+		DictionaryAddDelegates() : this(Dictionaries.Default.Get) {}
+
+		DictionaryAddDelegates(Func<object, IDictionary> dictionaries)
 		{
-			_action = Add;
+			_dictionaries = dictionaries;
+			_action            = Add;
 		}
 
 		public Action<object, object> Get(TypeInfo parameter) => _action;
 
-		static void Add(object dictionary, object item) => Add((IDictionary)dictionary, (DictionaryEntry)item);
+		void Add(object dictionary, object item) => Add(dictionary as IDictionary ?? _dictionaries(dictionary), (DictionaryEntry)item);
 
 		static void Add(IDictionary dictionary, DictionaryEntry entry) => dictionary.Add(entry.Key, entry.Value);
+
 	}
 }
