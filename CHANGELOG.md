@@ -1,3 +1,9 @@
+# [ExtendedXmlSerializer v3.4.1](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.4.1)
+> 10/13/2020 03:28:52 UTC
+##### ``v3.4.1``
+### Other Changes 
+- Generated API Key. &#129310; #468 @Mike-E-angelo 
+
 # [ExtendedXmlSerializer v3.4.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.4.0)
 > 10/13/2020 03:02:05 UTC
 ##### ``v3.4.0``
