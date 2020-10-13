@@ -1,3 +1,17 @@
+# [ExtendedXmlSerializer v3.4.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.4.0)
+> 10/13/2020 03:02:05 UTC
+##### ``v3.4.0``
+### ✨ New Features &#128640; 
+- Added basic support for custom `IDictionary&lt;TKey, TValue&gt;`. #465 @Mike-E-angelo 
+### &#128027; Bug Fixes &#128295; 
+- Scoped reference encounter counter to per-writer. #455 @Mike-E-angelo 
+- Skipped processing of parameterized-content members that have custom … #464 @Mike-E-angelo 
+### Other Changes 
+- Update NuGet API Key #456 @WojciechNagorski 
+- Use BenchmarkSwitcher #459 @WojciechNagorski 
+- Update nuget packages #457 @WojciechNagorski 
+- Update performance tests #460 @WojciechNagorski 
+
 # [ExtendedXmlSerializer v3.3.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.3.0)
 > 09/22/2020 06:05:26 UTC
 ##### ``v3.3.0``
