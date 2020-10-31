@@ -23,7 +23,8 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 			: this(specification, formatter.Get) {}
 
 		public AssemblyTypePartitions(ISpecification<TypeInfo> specification, Func<TypeInfo, string> formatter)
-			: this(specification.IsSatisfiedBy, formatter, ApplicationTypes, x => x.Namespace) {}
+			: this(specification.And(ApplicationTypeSpecification.Default).IsSatisfiedBy, formatter, ApplicationTypes,
+			       x => x.Namespace) {}
 
 		// ReSharper disable once TooManyDependencies
 		public AssemblyTypePartitions(Func<TypeInfo, bool> specification, Func<TypeInfo, string> formatter,
