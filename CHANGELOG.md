@@ -1,3 +1,9 @@
+# [ExtendedXmlSerializer v3.4.2](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.4.2)
+> 11/03/2020 06:05:39 UTC
+##### ``v3.4.2``
+### &#128027; Bug Fixes &#128295; 
+- Added check for &quot;unspeakable&quot; types. #471 @Mike-E-angelo 
+
 # [ExtendedXmlSerializer v3.4.1](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.4.1)
 > 10/13/2020 03:28:52 UTC
 ##### ``v3.4.1``
