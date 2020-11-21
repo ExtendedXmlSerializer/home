@@ -60,8 +60,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		IMemberSerializer Content(IMember profile, IMemberAccess access)
 		{
 			var identity = new Identity<object>(profile);
-			var isMember = IsMember(profile);
-			var composite = isMember
+			var composite = IsMember(profile)
 				                ? (IWriter<object>)new MemberPropertyWriter(identity)
 				                : identity;
 			var start  = composite.Adapt();

@@ -7,12 +7,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 	{
 		readonly IInnerContentResult _result;
 
-		public ParameterizedResultHandler(IInnerContentResult result)
-		{
-			_result = result;
-		}
+		public ParameterizedResultHandler(IInnerContentResult result) => _result = result;
 
 		public object Get(IInnerContent parameter)
-			=> (parameter.Current as IActivationContext)?.Get() ?? _result.Get(parameter);
+			=> parameter.Current is IActivationContext context ? context.Get() : _result.Get(parameter);
 	}
 }
