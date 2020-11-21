@@ -101,6 +101,15 @@ Or if you are brave and want to try out our preview feed:
 Install-Package ExtendedXmlSerializer -Source https://ci.appveyor.com/nuget/extendedxmlserializer-preview
 ```
 
+Known Issues
+============
+
+While ExtendedXmlSerializer is [very nice](https://tenor.com/view/nice-very-nice-gif-4295060), it does have some known issues that have been identified by the owners as such.  These issues are considered too significant to address and have been consolidated under our label for your review here:
+
+https://github.com/ExtendedXmlSerializer/home/labels/known%20issue
+
+Please review these issues before submitting a new issue and/or trialing ExtendedXmlSerializer.
+
 Featured Documentation
 ======================
 
