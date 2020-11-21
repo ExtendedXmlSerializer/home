@@ -65,6 +65,9 @@ for:
         ```
         Install-Package ExtendedXmlSerializer -Version {{buildVersion}} -Source https://ci.appveyor.com/nuget/extendedxmlserializer-preview
         ```
+        
+        Problems with the above command?  You may be running into this known issue here:
+        https://github.com/NuGet/Home/issues/7189        
         {{/passed}}
       on_build_success: true
 
