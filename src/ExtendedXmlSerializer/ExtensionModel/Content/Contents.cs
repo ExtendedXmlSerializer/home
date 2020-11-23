@@ -46,9 +46,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			            .DecorateContentsWith<ReflectionContents>()
 			            .When(ReflectionContentSpecification.Default)
 
-			            .DecorateContentsWith<NullableContents>()
-			            .When(IsNullableTypeSpecification.Default)
-
 			            .DecorateContentsWith<ConverterContents>()
 			            .When<ConverterSpecification>()
 			            .DecorateContentsWith<RegisteredContents>()

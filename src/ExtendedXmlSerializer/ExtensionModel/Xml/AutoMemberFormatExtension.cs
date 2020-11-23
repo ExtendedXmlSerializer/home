@@ -1,8 +1,8 @@
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Specifications;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -48,11 +48,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 				_converters = converters;
 			}
 
-			public IConverter Get(MemberInfo parameter)
-			{
-				var converter = _members.Get(parameter);
-				return converter ?? From(parameter);
-			}
+			public IConverter Get(MemberInfo parameter) => _members.Get(parameter) ?? From(parameter);
 
 			IConverter From(MemberDescriptor parameter) => _converters.Get(parameter.MemberType.AccountForNullable());
 		}

@@ -32,7 +32,6 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			            .Register<RuntimeSerializers>()
 			            .Register<ISerializers, Serializers>()
 			            .RegisterInstance(RuntimeSerializationExceptionMessage.Default)
-			            .Decorate<ISerializers, NullableAwareSerializers>()
 			            .Decorate<ISerializers, ReferenceAwareSerializers>()
 			            .Decorate<ISerializers, DynamicAwareSerializers>()
 			            .Decorate<IContents, RecursionAwareContents>();
