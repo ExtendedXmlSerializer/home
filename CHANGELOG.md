@@ -1,3 +1,9 @@
+# [Release 3.4.3](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.4.3)
+> 11/24/2020 05:53:54 UTC
+##### ``v3.4.3``
+### &#128027; Bug Fixes &#128295; 
+- Adjusted support for nullable structure types. #478 @Mike-E-angelo 
+
 # [ExtendedXmlSerializer v3.4.2](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.4.2)
 > 11/03/2020 06:05:39 UTC
 ##### ``v3.4.2``
