@@ -56,8 +56,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: ${{ env.DEPLOY_COMMIT_MESSAGE }}
-          author-email: ${{ env.DEPLOY_EMAIL }}
-          author-name: ${{ env.DEPLOY_USER }}
+          author: '${{ env.DEPLOY_USER }} <${{ env.DEPLOY_EMAIL }}>'
           title: '[Automated] ${{ env.DEPLOY_COMMIT_MESSAGE }}'
           body: |
             Automated Pull Request
