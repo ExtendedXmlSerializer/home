@@ -1,11 +1,12 @@
-﻿using System;
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
+﻿using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
+using System;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -24,15 +25,33 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		sealed class Services : IInnerContentServices
 		{
 			readonly IInnerContentServices _services;
+			readonly IClassification       _classification;
 			readonly Action<IFormatReader> _missing;
 
-			public Services(IInnerContentServices services, Action<IFormatReader> missing)
+			public Services(IInnerContentServices services, IClassification classification,
+			                Action<IFormatReader> missing)
 			{
-				_services = services;
-				_missing  = missing;
+				_services       = services;
+				_classification = classification;
+				_missing        = missing;
 			}
 
-			public bool IsSatisfiedBy(IInnerContent parameter) => _services.IsSatisfiedBy(parameter);
+			public bool IsSatisfiedBy(IInnerContent parameter)
+			{
+				var previous = _services.IsSatisfiedBy(parameter);
+				if (previous)
+				{
+					var reader = parameter.Get();
+					var type   = _classification.Get(reader);
+					if (type == null)
+					{
+						_missing(reader);
+						return false;
+					}
+				}
+
+				return previous;
+			}
 
 			public void Handle(IInnerContent contents, IMemberSerializer member)
 			{
