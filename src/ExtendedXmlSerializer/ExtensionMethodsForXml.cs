@@ -273,6 +273,43 @@ namespace ExtendedXmlSerializer
 			        .Apply(@this.Get(), migrations.Fixed())
 			        .Return(@this);
 
+		/// <summary>
+		/// Adds a migration command to the configured type.  A migration allows older persisted XML to migrate to an object
+		/// model schema that has changed since the XML was persisted.  The provided command specifies how to manipulate the
+		/// element that represents the type so that it can (hopefully 😇) be deserialized without error.
+		/// </summary>
+		/// <param name="this">The type configuration to configure.</param>
+		/// <param name="migration">The command that specifies how to migrate an Xml element that represents an older schema.</param>
+		/// <returns>The configured type configuration.</returns>
+		public static ITypeConfiguration AddMigration(this ITypeConfiguration @this, ICommand<XElement> migration)
+			=> @this.AddMigration(migration.Execute);
+
+		/// <summary>
+		/// Adds a migration delegate to the configured type.  A migration allows older persisted XML to migrate to an object
+		/// model schema that has changed since the XML was persisted.  The provided command specifies how to manipulate the
+		/// element that represents the type so that it can (hopefully 😇) be deserialized without error.
+		/// </summary>
+		/// <param name="this">The type configuration to configure.</param>
+		/// <param name="migration">The delegate that specifies how to migrate an Xml element that represents an older schema.
+		/// </param>
+		/// <returns>The configured type configuration.</returns>
+		public static ITypeConfiguration AddMigration(this ITypeConfiguration @this, Action<XElement> migration)
+			=> @this.AddMigration(migration.Yield());
+
+		/// <summary>
+		/// Adds a set of migration delegates to the configured type.  A migration allows older persisted XML to migrate to an
+		/// object model schema that has changed since the XML was persisted.  The provided command specifies how to
+		/// manipulate the element that represents the type so that it can (hopefully 😇) be deserialized without error.
+		/// </summary>
+		/// <param name="this">The type configuration to configure.</param>
+		/// <param name="migrations">The delegates that specify how to migrate an Xml element that represents an older schema.
+		/// </param>
+		/// <returns>The configured type configuration.</returns>
+		public static ITypeConfiguration AddMigration(this ITypeConfiguration @this, IEnumerable<Action<XElement>> migrations)
+			=> @this.Root.With<MigrationsExtension>()
+			        .Apply(@this.Get(), migrations.Fixed())
+			        .Return(@this);
+
 		#endregion
 	}
 }
