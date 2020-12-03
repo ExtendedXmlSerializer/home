@@ -3,6 +3,7 @@ using ExtendedXmlSerializer.Tests.ReportedIssues.Support;
 using FluentAssertions;
 using System;
 using Xunit;
+// ReSharper disable All
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {
@@ -33,9 +34,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		class Test
 		{
-			public DateTime Date1 { get; set; } = DateTime.Now;  // Formatted OK
-			public DateTime? Date2 { get; set; } = null;         // Is not emitted = OK
-			public DateTime? Date3 { get; set; } = DateTime.Now; // Completety ignores configured formatting
+			readonly static DateTime Now = new DateTime(2020, 11, 23);
+
+			public DateTime Date1 { get; set; } = Now;   // Formatted OK
+			public DateTime? Date2 { get; set; } = null; // Is not emitted = OK
+			public DateTime? Date3 { get; set; } = Now;  // Completety ignores configured formatting
 		}
 	}
 }
