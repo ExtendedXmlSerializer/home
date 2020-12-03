@@ -19,13 +19,20 @@ using System.Xml.Linq;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class MigrationsExtension : TypedTable<IEnumerable<Action<XElement>>>, ISerializerExtension
+	/// <summary>
+	/// This extension is meant for internal use, but has been exposed for extension authors who require access to it.
+	/// </summary>
+	/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/483" />
+	public sealed class MigrationsExtension : TypedTable<IEnumerable<Action<XElement>>>, ISerializerExtension
 	{
+		/// <inheritdoc />
 		[UsedImplicitly]
 		public MigrationsExtension() : this(new Dictionary<TypeInfo, IEnumerable<Action<XElement>>>()) {}
 
+		/// <inheritdoc />
 		public MigrationsExtension(IDictionary<TypeInfo, IEnumerable<Action<XElement>>> store) : base(store) {}
 
+		/// <inheritdoc />
 		public IServiceRepository Get(IServiceRepository parameter) => parameter.Decorate<IContents>(Register);
 
 		IContents Register(IServiceProvider services, IContents contents)
