@@ -16,10 +16,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var serializer = new ConfigurationContainer().UseAutoFormatting()
 			                                             .UseOptimizedNamespaces()
+			                                             .EnableImmutableTypes()
 			                                             .EnableParameterizedContentWithPropertyAssignments()
 			                                             .Create()
 			                                             .ForTesting();
-			serializer.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><ImmutableList xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""sys:int"" xmlns=""clr-namespace:System.Collections.Immutable;assembly=System.Collections.Immutable""><sys:int>1</sys:int><sys:int>2</sys:int><sys:int>3</sys:int><sys:int>4</sys:int></ImmutableList>");
+			serializer.Assert(instance,
+			                  @"<?xml version=""1.0"" encoding=""utf-8""?><ImmutableList xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""sys:int"" xmlns=""clr-namespace:System.Collections.Immutable;assembly=System.Collections.Immutable""><sys:int>1</sys:int><sys:int>2</sys:int><sys:int>3</sys:int><sys:int>4</sys:int></ImmutableList>");
 			serializer.Cycle(instance).Should().BeEquivalentTo(instance);
 		}
 
@@ -30,10 +32,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var serializer = new ConfigurationContainer().UseAutoFormatting()
 			                                             .UseOptimizedNamespaces()
+			                                             .EnableImmutableTypes()
 			                                             .EnableParameterizedContentWithPropertyAssignments()
 			                                             .Create()
 			                                             .ForTesting();
-			serializer.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><ImmutableHashSet xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""sys:int"" xmlns=""clr-namespace:System.Collections.Immutable;assembly=System.Collections.Immutable""><sys:int>1</sys:int><sys:int>2</sys:int><sys:int>3</sys:int><sys:int>4</sys:int></ImmutableHashSet>");
+			serializer.Assert(instance,
+			                  @"<?xml version=""1.0"" encoding=""utf-8""?><ImmutableHashSet xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""sys:int"" xmlns=""clr-namespace:System.Collections.Immutable;assembly=System.Collections.Immutable""><sys:int>1</sys:int><sys:int>2</sys:int><sys:int>3</sys:int><sys:int>4</sys:int></ImmutableHashSet>");
 			serializer.Cycle(instance).Should().BeEquivalentTo(instance);
 		}
 
@@ -44,25 +48,59 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var serializer = new ConfigurationContainer().UseAutoFormatting()
 			                                             .UseOptimizedNamespaces()
+			                                             .EnableImmutableTypes()
 			                                             .EnableParameterizedContentWithPropertyAssignments()
 			                                             .Create()
 			                                             .ForTesting();
-			serializer.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><ImmutableSortedSet xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""sys:int"" xmlns=""clr-namespace:System.Collections.Immutable;assembly=System.Collections.Immutable""><sys:int>1</sys:int><sys:int>2</sys:int><sys:int>3</sys:int><sys:int>4</sys:int></ImmutableSortedSet>");
+			serializer.Assert(instance,
+			                  @"<?xml version=""1.0"" encoding=""utf-8""?><ImmutableSortedSet xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""sys:int"" xmlns=""clr-namespace:System.Collections.Immutable;assembly=System.Collections.Immutable""><sys:int>1</sys:int><sys:int>2</sys:int><sys:int>3</sys:int><sys:int>4</sys:int></ImmutableSortedSet>");
 			serializer.Cycle(instance).Should().BeEquivalentTo(instance);
 		}
 
 		[Fact]
 		public void VerifyDictionary()
 		{
-			var instance = new Dictionary<string, string>{["Hello"] = "World"}.ToImmutableDictionary();
+			var instance = new Dictionary<string, string>
+			{
+				["Hello"] = "World"
+			}.ToImmutableDictionary();
 
 			var serializer = new ConfigurationContainer().UseAutoFormatting()
 			                                             .UseOptimizedNamespaces()
+			                                             .EnableImmutableTypes()
 			                                             .EnableParameterizedContentWithPropertyAssignments()
 			                                             .Create()
 			                                             .ForTesting();
 
-			serializer.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><ImmutableDictionary xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""sys:string,sys:string"" xmlns=""clr-namespace:System.Collections.Immutable;assembly=System.Collections.Immutable""><sys:Item Key=""Hello"" Value=""World"" /></ImmutableDictionary>");
+			serializer.Assert(instance,
+			                  @"<?xml version=""1.0"" encoding=""utf-8""?><ImmutableDictionary xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""sys:string,sys:string"" xmlns=""clr-namespace:System.Collections.Immutable;assembly=System.Collections.Immutable""><sys:Item Key=""Hello"" Value=""World"" /></ImmutableDictionary>");
+
+			var dictionary = serializer.Cycle(instance);
+			dictionary.Should().BeEquivalentTo(instance);
+
+			dictionary["Hello"].Should().Be(instance["Hello"]);
+		}
+
+		[Fact]
+		public void VerifySortedDictionary()
+		{
+			var instance = new Dictionary<string, string>
+			{
+				["First"]  = "Value1",
+				["Hello"]  = "World",
+				["Second"] = "Value2",
+				["Last"]   = "Value2",
+			}.ToImmutableSortedDictionary();
+
+			var serializer = new ConfigurationContainer().UseAutoFormatting()
+			                                             .UseOptimizedNamespaces()
+			                                             .EnableImmutableTypes()
+			                                             .EnableParameterizedContentWithPropertyAssignments()
+			                                             .Create()
+			                                             .ForTesting();
+
+			serializer.Assert(instance,
+			                  @"<?xml version=""1.0"" encoding=""utf-8""?><ImmutableSortedDictionary xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""sys:string,sys:string"" xmlns=""clr-namespace:System.Collections.Immutable;assembly=System.Collections.Immutable""><sys:Item Key=""First"" Value=""Value1"" /><sys:Item Key=""Hello"" Value=""World"" /><sys:Item Key=""Last"" Value=""Value2"" /><sys:Item Key=""Second"" Value=""Value2"" /></ImmutableSortedDictionary>");
 
 			var dictionary = serializer.Cycle(instance);
 			dictionary.Should().BeEquivalentTo(instance);

@@ -127,6 +127,19 @@ namespace ExtendedXmlSerializer
 		public static IConfigurationContainer EnableAllConstructors(this IConfigurationContainer @this)
 			=> @this.Extend(AllConstructorsExtension.Default);
 
+		/// <summary>
+		/// Enables the use of types found in the `System.Collections.Immutable` namespace.
+		/// </summary>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <returns>The configured configuration container.</returns>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/485" />
+		public static IConfigurationContainer EnableImmutableTypes(this IConfigurationContainer @this)
+			=> @this.Extend(ImmutableListExtension.Default)
+			        .Extend(ImmutableHashSetExtension.Default)
+			        .Extend(ImmutableSortedSetExtension.Default)
+			        .Extend(ImmutableDictionariesExtension.Default)
+			        .Extend(ImmutableSortedDictionariesExtension.Default);
+
 		#region Obsolete
 
 		/// <summary>
@@ -217,7 +230,7 @@ namespace ExtendedXmlSerializer
 		/// <returns></returns>
 		/// <seealso cref="UnknownContentContext.Call"/>
 		[Obsolete(
-			"This method is being deprecated.  Please use ConfigurationContainer.WithUnknownContent.Call instead.")]
+			         "This method is being deprecated.  Please use ConfigurationContainer.WithUnknownContent.Call instead.")]
 		public static IConfigurationContainer EnableUnknownContentHandling(this IConfigurationContainer @this,
 		                                                                   Action<IFormatReader> onMissing)
 			=> @this.WithUnknownContent().Call(onMissing);
