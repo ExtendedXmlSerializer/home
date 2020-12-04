@@ -14,18 +14,18 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class ImmutableHashSetExtension : ISerializerExtension
+	sealed class ImmutableSortedSetExtension : ISerializerExtension
 	{
-		public static ImmutableHashSetExtension Default { get; } = new ImmutableHashSetExtension();
+		public static ImmutableSortedSetExtension Default { get; } = new ImmutableSortedSetExtension();
 
-		ImmutableHashSetExtension() : this(new IsAssignableGenericSpecification(typeof(ImmutableHashSet<>))) {}
+		ImmutableSortedSetExtension() : this(new IsAssignableGenericSpecification(typeof(ImmutableSortedSet<>))) {}
 
 		readonly ISpecification<TypeInfo> _specification;
 
-		public ImmutableHashSetExtension(ISpecification<TypeInfo> specification) => _specification = specification;
+		public ImmutableSortedSetExtension(ISpecification<TypeInfo> specification) => _specification = specification;
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.DecorateContentsWith<ImmutableHashSets>()
+			=> parameter.DecorateContentsWith<ImmutableSortedSets>()
 			            .When(_specification)
 			            .Decorate<IGenericTypes, GenericTypes>();
 
@@ -33,10 +33,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 		sealed class GenericTypes : IGenericTypes
 		{
-			readonly static TypeInfo Check = typeof(ImmutableHashSet).GetTypeInfo();
-			readonly static ImmutableArray<TypeInfo> Type = typeof(ImmutableHashSet<>).GetTypeInfo()
-			                                                                          .Yield()
-			                                                                          .ToImmutableArray();
+			readonly static TypeInfo Check = typeof(ImmutableSortedSet).GetTypeInfo();
+			readonly static ImmutableArray<TypeInfo> Type = typeof(ImmutableSortedSet<>).GetTypeInfo()
+			                                                                            .Yield()
+			                                                                            .ToImmutableArray();
 
 			readonly IGenericTypes _types;
 
@@ -50,9 +50,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			}
 		}
 
-		sealed class ImmutableHashSets : Collections
+		sealed class ImmutableSortedSets : Collections
 		{
-			public ImmutableHashSets(RuntimeSerializers serializers, Contents contents) : base(serializers, contents) {}
+			public ImmutableSortedSets(RuntimeSerializers serializers, Contents contents)
+				: base(serializers, contents) {}
 		}
 
 		sealed class Contents : ICollectionContents
@@ -87,8 +88,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 				Reader(IReader<Collection<T>> reader) => _reader = reader;
 
-				public object Get(IFormatReader parameter) => _reader.Get(parameter).ToImmutableHashSet();
+				public object Get(IFormatReader parameter) => _reader.Get(parameter).ToImmutableSortedSet();
 			}
 		}
 	}
+
 }
