@@ -14,18 +14,18 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class ImmutableListExtension : ISerializerExtension
+	sealed class ImmutableHashSetExtension : ISerializerExtension
 	{
-		public static ImmutableListExtension Default { get; } = new ImmutableListExtension();
+		public static ImmutableHashSetExtension Default { get; } = new ImmutableHashSetExtension();
 
-		ImmutableListExtension() : this(new IsAssignableGenericSpecification(typeof(ImmutableList<>))) {}
+		ImmutableHashSetExtension() : this(new IsAssignableGenericSpecification(typeof(ImmutableHashSet<>))) {}
 
 		readonly ISpecification<TypeInfo> _specification;
 
-		public ImmutableListExtension(ISpecification<TypeInfo> specification) => _specification = specification;
+		public ImmutableHashSetExtension(ISpecification<TypeInfo> specification) => _specification = specification;
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.DecorateContentsWith<ImmutableLists>()
+			=> parameter.DecorateContentsWith<ImmutableHashSets>()
 			            .When(_specification)
 			            .Decorate<IGenericTypes, GenericTypes>();
 
@@ -33,10 +33,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 		sealed class GenericTypes : IGenericTypes
 		{
-			readonly static TypeInfo Check = typeof(ImmutableList).GetTypeInfo();
-			readonly static ImmutableArray<TypeInfo> Type = typeof(ImmutableList<>).GetTypeInfo()
-			                                                                       .Yield()
-			                                                                       .ToImmutableArray();
+			readonly static TypeInfo Check = typeof(ImmutableHashSet).GetTypeInfo();
+			readonly static ImmutableArray<TypeInfo> Type = typeof(ImmutableHashSet<>).GetTypeInfo()
+			                                                                          .Yield()
+			                                                                          .ToImmutableArray();
 
 			readonly IGenericTypes _types;
 
@@ -45,14 +45,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			public ImmutableArray<TypeInfo> Get(IIdentity parameter)
 			{
 				var type   = _types.Get(parameter);
-				var result = type.Only()?.Equals(Check) ?? false ? Type : type;
+				var result = Equals(type.Only(), Check) ? Type : type;
 				return result;
 			}
 		}
 
-		sealed class ImmutableLists : Collections
+		sealed class ImmutableHashSets : Collections
 		{
-			public ImmutableLists(RuntimeSerializers serializers, Contents contents) : base(serializers, contents) {}
+			public ImmutableHashSets(RuntimeSerializers serializers, Contents contents) : base(serializers, contents) {}
 		}
 
 		sealed class Contents : ICollectionContents
@@ -87,7 +87,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 				Reader(IReader<Collection<T>> reader) => _reader = reader;
 
-				public object Get(IFormatReader parameter) => _reader.Get(parameter).ToImmutableList();
+				public object Get(IFormatReader parameter) => _reader.Get(parameter).ToImmutableHashSet();
 			}
 		}
 	}
