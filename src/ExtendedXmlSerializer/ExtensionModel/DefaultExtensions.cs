@@ -62,6 +62,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			yield return ImmutableListExtension.Default;
 			yield return ImmutableHashSetExtension.Default;
 			yield return ImmutableSortedSetExtension.Default;
+			yield return ImmutableDictionariesExtension.Default;
 			yield return SerializationExtension.Default;
 			yield return NullableStructureAwareExtension.Default;
 			yield return new CustomSerializationExtension();
