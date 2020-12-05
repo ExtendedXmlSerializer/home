@@ -28,11 +28,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 		public ParameterizedActivators(IActivators activators, IQueriedConstructors constructors,
 		                               IConstructorMembers members, IMemberAccessors accessors, ITypeDefaults defaults)
 		{
-			_activators    = activators;
-			_constructors  = constructors;
-			_members       = members;
-			_accessors     = accessors;
-			_defaults = defaults;
+			_activators   = activators;
+			_constructors = constructors;
+			_members      = members;
+			_accessors    = accessors;
+			_defaults     = defaults;
 		}
 
 		public IActivator Get(Type parameter)
@@ -69,7 +69,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 			{
 				var arguments = new Enumerable<object>(_constructor.GetParameters()
 				                                                   .Select(x => x.Name)
-				                                                   .Select(parameter));
+				                                                   .Select(parameter)
+				                                                   .Select(x => x is IActivationAware aware
+					                                                                ? aware.Get()
+					                                                                : x));
 				var result = new ConstructedActivator(_constructor, arguments);
 				return result;
 			}

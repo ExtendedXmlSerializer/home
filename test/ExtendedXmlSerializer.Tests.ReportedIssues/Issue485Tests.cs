@@ -27,33 +27,6 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			serializer.Cycle(instance).Should().BeEquivalentTo(instance);
 		}
 
-		/*[Fact]
-		public void VerifyEmpty()
-		{
-			var serializer = new ConfigurationContainer().UseAutoFormatting()
-			                                             .UseOptimizedNamespaces()
-			                                             .EnableImmutableTypes()
-			                                             .EnableParameterizedContent()
-			                                             .Create()
-			                                             .ForTesting();
-			var instance = new SubjectList("Hello World!", ImmutableList<TimeSpan>.Empty);
-
-			serializer.Cycle(instance).Should().BeEquivalentTo(instance);
-		}*/
-
-		class SubjectList
-		{
-			public SubjectList(string name, ImmutableList<TimeSpan> list)
-			{
-				Name = name;
-				List = list;
-			}
-
-			public string Name { get; }
-
-			public ImmutableList<TimeSpan> List { get; }
-		}
-
 		[Fact]
 		public void VerifyHashSet()
 		{
@@ -135,6 +108,141 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			dictionary.Should().BeEquivalentTo(instance);
 
 			dictionary["Hello"].Should().Be(instance["Hello"]);
+		}
+
+		[Fact]
+		public void VerifyListEmpty()
+		{
+			var serializer = new ConfigurationContainer().UseAutoFormatting()
+			                                             .UseOptimizedNamespaces()
+			                                             .EnableImmutableTypes()
+			                                             .EnableParameterizedContent()
+			                                             .Create()
+			                                             .ForTesting();
+			var instance = new SubjectList("Hello World!", ImmutableList<TimeSpan>.Empty);
+
+			serializer.Cycle(instance).Should().BeEquivalentTo(instance);
+		}
+
+		[Fact]
+		public void VerifyHashSetEmpty()
+		{
+			var serializer = new ConfigurationContainer().UseAutoFormatting()
+			                                             .UseOptimizedNamespaces()
+			                                             .EnableImmutableTypes()
+			                                             .EnableParameterizedContent()
+			                                             .Create()
+			                                             .ForTesting();
+			var instance = new SubjectHashSet("Hello World!", ImmutableHashSet<TimeSpan>.Empty);
+
+			serializer.Cycle(instance).Should().BeEquivalentTo(instance);
+		}
+
+		[Fact]
+		public void VerifySortedSetEmpty()
+		{
+			var serializer = new ConfigurationContainer().UseAutoFormatting()
+			                                             .UseOptimizedNamespaces()
+			                                             .EnableImmutableTypes()
+			                                             .EnableParameterizedContent()
+			                                             .Create()
+			                                             .ForTesting();
+			var instance = new SubjectSortedSet("Hello World!", ImmutableSortedSet<TimeSpan>.Empty);
+
+			serializer.Cycle(instance).Should().BeEquivalentTo(instance);
+		}
+
+		[Fact]
+		public void VerifyDictionaryEmpty()
+		{
+			var serializer = new ConfigurationContainer().UseAutoFormatting()
+			                                             .UseOptimizedNamespaces()
+			                                             .EnableImmutableTypes()
+			                                             .EnableParameterizedContent()
+			                                             .Create()
+			                                             .ForTesting();
+			var instance = new SubjectDictionary("Hello World!", ImmutableDictionary<string, string>.Empty);
+
+			serializer.Cycle(instance).Should().BeEquivalentTo(instance);
+		}
+
+		[Fact]
+		public void VerifySortedDictionaryEmpty()
+		{
+			var serializer = new ConfigurationContainer().UseAutoFormatting()
+			                                             .UseOptimizedNamespaces()
+			                                             .EnableImmutableTypes()
+			                                             .EnableParameterizedContent()
+			                                             .Create()
+			                                             .ForTesting();
+			var instance = new SubjectSortedDictionary("Hello World!", ImmutableSortedDictionary<string, string>.Empty);
+
+			serializer.Cycle(instance).Should().BeEquivalentTo(instance);
+		}
+
+		class SubjectList
+		{
+			public SubjectList(string name, ImmutableList<TimeSpan> list)
+			{
+				Name = name;
+				List = list;
+			}
+
+			public string Name { get; }
+
+			public ImmutableList<TimeSpan> List { get; }
+		}
+
+		class SubjectHashSet
+		{
+			public SubjectHashSet(string name, ImmutableHashSet<TimeSpan> list)
+			{
+				Name = name;
+				List = list;
+			}
+
+			public string Name { get; }
+
+			public ImmutableHashSet<TimeSpan> List { get; }
+		}
+
+		class SubjectSortedSet
+		{
+			public SubjectSortedSet(string name, ImmutableSortedSet<TimeSpan> list)
+			{
+				Name = name;
+				List = list;
+			}
+
+			public string Name { get; }
+
+			public ImmutableSortedSet<TimeSpan> List { get; }
+		}
+
+		class SubjectDictionary
+		{
+			public SubjectDictionary(string name, ImmutableDictionary<string, string> list)
+			{
+				Name = name;
+				List = list;
+			}
+
+			public string Name { get; }
+
+			public ImmutableDictionary<string, string> List { get; }
+		}
+
+		class SubjectSortedDictionary
+		{
+			public SubjectSortedDictionary(string name, ImmutableSortedDictionary<string, string> list)
+			{
+				Name = name;
+				List = list;
+			}
+
+			public string Name { get; }
+
+			public ImmutableSortedDictionary<string, string> List { get; }
 		}
 	}
 }

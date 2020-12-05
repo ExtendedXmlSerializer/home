@@ -8,6 +8,7 @@ using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Reflection;
@@ -27,9 +28,24 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.DecorateContentsWith<ImmutableLists>()
 			            .When(_specification)
-			            .Decorate<IGenericTypes, GenericTypes>();
+			            .Decorate<IGenericTypes, GenericTypes>()
+			            .Decorate<IConstructorLocator>(Register);
+
+		IConstructorLocator Register(IServiceProvider arg1, IConstructorLocator previous)
+			=> new ConstructorLocator(_specification, previous);
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
+
+		sealed class ConstructorLocator : ListConstructorLocator, IConstructorLocator
+		{
+			public ConstructorLocator(ISpecification<TypeInfo> specification, IConstructorLocator previous)
+				: base(specification, previous, typeof(Adapter<>)) {}
+		}
+
+		sealed class Adapter<T> : List<T>, IActivationAware
+		{
+			public object Get() => this.ToImmutableList();
+		}
 
 		sealed class GenericTypes : IGenericTypes
 		{

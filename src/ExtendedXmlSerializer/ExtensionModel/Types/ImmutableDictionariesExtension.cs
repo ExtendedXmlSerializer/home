@@ -27,9 +27,24 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.DecorateContentsWith<Contents>()
 			            .When(_specification)
-			            .Decorate<IGenericTypes, GenericTypes>();
+			            .Decorate<IGenericTypes, GenericTypes>()
+			            .Decorate<IConstructorLocator>(Register);
+
+		IConstructorLocator Register(IServiceProvider arg1, IConstructorLocator previous)
+			=> new ConstructorLocator(_specification, previous);
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
+
+		sealed class ConstructorLocator : DictionaryConstructorLocator, IConstructorLocator
+		{
+			public ConstructorLocator(ISpecification<TypeInfo> specification, IConstructorLocator previous)
+				: base(specification, previous, typeof(Adapter<,>)) {}
+		}
+
+		sealed class Adapter<TKey, TValue> : Dictionary<TKey, TValue>, IActivationAware
+		{
+			public object Get() => this.ToImmutableDictionary();
+		}
 
 		sealed class GenericTypes : IGenericTypes
 		{
