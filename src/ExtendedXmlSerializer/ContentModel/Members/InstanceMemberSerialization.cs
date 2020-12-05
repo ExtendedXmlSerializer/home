@@ -1,3 +1,4 @@
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Types;
@@ -22,11 +23,14 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			_serialization  = serialization;
 		}
 
+		public IMemberSerialization Get(IInnerContent parameter) => Get(parameter.Current);
+
 		public IMemberSerialization Get(object parameter)
 		{
 			var type   = parameter is ITypeAware aware ? aware.Get() : parameter.GetType().GetTypeInfo();
 			var result = _specification.IsSatisfiedBy(type) ? _serializations.Get(type) : _serialization;
 			return result;
 		}
+
 	}
 }
