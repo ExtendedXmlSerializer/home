@@ -1,4 +1,5 @@
 using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using ExtendedXmlSerializer.ExtensionModel.Xml.Classic;
 using System;
@@ -35,14 +36,13 @@ namespace ExtendedXmlSerializer.Configuration
 		/// MyProperty {get; set} = true` and `MyProperty` is `false` upon serialization, then the content is emitted.
 		/// </summary>
 		public static IEmitBehavior WhenModified { get; } =
-			new EmitBehavior(new AddAlteration(AllowedAssignedInstanceValues.Default));
+			new EmitBehavior(new AddAlteration(new AllowedAssignedInstanceValues(new TypeMemberDefaults(DefaultTypeDefaults.Default))));
 
 		#region Obsolete
 
 		/// <exclude />
 		[Obsolete("This is considered deprecated and will be removed in a future release.  Use EmitBehaviors.WhenModified instead.")]
-		public static IEmitBehavior Assigned { get; } =
-			new EmitBehavior(new AddAlteration(AllowedAssignedInstanceValues.Default));
+		public static IEmitBehavior Assigned { get; } = WhenModified;
 
 		/// <exclude />
 		[Obsolete("This is considered deprecated and will be removed in a future release.  Use EmitBehaviors.WhenAssigned instead.")]

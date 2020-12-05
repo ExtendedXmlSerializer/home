@@ -1,4 +1,5 @@
 using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Types;
@@ -16,18 +17,26 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 		readonly IQueriedConstructors _constructors;
 		readonly IMemberAccessors     _accessors;
 		readonly ITypeMembers         _typeMembers;
+		readonly ITypeDefaults        _defaults;
 		readonly IConstructorMembers  _members;
 
 		// ReSharper disable once TooManyDependencies
 		public AllMembersParameterizedActivators(IActivators activators, IQueriedConstructors constructors,
 		                                         IConstructorMembers members, IMemberAccessors accessors,
 		                                         ITypeMembers typeMembers)
+			: this(activators, constructors, members, accessors, typeMembers, TypeDefaults.Defaults.Get(activators)) {}
+
+		// ReSharper disable once TooManyDependencies
+		public AllMembersParameterizedActivators(IActivators activators, IQueriedConstructors constructors,
+		                                         IConstructorMembers members, IMemberAccessors accessors,
+		                                         ITypeMembers typeMembers, ITypeDefaults defaults)
 		{
 			_activators   = activators;
 			_constructors = constructors;
 			_members      = members;
 			_accessors    = accessors;
 			_typeMembers  = typeMembers;
+			_defaults     = defaults;
 		}
 
 		public IActivator Get(Type parameter)
@@ -46,7 +55,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 		{
 			var activator = new Source(constructor).ToSelectionDelegate();
 			var context   = new MemberContext(constructor.ReflectedType.GetTypeInfo(), members);
-			var contexts  = new ActivationContexts(_accessors, context, activator);
+			var contexts  = new ActivationContexts(_accessors, context, activator, _defaults);
 			var defaults = constructor.GetParameters()
 			                          .Where(x => x.IsOptional)
 			                          .Select(x => Pairs.Create(x.Name, x.DefaultValue))

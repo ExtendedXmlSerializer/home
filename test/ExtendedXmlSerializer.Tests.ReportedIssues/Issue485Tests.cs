@@ -1,9 +1,11 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Tests.ReportedIssues.Support;
 using FluentAssertions;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Xunit;
+// ReSharper disable All
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {
@@ -23,6 +25,33 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			serializer.Assert(instance,
 			                  @"<?xml version=""1.0"" encoding=""utf-8""?><ImmutableList xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""sys:int"" xmlns=""clr-namespace:System.Collections.Immutable;assembly=System.Collections.Immutable""><sys:int>1</sys:int><sys:int>2</sys:int><sys:int>3</sys:int><sys:int>4</sys:int></ImmutableList>");
 			serializer.Cycle(instance).Should().BeEquivalentTo(instance);
+		}
+
+		/*[Fact]
+		public void VerifyEmpty()
+		{
+			var serializer = new ConfigurationContainer().UseAutoFormatting()
+			                                             .UseOptimizedNamespaces()
+			                                             .EnableImmutableTypes()
+			                                             .EnableParameterizedContent()
+			                                             .Create()
+			                                             .ForTesting();
+			var instance = new SubjectList("Hello World!", ImmutableList<TimeSpan>.Empty);
+
+			serializer.Cycle(instance).Should().BeEquivalentTo(instance);
+		}*/
+
+		class SubjectList
+		{
+			public SubjectList(string name, ImmutableList<TimeSpan> list)
+			{
+				Name = name;
+				List = list;
+			}
+
+			public string Name { get; }
+
+			public ImmutableList<TimeSpan> List { get; }
 		}
 
 		[Fact]

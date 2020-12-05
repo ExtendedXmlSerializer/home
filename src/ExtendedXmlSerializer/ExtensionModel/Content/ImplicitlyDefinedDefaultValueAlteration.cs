@@ -1,8 +1,8 @@
-﻿using System;
-using ExtendedXmlSerializer.ContentModel.Conversion;
+﻿using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core.Parsing;
 using ExtendedXmlSerializer.Core.Sources;
+using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -15,7 +15,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		public IConverter Get(IConverter parameter)
 		{
-			var @default = TypeDefaults.Default.Get(parameter.Get());
+			var @default = DefaultTypeDefaults.Default.Get(parameter.Get());
 			var parser   = new Parser(parameter.Parse, @default);
 			var result   = new Converter<object>(parameter, parser.Get, parameter.Format);
 			return result;

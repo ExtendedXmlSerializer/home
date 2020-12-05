@@ -17,7 +17,7 @@ namespace ExtendedXmlSerializer
 	/// </summary>
 	public static class ExtensionMethodsForSerialization
 	{
-		readonly static Func<Stream> New = DefaultActivators.Default.New<MemoryStream>;
+		readonly static Func<Stream> New = DefaultConstructedActivators.Default.New<MemoryStream>;
 
 		readonly static IXmlWriterFactory WriterFactory
 			= new XmlWriterFactory(CloseSettings.Default.Get(ExtensionModel.Xml.Defaults.WriterSettings));
