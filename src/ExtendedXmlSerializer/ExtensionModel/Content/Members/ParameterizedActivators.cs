@@ -22,7 +22,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 		// ReSharper disable once TooManyDependencies
 		public ParameterizedActivators(IActivators activators, IQueriedConstructors constructors,
 		                               IConstructorMembers members, IMemberAccessors accessors)
-			: this(activators, constructors, members, accessors, TypeDefaults.Defaults.Get(activators)) {}
+			: this(activators, constructors, members, accessors,
+			       new ParameterizedAwareTypeDefaults(TypeDefaults.Defaults.Get(activators), constructors)) {}
 
 		// ReSharper disable once TooManyDependencies
 		public ParameterizedActivators(IActivators activators, IQueriedConstructors constructors,
