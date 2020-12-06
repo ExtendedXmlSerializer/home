@@ -74,7 +74,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 			{
 				var arguments = new Enumerable<object>(_constructor.GetParameters()
 				                                                   .Select(x => x.Name)
-				                                                   .Select(parameter));
+				                                                   .Select(parameter)
+				                                                   .Select(x => x is IActivationAware aware
+					                                                                ? aware.Get()
+					                                                                : x));
 				var result = new ConstructedActivator(_constructor, arguments);
 				return result;
 			}
