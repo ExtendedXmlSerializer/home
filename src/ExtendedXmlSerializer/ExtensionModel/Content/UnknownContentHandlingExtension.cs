@@ -18,9 +18,52 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.RegisterInstance(_action)
-			            .Decorate<IInnerContentServices, Services>();
+			            .Decorate<IInnerContentServices, Services>()
+			            .Decorate<IInstanceMemberSerializations, InstanceMemberSerializations>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
+
+		sealed class InstanceMemberSerializations : IInstanceMemberSerializations
+		{
+			readonly IInstanceMemberSerializations _previous;
+			readonly IInnerContentServices         _services;
+
+			public InstanceMemberSerializations(IInstanceMemberSerializations previous, IInnerContentServices services)
+			{
+				_previous = previous;
+				_services = services;
+			}
+
+			public IInstanceMemberSerialization Get(TypeInfo parameter)
+				=> new InstanceMemberSerialization(_previous.Get(parameter), _services);
+
+			sealed class InstanceMemberSerialization : IInstanceMemberSerialization
+			{
+				readonly IInstanceMemberSerialization _previous;
+				readonly IInnerContentServices        _services;
+
+				public InstanceMemberSerialization(IInstanceMemberSerialization previous,
+				                                   IInnerContentServices services)
+				{
+					_previous = previous;
+					_services = services;
+				}
+
+				public IMemberSerialization Get(IInnerContent parameter)
+				{
+					var content       = parameter.Get();
+					var key           = _services.Get(content);
+					var serialization = _previous.Get(parameter);
+					var serializer    = serialization.Get(key);
+					var result = serializer is PropertyMemberSerializer && !content.IsSatisfiedBy(serializer.Profile)
+						             ? null
+						             : serialization;
+					return result;
+				}
+
+				public IMemberSerialization Get(object parameter) => _previous.Get(parameter);
+			}
+		}
 
 		sealed class Services : IInnerContentServices
 		{
