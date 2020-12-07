@@ -1,12 +1,12 @@
+using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.IO;
-using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
 	class InstanceFormatter : IInstanceFormatter
 	{
-		readonly static Func<Stream> Stream = DefaultActivators.Default.New<MemoryStream>;
+		readonly static Func<Stream> Stream = DefaultConstructedActivators.Default.New<MemoryStream>;
 
 		readonly IExtendedXmlSerializer _serializer;
 		readonly IXmlWriterFactory      _factory;

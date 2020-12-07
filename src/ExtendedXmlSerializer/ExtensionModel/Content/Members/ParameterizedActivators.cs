@@ -1,4 +1,5 @@
 using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Types;
@@ -15,16 +16,24 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 		readonly IActivators          _activators;
 		readonly IQueriedConstructors _constructors;
 		readonly IMemberAccessors     _accessors;
+		readonly ITypeDefaults        _defaults;
 		readonly IConstructorMembers  _members;
 
 		// ReSharper disable once TooManyDependencies
 		public ParameterizedActivators(IActivators activators, IQueriedConstructors constructors,
 		                               IConstructorMembers members, IMemberAccessors accessors)
+			: this(activators, constructors, members, accessors,
+			       new ParameterizedAwareTypeDefaults(TypeDefaults.Defaults.Get(activators), constructors)) {}
+
+		// ReSharper disable once TooManyDependencies
+		public ParameterizedActivators(IActivators activators, IQueriedConstructors constructors,
+		                               IConstructorMembers members, IMemberAccessors accessors, ITypeDefaults defaults)
 		{
 			_activators   = activators;
 			_constructors = constructors;
 			_members      = members;
 			_accessors    = accessors;
+			_defaults     = defaults;
 		}
 
 		public IActivator Get(Type parameter)
@@ -42,7 +51,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 		{
 			var activator = new Source(constructor).ToSelectionDelegate();
 			var context   = new MemberContext(constructor.ReflectedType.GetTypeInfo(), members);
-			var contexts  = new ActivationContexts(_accessors, context, activator);
+			var contexts  = new ActivationContexts(_accessors, context, activator, _defaults);
 			var defaults = constructor.GetParameters()
 			                          .Where(x => x.IsOptional)
 			                          .Select(x => Pairs.Create(x.Name, x.DefaultValue))
@@ -61,7 +70,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 			{
 				var arguments = new Enumerable<object>(_constructor.GetParameters()
 				                                                   .Select(x => x.Name)
-				                                                   .Select(parameter));
+				                                                   .Select(parameter)
+				                                                   .Select(x => x is IActivationAware aware
+					                                                                ? aware.Get()
+					                                                                : x));
 				var result = new ConstructedActivator(_constructor, arguments);
 				return result;
 			}

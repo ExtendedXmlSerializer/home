@@ -1,15 +1,14 @@
-using System;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
+using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
 	sealed class Activators : ReferenceCacheBase<Type, IActivator>, IActivators
 	{
-		public static Activators Default { get; } = new Activators();
-
-		Activators() : this(ActivatingTypeSpecification.Default, DefaultActivators.Default, SingletonLocator.Default) {}
+		public Activators(IActivators activators)
+			: this(ActivatingTypeSpecification.Default, activators, SingletonLocator.Default) {}
 
 		readonly IActivatingTypeSpecification _specification;
 		readonly IActivators                  _activators;

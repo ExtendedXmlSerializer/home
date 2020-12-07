@@ -10,6 +10,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		: ReferenceCacheBase<IFormatReader, IMarkupExtensionPartsEvaluator>,
 		  IMarkupExtensions
 	{
+		readonly IActivators             _activators;
 		readonly IEvaluator              _evaluator;
 		readonly ITypeMembers            _members;
 		readonly IMemberAccessors        _accessors;
@@ -17,9 +18,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		readonly System.IServiceProvider _provider;
 
 		// ReSharper disable once TooManyDependencies
-		public MarkupExtensions(IEvaluator evaluator, ITypeMembers members, IMemberAccessors accessors,
-		                        IConstructors constructors, System.IServiceProvider provider)
+		public MarkupExtensions(IActivators activators, IEvaluator evaluator, ITypeMembers members,
+		                        IMemberAccessors accessors, IConstructors constructors,
+		                        System.IServiceProvider provider)
 		{
+			_activators   = activators;
 			_evaluator    = evaluator;
 			_members      = members;
 			_accessors    = accessors;
@@ -28,7 +31,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		}
 
 		protected override IMarkupExtensionPartsEvaluator Create(IFormatReader parameter)
-			=> new MarkupExtensionPartsEvaluator(parameter, _evaluator, _members, _accessors, _constructors, _provider,
-			                                     parameter);
+			=> new MarkupExtensionPartsEvaluator(_activators, parameter, _evaluator, _members, _accessors,
+			                                     _constructors, _provider, parameter);
 	}
 }

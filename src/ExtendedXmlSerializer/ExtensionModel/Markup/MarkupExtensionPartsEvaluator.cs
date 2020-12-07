@@ -2,6 +2,7 @@ using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Properties;
+using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Parsing;
 using ExtendedXmlSerializer.Core.Sources;
@@ -33,17 +34,21 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		readonly IConstructors           _constructors;
 		readonly System.IServiceProvider _provider;
 		readonly IFormatter<TypeParts>   _formatter;
+		readonly ITypeDefaults           _defaults;
 		readonly object[]                _services;
 
-		public MarkupExtensionPartsEvaluator(IParser<MemberInfo> parser, IEvaluator evaluator, ITypeMembers members,
+		public MarkupExtensionPartsEvaluator(IActivators activators,
+		                                     IParser<MemberInfo> parser, IEvaluator evaluator, ITypeMembers members,
 		                                     IMemberAccessors accessors, IConstructors constructors,
-		                                     System.IServiceProvider provider, params object[] services)
+		                                     System.IServiceProvider provider,
+		                                     params object[] services)
 			: this(parser, evaluator, members, accessors, constructors, provider, TypePartsFormatter.Default,
-			       services) {}
+			       TypeDefaults.Defaults.Get(activators), services) {}
 
 		public MarkupExtensionPartsEvaluator(IParser<MemberInfo> parser, IEvaluator evaluator, ITypeMembers members,
 		                                     IMemberAccessors accessors, IConstructors constructors,
 		                                     System.IServiceProvider provider, IFormatter<TypeParts> formatter,
+		                                     ITypeDefaults defaults,
 		                                     params object[] services)
 		{
 			_parser       = parser;
@@ -53,6 +58,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			_constructors = constructors;
 			_provider     = provider;
 			_formatter    = formatter;
+			_defaults     = defaults;
 			_services     = services;
 		}
 
@@ -81,9 +87,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			                           .ToArray();
 			var activator = new ConstructedActivator(constructor, arguments);
 			var context   = new MemberContext(constructor.ReflectedType.GetTypeInfo(), members);
-			var extension = new ActivationContexts(_accessors, context, activator).Get(dictionary)
-			                                                                      .Get()
-			                                                                      .AsValid<IMarkupExtension>();
+			var extension = new ActivationContexts(_accessors, context, activator, _defaults)
+			                .Get(dictionary)
+			                .Get()
+			                .AsValid<IMarkupExtension>();
 			var result = extension.ProvideValue(new Provider(_provider, _services.Appending(parameter)
 			                                                                     .ToArray()));
 			return result;

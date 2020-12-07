@@ -15,27 +15,39 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		readonly MemberContext                          _members;
 		readonly ITableSource<string, IMember>          _table;
 		readonly Func<Func<string, object>, IActivator> _activator;
+		readonly ITypeDefaults                          _defaults;
 
-		public ActivationContexts(IMemberAccessors accessors, MemberContext members, IActivator activator)
-			: this(accessors, members, activator.Accept) {}
+		// ReSharper disable once TooManyDependencies
+		public ActivationContexts(IActivators activators, IMemberAccessors accessors, MemberContext members,
+		                          IActivator activator)
+			: this(accessors, members, activator, TypeDefaults.Defaults.Get(activators)) {}
 
+		// ReSharper disable once TooManyDependencies
+		public ActivationContexts(IMemberAccessors accessors, MemberContext members, IActivator activator,
+		                          ITypeDefaults defaults)
+			: this(accessors, members, activator.Accept, defaults) {}
+
+		// ReSharper disable once TooManyDependencies
 		public ActivationContexts(IMemberAccessors accessors, MemberContext members,
-		                          Func<Func<string, object>, IActivator> activator)
+		                          Func<Func<string, object>, IActivator> activator, ITypeDefaults defaults)
 			: this(accessors, members,
 			       new TableSource<string, IMember>(members.Members
 			                                               .ToDictionary(x => x.Name,
 			                                                             StringComparer.InvariantCultureIgnoreCase)),
-			       activator) {}
+			       activator, defaults) {}
 
 		// ReSharper disable once TooManyDependencies
 		public ActivationContexts(IMemberAccessors accessors, MemberContext members,
 		                          ITableSource<string, IMember> table,
-		                          Func<Func<string, object>, IActivator> activator)
+		                          Func<Func<string, object>, IActivator> activator,
+		                          ITypeDefaults defaults
+		)
 		{
 			_accessors = accessors;
 			_members   = members;
 			_table     = table;
 			_activator = activator;
+			_defaults  = defaults;
 		}
 
 		public IActivationContext Get(IDictionary<string, object> parameter)
@@ -46,7 +58,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			                                                                        source),
 			                                           new AddItemsCommand(list));
 			var alteration = new ConfiguringAlteration<object>(command);
-			var activator  = new AlteringActivator(alteration, _activator(new Store(source, _table).Get));
+			var activator  = new AlteringActivator(alteration, _activator(new Store(source, _table, _defaults).Get));
 			var result     = new ActivationContext(_members.ReflectedType, source, activator.Singleton().Get, list);
 			return result;
 		}
@@ -56,9 +68,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			readonly ITableSource<string, object>          _store;
 			readonly IParameterizedSource<string, IMember> _members;
 			readonly ITypeDefaults                         _defaults;
-
-			public Store(ITableSource<string, object> store, IParameterizedSource<string, IMember> members)
-				: this(store, members, TypeDefaults.Default) {}
 
 			public Store(ITableSource<string, object> store, IParameterizedSource<string, IMember> members,
 			             ITypeDefaults defaults)

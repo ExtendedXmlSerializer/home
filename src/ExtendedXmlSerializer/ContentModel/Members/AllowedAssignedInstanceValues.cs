@@ -7,16 +7,14 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	class AllowedAssignedInstanceValues : IAllowedMemberValues
+	sealed class AllowedAssignedInstanceValues : IAllowedMemberValues
 	{
 		readonly ISpecification<TypeInfo>                 _specification;
 		readonly ITypeMemberDefaults                      _defaults;
 		readonly IGeneric<object, ISpecification<object>> _generic;
 
-		public static AllowedAssignedInstanceValues Default { get; } = new AllowedAssignedInstanceValues();
-
-		AllowedAssignedInstanceValues()
-			: this(ActivatingTypeSpecification.Default, TypeMemberDefaults.Default,
+		public AllowedAssignedInstanceValues(ITypeMemberDefaults defaults)
+			: this(ActivatingTypeSpecification.Default, defaults,
 			       new Generic<object, ISpecification<object>>(typeof(Specification<>))) {}
 
 		public AllowedAssignedInstanceValues(ISpecification<TypeInfo> specification, ITypeMemberDefaults defaults,
