@@ -1,3 +1,13 @@
+# [ExtendedXmlSerializer v3.5.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.5.0)
+> 12/08/2020 04:16:45 UTC
+##### ``v3.5.0``
+### ✨ New Features &#128640; 
+- Added non-generic equivalent for `AddMigration` #484 @Mike-E-angelo 
+- Added support for `System.Collections.Immutable` Types #486 @Mike-E-angelo 
+### &#128027; Bug Fixes &#128295; 
+- Fixed list support in `WithUnknownContent` #487 @Mike-E-angelo 
+- Applied serializer type check using `WithUnknownContent` #492 @Mike-E-angelo 
+
 # [ExtendedXmlSerializer v3.4.3](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.4.3)
 > 11/24/2020 06:11:48 UTC
 ##### ``v3.4.3``
