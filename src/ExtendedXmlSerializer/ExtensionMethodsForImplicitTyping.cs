@@ -93,6 +93,19 @@ namespace ExtendedXmlSerializer
 			=> @this.EnableImplicitTyping(new PublicAssemblyTypes<T>());
 
 		/// <summary>
+		/// Convenience method to enable implicit typing on a container, using all found public types within the provided
+		/// subject type's assembly.  All public types found within the provided subject type's assembly will be included and
+		/// registered as an implicit type.  Use this with care and ensure that the names of all the public types found within
+		/// the assembly are unique.  Otherwise, an exception will be thrown if more than one type share the same name.
+		/// </summary>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <param name="type">The subject type to query for type resolution.</param>
+		/// <returns>The configured configuration container.</returns>
+		/// <seealso cref="EnableImplicitTyping(IConfigurationContainer,System.Type[])"/>
+		public static IConfigurationContainer EnableImplicitTypingFromPublic(this IConfigurationContainer @this, Type type)
+			=> @this.EnableImplicitTyping(new PublicAssemblyTypes(type));
+
+		/// <summary>
 		/// Convenience method to enable implicit typing on a container, using all found types within the provided subject
 		/// type's namespace.  All types found within the provided subject type's namespace will be included and registered as
 		/// an implicit type.  Use this with care and ensure that the names of all the types found within the namespace are
