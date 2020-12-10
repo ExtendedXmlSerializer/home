@@ -65,7 +65,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types.Sources
 			foreach (var property in properties)
 			{
 				var propertyType = property.PropertyType;
-				if (typeof(IEnumerable).IsAssignableFrom(propertyType) && propertyType.IsGenericType)
+				if (IsSupportedGenericType(propertyType))
 				{
 					propertyType = propertyType.GenericTypeArguments.First();
 				}
@@ -79,7 +79,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types.Sources
 			return result;
 		}
 
-    }
+		static bool IsSupportedGenericType(Type propertyType)
+		{
+			return typeof(IEnumerable).IsAssignableFrom(propertyType) && propertyType.IsGenericType && propertyType.GenericTypeArguments.Length == 1;
+		}
+	}
 
 
 }
