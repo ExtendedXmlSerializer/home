@@ -197,5 +197,15 @@ namespace ExtendedXmlSerializer
 		public static IConfigurationContainer EnableImplicitTypingFromNamespacePublic(
 			this IConfigurationContainer @this, Type type)
 			=> @this.EnableImplicitTyping(new PublicTypesInSameNamespace(type));
+
+
+		public static IConfigurationContainer EnableImplicitTypingPropertyTypes<T>(
+			this IConfigurationContainer @this)
+			=> @this.EnableImplicitTyping(new AllPropertyTypes<T>());
+
+
+		public static IConfigurationContainer EnableImplicitTypingPropertyTypes(
+			this IConfigurationContainer @this, Type type)
+			=> @this.EnableImplicitTyping(new AllPropertyTypes(type));
 	}
 }
