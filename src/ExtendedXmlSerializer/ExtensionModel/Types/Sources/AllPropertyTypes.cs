@@ -65,7 +65,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types.Sources
 			foreach (var property in properties)
 			{
 				var propertyType = property.PropertyType;
-				if (typeof(IList).IsAssignableFrom(propertyType) && propertyType.IsGenericType)
+				if (typeof(IEnumerable).IsAssignableFrom(propertyType) && propertyType.IsGenericType)
 				{
 					propertyType = propertyType.GenericTypeArguments.First();
 				}
