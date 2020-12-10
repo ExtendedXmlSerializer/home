@@ -198,12 +198,30 @@ namespace ExtendedXmlSerializer
 			this IConfigurationContainer @this, Type type)
 			=> @this.EnableImplicitTyping(new PublicTypesInSameNamespace(type));
 
-
+		/// <summary>
+		/// Convenience method to enable implicit typing on a container, using all recursively found public property types within the
+		/// provided type. All public property types found within the provided type will be included and registered as an implicit type.
+		/// Use this with care and ensure that the names of all the public types found within the namespace are unique.  Otherwise,
+		/// an exception will be thrown if more than one type share the same name.
+		/// </summary>
+		/// <typeparam name="T">The subject type to query for type resolution.</typeparam>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <returns>The configured configuration container.</returns>
+		/// <seealso cref="EnableImplicitTyping(IConfigurationContainer,System.Type[])"/>
 		public static IConfigurationContainer EnableImplicitTypingPropertyTypes<T>(
 			this IConfigurationContainer @this)
 			=> @this.EnableImplicitTyping(new AllPropertyTypes<T>());
 
-
+		/// <summary>
+		/// Convenience method to enable implicit typing on a container, using all recursively found public property types within the
+		/// provided type. All public property types found within the provided type will be included and registered as an implicit type.
+		/// Use this with care and ensure that the names of all the public types found within the namespace are unique.  Otherwise,
+		/// an exception will be thrown if more than one type share the same name.
+		/// </summary>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <param name="type">The subject type to query for type resolution.</param>
+		/// <returns>The configured configuration container.</returns>
+		/// <seealso cref="EnableImplicitTyping(IConfigurationContainer,System.Type[])"/>
 		public static IConfigurationContainer EnableImplicitTypingPropertyTypes(
 			this IConfigurationContainer @this, Type type)
 			=> @this.EnableImplicitTyping(new AllPropertyTypes(type));

@@ -8,14 +8,24 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types.Sources
 {
+	/// <summary>
+	/// Iterates through all public properties in given type and resolve its types. Then recursively iterates through them.
+	/// </summary>
+	/// <typeparam name="T">The type to query.</typeparam>
 	public sealed class AllPropertyTypes<T> : Items<Type>
 	{
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
 		public AllPropertyTypes() : base(new AllPropertyTypes(typeof(T)))
 		{
 			
 		}
 	}
 
+	/// <summary>
+	/// Iterates through all public properties in given type and resolve its types. Then recursively iterates through them.
+	/// </summary>
 	public sealed class AllPropertyTypes : Items<Type>
 	{
 		readonly static HashSet<Type> IgnoredTypes = new HashSet<Type>
@@ -35,6 +45,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types.Sources
 			typeof(DateTime)
 		};
 
+		/// <summary>
+		/// Creates a new instance.
+		/// </summary>
+		/// <param name="type">The reference type to query.</param>
 		public AllPropertyTypes(Type type) : base(GetPropertyTypes(type))
 		{
 			
@@ -60,7 +74,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types.Sources
 				{
 					result.UnionWith(GetPropertyTypes(propertyType));
 				}
-
 			}
 
 			return result;

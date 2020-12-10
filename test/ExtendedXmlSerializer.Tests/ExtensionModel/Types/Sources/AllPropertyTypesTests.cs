@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml.Serialization;
 using ExtendedXmlSerializer.ExtensionModel.Types.Sources;
 using Xunit;
@@ -66,7 +64,6 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types.Sources
 
 	    class Engine
 	    {
-
 	    }
 
 	    class AlmostEmptyClass
