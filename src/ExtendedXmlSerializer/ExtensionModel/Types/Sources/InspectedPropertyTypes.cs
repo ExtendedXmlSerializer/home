@@ -12,12 +12,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types.Sources
 	/// Iterates through all public properties in given type and resolve its types. Then recursively iterates through them.
 	/// </summary>
 	/// <typeparam name="T">The type to query.</typeparam>
-	public sealed class AllPropertyTypes<T> : Items<Type>
+	public sealed class InspectedPropertyTypes<T> : Items<Type>
 	{
 		/// <summary>
 		/// Creates a new instance.
 		/// </summary>
-		public AllPropertyTypes() : base(new AllPropertyTypes(typeof(T)))
+		public InspectedPropertyTypes() : base(new InspectedPropertyTypes(typeof(T)))
 		{
 			
 		}
@@ -26,7 +26,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types.Sources
 	/// <summary>
 	/// Iterates through all public properties in given type and resolve its types. Then recursively iterates through them.
 	/// </summary>
-	public sealed class AllPropertyTypes : Items<Type>
+	public sealed class InspectedPropertyTypes : Items<Type>
 	{
 		readonly static HashSet<Type> IgnoredTypes = new HashSet<Type>
 		{
@@ -49,7 +49,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types.Sources
 		/// Creates a new instance.
 		/// </summary>
 		/// <param name="type">The reference type to query.</param>
-		public AllPropertyTypes(Type type) : base(GetPropertyTypes(type))
+		public InspectedPropertyTypes(Type type) : base(GetPropertyTypes(type))
 		{
 			
 		}

@@ -208,9 +208,9 @@ namespace ExtendedXmlSerializer
 		/// <param name="this">The configuration container to configure.</param>
 		/// <returns>The configured configuration container.</returns>
 		/// <seealso cref="EnableImplicitTyping(IConfigurationContainer,System.Type[])"/>
-		public static IConfigurationContainer EnableImplicitTypingPropertyTypes<T>(
+		public static IConfigurationContainer EnableImplicitTypingByInspecting<T>(
 			this IConfigurationContainer @this)
-			=> @this.EnableImplicitTyping(new AllPropertyTypes<T>());
+			=> @this.EnableImplicitTyping(new InspectedPropertyTypes<T>());
 
 		/// <summary>
 		/// Convenience method to enable implicit typing on a container, using all recursively found public property types within the
@@ -222,8 +222,8 @@ namespace ExtendedXmlSerializer
 		/// <param name="type">The subject type to query for type resolution.</param>
 		/// <returns>The configured configuration container.</returns>
 		/// <seealso cref="EnableImplicitTyping(IConfigurationContainer,System.Type[])"/>
-		public static IConfigurationContainer EnableImplicitTypingPropertyTypes(
+		public static IConfigurationContainer EnableImplicitTypingByInspecting(
 			this IConfigurationContainer @this, Type type)
-			=> @this.EnableImplicitTyping(new AllPropertyTypes(type));
+			=> @this.EnableImplicitTyping(new InspectedPropertyTypes(type));
 	}
 }

@@ -6,12 +6,12 @@ using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types.Sources
 {
-    public class AllPropertyTypesTests
+    public class InspectedPropertyTypesTests
     {
 		[Fact]
 	    public void ShouldHandleSingleProperty()
 	    {
-		    var types = new AllPropertyTypes<Vehicle>();
+		    var types = new InspectedPropertyTypes<Vehicle>();
 
 		    var result = types.Get();
 
@@ -24,7 +24,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types.Sources
 	    [Fact]
 	    public void ShouldIgnoreExcludedProperties()
 	    {
-		    var types = new AllPropertyTypes<AlmostEmptyClass>();
+		    var types = new InspectedPropertyTypes<AlmostEmptyClass>();
 
 		    var result = types.Get();
 
@@ -37,7 +37,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types.Sources
 		[Fact]
 	    public void SamePropertyAsParentShouldNotCauseStackOverflow()
 	    {
-            var types = new AllPropertyTypes<Human>();
+            var types = new InspectedPropertyTypes<Human>();
 
             var result = types.Get();
 
@@ -48,7 +48,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types.Sources
 	    [Fact]
 	    public void ShouldHandleListGracefully()
 	    {
-		    var types = new AllPropertyTypes<Zoo>();
+		    var types = new InspectedPropertyTypes<Zoo>();
 
 		    var result = types.Get();
 
