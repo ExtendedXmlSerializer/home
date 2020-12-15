@@ -1,3 +1,10 @@
+# [ExtendedXmlSerializer v3.6.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.6.0)
+> 12/15/2020 06:34:03 UTC
+##### ``v3.6.0``
+### ✨ New Features &#128640; 
+- Added non-generic versions of `EnableImplicitTypingFrom*` methods #494 @netaques 
+- Added `EnableImplicitTypingByInspecting&lt;T&gt;` extension method #495 @netaques 
+
 # [ExtendedXmlSerializer v3.5.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.5.0)
 > 12/08/2020 04:16:45 UTC
 ##### ``v3.5.0``
