@@ -17,9 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendedXmlSerializer.Tests
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{DE813CE8-58FB-473D-A10E-CDDFF2A58FBF}"
 	ProjectSection(SolutionItems) = preProject
-		appveyor.yml = appveyor.yml
+		.build\appveyor.yml = .build\appveyor.yml
 		.build\Common.ps1 = .build\Common.ps1
-		documentation\docfx.json = documentation\docfx.json
 		.build\Install.ps1 = .build\Install.ps1
 		.build\Success.ps1 = .build\Success.ps1
 	EndProjectSection
@@ -27,6 +26,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendedXmlSerializer.Tests.Performance", "test\ExtendedXmlSerializer.Tests.Performance\ExtendedXmlSerializer.Tests.Performance.csproj", "{6255260E-7A32-4B40-90CE-8729F6903E54}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendedXmlSerializer.Samples", "samples\ExtendedXmlSerializer.Samples\ExtendedXmlSerializer.Samples.csproj", "{935EB8FE-A9E5-4DC7-8CBB-7A32E2A56C9E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendedXmlSerializer.Tests.ReportedIssues.Issue502", "test\ExtendedXmlSerializer.Tests.ReportedIssues.Issue502\ExtendedXmlSerializer.Tests.ReportedIssues.Issue502.csproj", "{358A888A-5FAD-47CA-BD72-F919DB3ED267}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".references", ".references", "{36FD3644-F29C-4AD9-A533-ECB1802D476E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VweCore", "test\.External\VweCore\VweCore.csproj", "{E3D212A5-E82B-4823-AEF3-DF58B898F669}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,12 +59,22 @@ Global
 		{935EB8FE-A9E5-4DC7-8CBB-7A32E2A56C9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{935EB8FE-A9E5-4DC7-8CBB-7A32E2A56C9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{935EB8FE-A9E5-4DC7-8CBB-7A32E2A56C9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{358A888A-5FAD-47CA-BD72-F919DB3ED267}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{358A888A-5FAD-47CA-BD72-F919DB3ED267}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{358A888A-5FAD-47CA-BD72-F919DB3ED267}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{358A888A-5FAD-47CA-BD72-F919DB3ED267}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3D212A5-E82B-4823-AEF3-DF58B898F669}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3D212A5-E82B-4823-AEF3-DF58B898F669}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3D212A5-E82B-4823-AEF3-DF58B898F669}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3D212A5-E82B-4823-AEF3-DF58B898F669}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{DE813CE8-58FB-473D-A10E-CDDFF2A58FBF} = {2859812B-6D27-4A85-AC4A-8D3A55D9E3CD}
+		{36FD3644-F29C-4AD9-A533-ECB1802D476E} = {2859812B-6D27-4A85-AC4A-8D3A55D9E3CD}
+		{E3D212A5-E82B-4823-AEF3-DF58B898F669} = {36FD3644-F29C-4AD9-A533-ECB1802D476E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0980EF53-85ED-482A-8798-690538C3F7A4}

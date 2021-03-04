@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj" />
+        <PackageReference Include="Light.GuardClauses" Version="9.0.0" />
+        <PackageReference Include="Light.EmbeddedResources" Version="1.0.0" />
+        <PackageReference Include="Light.ViewModels" Version="0.6.0" />
+    </ItemGroup>
+
+</Project>
