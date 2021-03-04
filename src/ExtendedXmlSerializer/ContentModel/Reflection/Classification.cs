@@ -1,6 +1,7 @@
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
+using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using System;
 using System.Collections.Immutable;
@@ -28,10 +29,9 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 		}
 
 		public TypeInfo Get(IFormatReader parameter)
-			=> FromAttributes(parameter) ?? (!parameter.IsSatisfiedBy(MemberIdentity.Default)
-				                                 ? _types.Get(_identities.Get(parameter.Name, parameter.Identifier))
-				                                 : null);
-
+			=> FromAttributes(parameter) ?? (parameter.Contains(MemberIdentity.Default)
+				                                 ? null
+				                                 : _types.Get(_identities.Get(parameter.Name, parameter.Identifier)));
 		TypeInfo FromAttributes(IFormatReader parameter)
 			=> _specification.IsSatisfiedBy(parameter)
 				   ? ExplicitTypeProperty.Default.Get(parameter) ??

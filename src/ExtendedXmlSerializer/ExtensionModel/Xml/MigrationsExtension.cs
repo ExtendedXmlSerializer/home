@@ -99,6 +99,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 						throw new XmlException($"Unknown varsion number {version} for type {typeInfo}.");
 					}
 
+					parameter.Set();
+
 					var reader  = parameter.Get().AsValid<System.Xml.XmlReader>();
 					var element = XElement.Load(reader.ReadSubtree());
 					for (var i = version; i < _version; i++)
