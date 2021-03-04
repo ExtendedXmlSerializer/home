@@ -1,9 +1,10 @@
 ﻿using System.Linq;
+using VweCore;
 using VweCore.Geometry;
 
-namespace VweCore.Tests
+namespace ExtendedXmlSerializer.Tests.ReportedIssues.Issue502
 {
-    public static class TestMapFactory
+	public static class TestMapFactory
     {
         public static Map CreateMapWithDefaultData()
         {

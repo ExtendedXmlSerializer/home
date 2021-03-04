@@ -1,17 +1,17 @@
-﻿using System.Collections.Generic;
-using ExtendedXmlSerializer;
-using FluentAssertions;
+﻿using FluentAssertions;
+using System.Collections.Generic;
+using VweCore;
 using VweCore.Xml;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace VweCore.Tests
+namespace ExtendedXmlSerializer.Tests.ReportedIssues.Issue502
 {
-    public sealed class SerializeMapTests
+	public sealed class Issue502Tests
     {
         private readonly ITestOutputHelper _output;
 
-        public SerializeMapTests(ITestOutputHelper output) => _output = output;
+        public Issue502Tests(ITestOutputHelper output) => _output = output;
 
         [Fact]
         public void SerializeMap()
@@ -111,7 +111,7 @@ namespace VweCore.Tests
             var serializer = XmlSerializer.CreateDefaultSerializer();
 
             var somePoint = new HallwayNode(){Id = 3};
-            
+
             var storageLocation = new StorageLocation();
             var markerPoint = new MarkerPoint() { StorageLocation = storageLocation};
             storageLocation.MarkerPoints.Add(markerPoint);
