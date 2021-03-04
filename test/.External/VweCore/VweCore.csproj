@@ -5,6 +5,7 @@
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+      <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
