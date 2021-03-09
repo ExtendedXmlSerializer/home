@@ -6,7 +6,6 @@ using ExtendedXmlSerializer.ContentModel.Reflection;
 using JetBrains.Annotations;
 using System;
 using System.Reflection;
-using System.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -15,7 +14,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		readonly Func<TypeInfo, IReader> _activation;
 		readonly IEntities               _entities;
 		readonly IReferenceMaps          _maps;
-		
+
 		[UsedImplicitly]
 		public ReferenceActivation(IActivation activation, IEntities entities)
 			: this(activation.Get, entities) {}
@@ -68,7 +67,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 			public object Get(IFormatReader parameter)
 			{
-				var element =  parameter.Get().To<XmlReader>().NodeType != XmlNodeType.Attribute || MemberProperty.Default.Get(parameter);
+				var element = IsElement.Default.IsSatisfiedBy(parameter);
 
 				var declared = element ? Identity(parameter) : null;
 				var result   = _activator.Get(parameter);

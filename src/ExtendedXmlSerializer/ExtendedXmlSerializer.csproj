@@ -58,5 +58,6 @@ https://github.com/ExtendedXmlSerializer/home/blob/master/CHANGELOG.md
     <PackageReference Include="System.Interactive" Version="4.1.1" />
     <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.1" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 </Project>

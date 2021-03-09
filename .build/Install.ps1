@@ -18,7 +18,7 @@ function Exec
     & $cmd
     if ($LastExitCode -ne 0) {
 		$host.SetShouldExit($LastExitCode)
-        throw ("Exec: " + $errorMessage)		
+        throw ("Error With Exec: $cmd" + $errorMessage)		
     }
 }
 

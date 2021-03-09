@@ -4,7 +4,6 @@ using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using System.Reflection;
-using System.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -12,7 +11,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 	{
 		readonly static ContentModel.Properties.ReferenceIdentity ReferenceIdentity =
 			ContentModel.Properties.ReferenceIdentity.Default;
-
 		readonly IReferenceMaps  _maps;
 		readonly IEntities       _entities;
 		readonly TypeInfo        _definition;
@@ -30,21 +28,17 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		ReferenceIdentity? GetReference(IFormatReader parameter)
 		{
-			if (parameter.Get().To<XmlReader>().NodeType != XmlNodeType.Attribute ||
-			    MemberProperty.Default.Get(parameter))
+			var identity = ReferenceIdentity.Get(parameter);
+			if (identity.HasValue)
 			{
-				var identity = ReferenceIdentity.Get(parameter);
-				if (identity.HasValue)
-				{
-					return new ReferenceIdentity(identity.Value);
-				}
+				return new ReferenceIdentity(identity.Value);
+			}
 
-				var type   = _classification.GetClassification(parameter, _definition);
-				var entity = _entities.Get(type)?.Reference(parameter);
-				if (entity != null)
-				{
-					return new ReferenceIdentity(type, entity);
-				}
+			var type   = _classification.GetClassification(parameter, _definition);
+			var entity = _entities.Get(type)?.Reference(parameter);
+			if (entity != null)
+			{
+				return new ReferenceIdentity(type, entity);
 			}
 
 			return null;
@@ -52,16 +46,18 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		public override object Get(IFormatReader parameter)
 		{
-			var reference = GetReference(parameter);
-			if (reference != null)
+			var element = IsElement.Default.IsSatisfiedBy(parameter);
+			if (element)
 			{
-				var result = _maps.Get(parameter).Get(reference.Value);
-				return result;
+				var reference = GetReference(parameter);
+				if (reference != null)
+				{
+					var result = _maps.Get(parameter).Get(reference.Value);
+					return result;
+				}
 			}
 
 			{
-				var element = parameter.Get().To<XmlReader>().NodeType != XmlNodeType.Attribute ||
-				              MemberProperty.Default.Get(parameter);
 				var declared = element ? Identity(parameter) : null;
 				var result   = base.Get(parameter);
 				var identity = declared ?? (element && result != null ? Entity(parameter, result) : null);
@@ -87,12 +83,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		ReferenceIdentity? Entity(IFormatReader reader, object instance)
 		{
-			var typeInfo = instance.GetType()
-			                       .GetTypeInfo();
-			var entity = _entities.Get(typeInfo)
-			                      ?.Get(reader);
+			var typeInfo = instance.GetType();
+			var entity   = _entities.Get(typeInfo)?.Get(reader);
 			var result = entity != null
-				             ? (ReferenceIdentity?)new ReferenceIdentity(typeInfo, entity)
+				             ? (ReferenceIdentity?)new ReferenceIdentity(typeInfo.GetTypeInfo(), entity)
 				             : null;
 			return result;
 		}

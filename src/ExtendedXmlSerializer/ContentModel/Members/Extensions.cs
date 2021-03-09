@@ -14,6 +14,9 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		public static object GetIfAssigned(this IReader @this, IFormatReader reader)
 			=> reader.IsAssigned() ? @this.Get(reader) : null;
 
+		public static bool Contains(this IFormatReader @this, IIdentity identity)
+			=> Content.Contains.Default.IsSatisfiedBy((@this, identity));
+
 		public static bool IsAssigned(this IFormatReader @this)
 			=> !IdentityComparer.Default.Equals(@this, NullElementIdentity.Default) &&
 			   !@this.IsSatisfiedBy(NullValueIdentity.Default);
