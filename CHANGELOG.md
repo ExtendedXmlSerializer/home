@@ -1,3 +1,15 @@
+# [ExtendedXmlSerializer v3.6.2](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.6.2)
+> 03/10/2021 10:27:09 UTC
+##### ``v3.6.2``
+### Other Changes 
+- Build fix (hopefully) #505 @Mike-E-angelo 
+
+# [ExtendedXmlSerializer v3.6.1](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.6.1)
+> 03/10/2021 07:26:03 UTC
+##### ``v3.6.1``
+### &#128027; Bug Fixes &#128295; 
+- Fixed reference + attribute-based deserialization issues #503 @Mike-E-angelo 
+
 # [ExtendedXmlSerializer v3.6.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.6.0)
 > 12/15/2020 06:34:03 UTC
 ##### ``v3.6.0``
