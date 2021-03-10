@@ -48,6 +48,11 @@ jobs:
         with:
           name: store
           path: ./
+      - name: Get base branch
+        id: vars
+        run: |
+          base_ref=${{ env.BRANCH_REFERENCE }}
+          echo ::set-output name=base_branch::${base_ref#refs/*/}
       - name: Create Pull Request for CHANGELOG
         uses: peter-evans/create-pull-request@v3
         with:
@@ -63,5 +68,5 @@ jobs:
 
             [1]: https://github.com/peter-evans/create-pull-request
           labels: automerge
-          base: ${{ env.BRANCH_REFERENCE }}
+          base: ${{ steps.vars.outputs.base_branch }}
           branch: automated/changelog
