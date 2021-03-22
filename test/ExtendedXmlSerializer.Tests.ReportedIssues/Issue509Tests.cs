@@ -13,8 +13,6 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		public void Verify()
 		{
-			true.Should().BeTrue();
-
 			var serializer = new ConfigurationContainer().Type<Key>()
 			                                             .Register()
 			                                             .Converter()
