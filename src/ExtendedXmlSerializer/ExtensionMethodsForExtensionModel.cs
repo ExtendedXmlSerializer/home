@@ -7,6 +7,7 @@ using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using ExtendedXmlSerializer.ExtensionModel.Expressions;
 using ExtendedXmlSerializer.ExtensionModel.Instances;
 using ExtendedXmlSerializer.ExtensionModel.Markup;
+using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using System;
 using System.Collections.Generic;
@@ -90,6 +91,19 @@ namespace ExtendedXmlSerializer
 		/// <returns>The configured root context (usually an <see cref="IConfigurationContainer"/>).</returns>
 		public static T EnableRootInstances<T>(this T @this) where T : IRootContext
 			=> @this.Root.With<RootInstanceExtension>().Return(@this);
+
+		/// <summary>
+		/// Do not use this method unless you are familiar with its behavior.  This removes static reference checking which
+		/// speeds up performance but will lead to endless recursion if your graph indeed has a circular reference within it.
+		///
+		/// Note that this is very incompatible with EnableReferences. Please see provided GitHub link for more context and
+		/// information.
+		/// </summary>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <returns>The configured configuration container.</returns>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/511" />
+		public static IConfigurationContainer WithoutReferenceChecking(this IConfigurationContainer @this)
+			=> @this.Root.Apply<IgnoreReferenceCheckExtension>().Return(@this);
 
 		/// <summary>
 		/// This is considered internal framework functionality and is not intended to be used from your code.  However. 😁
