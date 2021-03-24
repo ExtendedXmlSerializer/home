@@ -1,9 +1,9 @@
-using System.Collections.Generic;
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -22,7 +22,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			         .Decorate<IActivation, ReferenceActivation>()
 			         .Decorate<ISerializers, CircularReferenceEnabledSerialization>()
 			         .Decorate<IContents, ReferenceContents>()
-			         .Decorate<IContents, RecursionAwareContents>();
+			         ;
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

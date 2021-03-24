@@ -1,3 +1,4 @@
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Content;
@@ -60,6 +61,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			yield return new MemberFormatExtension();
 			yield return ImmutableArrayExtension.Default;
 			yield return SerializationExtension.Default;
+			yield return RecursionAwareExtension.Default;
 			yield return NullableStructureAwareExtension.Default;
 			yield return new CustomSerializationExtension();
 			yield return CachingExtension.Default;
