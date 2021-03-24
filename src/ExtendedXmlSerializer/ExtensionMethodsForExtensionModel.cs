@@ -100,10 +100,14 @@ namespace ExtendedXmlSerializer
 		/// information.
 		/// </summary>
 		/// <param name="this">The configuration container to configure.</param>
+		/// <param name="enabled">Specifies if static-reference checking should be enabled.  The default behavior is true.
+		/// Specifying false will ignore static reference checking and improve performance for graphs that may have circular
+		/// references (but shouldn't).</param>
 		/// <returns>The configured configuration container.</returns>
 		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/511" />
-		public static IConfigurationContainer WithoutReferenceChecking(this IConfigurationContainer @this)
-			=> @this.Root.Apply<IgnoreReferenceCheckExtension>().Return(@this);
+		public static IConfigurationContainer EnableStaticReferenceChecking(
+			this IConfigurationContainer @this, bool enabled)
+			=> enabled ? @this : @this.Root.Apply<StaticReferenceCheckingExtension>().Return(@this);
 
 		/// <summary>
 		/// This is considered internal framework functionality and is not intended to be used from your code.  However. 😁

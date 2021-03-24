@@ -10,7 +10,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		public void Verify()
 		{
-			var sut      = new ConfigurationContainer().WithoutReferenceChecking().Create().ForTesting();
+			var sut      = new ConfigurationContainer().EnableStaticReferenceChecking(false).Create().ForTesting();
 			var instance = new Subject { Other = new Other() };
 			sut.Cycle(instance).Should().BeEquivalentTo(instance);
 		}

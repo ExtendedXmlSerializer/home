@@ -3,11 +3,11 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class IgnoreReferenceCheckExtension : ISerializerExtension
+	sealed class StaticReferenceCheckingExtension : ISerializerExtension
 	{
-		public static IgnoreReferenceCheckExtension Default { get; } = new IgnoreReferenceCheckExtension();
+		public static StaticReferenceCheckingExtension Default { get; } = new StaticReferenceCheckingExtension();
 
-		IgnoreReferenceCheckExtension() {}
+		StaticReferenceCheckingExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.RegisterInstance<IStaticReferenceSpecification>(Specification.Instance);
