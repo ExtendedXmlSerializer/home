@@ -59,6 +59,16 @@ namespace ExtendedXmlSerializer
 			=> @this.Extend(ThreadProtectionExtension.Default);
 
 		/// <summary>
+		/// Enables thread protection during serializer initialization by locking the recursion-aware contents when serializer
+		/// contents are established.
+		/// </summary>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <returns>The configured configuration container.</returns>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/513" />
+		public static IConfigurationContainer EnableThreadAwareRecursionContent(this IConfigurationContainer @this)
+			=> @this.Extend(ThreadAwareRecursionContentExtension.Default);
+
+		/// <summary>
 		/// Enables member exception handling during serialization and deserialization.  By default when errors are
 		/// encountered during these processes the exception is simply thrown without much context or detail.  This is for
 		/// performance considerations and to cut down on try/catches.  Enabling this feature wraps
