@@ -195,6 +195,53 @@ namespace ExtendedXmlSerializer
 			=> behavior.Get(@this);
 
 		/// <summary>
+		/// Marks the specified type as ignored, meaning it will not emit or read when encountered in a graph.
+		/// </summary>
+		/// <typeparam name="T">The type under configuration.</typeparam>
+		/// <param name="this">The type configuration to configure.</param>
+		/// <returns>The configured type configuration.</returns>
+		public static ITypeConfiguration<T> Ignore<T>(this ITypeConfiguration<T> @this)
+			=> @this.Ignore(@this.Get())
+			        .Return(@this);
+
+		/// <summary>
+		/// Marks the specified type as ignored, meaning it will not emit or read when encountered in a graph.
+		/// </summary>
+		/// <param name="this">The container to configure.</param>
+		/// <param name="type">The type to mark as ignored.</param>
+		/// <returns>The configured container.</returns>
+		public static IConfigurationContainer Ignore(this IConfigurationContainer @this, TypeInfo type)
+			=> @this.Root.With<AllowedTypesExtension>()
+			        .Prohibited.Apply(type)
+			        .Return(@this);
+
+		/// <summary>
+		/// Marks a type as "allowed" so that it is emitted during serialization and read during deserialization.  Note that
+		/// including a type establishes an "allowed-only" policy so that only types that are explicitly included are
+		/// considered for processing.
+		/// </summary>
+		/// <typeparam name="T">The type under configuration.</typeparam>
+		/// <param name="this">The type configuration to configure.</param>
+		/// <returns>The configured type configuration.</returns>
+		public static ITypeConfiguration<T> Include<T>(this ITypeConfiguration<T> @this)
+			=> @this.To<ITypeConfiguration>()
+			        .Include()
+			        .Return(@this);
+
+		/// <summary>
+		/// Marks a type as "allowed" so that it is emitted during serialization and read during deserialization.  Note that
+		/// including a type establishes an "allowed-only" policy so that only types that are explicitly included are
+		/// considered for processing.
+		/// </summary>
+		/// <param name="this">The type configuration to configure.</param>
+		/// <returns>The configured type configuration.</returns>
+		public static ITypeConfiguration Include(this ITypeConfiguration @this)
+			=> @this.Root.With<AllowedTypesExtension>()
+			        .Allowed.Apply(@this.Get())
+			        .Return(@this);
+
+
+		/// <summary>
 		/// Configures a member configuration to only emit when its value meets certain criteria.
 		/// </summary>
 		/// <typeparam name="T">The containing type of the member.</typeparam>
