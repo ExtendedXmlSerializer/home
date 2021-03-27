@@ -4,6 +4,7 @@ using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Parsing;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
@@ -96,7 +97,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 					if (version > _version)
 					{
-						throw new XmlException($"Unknown varsion number {version} for type {typeInfo}.");
+						throw new XmlException($"Unknown version number {version} for type {typeInfo}.");
 					}
 
 					parameter.Set();
@@ -110,14 +111,41 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 						if (migration == null)
 							throw new XmlException(
 							                       $"Migrations for type {fullName} contains invalid migration at index {i}.");
-						_migrations[index]
-							.Invoke(element);
+						_migrations[index](element);
 					}
 
-					var xmlReader = element.CreateReader();
-					XmlParserContexts.Default.Assign(xmlReader.NameTable,
-					                                 XmlParserContexts.Default.Get(reader.NameTable));
-					var result    = _factory.Get(xmlReader);
+					var attributes = element.Descendants()
+					                        .Attributes()
+					                        .Where(a => a.IsNamespaceDeclaration)
+					                        .Distinct()
+					                        .ToArray();
+					foreach (var attribute in attributes)
+					{
+						element.Add(attribute);
+					}
+
+					var native  = element.CreateReader(ReaderOptions.OmitDuplicateNamespaces);
+					var context = XmlParserContexts.Default.Get(reader.NameTable);
+					if (reader.NameTable != null)
+					{
+						var manager = context.NamespaceManager;
+
+						foreach (var attribute in attributes)
+						{
+							var prefix = attribute.Name.LocalName;
+							if (manager.LookupNamespace(prefix) == null)
+							{
+								var @namespace = element.GetNamespaceOfPrefix(prefix);
+								if (@namespace != null)
+								{
+									manager.AddNamespace(prefix, @namespace.NamespaceName);
+								}
+							}
+						}
+					}
+
+					XmlParserContexts.Default.Assign(native.NameTable, context);
+					var result = _factory.Get(native);
 					AssociatedReaders.Default.Assign(result, parameter);
 					return result;
 				}

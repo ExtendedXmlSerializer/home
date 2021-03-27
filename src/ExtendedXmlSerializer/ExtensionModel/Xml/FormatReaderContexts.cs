@@ -6,8 +6,9 @@ using System.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class FormatReaderContexts : ReferenceCacheBase<System.Xml.XmlReader, IFormatReaderContext>,
-	                                    IFormatReaderContexts
+	sealed class FormatReaderContexts
+		: ReferenceCacheBase<System.Xml.XmlReader, IFormatReaderContext>,
+		  IFormatReaderContexts
 	{
 		readonly IIdentityStore     _store;
 		readonly IXmlParserContexts _contexts;
@@ -28,11 +29,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		protected override IFormatReaderContext Create(System.Xml.XmlReader parameter)
 		{
-			var resolver = _contexts.IsSatisfiedBy(parameter.NameTable)
-				               ? _contexts.Get(parameter.NameTable)
-				                          .NamespaceManager
-				               : parameter as IXmlNamespaceResolver ?? Default(parameter);
-			var mapper = new IdentityMapper(_store, resolver);
+			var resolver = Determine(parameter) ?? parameter as IXmlNamespaceResolver ?? Default(parameter);
+			var mapper   = new IdentityMapper(_store, resolver);
 
 			var reflector = new TypePartReflector(mapper, _types);
 			var types     = new TypeParser(reflector);
@@ -40,5 +38,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			var result    = new FormatReaderContext(mapper, parser);
 			return result;
 		}
+
+		IXmlNamespaceResolver Determine(System.Xml.XmlReader parameter)
+			=> parameter.NameTable != null && _contexts.IsSatisfiedBy(parameter.NameTable)
+				   ? _contexts.Get(parameter.NameTable).NamespaceManager
+				   : null;
 	}
 }
