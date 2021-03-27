@@ -17,4 +17,17 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues.Shared.Issue517
 
 	interface Interface1 { }
 
+	namespace ContainerNameSpace
+	{
+		class Container
+		{
+			public List<ItemNameSpace.Item> Childrens { get; set; } = new List<ItemNameSpace.Item>();
+		}
+	}
+
+	namespace ItemNameSpace
+	{
+		class Item { }
+	}
+
 }

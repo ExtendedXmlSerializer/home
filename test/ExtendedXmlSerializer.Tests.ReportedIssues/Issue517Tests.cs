@@ -25,6 +25,23 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			sut.Cycle(instance).Should().BeEquivalentTo(instance);
 		}
 
+		[Fact]
+		public void VerifyAdditional()
+		{
+			var container = new Shared.Issue517.ContainerNameSpace.Container();
+			for (int i = 0; i < 1; i++)
+			{
+				container.Childrens.Add(new Shared.Issue517.ItemNameSpace.Item());
+			}
+
+			IConfigurationContainer config = new ConfigurationContainer();
+			config.Type<Shared.Issue517.ContainerNameSpace.Container>().AddMigration(new EmptyMigration());
+			var serializer = config.Create().ForTesting();
+
+			serializer.Cycle(container).Should().BeEquivalentTo(container);
+
+		}
+
 		public class EmptyMigration : IEnumerable<Action<XElement>>
 		{
 			public IEnumerator<Action<XElement>> GetEnumerator()

@@ -121,7 +121,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 					                        .ToArray();
 					foreach (var attribute in attributes)
 					{
-						element.Add(attribute);
+						if (element.Attribute(attribute.Name) == null)
+						{
+							element.Add(attribute);	
+						}
 					}
 
 					var native  = element.CreateReader(ReaderOptions.OmitDuplicateNamespaces);
