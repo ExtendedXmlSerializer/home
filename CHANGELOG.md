@@ -1,3 +1,13 @@
+# [ExtendedXmlSerializer v3.7.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.0)
+> 03/30/2021 03:23:20 UTC
+##### ``v3.7.0``
+### ✨ New Features &#128640; 
+- Added `ConfigurationContainer.EnableStaticReferenceChecking` #512 @Mike-E-angelo 
+- Added `ConfigurationContainer.EnableThreadAwareRecursionContent` #514 @Mike-E-angelo 
+-  Added basic support for `TypeConfiguration.Ignore` #516 @Mike-E-angelo 
+### &#128027; Bug Fixes &#128295; 
+- Fixed namespace resolution bug in migration extension #518 @Mike-E-angelo 
+
 # [ExtendedXmlSerializer v3.6.2](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.6.2)
 > 03/10/2021 10:27:09 UTC
 ##### ``v3.6.2``
