@@ -1,3 +1,9 @@
+# [ExtendedXmlSerializer v3.7.1](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.1)
+> 05/25/2021 06:34:21 UTC
+##### ``v3.7.1``
+### &#128027; Bug Fixes &#128295; 
+- Fixed `WithUnknownContent.Continue` to account for complex content #522 @Mike-E-angelo 
+
 # [ExtendedXmlSerializer v3.7.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.0)
 > 03/30/2021 03:23:20 UTC
 ##### ``v3.7.0``
