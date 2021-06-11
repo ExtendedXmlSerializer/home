@@ -104,11 +104,13 @@ Install-Package ExtendedXmlSerializer -Source https://ci.appveyor.com/nuget/exte
 Known Issues
 ============
 
-While ExtendedXmlSerializer is [very nice](https://tenor.com/view/nice-very-nice-gif-4295060), it does have some known issues that have been identified by the owners as such.  These issues are considered too significant to address and have been consolidated under our label for your review here:
+While ExtendedXmlSerializer is [very nice](https://tenor.com/view/nice-very-nice-gif-4295060), it does have some known issues that have been identified by its owners.  These issues are considered too significant to address and have been consolidated under a dedicated label for your review here:
 
 https://github.com/ExtendedXmlSerializer/home/labels/known%20issue
 
 Please review these issues before submitting a new issue and/or trialing ExtendedXmlSerializer.
+
+Additionally, please note that [ExtendedXmlSerializer is now essentially in maintenance mode as of March 2020](https://github.com/ExtendedXmlSerializer/home/issues/383).  We will continue to monitor for any major bugs, so [feel free to post an issue](https://github.com/ExtendedXmlSerializer/home/issues/new) if you find one.  However, major tasks and/or feature requests and the like will be deferred to the community.
 
 Featured Documentation
 ======================
@@ -140,7 +142,7 @@ Notable Contributors
 ========================
 
 - [Wojciech Nagórski](https://github.com/WojciechNagorski) - v1.x Author.
-- [Mike-EEE](https://github.com/Mike-EEE) - v2.x Author.
+- [Mike-E-angelo](https://github.com/Mike-E-angelo) - v2.x+ Author.
 
 Mentions
 ========
@@ -150,15 +152,3 @@ Mentions
 ExtendedXmlSerializer is proudly developed and maintained with ReSharper Ultimate.
 
 <br />
-<br />
-
-[<img src="https://raw.githubusercontent.com/DragonSpark/blog.dragonspark.us/a49ead8aa87f61dd6c4d6f5999e6d01b8823d57b/static/images/OzCode.svg?sanitize=true" height="200" />](https://www.oz-code.com/)
-
-Magical debugging is courtesy of OzCode.
-
-<br />
-<br />
-
-[<img src="https://raw.githubusercontent.com/SuperDotNet/superdotnet.run/c83812c7120c1d6a1cb0db13bee2d4ff0a5fc526/static/images/CodeCompare.svg?sanitize=true" height="200" />](https://www.devart.com/codecompare/)
-
-File comparison and conflict resolution handled by DevArt's Code Compare.
