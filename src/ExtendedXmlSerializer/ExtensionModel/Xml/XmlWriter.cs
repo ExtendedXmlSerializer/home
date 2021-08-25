@@ -11,6 +11,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+
 // ReSharper disable TooManyDependencies
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
@@ -55,6 +56,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			var identifier = identity.Identifier.NullIfEmpty();
 			if (identifier != null)
 			{
+				switch (Count)
+				{
+					case 0:
+						Add(string.Empty, identifier);
+						break;
+				}
+
 				_writer.WriteStartElement(identity.Name, identifier);
 			}
 			else
@@ -115,16 +123,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		string Prefix(string parameter) => Lookup(parameter) ?? CreatePrefix(parameter);
 
 		string Lookup(string parameter)
-		{
-			var lookup = _prefixes.Get(parameter);
-			if (parameter != null && lookup == string.Empty && !ContainsKey(string.Empty))
-			{
-				Add(string.Empty, parameter);
-			}
-
-			var result = parameter == this.Get(string.Empty) || parameter == null ? string.Empty : lookup;
-			return result;
-		}
+			=> parameter != null
+				   ? parameter == this.Get(string.Empty) ? string.Empty : _prefixes.Get(parameter)
+				   : string.Empty;
 
 		string CreatePrefix(string identifier)
 		{
@@ -140,7 +141,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		string Create(string parameter)
 		{
-			var result = _formatter.Get(Count + 1);
+			var result = _formatter.Get(Count);
 			Add(result, parameter);
 			return result;
 		}

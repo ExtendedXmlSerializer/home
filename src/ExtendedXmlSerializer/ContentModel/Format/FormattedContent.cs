@@ -1,5 +1,5 @@
-using System;
 using ExtendedXmlSerializer.Core.Sources;
+using System;
 
 namespace ExtendedXmlSerializer.ContentModel.Format
 {
@@ -7,12 +7,8 @@ namespace ExtendedXmlSerializer.ContentModel.Format
 	{
 		readonly Func<IFormatWriter, IFormatter<T>> _source;
 
-		public FormattedContent(Func<IFormatWriter, IFormatter<T>> source)
-		{
-			_source = source;
-		}
+		public FormattedContent(Func<IFormatWriter, IFormatter<T>> source) => _source = source;
 
-		public string Get(IFormatWriter writer, T instance) => _source(writer)
-			.Get(instance);
+		public string Get(IFormatWriter writer, T instance) => _source(writer).Get(instance);
 	}
 }
