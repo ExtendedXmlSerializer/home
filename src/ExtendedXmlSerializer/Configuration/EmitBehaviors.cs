@@ -19,7 +19,8 @@ namespace ExtendedXmlSerializer.Configuration
 
 		/// <summary>
 		/// Follows the classic serializer behavior for emitting content.  For classic serialization, the serializer always
-		/// emits the value when it is a <see cref="Enum"/>.  Otherwise, it emits if the value is assigned (non-null).
+		/// emits the value when it is a <see cref="Enum"/> and empty lists.  Otherwise, it emits if the value is assigned
+		/// (non-null).
 		/// </summary>
 		public static IEmitBehavior Classic { get; } =
 			new EmitBehavior(new AddAlteration(ClassicAllowedMemberValues.Default));
