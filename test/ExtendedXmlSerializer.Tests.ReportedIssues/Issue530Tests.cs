@@ -37,6 +37,28 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                 @"<?xml version=""1.0"" encoding=""utf-8""?><Issue530Tests-EmitMe xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests.ReportedIssues""><Message>This is emitted</Message></Issue530Tests-EmitMe>");
 		}
 
+		[Fact]
+		public void VerifyNullable()
+		{
+			var instance = new TestClass { ValueList = new List<double>() };
+
+			var sut = new ConfigurationContainer().UseAutoFormatting()
+			                                      .Type<double?>()
+			                                      .EmitWhen(x => x.HasValue)
+			                                      .Emit(EmitBehaviors.Classic)
+			                                      .Create()
+			                                      .ForTesting();
+
+			sut.Cycle(instance).Should().BeEquivalentTo(instance);
+		}
+
+		class TestClass
+		{
+			public double? Value1;
+
+			public List<double> ValueList;
+		}
+
 		sealed class Subject
 		{
 			public List<string> List { get; set; }
