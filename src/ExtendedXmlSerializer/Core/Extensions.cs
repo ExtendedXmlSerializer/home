@@ -35,7 +35,7 @@ namespace ExtendedXmlSerializer.Core
 			IEqualityComparer<TKey> comparer = null)
 			=> @this.ToDictionary(x => x.Key, x => x.Value, comparer);
 
-		
+
 
 		public static ITypedSortOrder Sort<T>(this ITypedSortOrder @this, int sort)
 		{

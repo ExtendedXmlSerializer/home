@@ -43,16 +43,14 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var instance = new TestClass { ValueList = new List<double>() };
 
 			var sut = new ConfigurationContainer().UseAutoFormatting()
-			                                      .Type<double?>()
-			                                      .EmitWhen(x => x.HasValue)
-			                                      .Emit(EmitBehaviors.Classic)
+			                                      .Emit(EmitBehaviors.Always)
 			                                      .Create()
 			                                      .ForTesting();
 
 			sut.Cycle(instance).Should().BeEquivalentTo(instance);
 		}
 
-		class TestClass
+		public class TestClass
 		{
 			public double? Value1;
 
