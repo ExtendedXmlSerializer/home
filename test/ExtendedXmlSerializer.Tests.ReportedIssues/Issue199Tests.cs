@@ -21,8 +21,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                            .Register()
 			                                            .Converter()
 			                                            // Totally cheating here. Put formatter logic to get what you want:
-			                                            .ByCalling(x => "2018-08-07+10:00",
-			                                                     x => new DateTime(2018, 8, 7, 10, 0, 0))
+			                                            .ByCalling(_ => "2018-08-07+10:00",
+			                                                     _ => new DateTime(2018, 8, 7, 10, 0, 0))
 			                                            .InspectingType<PatientVerificationRequest>()
 			                                            .Create()
 			                                            .ForTesting();
@@ -36,14 +36,14 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			var registry =
 				new PrefixRegistryExtension(new AllTypesInSameNamespace<PatientVerificationRequest>()
-					                            .ToDictionary(x => x, x => "q"));
+					                            .ToDictionary(x => x, _ => "q"));
 			var container = new ConfigurationContainer().Extend(registry)
 			                                            .Type<DateTime>()
 			                                            .Register()
 			                                            .Converter()
 			                                            // Totally cheating here. Put formatter logic to get what you want:
-			                                            .ByCalling(x => "2018-08-07+10:00",
-			                                                     x => new DateTime(2018, 8, 7, 10, 0, 0))
+			                                            .ByCalling(_ => "2018-08-07+10:00",
+			                                                     _ => new DateTime(2018, 8, 7, 10, 0, 0))
 			                                            .InspectingType<PatientVerificationRequest>()
 			                                            .Create()
 			                                            .ForTesting();

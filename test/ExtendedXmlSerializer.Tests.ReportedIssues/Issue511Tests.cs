@@ -1,6 +1,7 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Tests.ReportedIssues.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -17,11 +18,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		class Subject
 		{
-			public Other Other { get; set; }
+			public Other Other { [UsedImplicitly] get; set; }
 		}
 
 		class Other
 		{
+			[UsedImplicitly]
 			public Subject Subject { get; set; }
 		}
 	}

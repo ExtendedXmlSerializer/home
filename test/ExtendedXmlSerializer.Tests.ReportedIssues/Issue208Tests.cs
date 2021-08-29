@@ -19,7 +19,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var subject = "Hello World!";
 
 			var loop = Parallel.For(0, 1000,
-			                        index => container.Cycle(subject)
+			                        _ => container.Cycle(subject)
 			                                          .Should()
 			                                          .Be(subject));
 			while (!loop.IsCompleted)

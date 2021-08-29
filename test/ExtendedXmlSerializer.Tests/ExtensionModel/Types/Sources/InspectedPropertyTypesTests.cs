@@ -1,106 +1,127 @@
-﻿using System;
+﻿using ExtendedXmlSerializer.ExtensionModel.Types.Sources;
+using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using ExtendedXmlSerializer.ExtensionModel.Types.Sources;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types.Sources
 {
-    public class InspectedPropertyTypesTests
-    {
+	public class InspectedPropertyTypesTests
+	{
 		[Fact]
-	    public void ShouldHandleSingleProperty()
-	    {
-		    var types = new InspectedPropertyTypes<Vehicle>();
+		public void ShouldHandleSingleProperty()
+		{
+			var types = new InspectedPropertyTypes<Vehicle>();
 
-		    var result = types.Get();
+			var result = types.Get();
 
-		    Assert.Equal(2, result.Length);
-		    Assert.Contains(result, t => t == typeof(Vehicle));
-		    Assert.Contains(result, t => t == typeof(Engine));
-	    }
-
-
-	    [Fact]
-	    public void ShouldIgnoreExcludedProperties()
-	    {
-		    var types = new InspectedPropertyTypes<AlmostEmptyClass>();
-
-		    var result = types.Get();
-
-		    Assert.Single(result);
-		    Assert.Contains(result, t => t == typeof(AlmostEmptyClass));
-	    }
-
-
+			Assert.Equal(2, result.Length);
+			Assert.Contains(result, t => t == typeof(Vehicle));
+			Assert.Contains(result, t => t == typeof(Engine));
+		}
 
 		[Fact]
-	    public void SamePropertyAsParentShouldNotCauseStackOverflow()
-	    {
-            var types = new InspectedPropertyTypes<Human>();
+		public void ShouldIgnoreExcludedProperties()
+		{
+			var types = new InspectedPropertyTypes<AlmostEmptyClass>();
 
-            var result = types.Get();
+			var result = types.Get();
 
-            Assert.Single(result);
-            Assert.Contains(result, t => t == typeof(Human));
-	    }
+			Assert.Single(result);
+			Assert.Contains(result, t => t == typeof(AlmostEmptyClass));
+		}
 
-	    [Fact]
-	    public void ShouldHandleListGracefully()
-	    {
-		    var types = new InspectedPropertyTypes<Zoo>();
+		[Fact]
+		public void SamePropertyAsParentShouldNotCauseStackOverflow()
+		{
+			var types = new InspectedPropertyTypes<Human>();
 
-		    var result = types.Get();
+			var result = types.Get();
 
-		    Assert.Equal(2, result.Length);
-		    Assert.Contains(result, t => t == typeof(Zoo));
-		    Assert.Contains(result, t => t == typeof(Animal));
-	    }
+			Assert.Single(result);
+			Assert.Contains(result, t => t == typeof(Human));
+		}
 
-	    class Vehicle
-	    {
-		    public Engine Engine { get; set; }
-	    }
+		[Fact]
+		public void ShouldHandleListGracefully()
+		{
+			var types = new InspectedPropertyTypes<Zoo>();
 
-	    class Engine
-	    {
-	    }
+			var result = types.Get();
 
-	    class AlmostEmptyClass
-	    {
-		    public int Int { get; set; }
-		    public uint UInt { get; set; }
-		    public string String { get; set; }
-		    public long Long { get; set; }
-		    public ulong ULong { get; set; }
-		    public short Short { get; set; }
-		    public ushort UShort { get; set; }
-		    public double Double { get; set; }
-		    public bool Bool { get; set; }
-		    public decimal Decimal { get; set; }
-		    public byte Byte { get; set; }
-		    public sbyte SByte { get; set; }
-		    public DateTime DateTime { get; set; }
+			Assert.Equal(2, result.Length);
+			Assert.Contains(result, t => t == typeof(Zoo));
+			Assert.Contains(result, t => t == typeof(Animal));
+		}
 
-			[XmlIgnore]
-		    public Animal Animal { get; set; }
-	    }
+		class Vehicle
+		{
+			[UsedImplicitly]
+			public Engine Engine { get; set; }
+		}
 
-	    class Human
-	    {
-		    public Human Mother { get; set; }
-		    public Human Father { get; set; }
-	    }
+		class Engine {}
 
-	    class Zoo
-	    {
-		    public List<Animal> Animals { get; set; }
-	    }
+		class AlmostEmptyClass
+		{
+			[UsedImplicitly]
+			public int Int { get; set; }
 
-	    class Animal
-	    {
-	    }
+			[UsedImplicitly]
+			public uint UInt { get; set; }
+
+			[UsedImplicitly]
+			public string String { get; set; }
+
+			[UsedImplicitly]
+			public long Long { get; set; }
+
+			[UsedImplicitly]
+			public ulong ULong { get; set; }
+
+			[UsedImplicitly]
+			public short Short { get; set; }
+
+			[UsedImplicitly]
+			public ushort UShort { get; set; }
+
+			[UsedImplicitly]
+			public double Double { get; set; }
+
+			[UsedImplicitly]
+			public bool Bool { get; set; }
+
+			[UsedImplicitly]
+			public decimal Decimal { get; set; }
+
+			[UsedImplicitly]
+			public byte Byte { get; set; }
+
+			[UsedImplicitly]
+			public sbyte SByte { get; set; }
+
+			[UsedImplicitly]
+			public DateTime DateTime { get; set; }
+
+			[XmlIgnore][UsedImplicitly]
+			public Animal Animal { get; set; }
+		}
+
+		class Human
+		{
+			[UsedImplicitly]
+			public Human Mother { get; set; }
+			[UsedImplicitly]
+			public Human Father { get; set; }
+		}
+
+		class Zoo
+		{
+			[UsedImplicitly]
+			public List<Animal> Animals { get; set; }
+		}
+
+		class Animal {}
 	}
-
-
 }

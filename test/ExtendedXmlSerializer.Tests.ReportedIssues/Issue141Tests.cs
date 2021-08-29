@@ -53,7 +53,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var serializer = new ConfigurationContainer().Emit(EmitBehaviors.WhenModified)
 			                                             .Type<ClassWithDefaultString>()
 			                                             .Member(x => x.SubNode)
-			                                             .EmitWhen(x => true)
+			                                             .EmitWhen(_ => true)
 			                                             .Create();
 
 			var xml          = serializer.Serialize(new ClassWithDefaultString() {Name = null, SubNode = null});

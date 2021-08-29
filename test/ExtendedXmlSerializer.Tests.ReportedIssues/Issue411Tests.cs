@@ -12,7 +12,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			var serializer = new ConfigurationContainer().Type<SubjectBase>()
 			                                             .Member(x => x.Message)
-			                                             .EmitWhen(x => false)
+			                                             .EmitWhen(_ => false)
 			                                             .Create()
 			                                             .ForTesting();
 
@@ -25,7 +25,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			var serializer = new ConfigurationContainer().Type<SubjectBase>()
 			                                             .Member(x => x.Message)
-			                                             .EmitWhenInstance(x => false)
+			                                             .EmitWhenInstance(_ => false)
 			                                             .Create()
 			                                             .ForTesting();
 

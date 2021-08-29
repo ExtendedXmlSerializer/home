@@ -46,7 +46,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			public IEnumerator<Action<XElement>> GetEnumerator()
 			{
-				yield return x => {}; //Do nothing
+				yield return _ => {}; //Do nothing
 			}
 
 			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

@@ -171,7 +171,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			public MemberComparer(ITypeComparer type) => _type = type;
 
 			public bool Equals(MemberInfo x, MemberInfo y)
-				=> x.Name.Equals(y.Name) && _type.Equals(x.ReflectedType.GetTypeInfo(), y.ReflectedType.GetTypeInfo());
+				=> x.Name.Equals(y.Name) && _type.Equals(x.ReflectedType?.GetTypeInfo(), y.ReflectedType?.GetTypeInfo());
 
 			public int GetHashCode(MemberInfo obj) => 0;
 		}
