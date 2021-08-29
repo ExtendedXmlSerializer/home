@@ -1,13 +1,12 @@
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
 	sealed class Converters : IConverters
 	{
-		readonly IEnumerable<IConverter> _converters;
+		readonly IConverter[] _converters;
 
-		public Converters(IEnumerable<IConverter> converters) => _converters = converters;
+		public Converters(IConverter[] converters) => _converters = converters;
 
 		public IConverter Get(TypeInfo parameter)
 		{
