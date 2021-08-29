@@ -66,9 +66,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		sealed class EmitMe
 		{
-			public string Message { get; set; }
+			public string Message { [UsedImplicitly] get; set; }
 
-			public DoNotEmitMe NotEmitted { get; set; }
+			public DoNotEmitMe NotEmitted { [UsedImplicitly] get; set; }
 		}
 
 		sealed class DoNotEmitMe

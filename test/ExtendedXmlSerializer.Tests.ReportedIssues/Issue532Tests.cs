@@ -2,10 +2,8 @@
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Tests.ReportedIssues.Support;
 using FluentAssertions;
-using System;
-using System.Collections.Generic;
+using JetBrains.Annotations;
 using System.Reflection;
-using System.Text;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -59,9 +57,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		sealed class Root
 		{
-			public bool? On { get; set; }
+			public bool? On { [UsedImplicitly] get; set; }
 
-			public Status? Current { get; set; }
+			public Status? Current { [UsedImplicitly] get; set; }
 		}
 
 		private class NullableStatusConverter : IConverter<Status?>
