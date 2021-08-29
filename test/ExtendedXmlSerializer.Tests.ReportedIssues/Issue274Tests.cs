@@ -9,7 +9,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		void Verify()
 		{
 			new ConfigurationContainer().WithUnknownContent()
-			                            .Call(reader => {});
+			                            .Call(_ => {});
 		}
 	}
 }

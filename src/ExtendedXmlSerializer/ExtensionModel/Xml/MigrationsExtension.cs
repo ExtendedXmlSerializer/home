@@ -4,7 +4,6 @@ using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Parsing;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
@@ -89,6 +88,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 					_property       = property;
 				}
 
+				// ReSharper disable once CognitiveComplexity
+				// ReSharper disable once ExcessiveIndentation
 				public IFormatReader Get(IFormatReader parameter)
 				{
 					var typeInfo = _classification.Get(parameter) ?? _type;
@@ -123,7 +124,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 					{
 						if (element.Attribute(attribute.Name) == null)
 						{
-							element.Add(attribute);	
+							element.Add(attribute);
 						}
 					}
 

@@ -1,6 +1,7 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Tests.ReportedIssues.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using Xunit;
 
@@ -59,6 +60,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		sealed class Subject
 		{
+			[UsedImplicitly]
 			public List<string> List { get; set; }
 		}
 
