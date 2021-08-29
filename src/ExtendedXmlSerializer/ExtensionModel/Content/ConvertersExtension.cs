@@ -29,8 +29,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		/// <inheritdoc />
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.RegisterInstance(Converters.ToArray()
-			                                        .Hide())
+			=> parameter.RegisterInstance(Converters.ToArray())
 			            .Register<IConverters, Converters>()
 			            .Decorate<IConverters, EnumerationConverters>()
 			            .Register<ISerializers, Serializers>()

@@ -1,5 +1,6 @@
 ﻿using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Format;
 using System;
 using System.Reflection;
@@ -19,17 +20,25 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 		sealed class NullableStructureAwareContents : IContents
 		{
-			readonly IContents _previous;
+			readonly IConverters _converters;
+			readonly IContents   _previous;
 
-			public NullableStructureAwareContents(IContents previous) => _previous = previous;
+			public NullableStructureAwareContents(IConverters converters, IContents previous)
+			{
+				_converters = converters;
+				_previous   = previous;
+			}
 
 			public ISerializer Get(TypeInfo parameter)
 			{
 				var underlying = Nullable.GetUnderlyingType(parameter);
-				var decorate   = underlying != null;
-				var serializer = _previous.Get(decorate ? underlying : parameter);
-				var result     = decorate ? new Serializer(new Reader(serializer), serializer) : serializer;
-				return result;
+				if (underlying != null)
+				{
+					var serializer = _previous.Get(_converters.Get(parameter) != null ? parameter : underlying);
+					return new Serializer(new Reader(serializer), serializer);
+				}
+
+				return _previous.Get(parameter);
 			}
 		}
 

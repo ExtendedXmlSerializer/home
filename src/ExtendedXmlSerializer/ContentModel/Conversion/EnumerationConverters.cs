@@ -7,8 +7,10 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
 	sealed class EnumerationConverters : ConditionalSource<TypeInfo, IConverter>, IConverters
 	{
-		public EnumerationConverters(IConverters converters)
-			: base(IsAssignableSpecification<Enum>.Default, Converters.Default, converters) {}
+		public EnumerationConverters(IConverters previous) : this(previous, Converters.Default) {}
+
+		public EnumerationConverters(IConverters previous, IConverters converters)
+			: base(IsAssignableSpecification<Enum>.Default, converters, previous) {}
 
 		sealed class Converters : IConverters
 		{

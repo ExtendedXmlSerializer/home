@@ -23,11 +23,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public bool IsSatisfiedBy(TKey parameter) => _store.ContainsKey(parameter);
 
 		/// <inheritdoc />
-		public virtual TValue Get(TKey parameter)
-		{
-			TValue result;
-			return _store.TryGetValue(parameter, out result) ? result : default;
-		}
+		public virtual TValue Get(TKey parameter) => _store.TryGetValue(parameter, out var result) ? result : default;
 
 		/// <inheritdoc />
 		public void Assign(TKey key, TValue value) => _store[key] = value;
