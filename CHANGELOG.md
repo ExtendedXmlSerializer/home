@@ -1,3 +1,14 @@
+# [ExtendedXmlSerializer v3.7.2](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.2)
+> 08/31/2021 11:19:12 UTC
+##### ``v3.7.2``
+### &#128027; Bug Fixes &#128295; 
+- Adjusted writer to properly store root/default namespace #529 @Mike-E-angelo 
+- Accounted for converter registration with nullable structures #534 @Mike-E-angelo 
+- Accounted for empty content for nullable attributes #531 @Mike-E-angelo 
+### Other Changes 
+- Upgraded tests to netcoreapp3.1 #536 @Mike-E-angelo 
+- Attended to warnings #537 @Mike-E-angelo 
+
 # [ExtendedXmlSerializer v3.7.1](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.1)
 > 05/25/2021 06:34:21 UTC
 ##### ``v3.7.1``
