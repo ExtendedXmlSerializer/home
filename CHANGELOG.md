@@ -1,3 +1,9 @@
+# [ExtendedXmlSerializer v3.7.3](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.3)
+> 08/31/2021 12:15:48 UTC
+##### ``v3.7.3``
+This is solely a CI-based release as build problems occurred with the previous one:
+https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.2
+
 # [ExtendedXmlSerializer v3.7.2](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.2)
 > 08/31/2021 11:19:12 UTC
 ##### ``v3.7.2``
