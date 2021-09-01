@@ -56,13 +56,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			var identifier = identity.Identifier.NullIfEmpty();
 			if (identifier != null)
 			{
-				switch (Count)
-				{
-					case 0:
-						Add(string.Empty, identifier);
-						break;
-				}
-
 				_writer.WriteStartElement(identity.Name, identifier);
 			}
 			else
@@ -141,7 +134,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		string Create(string parameter)
 		{
-			var result = _formatter.Get(Count);
+			var result = _formatter.Get(Count + 1);
 			Add(result, parameter);
 			return result;
 		}
