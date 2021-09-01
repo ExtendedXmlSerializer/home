@@ -16,5 +16,16 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			path.Namespace.Should().BeNull();
 			path.Path.Should().Be("Some-Assembly.Tests");
 		}
+
+		[Fact]
+		public void VerifyWithNamespace()
+		{
+			const string input = "clr-namespace:Some.Namespace.Here;assembly=Some-Assembly.Tests";
+			var path = ExtendedXmlSerializer.ContentModel.Reflection.AssemblyPathParser.Default.ToParser()
+			                                .Parse(input);
+			path.Namespace.Should().Be("Some.Namespace.Here");
+			path.Path.Should().Be("Some-Assembly.Tests");
+		}
+
 	}
 }
