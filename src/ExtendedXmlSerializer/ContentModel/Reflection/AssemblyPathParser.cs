@@ -8,7 +8,7 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 	{
 		readonly static Parser<string>
 			Namespace = new Core.Parsing.Identifier('_', '.'),
-			Assembly  = new Core.Parsing.Identifier(',', ' ', '_', '.');
+			Assembly  = new Core.Parsing.Identifier(',', '-', ' ', '_', '.');
 
 		public static AssemblyPathParser Default { get; } = new AssemblyPathParser();
 
