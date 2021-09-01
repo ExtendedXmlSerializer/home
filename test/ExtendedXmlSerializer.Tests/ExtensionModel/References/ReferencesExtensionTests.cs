@@ -327,6 +327,63 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		}
 
 		[Fact]
+		public void DictionaryPrevious()
+		{
+			var container = new ConfigurationContainer();
+			container.Type<TestClassReference>()
+			         .EnableReferences(x => x.Id);
+			var support = new SerializationSupport(container);
+
+			var instance =
+				new TestClassReferenceWithDictionary
+				{
+					Parent = new TestClassReference
+					{
+						Id   = 1,
+						Name = "Hello World, this is a Name!"
+					}
+				};
+			var other = new TestClassReference
+				{ Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent };
+
+			instance.All = new Dictionary<int, IReference>
+			{
+				{
+					3,
+					new TestClassReference { Id = 3, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent }
+				},
+				{ 4, new TestClassReference { Id = 4, ObjectA = other, ReferenceToObjectA = other } },
+				{ 2, other },
+				{ 1, instance.Parent }
+			};
+
+			var actual =
+				support.Deserialize<TestClassReferenceWithDictionary>(
+				                                                      @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassReferenceWithDictionary xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><Parent exs:type=""TestClassReference"" Id=""1"" /><All><sys:Item><Key>3</Key><Value exs:type=""TestClassReference"" Id=""3""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></Value></sys:Item><sys:Item><Key>4</Key><Value exs:type=""TestClassReference"" Id=""4""><ObjectA exs:type=""TestClassReference"" Id=""2""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></ObjectA><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""2"" /></Value></sys:Item><sys:Item><Key>2</Key><Value exs:type=""TestClassReference"" exs:entity=""2"" /></sys:Item><sys:Item><Key>1</Key><Value exs:type=""TestClassReference"" exs:entity=""1"" /></sys:Item></All></TestClassReferenceWithDictionary>");
+			Assert.NotNull(actual.Parent);
+			var list = actual.All;
+			Assert.Same(actual.Parent, list[3]
+			                           .To<TestClassReference>()
+			                           .ObjectA);
+			Assert.Same(actual.Parent, list[3]
+			                           .To<TestClassReference>()
+			                           .ReferenceToObjectA);
+			Assert.Same(list[4]
+			            .To<TestClassReference>()
+			            .ObjectA, list[4]
+			                      .To<TestClassReference>()
+			                      .ReferenceToObjectA);
+			Assert.Same(list[4]
+			            .To<TestClassReference>()
+			            .ObjectA.To<TestClassReference>()
+			            .ObjectA, actual.Parent);
+			Assert.Same(list[4]
+			            .To<TestClassReference>()
+			            .ObjectA, list[2]);
+			Assert.Same(actual.Parent, list[1]);
+		}
+
+		[Fact]
 		public void OptimizedDictionary()
 		{
 			var container = new ConfigurationContainer().UseOptimizedNamespaces()
