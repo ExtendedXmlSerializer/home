@@ -1,3 +1,9 @@
+# [ExtendedXmlSerializer v3.7.4](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.4)
+> 09/01/2021 16:06:51 UTC
+##### ``v3.7.4``
+### &#128027; Bug Fixes &#128295; 
+- Fixed problem with namespace not emitting properly for optimized name… #546 @Mike-E-angelo 
+
 # [ExtendedXmlSerializer v3.7.3](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.3)
 > 08/31/2021 12:15:48 UTC
 ##### ``v3.7.3``
