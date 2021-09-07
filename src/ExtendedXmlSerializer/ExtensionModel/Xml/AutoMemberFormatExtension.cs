@@ -105,8 +105,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			{
 				var underlying = Nullable.GetUnderlyingType(parameter);
 				var decorate   = underlying != null;
-				var converter  = _previous.Get(underlying ?? parameter);
-				var result     = decorate ? new Converter(converter) : converter;
+				var converter  = (decorate ? _previous.Get(underlying) : null) ?? _previous.Get(parameter);
+				var result     = decorate && converter != null ? new Converter(converter) : converter;
 				return result;
 			}
 		}
