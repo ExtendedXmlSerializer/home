@@ -50,7 +50,7 @@ https://github.com/ExtendedXmlSerializer/home/blob/master/CHANGELOG.md
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" PrivateAssets="All" />
+    <PackageReference Include="JetBrains.Annotations" Version="2021.2.0" PrivateAssets="All" />
     <PackageReference Include="LightInject" Version="6.3.5" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
     <PackageReference Include="NReco.LambdaParser" Version="1.0.12" />
