@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.Tests.Performance.Model;
 
 namespace ExtendedXmlSerializer.Tests.Performance
 {
-	[ShortRunJob]
+    [ShortRunJob]
     [MemoryDiagnoser]
 	public class LegacyExtendedXmlSerializerTest
 	{
