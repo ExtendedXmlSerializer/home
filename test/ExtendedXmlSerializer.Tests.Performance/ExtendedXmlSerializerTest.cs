@@ -25,8 +25,6 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Jobs;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Performance.Model;
@@ -34,6 +32,7 @@ using ExtendedXmlSerializer.Tests.Performance.Model;
 namespace ExtendedXmlSerializer.Tests.Performance
 {
     [ShortRunJob]
+    [MemoryDiagnoser]
     public class ExtendedXmlSerializerTest
     {
         readonly IExtendedXmlSerializer _serializer = new ConfigurationContainer().EnableClassicMode().Create();
