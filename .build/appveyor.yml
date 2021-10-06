@@ -150,6 +150,6 @@ for:
     - provider: NuGet
       name: production
       api_key:
-        secure: 3xv+c6PbtnW3tx/MI4eapFy0s+aCkvKUXtP3CfaWQJd/+Uuu39NTKYqGZTt2QVAp
+        secure: GeCpH0D7n2TbpoGO+/AMPSyePEr9Eua+bZ8rzeoli7HgOMAQJ8Kw3UlsgMSRD+aZ
   on_success:
     - ps: .\.build\Deploy-Documentation.ps1 
