@@ -32,6 +32,7 @@ using ExtendedXmlSerializer.Tests.Performance.Model;
 namespace ExtendedXmlSerializer.Tests.Performance
 {
     [ShortRunJob]
+    [MemoryDiagnoser]
     public class XmlSerializerTest
     {
         readonly IXmlReaderFactory _readerFactory = new XmlReaderFactory();
