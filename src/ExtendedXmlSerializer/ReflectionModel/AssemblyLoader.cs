@@ -38,14 +38,15 @@ namespace ExtendedXmlSerializer.ReflectionModel
 					for (var i = 0; i < length; i++)
 					{
 						var assembly = _loaded[i];
-						if (assembly.GetName()
-						            .Name == parameter)
+						if (assembly.GetName().Name == parameter)
 						{
 							return assembly;
 						}
 					}
 
-					throw;
+#pragma warning disable CS0618
+					return Assembly.LoadWithPartialName(parameter);
+#pragma warning restore CS0618
 				}
 			}
 		}
