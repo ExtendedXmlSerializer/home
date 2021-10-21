@@ -44,7 +44,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 						}
 					}
 
-					throw new InvalidOperationException($"Could not load assembly '{parameter}'.", error);
+					throw new InvalidOperationException($"Could not load assembly '{parameter}'.  Are you sure it exists?", error);
 				}
 			}
 		}
