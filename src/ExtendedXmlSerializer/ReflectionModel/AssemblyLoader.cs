@@ -32,7 +32,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 				{
 					return Assembly.LoadFile(_path(parameter));
 				}
-				catch
+				catch (Exception error)
 				{
 					var length = _loaded.Length;
 					for (var i = 0; i < length; i++)
@@ -44,9 +44,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 						}
 					}
 
-#pragma warning disable CS0618
-					return Assembly.LoadWithPartialName(parameter);
-#pragma warning restore CS0618
+					throw new InvalidOperationException($"Could not load assembly '{parameter}'.  Are you sure it exists?", error);
 				}
 			}
 		}
