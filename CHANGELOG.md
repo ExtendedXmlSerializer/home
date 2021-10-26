@@ -1,3 +1,12 @@
+# [ExtendedXmlSerializer v3.7.6](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.6)
+> 10/26/2021 08:41:13 UTC
+##### ``v3.7.6``
+### &#128027; Bug Fixes &#128295; 
+- Improved Unknown Assembly Experience/Messaging #559 @Mike-E-angelo 
+### Other Changes 
+- Update BenchmarkDotNet #553 @WojciechNagorski 
+- Update packages #554 @WojciechNagorski 
+
 # [ExtendedXmlSerializer v3.7.5](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.5)
 > 09/07/2021 13:03:29 UTC
 ##### ``v3.7.5``
@@ -232,11 +241,4 @@ A patch release that addresses reported issues since the 3.0.0 release.
 ### Other Changes 
 - Updated NuGet references. #336 @Mike-EEE 
 
-# [ExtendedXmlSerializer v3.0.1](https://github.com/ExtendedXmlSerializer/home/releases/tag/3.0.1)
-> 12/03/2019 10:09:25 UTC
-##### ``3.0.1``
-Every major release has one. &#128517; This minor patch fixing release is basically ironing out identified issues found during the deployment process of version `3.0.0`.
-
-### Other Changes
-- Fixed deployment issues #334 @Mike-EEE
 
