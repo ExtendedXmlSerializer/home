@@ -10,13 +10,13 @@ environment:
   DEPLOY_USER: ExtendedXmlSerializer Automation via AppVeyor
   DEPLOY_EMAIL: ExtendedXmlSerializer@users.noreply.github.com
 
-image: Visual Studio 2019
+# image: Visual Studio 2019
 
 skip_tags: true
 skip_non_tags: true
 skip_commits:
   author: /Automation Agent/
- 
+
 only_commits:
   files:
     - '*.sln'
@@ -45,7 +45,7 @@ for:
   branches:
     only:
       - master
-  
+
   install:
     - ps: . .\.build\Install.ps1
 
@@ -53,21 +53,21 @@ for:
   - ps: |
         Exec { & dotnet build $env:BUILD_SOLUTION_PATH -c Release }
         Exec { & dotnet pack $env:BUILD_SOLUTION_PATH -c Release }
-  
+
   notifications:
     - provider: GitHubPullRequest
       template: |
         {{#passed}}:white_check_mark:{{/passed}}{{#failed}}:x:{{/failed}} [Build {{&projectName}} {{buildVersion}} {{status}}]({{buildUrl}}) (commit {{commitUrl}} by @{{&commitAuthorUsername}})
-    
+
         {{#passed}}
         Install it by running the following command in [Package Manager Console](https://docs.microsoft.com/en-us/nuget/consume-packages/install-use-packages-powershell):
-    
+
         ```
         Install-Package ExtendedXmlSerializer -Version {{buildVersion}} -Source https://ci.appveyor.com/nuget/extendedxmlserializer-preview
         ```
-        
+
         Problems with the above command?  You may be running into this known issue here:
-        https://github.com/NuGet/Home/issues/7189        
+        https://github.com/NuGet/Home/issues/7189
         {{/passed}}
       on_build_success: true
 
@@ -77,7 +77,7 @@ for:
   nuget:
     project_feed: true
     disable_publish_on_pr: false
-    
+
   artifacts:
     - path: src\**\*.nupkg
       name: 'Preview Package $(APPVEYOR_BUILD_VERSION)'
@@ -87,47 +87,47 @@ for:
   branches:
     only:
       - /debug\/\w*/
-  
+
   cache:
     - '%USERPROFILE%\.ssh\known_hosts'
 
   install:
     - ps: . .\.build\Install.ps1
     - ps: .\.build\Prepare-Deployment.ps1
-  
+
   build_script:
     - ps: Exec { & dotnet pack $env:BUILD_SOLUTION_PATH -c Release }
     - ps: Exec { & docfx $env:BUILD_DOCUMENTATION_PATH }
-  
+
   test: off
-  
+
   on_success:
-    - ps: .\.build\Deploy-Documentation.ps1 
+    - ps: .\.build\Deploy-Documentation.ps1
 
 
 - # Deploy
   branches:
     only:
       - /\d*\.\d*\.\d*/
-  
+
   init:
     - ps: |
           if (!$env:APPVEYOR_FORCED_BUILD)
           {
             throw "This configuration should only be called from external workflows."
           }
-  
+
   cache:
     - '%USERPROFILE%\.ssh\known_hosts'
 
   install:
     - ps: . .\.build\Install.ps1
     - ps: .\.build\Prepare-Deployment.ps1
-  
+
   build_script:
     - ps: Exec { & dotnet pack $env:BUILD_SOLUTION_PATH -c Release }
     - ps: Exec { & docfx $env:BUILD_DOCUMENTATION_PATH }
-  
+
   test: off
 
   before_deploy:
@@ -152,4 +152,4 @@ for:
       api_key:
         secure: aLRTBBLmLj8KeKfmmRz6dToGICG9f96goueVi/osE4B3Oz5ZXP3w8TBfqOi9tp/c
   on_success:
-    - ps: .\.build\Deploy-Documentation.ps1 
+    - ps: .\.build\Deploy-Documentation.ps1
