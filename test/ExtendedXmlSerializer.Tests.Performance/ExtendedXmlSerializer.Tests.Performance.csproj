@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net462;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net471;netcoreapp3.1</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer.Tests.Performance</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>ExtendedXmlSerializer.Tests.Performance</PackageId>
