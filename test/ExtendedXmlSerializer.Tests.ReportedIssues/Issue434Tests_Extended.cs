@@ -5,7 +5,7 @@ using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {
-	public sealed class Issued434Tests_Extended
+	public sealed class Issue434Tests_Extended
 	{
 		[Fact]
 		public void Verify()
