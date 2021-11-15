@@ -3,6 +3,7 @@ using ExtendedXmlSerializer.Tests.ReportedIssues.Support;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -36,10 +37,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var serializer = new ConfigurationContainer().EnableImplicitTyping(typeof(List<TestSerialization>))
 			                                             .Create();
 
-			serializer.Cycle(instance).Should().BeEquivalentTo(instance);
-
-
-
+			var cycle = serializer.Cycle(instance);
+			cycle.Should().BeEquivalentTo(instance);
+			cycle[0].Should().BeEquivalentTo(instance[0]);
+			cycle.Last().Should().BeEquivalentTo(instance.Last());
 		}
 
 		[Serializable]
