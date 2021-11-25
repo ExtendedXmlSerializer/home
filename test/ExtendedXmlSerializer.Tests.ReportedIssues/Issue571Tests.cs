@@ -21,11 +21,6 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		</Issue571Tests-ModuleState>
 	</ModuleStates>
 </Issue571Tests-InputModelExample>";
-			var instance = new InputModelExample
-			{
-				Configuration = new Configuration(),
-				ModuleStates  = new List<ModuleState>() { new ModuleState { Name = "BUC" } }
-			};
 			var subject = new ConfigurationContainer()
 			              .EnableImplicitTyping(typeof(InputModelExample), typeof(ModuleState))
 			              .WithUnknownContent()
