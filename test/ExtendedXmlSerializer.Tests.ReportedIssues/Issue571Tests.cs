@@ -31,6 +31,30 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			subject.Invoking(support => support.Deserialize<InputModelExample>(content)).Should().NotThrow();
 		}
 
+		[Fact]
+		public void VerifyDefault()
+		{
+			const string content = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Issue571Tests-InputModelExample>
+	<Issue571Tests-Configuration xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:member="""">
+		<Language>LAD</Language>
+		<Section>Section1</Section>
+		<Plc>FC-6011-SB1-CPU</Plc>
+	</Issue571Tests-Configuration>
+	<ModuleStates>
+		<Issue571Tests-ModuleState>
+			<Name>BUC</Name>
+		</Issue571Tests-ModuleState>
+	</ModuleStates>
+</Issue571Tests-InputModelExample>";
+			var subject = new ConfigurationContainer()
+			              .EnableImplicitTyping(typeof(InputModelExample))
+			              .Create()
+			              .ForTesting();
+
+			subject.Deserialize<InputModelExample>(content).ModuleStates.Should().BeEmpty();
+		}
+
 		public class InputModelExample
 		{
 			public Configuration Configuration { get; set; }
