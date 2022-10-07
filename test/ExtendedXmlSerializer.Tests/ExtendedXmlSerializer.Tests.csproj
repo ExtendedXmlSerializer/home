@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <AssemblyTitle>ExtendedXmlSerializer.Tests</AssemblyTitle>
-    <TargetFrameworks>netcoreapp3.1;net471;net452</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net472;net452</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer.Tests</AssemblyName>
     <PackageId>ExtendedXmlSerializer.Tests</PackageId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
@@ -46,11 +46,11 @@
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' != 'net471' ">
+  <ItemGroup Condition=" '$(TargetFramework)' != 'net472' ">
     <ProjectReference Include="..\..\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net471' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
     <ProjectReference Include="..\..\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj" AdditionalProperties="TargetFramework=netstandard2.0" />
   </ItemGroup>
 
