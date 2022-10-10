@@ -21,7 +21,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 
 		public string Get(IFormatReader parameter)
 			=>
-				parameter.Name.Contains(_separator)
+				parameter.Name.Contains((string)_separator)
 					? IdentityFormatter.Default.Get(parameter.Identifier == string.Empty
 						                                ? parameter.Get(parameter.Name, string.Empty)
 						                                : parameter)
