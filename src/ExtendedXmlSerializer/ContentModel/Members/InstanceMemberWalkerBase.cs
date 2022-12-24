@@ -22,9 +22,8 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		protected override IEnumerable<T> Select(object input)
 		{
-			var parameter = input.GetType()
-			                     .GetTypeInfo();
-			var result = Members(input, parameter).Concat(Enumerate(input).Select(_selector).SelectMany(x => x));
+			var parameter = input.GetType().GetTypeInfo();
+			var result    = Members(input, parameter).Concat(Enumerate(input).Select(_selector).SelectMany(x => x));
 			return result;
 		}
 
@@ -40,9 +39,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		protected virtual IEnumerable<T> Members(object input, TypeInfo parameter)
 		{
 			var members = _members.Get(parameter);
-			var length  = members.Length;
-
-			for (var i = 0; i < length; i++)
+			for (var i = 0; i < members.Length; i++)
 			{
 				var member = members[i];
 

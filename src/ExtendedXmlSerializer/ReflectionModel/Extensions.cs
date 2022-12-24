@@ -1,9 +1,9 @@
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 using System;
 using System.Collections;
 using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
@@ -19,9 +19,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 		                                                                     .Get();
 
 		public static IEnumerator For(this IEnumeratorStore @this, object parameter)
-			=> @this.Get(parameter.GetType()
-			                      .GetTypeInfo())
-			        ?.Get((IEnumerable)parameter);
+			=> @this.Get(parameter.GetType())?.Get((IEnumerable)parameter);
 
 		public static bool IsSatisfiedBy(this ISpecification<TypeInfo> @this, object parameter)
 			=> @this.IsSatisfiedBy(parameter.GetType()

@@ -60,14 +60,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 					var references = _references.Get(instance);
 					if (references.Any())
 					{
-						var typeInfo = instance.GetType()
-						                       .GetTypeInfo();
+						var type = instance.GetType();
 						var line = Environment.NewLine;
 						var message =
 							$"{line}{line}Here is a list of found references:{line}{string.Join(line, references.Select(x => $"- {x}"))}";
 
 						throw new CircularReferencesDetectedException(
-						                                              $"The provided instance of type '{typeInfo}' contains circular references within its graph. Serializing this instance would result in a recursive, endless loop. To properly serialize this instance, please create a serializer that has referential support enabled by extending it with the ReferencesExtension.{message}",
+						                                              $"The provided instance of type '{type}' contains circular references within its graph. Serializing this instance would result in a recursive, endless loop. To properly serialize this instance, please create a serializer that has referential support enabled by extending it with the ReferencesExtension.{message}",
 						                                              _container);
 					}
 				}
