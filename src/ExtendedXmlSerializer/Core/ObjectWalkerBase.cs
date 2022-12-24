@@ -7,18 +7,16 @@ namespace ExtendedXmlSerializer.Core
 	/// <summary>
 	/// Attribution: https://msdn.microsoft.com/en-us/library/system.runtime.serialization.objectmanager(v=vs.110).aspx
 	/// </summary>
-	abstract class ObjectWalkerBase<TInput, TResult> : IEnumerable<TResult>, IEnumerator<TResult>
+	abstract class ObjectWalkerBase<TInput, TResult> : IEnumerable<TResult>, IEnumerator<TResult> where TInput : class
 	{
-		readonly static TInput DefaultValue = default;
+		readonly Stack<TInput>   _remaining = new();
+		readonly HashSet<object> _tracked;
 
-		readonly Stack<TInput> _remaining = new Stack<TInput>();
-		readonly Conditions    _conditions;
+		protected ObjectWalkerBase(TInput root) : this(root, new HashSet<object>()) {}
 
-		protected ObjectWalkerBase(TInput root) : this(root, new Conditions()) {}
-
-		protected ObjectWalkerBase(TInput root, Conditions conditions)
+		protected ObjectWalkerBase(TInput root, HashSet<object> tracked)
 		{
-			_conditions = conditions;
+			_tracked = tracked;
 			Schedule(root);
 		}
 
@@ -37,27 +35,21 @@ namespace ExtendedXmlSerializer.Core
 
 		protected bool Schedule(TInput candidate)
 		{
-			if (!Equals(candidate, DefaultValue))
+			if (candidate is not null)
 			{
-				// Ask the ObjectIDManager if this object has been examined before.
-				// If this object has been examined before, do not look at it again just return.
 				var result = First(candidate);
 				if (result)
 				{
-					OnSchedule(candidate);
+					_remaining.Push(candidate);
+					return true;
 				}
-
-				return result;
 			}
-
 			return false;
 		}
 
-		protected bool First(object candidate) => _conditions.Get(candidate).Apply();
+		protected bool First(object candidate) => _tracked.Add(candidate);
 
 		protected abstract TResult Select(TInput input);
-
-		void OnSchedule(TInput candidate) => _remaining.Push(candidate);
 
 		// Advance to the next item in the enumeration.
 		public bool MoveNext()
