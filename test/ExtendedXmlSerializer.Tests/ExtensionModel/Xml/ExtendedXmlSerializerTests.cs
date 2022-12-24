@@ -5,6 +5,7 @@ using FluentAssertions;
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Xunit;
 
@@ -281,17 +282,23 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 				Dictionary = new Dictionary<string, string> { { "Key", "Value" } }
 			};
 
-			const string ns =
-#if CORE
-				"Collections";
-#else
-				"Core";
-#endif
 
+#if CORE
 			var actual =
+				new SerializationSupport(new ConfigurationContainer()).Assert(expected,
+				                                                              $"<?xml version=\"1.0\" encoding=\"utf-8\"?><ExtendedXmlSerializerTests-ClassWithPropertyInterfaceOfList xmlns=\"clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests\"><List xmlns:sys=\"https://extendedxmlserializer.github.io/system\" xmlns:exs=\"https://extendedxmlserializer.github.io/v2\" exs:type=\"sys:List[sys:string]\"><Capacity>4</Capacity><sys:string>Item1</sys:string></List><Dictionary xmlns:sys=\"https://extendedxmlserializer.github.io/system\" xmlns:exs=\"https://extendedxmlserializer.github.io/v2\" exs:type=\"sys:Dictionary[sys:string,sys:string]\"><sys:Item><Key>Key</Key><Value>Value</Value></sys:Item></Dictionary><Set xmlns:sys=\"https://extendedxmlserializer.github.io/system\" xmlns:exs=\"https://extendedxmlserializer.github.io/v2\" exs:type=\"sys:HashSet[sys:string]\"><sys:string>Item2</sys:string></Set></ExtendedXmlSerializerTests-ClassWithPropertyInterfaceOfList>");
+			actual.Should().BeEquivalentTo(expected);
+
+#else
+			const string ns =
+				"Core";
+				var actual =
 				new SerializationSupport(new ConfigurationContainer()).Assert(expected,
 				                                                              $"<?xml version=\"1.0\" encoding=\"utf-8\"?><ExtendedXmlSerializerTests-ClassWithPropertyInterfaceOfList xmlns=\"clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests\"><List xmlns:sys=\"https://extendedxmlserializer.github.io/system\" xmlns:exs=\"https://extendedxmlserializer.github.io/v2\" exs:type=\"sys:List[sys:string]\"><Capacity>4</Capacity><sys:string>Item1</sys:string></List><Dictionary xmlns:sys=\"https://extendedxmlserializer.github.io/system\" xmlns:exs=\"https://extendedxmlserializer.github.io/v2\" exs:type=\"sys:Dictionary[sys:string,sys:string]\"><sys:Item><Key>Key</Key><Value>Value</Value></sys:Item></Dictionary><Set xmlns:ns1=\"clr-namespace:System.Collections.Generic;assembly=System.{ns}\" xmlns:sys=\"https://extendedxmlserializer.github.io/system\" xmlns:exs=\"https://extendedxmlserializer.github.io/v2\" exs:type=\"ns1:HashSet[sys:string]\"><sys:string>Item2</sys:string></Set></ExtendedXmlSerializerTests-ClassWithPropertyInterfaceOfList>");
 			actual.Should().BeEquivalentTo(expected);
+
+#endif
+
 		}
 
 		[Fact]
@@ -369,7 +376,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		[Fact]
 		public void Point()
 		{
-			var expected = new PointProperty { Point = new System.Windows.Point(10, 20) };
+			var expected = new PointProperty { Point = new Point(10, 20) };
 			var actual =
 				new SerializationSupport().Assert(expected,
 				                                  @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-PointProperty xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests""><Point><X>10</X><Y>20</Y></Point></ExtendedXmlSerializerTests-PointProperty>");
@@ -440,7 +447,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 #if !CORE
 		class PointProperty
 		{
-			public System.Windows.Point Point { get; set; }
+			public Point Point { get; set; }
 		}
 
 
