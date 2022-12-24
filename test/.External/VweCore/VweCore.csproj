@@ -10,9 +10,9 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\..\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj" />
-        <PackageReference Include="Light.GuardClauses" Version="9.0.0" />
-        <PackageReference Include="Light.EmbeddedResources" Version="1.0.0" />
-        <PackageReference Include="Light.ViewModels" Version="0.6.0" />
+        <PackageReference Include="Light.GuardClauses" Version="10.0.0" />
+        <PackageReference Include="Light.EmbeddedResources" Version="1.1.0" />
+        <PackageReference Include="Light.ViewModels" Version="0.7.0" />
     </ItemGroup>
 
 </Project>
