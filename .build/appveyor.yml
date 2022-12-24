@@ -10,7 +10,7 @@ environment:
   DEPLOY_USER: ExtendedXmlSerializer Automation via AppVeyor
   DEPLOY_EMAIL: ExtendedXmlSerializer@users.noreply.github.com
 
-image: Visual Studio 2019
+image: Visual Studio 2022
 
 skip_tags: true
 skip_non_tags: true

@@ -21,17 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Text;
-using System.Xml;
 using BenchmarkDotNet.Attributes;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Performance.Model;
+using System.IO;
+using System.Text;
+using System.Xml;
 
 namespace ExtendedXmlSerializer.Tests.Performance
 {
-    [ShortRunJob]
+	[ShortRunJob]
     [MemoryDiagnoser]
     public class ExtendedXmlSerializerTest
     {

@@ -5,12 +5,10 @@
     <Description>An extensible Xml Serializer for .NET that builds on the functionality of the classic XmlSerializer with a powerful and robust extension model.</Description>
     <AssemblyTitle>ExtendedXmlSerializer</AssemblyTitle>
     <Authors>Wojciech Nagórski;Michael DeMond</Authors>
-    <ClassicFrameworkVersion>net452</ClassicFrameworkVersion>
-    <TargetFrameworks>netstandard2.0;$(ClassicFrameworkVersion)</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>ExtendedXmlSerializer</AssemblyName>
-  </PropertyGroup>
-  <PropertyGroup>
     <DocumentationFile>$(BaseIntermediateOutputPath)\$(Configuration)\$(TargetFramework)\ExtendedXmlSerializer.xml</DocumentationFile>
+	  <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="$(Configuration) == 'Release'">
@@ -44,10 +42,6 @@ https://github.com/ExtendedXmlSerializer/home/blob/master/CHANGELOG.md
     <None Include="..\..\$(PackageLicenseFile)" Pack="true" Visible="false" PackagePath="" />
     <None Include="..\..\Logo.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == '$(ClassicFrameworkVersion)' ">
-    <DefineConstants>$(DefineConstants);NET45</DefineConstants>
-  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2021.2.0" PrivateAssets="All" />
