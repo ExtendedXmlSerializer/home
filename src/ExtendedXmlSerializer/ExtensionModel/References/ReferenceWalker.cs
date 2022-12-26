@@ -1,10 +1,10 @@
 using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
-using NetFabric.Hyperlinq;
-using System.Buffers;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -12,70 +12,119 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 {
 	// TODO
 
-	sealed class ReferenceWalker : IParameterizedSource<object, Lease<object>>
+	sealed class ReferenceWalker : IParameterizedSource<object, ReferenceResult>
 	{
 		readonly IReferencesPolicy _policy;
-		readonly IterateReferences _references;
+		readonly ProcessReference  _process;
 
-		public ReferenceWalker(IReferencesPolicy policy, IterateReferences references)
+		public ReferenceWalker(IReferencesPolicy policy, ProcessReference process)
 		{
-			_policy     = policy;
-			_references = references;
+			_policy  = policy;
+			_process = process;
 		}
 
-		public Lease<object> Get(object parameter)
+		public ReferenceResult Get(object parameter)
 		{
-			var scheduler = new ReferenceScheduler(_policy);
-			scheduler.IsSatisfiedBy(parameter);
-			var result = _references.Get(scheduler)
-			                        .AsValueEnumerable()
-			                        .ToArray(ArrayPool<object>.Shared);
+			var result = new ReferenceSet(_policy);
+			result.Execute(parameter);
+			while (result.Any())
+			{
+				_process.Execute(result);
+			}
+
 			return result;
 		}
 	}
 
-	sealed class ReferenceScheduler : ISpecification<object>, ISource<object>
+	readonly struct ReferenceBoundary : IDisposable
+	{
+		readonly Stack<object> _context;
+
+		public ReferenceBoundary(Stack<object> context, object subject)
+		{
+			Subject  = subject;
+			_context = context;
+		}
+
+		public object Subject { get; }
+
+		public void Dispose()
+		{
+			_context.Push(ReferenceCompleted.Default);
+		}
+	}
+
+	sealed class ReferenceCompleted
+	{
+		public static ReferenceCompleted Default { get; } = new();
+
+		ReferenceCompleted() {}
+	}
+
+	record ReferenceResult(HashSet<object> Encountered, HashSet<object> Cyclical)
+	{
+		public ReferenceResult() : this(new HashSet<object>(), new HashSet<object>()) {}
+	}
+
+	sealed record ReferenceSet : ReferenceResult, ICommand<object>, ISource<ReferenceBoundary>
 	{
 		readonly IReferencesPolicy _policy;
-		readonly Stack<object>     _remaining;
+		readonly Stack<object>     _remaining, _depth = new();
 		readonly HashSet<object>   _tracked;
 
-		public ReferenceScheduler(IReferencesPolicy policy) :
-			this(policy, new Stack<object>(), new HashSet<object>()) {}
+		public ReferenceSet(IReferencesPolicy policy)
+			: this(policy, new Stack<object>(), new HashSet<object>()) {}
 
-		public ReferenceScheduler(IReferencesPolicy policy, Stack<object> remaining, HashSet<object> tracked)
+		public ReferenceSet(IReferencesPolicy policy, Stack<object> remaining, HashSet<object> tracked)
 		{
 			_policy    = policy;
 			_remaining = remaining;
 			_tracked   = tracked;
 		}
 
-		public bool IsSatisfiedBy(object parameter)
+		public void Execute(object parameter)
 		{
 			if (parameter is not null)
 			{
-				var add = _tracked.Add(parameter);
-				if (add)
+				if (_tracked.Add(parameter))
 				{
 					_remaining.Push(parameter);
 				}
 				else
 				{
-					var info   = parameter.GetType();
-					var result = info is { IsValueType: false } && _policy.IsSatisfiedBy(info);
-					return result;
+					var info = parameter.GetType();
+					if (!info.IsValueType && _policy.IsSatisfiedBy(info))
+					{
+						Encountered.Add(parameter);
+						if (_depth.Contains(parameter))
+						{
+							Cyclical.Add(parameter);
+						}
+					}
 				}
 			}
-
-			return false;
 		}
 
-		public object Get() => _remaining.Pop();
+		public ReferenceBoundary Get()
+		{
+			var subject = _remaining.Pop();
+			while (subject is ReferenceCompleted)
+			{
+				_depth.Pop();
+				subject = Any() ? _remaining.Pop() : null;
+			}
 
-		public int Count => _remaining.Count;
+			if (subject is not null)
+			{
+				_depth.Push(subject);
+			}
+			return new(_depth, subject);
+		}
+
+		public bool Any() => _remaining.Count > 0;
 	}
 
-	sealed class ReferenceMembers : IParameterizedSource<ReferenceScheduler, IEnumerable<object>>
+	sealed class ProcessReference : ICommand<ReferenceSet>
 	{
 		readonly ISpecification<TypeInfo> _allowed;
 		readonly ITypeMembers             _members;
@@ -83,12 +132,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		readonly IEnumeratorStore         _store;
 
 		// ReSharper disable once TooManyDependencies
-		public ReferenceMembers(IContainsCustomSerialization custom, ITypeMembers members, IMemberAccessors accessors,
+		public ProcessReference(IContainsCustomSerialization custom, ITypeMembers members, IMemberAccessors accessors,
 		                        IEnumeratorStore store)
 			: this(AssignedSpecification<TypeInfo>.Default.And(custom.Inverse()), members, accessors, store) {}
 
 		// ReSharper disable once TooManyDependencies
-		public ReferenceMembers(ISpecification<TypeInfo> allowed, ITypeMembers members, IMemberAccessors accessors,
+		public ProcessReference(ISpecification<TypeInfo> allowed, ITypeMembers members, IMemberAccessors accessors,
 		                        IEnumeratorStore store)
 		{
 			_allowed   = allowed;
@@ -97,47 +146,24 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_store     = store;
 		}
 
-		public IEnumerable<object> Get(ReferenceScheduler parameter)
+		public void Execute(ReferenceSet parameter)
 		{
-			var next = parameter.Get();
-			var type = next.GetType();
+			using var boundary = parameter.Get();
+			var       next     = boundary.Subject;
+			var       type     = next.GetType();
 			if (_allowed.IsSatisfiedBy(type))
 			{
 				var members = _members.Get(type);
 				for (var i = 0; i < members.Length; i++)
 				{
 					var value = _accessors.Get(members[i]).Get(next);
-					if (parameter.IsSatisfiedBy(value))
-					{
-						yield return value;
-					}
+					parameter.Execute(value);
 				}
 
 				var iterator = _store.For(next);
 				while (iterator?.MoveNext() ?? false)
 				{
-					if (parameter.IsSatisfiedBy(iterator.Current))
-					{
-						yield return iterator.Current;
-					}
-				}
-			}
-		}
-	}
-
-	sealed class IterateReferences : IParameterizedSource<ReferenceScheduler, IEnumerable<object>>
-	{
-		readonly ReferenceMembers _members;
-
-		public IterateReferences(ReferenceMembers members) => _members = members;
-
-		public IEnumerable<object> Get(ReferenceScheduler parameter)
-		{
-			while (parameter.Count > 0)
-			{
-				foreach (var member in _members.Get(parameter))
-				{
-					yield return member;
+					parameter.Execute(iterator.Current);
 				}
 			}
 		}

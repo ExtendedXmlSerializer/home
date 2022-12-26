@@ -37,7 +37,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var image = new AdornedImage();
 
-			Assert.Throws<CircularReferencesDetectedException >(() => serializer.Serialize(new DataHolder() { Image1 = image, Image2 = image }));
+			Assert.Throws<MultipleReferencesDetectedException >(() => serializer.Serialize(new DataHolder() { Image1 = image, Image2 = image }));
 		}
 
 		class AdornedImageSerializer : ISerializer<AdornedImage>

@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class ReferencesExtension : TypedTable<MemberInfo>, IEntityMembers, ISerializerExtension
+	sealed class ReferencesExtension : TypedTable<MemberInfo>, IEntityMembers, ISerializerExtension 
 	{
 		public ReferencesExtension() : this(new Dictionary<TypeInfo, MemberInfo>()) {}
 
@@ -20,10 +20,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			         .Register<IReferenceEncounters, ReferenceEncounters>()
 			         .Register<IEntities, Entities>()
 			         .Decorate<IActivation, ReferenceActivation>()
-			         .Decorate<ISerializers, CircularReferenceEnabledSerialization>()
-			         .Decorate<IContents, ReferenceContents>()
-			         ;
-
+			         .Decorate<ISerializers, ReferenceDetectionAwareSerialization>()
+			         .Decorate<IContents, ReferenceContents>();
+		
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }
