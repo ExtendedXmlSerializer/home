@@ -65,6 +65,6 @@ namespace ExtendedXmlSerializer.Core
 			return result;
 		}
 
-		public virtual void Dispose() {}
+		public void Dispose() {}
 	}
 }

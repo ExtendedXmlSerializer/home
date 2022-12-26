@@ -6,17 +6,17 @@ using JetBrains.Annotations;
 using System;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Reflection;
+
 // ReSharper disable TooManyDependencies
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
 	sealed class ObjectIdentifiers : IObjectIdentifiers
 	{
-		readonly ITypeMembers           _members;
-		readonly IEnumeratorStore       _enumerators;
-		readonly IMemberAccessors       _accessors;
-		readonly Func<TypeInfo, string> _names;
+		readonly ITypeMembers       _members;
+		readonly IEnumeratorStore   _enumerators;
+		readonly IMemberAccessors   _accessors;
+		readonly Func<Type, string> _names;
 
 		[UsedImplicitly]
 		public ObjectIdentifiers(IIdentifiers identifiers, ITypeMembers members, IEnumeratorStore enumerators,
@@ -24,7 +24,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			: this(members, enumerators, accessors, identifiers.Get) {}
 
 		ObjectIdentifiers(ITypeMembers members, IEnumeratorStore enumerators, IMemberAccessors accessors,
-		                  Func<TypeInfo, string> names)
+		                  Func<Type, string> names)
 		{
 			_members     = members;
 			_enumerators = enumerators;

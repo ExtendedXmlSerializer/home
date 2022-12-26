@@ -1,39 +1,30 @@
 using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
 using System.Collections.Immutable;
-using System.Reflection;
+using System.Linq;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
 	sealed class References : IReferences
 	{
-		readonly ISpecification<TypeInfo> _allow;
-		readonly IReferencesPolicy        _policy;
-		readonly ITypeMembers             _members;
-		readonly IEnumeratorStore         _enumerators;
-		readonly IMemberAccessors         _accessors;
+		readonly ReferenceWalker _walker;
 
 		// ReSharper disable once TooManyDependencies
 		public References(IContainsCustomSerialization custom, IReferencesPolicy policy, ITypeMembers members,
 		                  IEnumeratorStore enumerators, IMemberAccessors accessors)
-			: this(AssignedSpecification<TypeInfo>.Default.And(custom.Inverse()), policy, members, enumerators,
-			       accessors) {}
+			: this(new ReferenceWalker(policy,
+			                                    new IterateReferences(new ReferenceMembers(custom, members,
+			                                                                               accessors, enumerators)))) {}
 
 		// ReSharper disable once TooManyDependencies
-		public References(ISpecification<TypeInfo> allow, IReferencesPolicy policy, ITypeMembers members,
-		                  IEnumeratorStore enumerators, IMemberAccessors accessors)
-		{
-			_allow       = allow;
-			_policy      = policy;
-			_members     = members;
-			_enumerators = enumerators;
-			_accessors   = accessors;
-		}
+		References(ReferenceWalker walker) => _walker = walker;
 
 		public ImmutableArray<object> Get(object parameter)
-			=> new ReferenceWalker(_allow, _policy, _members, _enumerators, _accessors, parameter).Get();
-
+		{
+			using var lease  = _walker.Get(parameter);
+			var       result = lease.Distinct().ToImmutableArray();
+			return result;
+		}
 	}
 }

@@ -3,7 +3,6 @@ using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
@@ -22,9 +21,21 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		protected override IEnumerable<T> Select(object input)
 		{
-			var parameter = input.GetType().GetTypeInfo();
+			var parameter = input.GetType();
 			var result    = Members(input, parameter).Concat(Enumerate(input).Select(_selector).SelectMany(x => x));
 			return result;
+		}
+
+		protected virtual IEnumerable<T> Members(object input, Type parameter)
+		{
+			var members = _members.Get(parameter);
+			for (var i = 0; i < members.Length; i++)
+			{
+				foreach (var item in Yield(members[i], input))
+				{
+					yield return item;
+				}
+			}
 		}
 
 		IEnumerable<object> Enumerate(object parameter)
@@ -33,20 +44,6 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			while (iterator?.MoveNext() ?? false)
 			{
 				yield return iterator.Current;
-			}
-		}
-
-		protected virtual IEnumerable<T> Members(object input, TypeInfo parameter)
-		{
-			var members = _members.Get(parameter);
-			for (var i = 0; i < members.Length; i++)
-			{
-				var member = members[i];
-
-				foreach (var item in Yield(member, input))
-				{
-					yield return item;
-				}
 			}
 		}
 

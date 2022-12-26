@@ -2,14 +2,14 @@
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 // ReSharper disable TooManyDependencies
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
-	sealed class ObjectTypeWalker : InstanceMemberWalkerBase<TypeInfo>, ISource<IEnumerable<TypeInfo>>
+	sealed class ObjectTypeWalker : InstanceMemberWalkerBase<Type>, ISource<IEnumerable<Type>>
 	{
 		readonly static VariableTypeMemberSpecifications Specifications = VariableTypeMemberSpecifications.Default;
 
@@ -28,7 +28,7 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 			_accessors      = accessors;
 		}
 
-		protected override IEnumerable<TypeInfo> Yield(IMember member, object instance)
+		protected override IEnumerable<Type> Yield(IMember member, object instance)
 		{
 			var current = _accessors.Get(member).Get(instance);
 			if (current != null)
@@ -48,7 +48,7 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 			}
 		}
 
-		protected override IEnumerable<TypeInfo> Yield(object instance)
+		protected override IEnumerable<Type> Yield(object instance)
 		{
 			if (!Schedule(instance))
 			{
@@ -56,9 +56,9 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 			}
 		}
 
-		protected override IEnumerable<TypeInfo> Members(object input, TypeInfo parameter)
+		protected override IEnumerable<Type> Members(object input, Type parameter)
 			=> parameter.Yield().Concat(base.Members(input, parameter));
 
-		public IEnumerable<TypeInfo> Get() => this.SelectMany(x => x).Distinct();
+		public IEnumerable<Type> Get() => this.SelectMany(x => x).Distinct();
 	}
 }
