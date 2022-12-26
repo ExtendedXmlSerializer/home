@@ -1,56 +1,28 @@
-using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.ReflectionModel;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class ReferenceWalker : InstanceMemberWalkerBase<object>, ISource<ImmutableArray<object>>
+	sealed class ReferenceWalker : IParameterizedSource<object, ReferenceResult>
 	{
-		readonly IReferencesPolicy        _policy;
-		readonly IMemberAccessors         _accessors;
-		readonly ISpecification<TypeInfo> _default;
+		readonly IReferencesPolicy _policy;
+		readonly ProcessReference  _process;
 
-		// ReSharper disable once TooManyDependencies
-		public ReferenceWalker(ISpecification<TypeInfo> @default, IReferencesPolicy policy, ITypeMembers members,
-		                       IEnumeratorStore enumerators,
-		                       IMemberAccessors accessors, object root)
-			: base(members, enumerators, root)
+		public ReferenceWalker(IReferencesPolicy policy, ProcessReference process)
 		{
-			_default   = @default;
-			_policy    = policy;
-			_accessors = accessors;
+			_policy  = policy;
+			_process = process;
 		}
 
-		protected override IEnumerable<object> Yield(IMember member, object instance)
-			=> Yield(_accessors.Get(member).Get(instance));
-
-		protected override IEnumerable<object> Yield(object instance)
+		public ReferenceResult Get(object parameter)
 		{
-			if (!Schedule(instance) && Check(instance))
+			var result = new ReferenceSet(_policy);
+			result.Execute(parameter);
+			while (result.Any())
 			{
-				yield return instance;
+				_process.Execute(result);
 			}
+
+			return result;
 		}
-
-		bool Check(object instance)
-		{
-			var info = instance?.GetType()
-			                   .GetTypeInfo();
-
-			var check = info != null && !info.IsValueType && _policy.IsSatisfiedBy(info);
-			return check;
-		}
-
-		protected override IEnumerable<object> Members(object input, TypeInfo parameter)
-			=> _default.IsSatisfiedBy(parameter) ? base.Members(input, parameter) : Enumerable.Empty<object>();
-
-		public ImmutableArray<object> Get() => this.SelectMany(x => x)
-		                                           .Distinct()
-		                                           .ToImmutableArray();
 	}
 }

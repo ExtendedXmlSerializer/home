@@ -51,7 +51,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var names = configuration.Root.Find<TypeNamesExtension>()
 			                         .Names;
 
-			Assert.Equal(names[typeof(SimpleTestSubject).GetTypeInfo()], Testclass);
+			Assert.Equal(Testclass, names[typeof(SimpleTestSubject).GetTypeInfo()]);
 			Assert.False(names.ContainsKey(typeof(TestClassPrimitiveTypesNullable).GetTypeInfo()));
 
 			var support  = new SerializationSupport(configuration);
@@ -136,8 +136,8 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 				configuration.GetTypeConfiguration(typeof(SimpleTestSubject))
 				             .Member(nameof(SimpleTestSubject.BasicProperty));
 
-			Assert.Equal(configuration.Root.Find<MemberPropertiesExtension>()
-			                          .Names[((ISource<MemberInfo>)member).Get()], MemberName);
+			Assert.Equal(MemberName, configuration.Root.Find<MemberPropertiesExtension>()
+			                                      .Names[((ISource<MemberInfo>)member).Get()]);
 
 			var support  = new SerializationSupport(configuration);
 			var instance = new SimpleTestSubject {BasicProperty = "Hello World!  Testing Member."};

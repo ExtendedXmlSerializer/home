@@ -1,6 +1,7 @@
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using System.Collections;
+using System.Linq;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -33,8 +34,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 				{
 					if (references.Contains(item))
 					{
-						hold.Get(item)
-						    .Push(list);
+						hold.Get(item).Push(list);
 					}
 				}
 			}

@@ -15,7 +15,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		/// <summary>
 		///  Creates a new instance with an empty blacklist.
 		/// </summary>
-		public DefaultReferencesExtension() : this(new HashSet<TypeInfo> {Support<string>.Metadata}) {}
+		public DefaultReferencesExtension() : this(new HashSet<TypeInfo> { Support<string>.Metadata }) {}
 
 		/// <summary>
 		/// Creates a new instance with the specified blacklist and empty whitelist.
@@ -52,12 +52,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 				             : new BlacklistReferencesPolicy(Blacklist.ToArray());
 
 			return parameter.RegisterInstance(policy)
+			                .RegisterInstance<
+				                IMultipleReferencesAllowed>(new MultipleReferencesAllowed(MultipleReferencesAllowed))
 			                .Register<ContainsStaticReferenceSpecification>()
 			                .Register<IStaticReferenceSpecification, ContainsStaticReferenceSpecification>()
-			                .Register<IReferences, References>()
+			                .Register<IReferenceView, ReferenceView>()
 				/*.Decorate(typeof(IContentWriters<>), typeof(ContentWriters<>))*/;
 		}
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
+
+		internal bool MultipleReferencesAllowed { get; set; }
 	}
 }

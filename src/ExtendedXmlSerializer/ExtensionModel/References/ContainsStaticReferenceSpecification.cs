@@ -1,7 +1,8 @@
-﻿using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Reflection;
+﻿using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ReflectionModel;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -11,9 +12,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		sealed class Source : StructureCacheBase<TypeInfo, bool>
 		{
-			readonly IDiscoveredTypes _types;
+			readonly IDiscoveredTypes           _types;
+			readonly ICollectionItemTypeLocator _item;
 
-			public Source(IDiscoveredTypes types) => _types = types;
+			public Source(IDiscoveredTypes types) : this(types, CollectionItemTypeLocator.Default) {}
+
+			public Source(IDiscoveredTypes types, ICollectionItemTypeLocator item)
+			{
+				_types = types;
+				_item  = item;
+			}
 
 			protected override bool Create(TypeInfo parameter)
 			{
@@ -25,12 +33,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 					for (var j = 0; j < length; j++)
 					{
 						var second = variables[j];
-						if (i != j &&
-						    (first.IsInterface || second.IsInterface || first.IsAssignableFrom(second) ||
-						     second.IsAssignableFrom(first))
-						)
+						if (i != j)
 						{
-							return true;
+							if (first.IsInterface || second.IsInterface ||
+								first.IsAssignableFrom(second) || second.IsAssignableFrom(first)
+								||
+								(_item.Get(first)?.IsAssignableFrom(second) ?? false) ||
+							    (_item.Get(second)?.IsAssignableFrom(first) ?? false))
+							{
+								return true;
+							}
 						}
 					}
 				}

@@ -4,11 +4,11 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	class CircularReferenceEnabledSerialization : ISerializers
+	sealed class ReferenceDetectionAwareSerialization : ISerializers
 	{
 		readonly ISerializers _context;
 
-		public CircularReferenceEnabledSerialization(ISerializers context) => _context = context;
+		public ReferenceDetectionAwareSerialization(ISerializers context) => _context = context;
 
 		public ContentModel.ISerializer Get(TypeInfo parameter) => new Container(_context.Get(parameter));
 
@@ -26,7 +26,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 				{
 					_serializer.Write(writer, instance);
 				}
-				catch (CircularReferencesDetectedException e)
+				catch (ReferencesDetectedException e)
 				{
 					e.Writer.Write(writer, instance);
 				}

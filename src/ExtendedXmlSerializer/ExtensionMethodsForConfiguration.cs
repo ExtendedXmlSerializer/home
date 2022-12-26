@@ -1,5 +1,6 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.References;
@@ -9,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer
 {
@@ -373,6 +373,19 @@ namespace ExtendedXmlSerializer
 		/// <returns>The configured configuration container.</returns>
 		public static IConfigurationContainer EnableDeferredReferences(this IConfigurationContainer @this)
 			=> @this.Root.Extend(ReaderContextExtension.Default, DeferredReferencesExtension.Default).Return(@this);
+
+		/// <summary>
+		/// This enables multiple references to be allowed in the graph without throwing an exception.  By default
+		/// if multiple instances of the same reference are found in an object graph that is being serialized, this throws
+		/// an exception.  This overrides the the default setting and allows the serialization to occur.  Note that this
+		/// does not impact cyclical references and these will still throw an exception if encountered and
+		/// <see cref="EnableReferences(IConfigurationContainer)"/> is not configured on the container.
+		/// </summary>
+		/// <param name="this">The configuration container to configure.</param>
+		/// <returns>The configured configuration container.</returns>
+		/// <seealso href="https://github.com/ExtendedXmlSerializer/home/issues/583" />
+		public static IConfigurationContainer AllowMultipleReferences(this IConfigurationContainer @this)
+			=> @this.Root.With<DefaultReferencesExtension>(x => x.MultipleReferencesAllowed = true).Return(@this);
 
 		static IRootContext EnableRootReferences(this IRootContext @this)
 			=> @this.EnableRootInstances().With<ReferencesExtension>().Return(@this);
