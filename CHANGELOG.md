@@ -1,3 +1,10 @@
+# [ExtendedXmlSerializer v3.7.9](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.9)
+> 12/27/2022 13:09:14 UTC
+##### ``v3.7.9``
+### Other Changes 
+- [Automated] Generated CHANGELOG.md #587 @github-actions[bot] 
+- Updated deploy key for documentation #591 @Mike-E-angelo 
+
 # [ExtendedXmlSerializer v3.7.8](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.8)
 > 12/27/2022 11:57:14 UTC
 ##### ``v3.7.8``
@@ -227,11 +234,4 @@ https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.2
 ### &#128027; Bug Fixes &#128295; 
 - Adjusted assembly-loading to be a bit more robust for .NETFramework-b… #367 @Mike-EEE 
 
-# [ExtendedXmlSerializer v3.1.1](https://github.com/ExtendedXmlSerializer/home/releases/tag/3.1.1)
-> 01/30/2020 15:29:34 UTC
-##### ``3.1.1``
-### &#128027; Bug Fixes &#128295;
-
-  - Accounted for struct root instances when references are enabled. #359 @Mike-EEE 
-  - Removed recursion check for types that have custom serializers defin… #362 @Mike-EEE / @aspektxxx 
 
