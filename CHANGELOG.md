@@ -1,3 +1,27 @@
+# [ExtendedXmlSerializer v3.7.8](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.8)
+> 12/27/2022 11:57:14 UTC
+##### ``v3.7.8``
+### Other Changes 
+- Build Nudge #589 @Mike-E-angelo 
+
+# [ExtendedXmlSerializer v3.7.7](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.7)
+> 12/27/2022 11:21:24 UTC
+##### ``v3.7.7``
+### &#128027; Bug Fixes &#128295; 
+- Added `ConfigurationContainer.AllowMultipleReferences` #586 @Mike-E-angelo 
+### Other Changes 
+- [Automated] Generated CHANGELOG.md #560 @github-actions[bot] 
+- Demonstration of EnableReferences #564 @Mike-E-angelo 
+- Quick sanity check to ensure implicit double can be serialized #562 @Mike-E-angelo 
+- Demonstration of EmitWhen #566 @Mike-E-angelo 
+- Updated remaining projects to netcoreapp3.1 #568 @Mike-E-angelo 
+- Comparer example #569 @Mike-E-angelo 
+- Demonstrated default behavior #572 @Mike-E-angelo 
+- Update tests to .net 4.7.2 #576 @WojciechNagorski 
+- Update BenchmarkDotNet #577 @WojciechNagorski 
+- Update some nuget packages #579 @WojciechNagorski 
+- Remove netappcore3.1 replace w/ net6.0 + net7.0 #585 @Mike-E-angelo 
+
 # [ExtendedXmlSerializer v3.7.6](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.6)
 > 10/26/2021 08:41:13 UTC
 ##### ``v3.7.6``
@@ -210,35 +234,4 @@ https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.2
 
   - Accounted for struct root instances when references are enabled. #359 @Mike-EEE 
   - Removed recursion check for types that have custom serializers defin… #362 @Mike-EEE / @aspektxxx 
-# [ExtendedXmlSerializer v3.1.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/3.1.0)
-> 01/18/2020 06:18:13 UTC
-##### ``3.1.0``
-### ✨ New Features &#128640;
-
-  - Added basic support for IEnumerable&lt;T&gt; for both instance and member property definitions. #343 @Mike-EEE 
-  - Added additional testing around Enumerable property support. #344 @Mike-EEE 
-  - Further adjusted and improved type content composer API. #351 @Mike-EEE 
-  - Further improved serializer registration #353 @Mike-EEE 
-  
-### &#128027; Bug Fixes &#128295;
-  
-  - Removed attribute values from reference-based reading. #342 @Mike-EEE 
-  - Added ordering to parameterized content members. #356 @Mike-EEE 
-  - Fixed type resolution issue with conflicting member name having the... #354 @Mike-EEE 
-  
-### Other Changes
-  
-  - Updated nuget reference for NReco.LambdaParser. #347 @Mike-EEE 
-  - Improved content serializer composition API. #350 @Mike-EEE 
-  - Added example code. #348 @Mike-EEE 
-
-# [ExtendedXmlSerializer v3.0.2](https://github.com/ExtendedXmlSerializer/home/releases/tag/3.0.2)
-> 12/10/2019 08:28:04 UTC
-##### ``3.0.2``
-A patch release that addresses reported issues since the 3.0.0 release.
-### &#128027; Bug Fixes &#128295; 
-- Fixed bug with null arrays when EmitBehaviors.WhenModified is used. #338 @Mike-EEE 
-### Other Changes 
-- Updated NuGet references. #336 @Mike-EEE 
-
 
