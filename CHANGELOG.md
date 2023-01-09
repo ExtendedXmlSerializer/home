@@ -1,3 +1,12 @@
+# [ExtendedXmlSerializer v3.7.10](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.10)
+> 01/09/2023 19:23:17 UTC
+##### ``v3.7.10``
+### &#128027; Bug Fixes &#128295; 
+- Improved reference tracking for multiple instances #594 @Mike-E-angelo 
+### Other Changes 
+- [Automated] Generated CHANGELOG.md #592 @github-actions[bot] 
+- Addressed Solution Warnings #596 @Mike-E-angelo 
+
 # [ExtendedXmlSerializer v3.7.9](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.9)
 > 12/27/2022 13:09:14 UTC
 ##### ``v3.7.9``
@@ -227,11 +236,5 @@ https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.2
 - Fixed Caching Issues for Better Performance. #381 @Mike-EEE 
 ### Other Changes 
 - Added Sample code for question. #373 @Mike-EEE 
-
-# [ExtendedXmlSerializer v3.1.2](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.1.2)
-> 02/07/2020 09:56:47 UTC
-##### ``v3.1.2``
-### &#128027; Bug Fixes &#128295; 
-- Adjusted assembly-loading to be a bit more robust for .NETFramework-b… #367 @Mike-EEE 
 
 
