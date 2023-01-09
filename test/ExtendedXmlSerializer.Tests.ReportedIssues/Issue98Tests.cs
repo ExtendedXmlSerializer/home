@@ -14,17 +14,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var instance = new Foo {Bar = new Bar()};
 			instance.Bar.Foos.Add(instance);
 
-			var serializer = new ConfigurationContainer().EnableReferences()
-			                                             .Create();
+			var serializer = new ConfigurationContainer().EnableReferences().Create().ForTesting();
 
 			var cycled = serializer.Cycle(instance);
 
-			cycled.Should()
-			      .BeSameAs(cycled.Bar.Foos.Only());
+			cycled.Should().BeSameAs(cycled.Bar.Foos.Only());
 
-			cycled.Bar.Should()
-			      .BeSameAs(cycled.Bar.Foos.Only()
-			                      .Bar);
+			cycled.Bar.Should().BeSameAs(cycled.Bar.Foos.Only().Bar);
 		}
 
 		[Fact]

@@ -16,12 +16,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		public ReferenceResult Get(object parameter)
 		{
 			var result = new ReferenceSet(_policy);
-			result.Execute(parameter);
-			while (result.Any())
-			{
-				_process.Execute(result);
-			}
-
+			_process.Execute(new (result, parameter));
 			return result;
 		}
 	}

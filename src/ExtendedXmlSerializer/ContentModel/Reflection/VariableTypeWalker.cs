@@ -1,17 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Members;
+﻿using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ReflectionModel;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
 	class VariableTypeWalker : TypeMemberWalkerBase<TypeInfo>, ISource<IEnumerable<TypeInfo>>
 	{
-		readonly static ReflectionModel.VariableTypeSpecification Specification =
-			ReflectionModel.VariableTypeSpecification.Default;
+		readonly static ISpecification<TypeInfo> Specification =
+			ReflectionModel.VariableTypeSpecification.Default.Or(IsArraySpecification.Default);
 
 		readonly ISpecification<TypeInfo> _specification;
 

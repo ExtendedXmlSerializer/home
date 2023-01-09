@@ -7,16 +7,10 @@ readonly struct ReferenceBoundary : IDisposable
 {
 	readonly Stack<object> _context;
 
-	public ReferenceBoundary(Stack<object> context, object subject)
-	{
-		Subject  = subject;
-		_context = context;
-	}
-
-	public object Subject { get; }
+	public ReferenceBoundary(Stack<object> context) => _context = context;
 
 	public void Dispose()
 	{
-		_context.Push(ReferenceCompleted.Default);
+		_context.Pop();
 	}
 }
