@@ -52,10 +52,10 @@ namespace ExtendedXmlSerializer.ReflectionModel
 
 			public Expression Get(ParameterInfo parameter)
 				=> parameter.IsDefined(typeof(ParamArrayAttribute))
-					   ? (Expression)Expression.NewArrayInit(parameter.ParameterType.GetElementType() ??
-					                                         throw new
-						                                         InvalidOperationException("Element Type not found."),
-					                                         Initializers)
+					   ? Expression.NewArrayInit(parameter.ParameterType.GetElementType() ??
+					                             throw new
+						                             InvalidOperationException("Element Type not found."),
+					                             Initializers)
 					   : Expression.Default(parameter.ParameterType);
 		}
 	}

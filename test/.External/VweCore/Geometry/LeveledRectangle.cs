@@ -38,7 +38,7 @@ namespace VweCore.Geometry
 
         public bool IsEmpty => LowerLeft.Equals(UpperRight);
 
-        public Point2D Center => new Point2D(LowerLeft.X + (Width / 2), LowerLeft.Y + (Height / 2));
+        public Point2D Center => new Point2D(LowerLeft.X + Width / 2, LowerLeft.Y + Height / 2);
 
         public bool Equals(LeveledRectangle other) => LowerLeft.Equals(other.LowerLeft) && UpperRight.Equals(other.UpperRight);
 

@@ -154,7 +154,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			                           arguments.HasValue
 				                           ? arguments.Value.Select(_selector)
 				                                      .ToImmutableArray
-				                           : (Func<ImmutableArray<TypeParts>>)null, parameter.Dimensions);
+				                           : null, parameter.Dimensions);
 			return result;
 		}
 	}

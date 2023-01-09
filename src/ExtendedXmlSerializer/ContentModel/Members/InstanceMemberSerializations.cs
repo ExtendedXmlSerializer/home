@@ -1,6 +1,6 @@
-using System.Reflection;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
@@ -21,7 +21,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		public IInstanceMemberSerialization Get(TypeInfo parameter)
 			=> _specification.IsSatisfiedBy(parameter)
-				   ? (IInstanceMemberSerialization)new InstanceMemberSerialization(parameter, _serializations)
+				   ? new InstanceMemberSerialization(parameter, _serializations)
 				   : new FixedInstanceMemberSerialization(_serializations.Get(parameter));
 	}
 }

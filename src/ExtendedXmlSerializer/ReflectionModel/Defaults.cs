@@ -14,6 +14,6 @@ namespace ExtendedXmlSerializer.ReflectionModel
 		public static Func<ParameterExpression, Type, Expression> ExpressionZip { get; }
 			= (expression, type) => type.IsAssignableFrom(expression.Type)
 				                        ? expression
-				                        : (Expression)Expression.Convert(expression, type);
+				                        : Expression.Convert(expression, type);
 	}
 }

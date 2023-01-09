@@ -1,10 +1,10 @@
-using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.Core
 {
 	sealed class TypedSortOrder : StructureCache<TypeInfo, int>, ITypedSortOrder
 	{
-		public TypedSortOrder() : base(info => 1) {}
+		public TypedSortOrder() : base(_ => 1) {}
 	}
 }

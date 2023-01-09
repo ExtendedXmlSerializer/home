@@ -5,7 +5,6 @@ using FluentAssertions;
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using Xunit;
 
@@ -376,7 +375,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		[Fact]
 		public void Point()
 		{
-			var expected = new PointProperty { Point = new Point(10, 20) };
+			var expected = new PointProperty { Point = new System.Drawing.Point(10, 20) };
 			var actual =
 				new SerializationSupport().Assert(expected,
 				                                  @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-PointProperty xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests""><Point><X>10</X><Y>20</Y></Point></ExtendedXmlSerializerTests-PointProperty>");
@@ -447,7 +446,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 #if !CORE
 		class PointProperty
 		{
-			public Point Point { get; set; }
+			public System.Drawing.Point Point { get; set; }
 		}
 
 

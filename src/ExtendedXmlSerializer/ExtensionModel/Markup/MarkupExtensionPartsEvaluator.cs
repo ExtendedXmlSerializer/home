@@ -160,7 +160,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			var array = parameter.GetArguments()
 			                     ?.ToArray();
 			var result = new TypeParts(string.Concat(parameter.Name, Extension), parameter.Identifier,
-			                           array != null ? array.ToImmutableArray : (Func<ImmutableArray<TypeParts>>)null,
+			                           array != null ? array.ToImmutableArray : null,
 			                           parameter.Dimensions);
 			return result;
 		}

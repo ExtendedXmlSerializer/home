@@ -7,7 +7,7 @@ using Xunit.Abstractions;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues.Issue502
 {
-	public sealed class Issue502Tests
+    public sealed class Issue502Tests
     {
         private readonly ITestOutputHelper _output;
 
@@ -48,8 +48,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues.Issue502
         {
             var serializer = XmlSerializer.CreateDefaultSerializer();
 
-            var storageLocation = new StorageLocation() { };
-            var storageRow = new StorageRow() { StorageLocations = { storageLocation } };
+            var storageLocation = new StorageLocation();
+            var storageRow      = new StorageRow { StorageLocations = { storageLocation } };
             storageLocation.StorageRow = storageRow;
             var map = new Map();
             map.Add(storageRow);
@@ -67,10 +67,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues.Issue502
         {
             var serializer = XmlSerializer.CreateDefaultSerializer();
 
-            var markerPoint = new MarkerPoint() { };
-            var storageLocation = new StorageLocation() { MarkerPoints = new List<MarkerPoint>(){markerPoint}};
+            var markerPoint     = new MarkerPoint();
+            var storageLocation = new StorageLocation { MarkerPoints = new List<MarkerPoint> {markerPoint}};
             markerPoint.StorageLocation = storageLocation;
-            var storageRow = new StorageRow() {StorageLocations = {storageLocation}};
+            var storageRow = new StorageRow {StorageLocations = {storageLocation}};
             storageLocation.StorageRow = storageRow;
 
             var xml = serializer.SerializeIndented(storageRow);
@@ -86,12 +86,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues.Issue502
         {
             var serializer = XmlSerializer.CreateDefaultSerializer();
 
-            var markerPoint = new MarkerPoint() { };
-            var storageLocation = new StorageLocation() { MarkerPoints = new List<MarkerPoint>(){markerPoint}};
+            var markerPoint     = new MarkerPoint();
+            var storageLocation = new StorageLocation { MarkerPoints = new List<MarkerPoint> {markerPoint}};
             markerPoint.StorageLocation = storageLocation;
-            var storageRow = new StorageRow() { StorageLocations = { storageLocation } };
+            var storageRow = new StorageRow { StorageLocations = { storageLocation } };
             storageLocation.StorageRow = storageRow;
-            var map = new Map(){Name = "test"};
+            var map = new Map {Name = "test"};
             map.Add(storageRow);
             map.Add(storageLocation);
             map.Add(markerPoint);
@@ -110,12 +110,12 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues.Issue502
         {
             var serializer = XmlSerializer.CreateDefaultSerializer();
 
-            var somePoint = new HallwayNode(){Id = 3};
+            var somePoint = new HallwayNode {Id = 3};
 
             var storageLocation = new StorageLocation();
-            var markerPoint = new MarkerPoint() { StorageLocation = storageLocation};
+            var markerPoint     = new MarkerPoint { StorageLocation = storageLocation};
             storageLocation.MarkerPoints.Add(markerPoint);
-            var storageRow = new StorageRow() { StorageLocations = { storageLocation } };
+            var storageRow = new StorageRow { StorageLocations = { storageLocation } };
             storageLocation.StorageRow = storageRow;
             var map = new Map();
             map.Add(somePoint);

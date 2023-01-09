@@ -10,7 +10,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		AllConstructorsExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Decorate<IConstructors>((provider, constructors) => new AllConstructors(constructors));
+			=> parameter.Decorate<IConstructors>((_, constructors) => new AllConstructors(constructors));
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

@@ -1,5 +1,5 @@
-using System.Reflection;
 using ExtendedXmlSerializer.Core;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
@@ -11,7 +11,7 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion
 
 		public bool IsSatisfiedBy(TypeInfo parameter) => _converter.IsSatisfiedBy(parameter);
 
-		public T? Parse(string data) => data.NullIfEmpty() != null ? _converter.Parse(data) : (T?)null;
+		public T? Parse(string data) => data.NullIfEmpty() != null ? _converter.Parse(data) : null;
 
 		public string Format(T? instance) => instance.HasValue ? _converter.Format(instance.Value) : null;
 	}

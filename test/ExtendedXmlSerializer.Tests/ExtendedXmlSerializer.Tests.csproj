@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+	<!-- ReSharper disable all UnknownProperty -->
   <PropertyGroup>
     <AssemblyTitle>ExtendedXmlSerializer.Tests</AssemblyTitle>
 	<ClassicFramework>net462</ClassicFramework>
@@ -10,7 +10,7 @@
 	  <NoWarn>$(NoWarn);CS8981</NoWarn>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' != '$(ClassicFramework)' ">
+	<PropertyGroup Condition=" '$(TargetFramework)' != '$(ClassicFramework)' ">
     <DefineConstants>$(DefineConstants);CORE</DefineConstants>
   </PropertyGroup>
 

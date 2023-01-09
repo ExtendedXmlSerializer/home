@@ -22,7 +22,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		/// <inheritdoc />
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.RegisterConstructorDependency<IContents>((provider, info) => provider.Get<DeferredContents>())
+			=> parameter.RegisterConstructorDependency<IContents>((provider, _) => provider.Get<DeferredContents>())
 			            .Register<IContents, RuntimeContents>()
 
 			            .DecorateContentsWith<MemberedContents>()

@@ -2,6 +2,7 @@
 
     <PropertyGroup>
 	    <ClassicFramework>net462</ClassicFramework>
+	    <!-- ReSharper disable once UnknownProperty -->
 	    <TargetFrameworks>net6.0; net7.0;$(ClassicFramework)</TargetFrameworks>
 	    <LangVersion>latest</LangVersion>
 	    <NoWarn>$(NoWarn);CS8981</NoWarn>

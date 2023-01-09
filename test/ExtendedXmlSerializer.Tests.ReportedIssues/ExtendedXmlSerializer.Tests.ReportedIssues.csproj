@@ -1,4 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<!-- ReSharper disable all UnknownProperty -->
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 	  <ClassicFramework>net462</ClassicFramework>

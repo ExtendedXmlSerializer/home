@@ -1,6 +1,6 @@
+using Light.GuardClauses;
 using System;
 using System.Collections.Generic;
-using Light.GuardClauses;
 using VweCore.Geometry;
 using VweCore.Translations;
 
@@ -43,7 +43,7 @@ namespace VweCore
                 Node2 = node,
                 Direction = isBidirectional ? NodeLinkDirection.Bidirectional : NodeLinkDirection.FromNode1ToNode2,
                 DrivingDirectionFromNode1 = NodeLinkDrivingDirection.Straight,
-                DrivingDirectionFromNode2 = isBidirectional ? NodeLinkDrivingDirection.Straight : (NodeLinkDrivingDirection?)null
+                DrivingDirectionFromNode2 = isBidirectional ? NodeLinkDrivingDirection.Straight : null
             };
             NodeLinks.Add(nodeLink);
             node.NodeLinks.Add(nodeLink);
