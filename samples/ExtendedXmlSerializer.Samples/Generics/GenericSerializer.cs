@@ -4,7 +4,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerializer.Samples.Generics
 {
-	public class GenericSerializer
+    public class GenericSerializer
     {
         private IExtendedXmlSerializer serializer;
 
@@ -46,7 +46,7 @@ namespace ExtendedXmlSerializer.Samples.Generics
 
 
             var data = srl.SerializeProject(prj);
-            var obj = srl.DeserializeProject<IProject>(data);
+            srl.DeserializeProject<IProject>(data);
         }
 
 
@@ -78,20 +78,20 @@ namespace ExtendedXmlSerializer.Samples.Generics
                 Id = id;
             }
 
-            public string Name { get; set; } = "MY project";
+            public string Name { get; set; }
             public int Id { get; }
             public string Path => @"C:/my/fake/path";
 
             public IList<ISite<IContext>> Sites { get; } = new List<ISite<IContext>>();
         }
 
-        public class SpecificClass : SiteBase<Context>
+        public sealed class SpecificClass : SiteBase<Context>
         {
             public SpecificClass()
             {
-                this.Name = "Specific class";
-                this.UserDescription = "Class description";
-                this.Context = new Context();
+                Name = "Specific class";
+                UserDescription = "Class description";
+                Context = new Context();
             }
 
 
@@ -105,6 +105,7 @@ namespace ExtendedXmlSerializer.Samples.Generics
         {
             public string Name { get; set; }
             public string UserDescription { get; set; }
+            // ReSharper disable once MemberHidesStaticFromOuterClass
             public abstract TSiteContext Context { get; set; }
         }
 

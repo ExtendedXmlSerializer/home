@@ -152,7 +152,7 @@ namespace ExtendedXmlSerializer.Core
 			where TValue : struct
 			=> AssignedSpecification<TKey>.Default.IsSatisfiedBy(key) && target.TryGetValue(key, out var result)
 				   ? result
-				   : (TValue?)null;
+				   : null;
 
 		public static IEnumerable<T> Appending<T>(this IEnumerable<T> @this, params T[] items) => @this.Concat(items);
 

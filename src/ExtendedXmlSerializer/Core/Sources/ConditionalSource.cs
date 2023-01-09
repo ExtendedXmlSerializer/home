@@ -26,7 +26,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 		/// <exclude />
 		public ConditionalSource(Func<TParameter, bool> specification, Func<TResult, bool> result,
 		                         Func<TParameter, TResult> source)
-			: this(specification, result, source, x => default) {}
+			: this(specification, result, source, _ => default) {}
 
 		/// <exclude />
 		public ConditionalSource(Func<TParameter, bool> specification, Func<TResult, bool> result,

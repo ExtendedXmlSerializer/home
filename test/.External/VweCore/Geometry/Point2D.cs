@@ -64,9 +64,9 @@ namespace VweCore.Geometry
         public Point2D TranslateBackFromOrigin(Point2D referencePoint) =>
             new Point2D(X + referencePoint.X, Y + referencePoint.Y);
 
-        public double CalculateRotatedXCoordinate(double angleInRadians) => (X * Math.Cos(angleInRadians)) - (Y * Math.Sin(angleInRadians));
+        public double CalculateRotatedXCoordinate(double angleInRadians) => X * Math.Cos(angleInRadians) - Y * Math.Sin(angleInRadians);
 
-        public double CalculateRotatedYCoordinate(double angleInRadians) => (X * Math.Sin(angleInRadians)) + (Y * Math.Cos(angleInRadians));
+        public double CalculateRotatedYCoordinate(double angleInRadians) => X * Math.Sin(angleInRadians) + Y * Math.Cos(angleInRadians);
 
         public static bool operator !=(Point2D left, Point2D right) => !left.Equals(right);
 

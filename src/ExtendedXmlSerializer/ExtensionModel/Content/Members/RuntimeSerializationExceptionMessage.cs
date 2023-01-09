@@ -11,7 +11,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 			= new RuntimeSerializationExceptionMessage();
 
 		RuntimeSerializationExceptionMessage() :
-			base(x => @"Parameterized Content is enabled on the container.  By default, the type must satisfy the following rules if a public parameterless constructor is not found:
+			base(_ => @"Parameterized Content is enabled on the container.  By default, the type must satisfy the following rules if a public parameterless constructor is not found:
 
 - Each member must not already be marked as an explicit contract
 - Must be a public fields / property.

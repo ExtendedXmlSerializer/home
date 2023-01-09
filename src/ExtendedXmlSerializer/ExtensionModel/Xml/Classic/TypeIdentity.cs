@@ -11,7 +11,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 		public TypeIdentity(Func<T, Key> identity) => _identity = identity;
 
 		public Key? Get(TypeInfo parameter)
-			=> parameter.IsDefined(typeof(T)) ? (Key?)_identity(parameter.GetCustomAttribute<T>()) : null;
+			=> parameter.IsDefined(typeof(T)) ? _identity(parameter.GetCustomAttribute<T>()) : null;
 	}
 
 	sealed class TypeIdentity : ITypeIdentity

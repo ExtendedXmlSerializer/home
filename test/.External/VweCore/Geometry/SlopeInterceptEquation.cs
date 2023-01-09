@@ -30,7 +30,7 @@ namespace VweCore.Geometry
 
         public static bool operator !=(SlopeInterceptEquation left, SlopeInterceptEquation right) => !left.Equals(right);
 
-        public double CalculateY(double x) => (x * Slope) + YIntercept;
+        public double CalculateY(double x) => x * Slope + YIntercept;
 
         public bool ContainsPoint(Point2D point) => CalculateY(point.X).IsApproximately(point.Y);
 
@@ -73,8 +73,8 @@ namespace VweCore.Geometry
             var x2 = x + xDistance;
 
             var pointX = direction == AbscissaDirection.LeftToRight
-                ? (x1.IsGreaterThanOrApproximatelyEqualTo(x) ? x1 : x2)
-                : (x1.IsLessThanOrApproximatelyEqualTo(x) ? x1 : x2);
+                ? x1.IsGreaterThanOrApproximatelyEqualTo(x) ? x1 : x2
+                : x1.IsLessThanOrApproximatelyEqualTo(x) ? x1 : x2;
 
             return new Point2D(pointX, CalculateY(pointX));
         }

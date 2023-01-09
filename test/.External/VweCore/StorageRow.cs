@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Light.GuardClauses;
+using System;
 using System.Collections.Generic;
-using Light.GuardClauses;
 using VweCore.Abstractions;
 using VweCore.Geometry;
 using VweCore.Translations;
@@ -72,7 +72,7 @@ namespace VweCore
 
         public Ray2D GetPerpendicularRay()
         {
-            var referencePoint = new Point2D(Position.X + (Width / 2), Position.Y).RotateAroundReferencePoint(AngleInDegrees, Position);
+            var referencePoint = new Point2D(Position.X + Width / 2, Position.Y).RotateAroundReferencePoint(AngleInDegrees, Position);
             return new Ray2D(referencePoint, AngleInDegrees);
         }
 
@@ -119,7 +119,7 @@ namespace VweCore
                 minimumWidth += StorageLocations[i].Diameter + StorageLocationPadding + StorageLocationPadding;
             }
 
-            var offsetForNewLocation = -(minimumWidth + StorageLocationPadding + (storageLocation.Diameter / 2));
+            var offsetForNewLocation = -(minimumWidth + StorageLocationPadding + storageLocation.Diameter / 2);
             minimumWidth += storageLocation.Diameter + StorageLocationPadding + StorageLocationPadding;
             return (minimumWidth, offsetForNewLocation);
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.Samples.Parametrized
 {
-	public static class ParametrizedConstructors
+    public static class ParametrizedConstructors
     {
         public static void SerializeAndDeserialize()
         {
@@ -22,7 +22,7 @@ namespace ExtendedXmlSerializer.Samples.Parametrized
             dt.Data.Add(7);
 
             var data = srl.Serialize(dt);
-            var obj = dsrl.Deserialize<DataHolder>(data);
+            dsrl.Deserialize<DataHolder>(data);
         }
 
         public class DataHolder

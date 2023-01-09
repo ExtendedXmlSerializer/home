@@ -1,6 +1,7 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Tests.ReportedIssues.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using Xunit;
 
@@ -18,9 +19,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		sealed class Subject
 		{
+			// ReSharper disable once CollectionNeverUpdated.Local
 			public List<byte[]> ParentKey { get; set; } = new ();
-			public byte[] Id { get; set; }
+			public byte[] Id { get; [UsedImplicitly] set; }
 
+			[UsedImplicitly]
 			public List<byte[]> Key
 			{
 				get

@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Immutable;
-using System.Linq;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core.Sources;
+using System;
+using System.Collections.Immutable;
+using System.Linq;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
@@ -26,7 +26,7 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 			                           arguments.HasValue
 				                           ? arguments.Value.Select(_selector)
 				                                      .ToImmutableArray
-				                           : (Func<ImmutableArray<TypeParts>>)null);
+				                           : null);
 			return result;
 		}
 	}

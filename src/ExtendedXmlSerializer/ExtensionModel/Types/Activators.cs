@@ -29,7 +29,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			var result = singleton != null
 				             ? activate
 					               ? new Activator(_activators.Build(parameter), singleton)
-					               : (IActivator)new ReflectionModel.Activator(singleton.Self)
+					               : new ReflectionModel.Activator(singleton.Self)
 				             : activator();
 			return result;
 		}

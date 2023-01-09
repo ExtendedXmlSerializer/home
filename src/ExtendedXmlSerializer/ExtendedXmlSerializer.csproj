@@ -7,7 +7,8 @@
     <Authors>Wojciech Nagórski;Michael DeMond</Authors>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>ExtendedXmlSerializer</AssemblyName>
-    <DocumentationFile>$(BaseIntermediateOutputPath)\$(Configuration)\$(TargetFramework)\ExtendedXmlSerializer.xml</DocumentationFile>
+	  <!-- ReSharper disable once UnknownProperty -->
+	  <DocumentationFile>$(BaseIntermediateOutputPath)\$(Configuration)\$(TargetFramework)\ExtendedXmlSerializer.xml</DocumentationFile>
 	  <LangVersion>preview</LangVersion>
   </PropertyGroup>
 

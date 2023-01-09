@@ -52,7 +52,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                 @"<?xml version=""1.0"" encoding=""utf-8""?><q:patientVerificationRequest OPVTypeCde=""PVM"" earliestDateOfService=""2018-08-07+10:00"" xmlns:q=""http://hic.gov.au/hiconline/hiconline/version-4"" />");
 		}
 
-		[System.CodeDom.Compiler.GeneratedCodeAttribute("XmlSchemaClassGenerator", "1.0.0.0"), SerializableAttribute,
+		[System.CodeDom.Compiler.GeneratedCodeAttribute("XmlSchemaClassGenerator", "1.0.0.0"), Serializable,
 		 System.Xml.Serialization.XmlTypeAttribute("PatientVerificationRequest", Namespace =
 			 "http://hic.gov.au/hiconline/hiconline/version-4"), System.Diagnostics.DebuggerStepThroughAttribute,
 		 System.ComponentModel.DesignerCategoryAttribute("code"), System.Xml.Serialization.XmlRootAttribute(

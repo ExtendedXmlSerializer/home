@@ -18,7 +18,7 @@ namespace ExtendedXmlSerializer.Core.Parsing
 		public static Func<T> Build<T>(this IOption<T> @this) => @this.IsDefined ? new Func<T>(@this.Get) : null;
 
 		public static T? GetAssigned<T>(this IOption<T> @this) where T : struct
-			=> @this.IsDefined ? @this.Get() : (T?)null;
+			=> @this.IsDefined ? @this.Get() : null;
 
 		public static T Get<T>(this IParsing<T> @this, string parameter) => @this.Get(Inputs.Default.Get(parameter))
 		                                                                         .Value;

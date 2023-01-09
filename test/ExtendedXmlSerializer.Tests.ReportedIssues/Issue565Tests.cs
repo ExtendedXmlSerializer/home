@@ -1,6 +1,7 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Tests.ReportedIssues.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using System.Linq;
 using System.Text;
 using Xunit;
@@ -37,6 +38,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		sealed class Model
 		{
+			[UsedImplicitly]
 			public Model(byte[] data, IDispenseEntity entity) : this(Encoding.UTF8.GetString(data), data, entity) {}
 
 			public Model(string key, IDispenseEntity entity) : this(key, Encoding.UTF8.GetBytes(key), entity) {}

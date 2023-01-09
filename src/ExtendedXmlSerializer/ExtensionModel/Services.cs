@@ -152,7 +152,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		public IServiceRepository RegisterFallback(Func<Type, bool> predicate, Func<Type, object> factory)
 			=>
 				new Services(_container,
-				             _registry.RegisterFallback((type, s) => predicate(type),
+				             _registry.RegisterFallback((type, _) => predicate(type),
 				                                        request => factory(request.ServiceType)));
 
 		public IServiceRepository RegisterConstructorDependency<TDependency>(
