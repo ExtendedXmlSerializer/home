@@ -23,7 +23,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			Action action = () => new ConfigurationContainer().Create().Cycle(subject).Should().BeEquivalentTo(subject);
 			action.Should()
 			      .Throw<Exception>()
-			      .WithMessage("The provided instance of type 'ExtendedXmlSerializer.Tests.ReportedIssues.Issue583Tests+RootObject' contains the same reference multiple times in its graph. While this is technically allowed, it is recommended to instead enable referential support by calling EnableReferences on the ConfigurationContainer. Doing so will ensure that multiple references found in the graph are emitted only once in the serialized document.\r\n\r\nHere is a list of found references:\r\n- ExtendedXmlSerializer.Tests.ReportedIssues.Issue583Tests+InnerObject");
+			      .WithMessage("The provided instance of type 'ExtendedXmlSerializer.Tests.ReportedIssues.Issue583Tests+RootObject' contains the same reference multiple times in its graph. While this is technically allowed, it is recommended to instead enable referential support by calling EnableReferences on the ConfigurationContainer. Doing so will ensure that multiple references found in the graph are emitted only once in the serialized document. Additionally, if you do want to allow multiple instances emitted as-is, make use of the `AllowMultipleReferences` method on the ConfigurationContainer.\r\n\r\nHere is a list of found references:\r\n- ExtendedXmlSerializer.Tests.ReportedIssues.Issue583Tests+InnerObject");
 		}
 
 		[Fact]
@@ -39,7 +39,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			Action action = () => new ConfigurationContainer().Create().Cycle(subject).Should().BeEquivalentTo(subject);
 			action.Should()
 			      .Throw<Exception>()
-			      .WithMessage("The provided instance of type 'ExtendedXmlSerializer.Tests.ReportedIssues.Issue583Tests+RootObjectOneProperty' contains the same reference multiple times in its graph. While this is technically allowed, it is recommended to instead enable referential support by calling EnableReferences on the ConfigurationContainer. Doing so will ensure that multiple references found in the graph are emitted only once in the serialized document.\r\n\r\nHere is a list of found references:\r\n- ExtendedXmlSerializer.Tests.ReportedIssues.Issue583Tests+InnerObject");
+			      .WithMessage("The provided instance of type 'ExtendedXmlSerializer.Tests.ReportedIssues.Issue583Tests+RootObjectOneProperty' contains the same reference multiple times in its graph. While this is technically allowed, it is recommended to instead enable referential support by calling EnableReferences on the ConfigurationContainer. Doing so will ensure that multiple references found in the graph are emitted only once in the serialized document. Additionally, if you do want to allow multiple instances emitted as-is, make use of the `AllowMultipleReferences` method on the ConfigurationContainer.\r\n\r\nHere is a list of found references:\r\n- ExtendedXmlSerializer.Tests.ReportedIssues.Issue583Tests+InnerObject");
 		}
 
 		[Fact]

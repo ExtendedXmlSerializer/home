@@ -1,35 +1,31 @@
-using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
 using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References;
 
-sealed record ReferenceSet : ReferenceResult, ICommand<object>, ISource<ReferenceBoundary>
+sealed record ReferenceSet : ReferenceResult, ISpecification<object>, IParameterizedSource<object, ReferenceBoundary>
 {
 	readonly IReferencesPolicy _policy;
-	readonly Stack<object>     _remaining, _depth = new();
+	readonly Stack<object>     _depth;
 	readonly HashSet<object>   _tracked;
 
-	public ReferenceSet(IReferencesPolicy policy)
-		: this(policy, new Stack<object>(), new HashSet<object>()) {}
+	public ReferenceSet(IReferencesPolicy policy) : this(policy, new Stack<object>(), new HashSet<object>()) {}
 
-	public ReferenceSet(IReferencesPolicy policy, Stack<object> remaining, HashSet<object> tracked)
+	public ReferenceSet(IReferencesPolicy policy, Stack<object> depth, HashSet<object> tracked)
 	{
-		_policy    = policy;
-		_remaining = remaining;
-		_tracked   = tracked;
+		_policy  = policy;
+		_depth   = depth;
+		_tracked = tracked;
 	}
 
-	public void Execute(object parameter)
+	public bool IsSatisfiedBy(object parameter)
 	{
 		if (parameter is not null)
 		{
-			if (_tracked.Add(parameter))
-			{
-				_remaining.Push(parameter);
-			}
-			else
+			var result = _tracked.Add(parameter);
+			if (!result)
 			{
 				var info = parameter.GetType();
 				if (!info.IsValueType && _policy.IsSatisfiedBy(info))
@@ -41,24 +37,15 @@ sealed record ReferenceSet : ReferenceResult, ICommand<object>, ISource<Referenc
 					}
 				}
 			}
+			return result;
 		}
+
+		return false;
 	}
 
-	public ReferenceBoundary Get()
+	public ReferenceBoundary Get(object parameter)
 	{
-		var subject = _remaining.Pop();
-		while (subject is ReferenceCompleted)
-		{
-			_depth.Pop();
-			subject = Any() ? _remaining.Pop() : null;
-		}
-
-		if (subject is not null)
-		{
-			_depth.Push(subject);
-		}
-		return new(_depth, subject);
+		_depth.Push(parameter);
+		return new(_depth);
 	}
-
-	public bool Any() => _remaining.Count > 0;
 }

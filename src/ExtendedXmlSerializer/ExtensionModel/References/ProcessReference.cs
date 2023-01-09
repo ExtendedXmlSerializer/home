@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References;
 
-sealed class ProcessReference : ICommand<ReferenceSet>
+sealed class ProcessReference : ICommand<ProcessReferenceInput>
 {
 	readonly ISpecification<TypeInfo> _allowed;
 	readonly ITypeMembers             _members;
@@ -29,24 +29,37 @@ sealed class ProcessReference : ICommand<ReferenceSet>
 		_store     = store;
 	}
 
-	public void Execute(ReferenceSet parameter)
+	public void Execute(ProcessReferenceInput parameter)
 	{
-		using var boundary = parameter.Get();
-		var       next     = boundary.Subject;
-		var       type     = next.GetType();
+		var (results, current) = parameter;
+		results.IsSatisfiedBy(current);
+		Process(results, current);
+	}
+	
+	void Process(ReferenceSet results, object current)
+	{
+		using var boundary = results.Get(current);
+		var       type     = current.GetType();
 		if (_allowed.IsSatisfiedBy(type))
 		{
 			var members = _members.Get(type);
 			for (var i = 0; i < members.Length; i++)
 			{
-				var value = _accessors.Get(members[i]).Get(next);
-				parameter.Execute(value);
+				var value = _accessors.Get(members[i]).Get(current);
+				if (results.IsSatisfiedBy(value))
+				{
+					Process(results, value);
+				}
 			}
 
-			var iterator = _store.For(next);
+			var iterator = _store.For(current);
 			while (iterator?.MoveNext() ?? false)
 			{
-				parameter.Execute(iterator.Current);
+				var o = iterator.Current;
+				if (results.IsSatisfiedBy(o))
+				{
+					Process(results, o);
+				}
 			}
 		}
 	}

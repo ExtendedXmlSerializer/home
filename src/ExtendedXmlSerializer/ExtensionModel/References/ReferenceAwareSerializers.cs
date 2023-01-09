@@ -84,7 +84,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 							$"{line}{line}Here is a list of found references:{line}{string.Join(line, references.Encountered.Select(x => $"- {x}"))}";
 
 						throw new MultipleReferencesDetectedException(
-						                                              $"The provided instance of type '{type}' contains the same reference multiple times in its graph. While this is technically allowed, it is recommended to instead enable referential support by calling EnableReferences on the ConfigurationContainer. Doing so will ensure that multiple references found in the graph are emitted only once in the serialized document.{message}",
+						                                              $"The provided instance of type '{type}' contains the same reference multiple times in its graph. While this is technically allowed, it is recommended to instead enable referential support by calling EnableReferences on the ConfigurationContainer. Doing so will ensure that multiple references found in the graph are emitted only once in the serialized document. Additionally, if you do want to allow multiple instances emitted as-is, make use of the `AllowMultipleReferences` method on the ConfigurationContainer.{message}",
 						                                              _container);
 					}
 				}

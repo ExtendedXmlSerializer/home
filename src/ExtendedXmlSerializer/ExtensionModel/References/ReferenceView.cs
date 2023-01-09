@@ -16,9 +16,5 @@ sealed class ReferenceView : IReferenceView
 	// ReSharper disable once TooManyDependencies
 	ReferenceView(ReferenceWalker walker) => _walker = walker;
 
-	public ReferenceResult Get(object parameter)
-	{
-		var result = _walker.Get(parameter);
-		return result;
-	}
+	public ReferenceResult Get(object parameter) => _walker.Get(parameter);
 }
