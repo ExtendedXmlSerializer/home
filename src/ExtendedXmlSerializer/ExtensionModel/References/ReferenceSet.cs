@@ -20,6 +20,8 @@ sealed record ReferenceSet : ReferenceResult, ISpecification<object>, IParameter
 		_tracked = tracked;
 	}
 
+	// ReSharper disable once CognitiveComplexity
+	// ReSharper disable once ExcessiveIndentation
 	public bool IsSatisfiedBy(object parameter)
 	{
 		if (parameter is not null)

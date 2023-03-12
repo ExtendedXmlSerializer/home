@@ -1,9 +1,10 @@
-﻿using System;
+﻿// ReSharper disable all
 using Light.GuardClauses;
+using System;
 
 namespace VweCore.Geometry
 {
-    public readonly struct Rectangle2D : IEquatable<Rectangle2D>
+	public readonly struct Rectangle2D : IEquatable<Rectangle2D>
     {
         public Rectangle2D(Point2D position, double width, double height, double angleInDegrees)
         {
