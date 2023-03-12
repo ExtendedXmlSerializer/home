@@ -40,12 +40,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.Instances
 
 				public object Get(IFormatReader parameter)
 				{
-					var key = parameter.Get()
-					                   .AsValid<XmlReader>();
+					var key = parameter.Get().AsValid<XmlReader>();
 
-					var result = _instances.IsSatisfiedBy(key) ? _instances.Get(key) : _reader.Get(parameter);
+					if (_instances.IsSatisfiedBy(key))
+					{
+						var result = _instances.Get(key);
+						_instances.Remove(key);
+						return result;
+					}
 
-					return result;
+					return _reader.Get(parameter);
 				}
 			}
 		}
