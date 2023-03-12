@@ -36,6 +36,7 @@ sealed class ProcessReference : ICommand<ProcessReferenceInput>
 		Process(results, current);
 	}
 	
+	// ReSharper disable once CognitiveComplexity
 	void Process(ReferenceSet results, object current)
 	{
 		using var boundary = results.Get(current);

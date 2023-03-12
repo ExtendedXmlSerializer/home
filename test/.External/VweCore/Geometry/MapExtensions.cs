@@ -1,9 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Light.GuardClauses;
+﻿using Light.GuardClauses;
+using System.Diagnostics.CodeAnalysis;
+// ReSharper disable all
 
 namespace VweCore.Geometry
 {
-    public static class MapExtensions
+	public static class MapExtensions
     {
         public static bool TryFindIntersectingNodeLink(this Map map, StorageRow storageRow, [NotNullWhen(true)] out NodeLink? nodeLink, out LineSegment2D lineFromStorageRowToIntersection)
         {

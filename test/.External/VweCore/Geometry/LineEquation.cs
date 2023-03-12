@@ -2,7 +2,7 @@
 
 namespace VweCore.Geometry
 {
-    public readonly struct LineEquation : IEquatable<LineEquation>
+	public readonly struct LineEquation : IEquatable<LineEquation>
     {
         public LineEquation(SlopeInterceptEquation slopeInterceptEquation)
         {
@@ -44,6 +44,7 @@ namespace VweCore.Geometry
             return otherEquation.SlopeInterceptEquation!.Value.CalculateIntersection(X!.Value);
         }
 
+        // ReSharper disable once TooManyArguments
         public Point2D? GetPointByOffset(Point2D pointFrom, double offset, AbscissaDirection abscissaDirection, OrdinateDirection ordinateDirection)
         {
             if (!ContainsPoint(pointFrom))

@@ -23,6 +23,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 				_item  = item;
 			}
 
+			// ReSharper disable once CognitiveComplexity
+			// ReSharper disable once CyclomaticComplexity
+			// ReSharper disable once ExcessiveIndentation
 			protected override bool Create(TypeInfo parameter)
 			{
 				var variables = _types.Get(parameter);

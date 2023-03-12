@@ -29,7 +29,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_specification = specification;
 			_references    = references;
 			_serializers   = serializers;
-			_allowed  = allowed;
+			_allowed       = allowed;
 		}
 
 		public ContentModel.ISerializer Get(TypeInfo parameter)
@@ -48,13 +48,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			readonly ContentModel.ISerializer   _container;
 			readonly IMultipleReferencesAllowed _allowed;
 
+			// ReSharper disable once TooManyDependencies
 			public Serializer(ISpecification<object> conditions, IReferenceView references,
 			                  IMultipleReferencesAllowed allowed, ContentModel.ISerializer container)
 			{
-				_conditions   = conditions;
-				_references   = references;
-				_container    = container;
-				_allowed = allowed;
+				_conditions = conditions;
+				_references = references;
+				_container  = container;
+				_allowed    = allowed;
 			}
 
 			public object Get(IFormatReader parameter) => _container.Get(parameter);

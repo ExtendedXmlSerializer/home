@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// ReSharper disable all
 using Light.GuardClauses;
+using System;
+using System.Collections.Generic;
 using VweCore.Abstractions;
 using VweCore.Geometry;
 
 namespace VweCore
 {
-    public sealed partial class Map
+	public sealed partial class Map
     {
         public T Add<T>(T entity)
             where T : class, IEntity
