@@ -2,19 +2,21 @@
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	sealed class MemberComparer : IMemberComparer
-	{
-		public static MemberComparer Default { get; } = new MemberComparer();
+    sealed class MemberComparer : IMemberComparer
+    {
+        public static MemberComparer Default { get; } = new MemberComparer();
 
-		MemberComparer() : this(Defaults.TypeComparer) {}
+        MemberComparer() : this(Defaults.TypeComparer) { }
 
-		readonly ITypeComparer _type;
+        readonly ITypeComparer _type;
 
-		public MemberComparer(ITypeComparer type) => _type = type;
+        public MemberComparer(ITypeComparer type) => _type = type;
 
-		public bool Equals(MemberInfo x, MemberInfo y)
-			=> x.Name.Equals(y.Name) && _type.Equals(x.ReflectedType.GetTypeInfo(), y.ReflectedType.GetTypeInfo());
+        public bool Equals(MemberInfo x, MemberInfo y)
+            => x.Name.Equals(y.Name) &&
+               (_type.Equals(x.ReflectedType.GetTypeInfo(), y.ReflectedType.GetTypeInfo()) ||
+                x.ReflectedType.IsAssignableFrom(y.DeclaringType));
 
-		public int GetHashCode(MemberInfo obj) => 0;
-	}
+        public int GetHashCode(MemberInfo obj) => 0;
+    }
 }
