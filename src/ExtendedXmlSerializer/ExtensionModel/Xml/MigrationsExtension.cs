@@ -136,16 +136,21 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 						foreach (var attribute in attributes)
 						{
-							var prefix = attribute.Name.LocalName;
-							if (manager.LookupNamespace(prefix) == null)
-							{
-								var @namespace = element.GetNamespaceOfPrefix(prefix);
-								if (@namespace != null)
-								{
-									manager.AddNamespace(prefix, @namespace.NamespaceName);
-								}
-							}
-						}
+                            var prefix = attribute.Name.LocalName;
+                            if (prefix == "xmlns")
+                            {
+                                //Add default namespace to the manager
+                                manager.AddNamespace(string.Empty, attribute.Value);
+                            }
+                            else if (manager.LookupNamespace(prefix) == null)
+                            {
+                                var @namespace = element.GetNamespaceOfPrefix(prefix);
+                                if (@namespace != null)
+                                {
+                                    manager.AddNamespace(prefix, @namespace.NamespaceName);
+                                }
+                            }
+                        }
 					}
 
 					XmlParserContexts.Default.Assign(native.NameTable, context);
