@@ -8,6 +8,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		ReaderFormatter() {}
 
-		public string Get(IFormatReader parameter) => ((System.Xml.XmlReader)parameter.Get()).Name;
+		public string Get(IFormatReader parameter) => ((System.Xml.XmlReader)parameter.Get()).LocalName;
 	}
 }
