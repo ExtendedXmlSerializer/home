@@ -1,11 +1,11 @@
-# [ExtendedXmlSerializer v3.7.13](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.13)
-> 03/23/2024 09:12:27 UTC
-##### ``v3.7.13``
+# [ExtendedXmlSerializer v3.7.15](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.15)
+> 03/23/2024 10:01:15 UTC
+##### ``v3.7.15``
 ## What&#39;s Changed
-* Update GitHub API token by @Mike-E-angelo in https://github.com/ExtendedXmlSerializer/home/pull/619
+* Update token by @Mike-E-angelo in https://github.com/ExtendedXmlSerializer/home/pull/622
 
 
-**Full Changelog**: https://github.com/ExtendedXmlSerializer/home/compare/v3.7.12...v3.7.13
+**Full Changelog**: https://github.com/ExtendedXmlSerializer/home/compare/v3.7.14...v3.7.15
 # [ExtendedXmlSerializer v3.7.12](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.12)
 > 03/23/2024 08:45:04 UTC
 ##### ``v3.7.12``
