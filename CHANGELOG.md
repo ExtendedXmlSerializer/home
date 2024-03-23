@@ -1,3 +1,12 @@
+# [ExtendedXmlSerializer v3.7.16](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.16)
+> 03/23/2024 10:34:17 UTC
+##### ``v3.7.16``
+## What&#39;s Changed
+* Update deploy key by @Mike-E-angelo in https://github.com/ExtendedXmlSerializer/home/pull/624
+* [Automated] Generated CHANGELOG.md by @github-actions in https://github.com/ExtendedXmlSerializer/home/pull/620
+
+
+**Full Changelog**: https://github.com/ExtendedXmlSerializer/home/compare/v3.7.15...v3.7.16
 # [ExtendedXmlSerializer v3.7.15](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.15)
 > 03/23/2024 10:01:15 UTC
 ##### ``v3.7.15``
@@ -231,11 +240,5 @@ https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.2
 ##### ``v3.2.2``
 ### &#128027; Bug Fixes &#128295; 
 - Enabled member comparison by base-type on EmitWhen call. #412 @Mike-E-wins 
-
-# [ExtendedXmlSerializer v3.2.1](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.1)
-> 06/22/2020 14:51:17 UTC
-##### ``v3.2.1``
-### &#128027; Bug Fixes &#128295; 
-- Fixed bug with references w/ exs:member=&quot;&quot; attributes #408 @Mike-E-wins 
 
 
