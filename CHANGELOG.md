@@ -1,3 +1,20 @@
+# [ExtendedXmlSerializer v3.7.18](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.18)
+> 03/23/2024 11:20:53 UTC
+##### ``v3.7.18``
+## What&#39;s Changed
+* Update to RSA by @Mike-E-angelo in https://github.com/ExtendedXmlSerializer/home/pull/629
+
+
+**Full Changelog**: https://github.com/ExtendedXmlSerializer/home/compare/v3.7.17...v3.7.18
+# [ExtendedXmlSerializer v3.7.17](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.17)
+> 03/23/2024 10:58:44 UTC
+##### ``v3.7.17``
+## What&#39;s Changed
+* [Automated] Generated CHANGELOG.md by @github-actions in https://github.com/ExtendedXmlSerializer/home/pull/625
+* Update Deploy Key (again) by @Mike-E-angelo in https://github.com/ExtendedXmlSerializer/home/pull/626
+
+
+**Full Changelog**: https://github.com/ExtendedXmlSerializer/home/compare/v3.7.16...v3.7.17
 # [ExtendedXmlSerializer v3.7.16](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.16)
 > 03/23/2024 10:34:17 UTC
 ##### ``v3.7.16``
@@ -228,17 +245,5 @@ https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.2
 - Member resolution now uses ReflectedType first, then DeclaredType. #417 @Mike-E-wins 
 - Fixed references resolution bugs during deserialization #420 @Mike-E-wins 
 - Added support for IReadOnlyList properties. #421 @Mike-E-wins 
-
-# [ExtendedXmlSerializer v3.2.3](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.3)
-> 07/21/2020 14:12:24 UTC
-##### ``v3.2.3``
-### &#128027; Bug Fixes &#128295; 
-- Assigned parser contexts for migrations. #415 @Mike-E-wins 
-
-# [ExtendedXmlSerializer v3.2.2](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.2)
-> 07/07/2020 07:25:26 UTC
-##### ``v3.2.2``
-### &#128027; Bug Fixes &#128295; 
-- Enabled member comparison by base-type on EmitWhen call. #412 @Mike-E-wins 
 
 
