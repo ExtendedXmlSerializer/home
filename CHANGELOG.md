@@ -1,3 +1,26 @@
+# [ExtendedXmlSerializer v3.7.13](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.13)
+> 03/23/2024 09:12:27 UTC
+##### ``v3.7.13``
+## What&#39;s Changed
+* Update GitHub API token by @Mike-E-angelo in https://github.com/ExtendedXmlSerializer/home/pull/619
+
+
+**Full Changelog**: https://github.com/ExtendedXmlSerializer/home/compare/v3.7.12...v3.7.13
+# [ExtendedXmlSerializer v3.7.12](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.12)
+> 03/23/2024 08:45:04 UTC
+##### ``v3.7.12``
+## What&#39;s Changed
+* Attended to warnings by @Mike-E-angelo in https://github.com/ExtendedXmlSerializer/home/pull/603
+* [Automated] Generated CHANGELOG.md by @github-actions in https://github.com/ExtendedXmlSerializer/home/pull/601
+* Demonstration of Implicit Typing and Alias by @Mike-E-angelo in https://github.com/ExtendedXmlSerializer/home/pull/605
+* DateOnly Extension demonstration by @Mike-E-angelo in https://github.com/ExtendedXmlSerializer/home/pull/610
+* Update NuGet API Key by @Mike-E-angelo in https://github.com/ExtendedXmlSerializer/home/pull/616
+* Fixed Deserialization of inherited class with different namespaces not possible with Migration (Issue 612) by @imperiobadgo in https://github.com/ExtendedXmlSerializer/home/pull/613
+
+## New Contributors
+* @imperiobadgo made their first contribution in https://github.com/ExtendedXmlSerializer/home/pull/613
+
+**Full Changelog**: https://github.com/ExtendedXmlSerializer/home/compare/v3.7.11...v3.7.12
 # [ExtendedXmlSerializer v3.7.11](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.11)
 > 03/12/2023 14:39:27 UTC
 ##### ``v3.7.11``
@@ -214,26 +237,5 @@ https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.2
 ##### ``v3.2.1``
 ### &#128027; Bug Fixes &#128295; 
 - Fixed bug with references w/ exs:member=&quot;&quot; attributes #408 @Mike-E-wins 
-
-# [ExtendedXmlSerializer v3.2.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.0)
-> 06/16/2020 07:28:35 UTC
-##### ``v3.2.0``
-### ✨ New Features &#128640; 
-- Allowed members to be configured from base classes. #399 @Mike-E-wins 
-- Ensured exs xmlns is applied to root for optimized namespace + enabled-reference scenarios. #402 @Mike-E-wins 
-### &#128027; Bug Fixes &#128295; 
-- Demonstrated WithUnknownContent().Continue() #395 @Mike-E-wins 
-- Adjusted reference detection to be more accurate in the case of attri… #400 @Mike-E-wins 
-### Other Changes 
-- Added basic (throw) support for anonymous/dynamic types. #389 @Mike-E-wins 
-- [Automated] Generated CHANGELOG.md #390 @github-actions[bot] 
-- Emit initialization times. #394 @Mike-E-wins 
-- Sample code for documentation demonstrating implicit and explicit ref… #404 @Mike-E-wins 
-
-# [ExtendedXmlSerializer v3.1.4](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.1.4)
-> 04/28/2020 06:37:20 UTC
-##### ``v3.1.4``
-### &#128027; Bug Fixes &#128295; 
-- Added support for Flags-based enumerations. #387 @Mike-E-wins 
 
 
