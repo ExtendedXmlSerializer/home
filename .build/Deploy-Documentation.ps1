@@ -1,7 +1,7 @@
 $key = ("-----BEGIN OPENSSH PRIVATE KEY-----`n" +
 		$env:DEPLOY_KEY.Replace(' ', "`n") +
 		"`n-----END OPENSSH PRIVATE KEY-----`n")
-Set-Content "$Home\.ssh\id_ed25519" $key
+Set-Content "$Home\.ssh\id_rsa" $key
 git clone "git@github.com:ExtendedXmlSerializer/documentation.git" -b gh-pages .wwwroot -q
 
 Copy-Item .wwwroot/.git documentation/.wwwroot -recurse
