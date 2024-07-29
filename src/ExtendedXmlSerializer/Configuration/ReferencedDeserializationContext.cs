@@ -3,6 +3,7 @@ using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System.IO;
 using System.Text;
 using System.Xml;
+using XmlReader = System.Xml.XmlReader;
 
 namespace ExtendedXmlSerializer.Configuration
 {
@@ -32,7 +33,8 @@ namespace ExtendedXmlSerializer.Configuration
 		/// <param name="serializer">The serializer to configure.</param>
 		/// <param name="existing">The existing target instance.</param>
 		/// <param name="settings">The xml reader settings used for deserialization.</param>
-		public ReferencedDeserializationContext(IExtendedXmlSerializer serializer, T existing, XmlReaderSettings settings)
+		public ReferencedDeserializationContext(IExtendedXmlSerializer serializer, T existing,
+		                                        XmlReaderSettings settings)
 			: this(InstanceReaders.Default.Get(serializer), existing, settings) {}
 
 		ReferencedDeserializationContext(IInstanceReader reader, T existing, XmlReaderSettings settings)
@@ -76,7 +78,18 @@ namespace ExtendedXmlSerializer.Configuration
 		/// <returns>The initial provided target instance, assigned with values discovered in the provided document.</returns>
 		public T Deserialize(XmlReaderSettings settings, Stream stream)
 		{
-			var reader   = new XmlReaderFactory(settings, settings.NameTable.Context()).Get(stream);
+			using var reader = new XmlReaderFactory(settings, settings.NameTable.Context()).Get(stream);
+			return Deserialize(reader);
+		}
+
+		/// <summary>
+		/// Deserializes a document represented by the provided stream and assigns any values into the provided instance
+		/// context, using the provided reader settings.
+		/// </summary>
+		/// <param name="reader">The reader representing the source document.</param>
+		/// <returns>The initial provided target instance, assigned with values discovered in the provided document.</returns>
+		public T Deserialize(XmlReader reader)
+		{
 			var existing = new Existing(reader, _existing);
 			var result   = (T)_reader.Get(existing);
 			return result;
