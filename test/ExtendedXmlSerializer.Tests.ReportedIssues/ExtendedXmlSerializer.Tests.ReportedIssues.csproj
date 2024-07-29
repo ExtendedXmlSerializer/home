@@ -3,7 +3,7 @@
 
   <PropertyGroup>
 	  <ClassicFramework>net462</ClassicFramework>
-	  <TargetFrameworks>net6.0; net7.0;$(ClassicFramework)</TargetFrameworks>
+	  <TargetFrameworks>net8.0;$(ClassicFramework)</TargetFrameworks>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <LangVersion>latest</LangVersion>
 	  <NoWarn>$(NoWarn);CS8981</NoWarn>
