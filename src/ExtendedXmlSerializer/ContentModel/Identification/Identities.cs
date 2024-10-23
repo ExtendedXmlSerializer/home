@@ -7,8 +7,6 @@ namespace ExtendedXmlSerializer.ContentModel.Identification
 {
 	sealed class Identities : CacheBase<TypeInfo, IIdentity>, IIdentities
 	{
-		readonly static TypeNameFormatter TypeNameFormatter = TypeNameFormatter.Default;
-
 		readonly IIdentityStore _source;
 		readonly INames         _alias;
 		readonly ITypeFormatter _formatter;
@@ -16,7 +14,7 @@ namespace ExtendedXmlSerializer.ContentModel.Identification
 
 		[UsedImplicitly]
 		public Identities(IIdentifiers identifiers, IIdentityStore source, INames names)
-			: this(source, names, TypeNameFormatter, identifiers) {}
+			: this(source, names, TypeNameFormatter.Default, identifiers) {}
 
 		// ReSharper disable once TooManyDependencies
 		public Identities(IIdentityStore source, INames alias, ITypeFormatter formatter, IIdentifiers identifiers)
