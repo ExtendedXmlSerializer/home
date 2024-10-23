@@ -10,13 +10,7 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 
 		GenericNameParser() : this(CodeIdentifier.Default, Parse.Char(DefaultClrDelimiters.Default.Generic)) {}
 
-		public GenericNameParser(Parser<string> identifier, Parser<char> delimiter) : base(
-		                                                                                   identifier
-			                                                                                   .SelectMany(delimiter
-			                                                                                               .Optional()
-			                                                                                               .Accept,
-			                                                                                               (name, _)
-				                                                                                               => name)
-		                                                                                  ) {}
+		public GenericNameParser(Parser<string> identifier, Parser<char> delimiter)
+			: base(identifier.SelectMany(delimiter.Optional().Accept, (name, _) => name)) {}
 	}
 }

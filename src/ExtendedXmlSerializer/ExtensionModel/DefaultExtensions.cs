@@ -58,6 +58,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			yield return new AllowedMembersExtension(_metadata);
 			yield return new AllowedMemberValuesExtension();
 			yield return new MemberFormatExtension();
+			yield return GeneratedListAwareExtension.Default;
 			yield return ImmutableArrayExtension.Default;
 			yield return SerializationExtension.Default;
 			yield return RecursionAwareExtension.Default;

@@ -10,6 +10,6 @@ namespace ExtendedXmlSerializer.ReflectionModel
 	{
 		public static IsUnspeakable Default { get; } = new IsUnspeakable();
 
-		IsUnspeakable() : base(x => x.Name.StartsWith("<")) {}
+		IsUnspeakable() : base(x => x.Name.StartsWith("<") || (x.FullName is not null && x.FullName.StartsWith("<"))) {}
 	}
 }

@@ -1,21 +1,14 @@
 ﻿using ExtendedXmlSerializer.Core.Specifications;
-using System.Collections.Generic;
+using ExtendedXmlSerializer.ExtensionModel;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
 	sealed class CollectionAwareConstructorLocator : ListConstructorLocator, IConstructorLocator
 	{
-		readonly static ISpecification<TypeInfo> Specification = IsInterface.Default.And(IsCollectionType.Instance);
+		readonly static ISpecification<TypeInfo> Specification
+			= IsInterface.Default.Or(IsGeneratedList.Default).And(IsCollectionTypeExpandedSpecification.Default);
 
 		public CollectionAwareConstructorLocator(IConstructorLocator previous) : base(Specification, previous) {}
-
-		sealed class IsCollectionType : AnySpecification<TypeInfo>
-		{
-			public static IsCollectionType Instance { get; } = new IsCollectionType();
-
-			IsCollectionType() : base(IsCollectionTypeSpecification.Default,
-			                          new IsAssignableGenericSpecification(typeof(IReadOnlyCollection<>))) {}
-		}
 	}
 }
