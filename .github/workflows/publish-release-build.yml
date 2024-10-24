@@ -34,7 +34,7 @@ jobs:
       with:
         access_token: ${{ secrets.GITHUB_TOKEN }}
     - name: Upload CHANGELOG
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v4
       with:
         name: store
         path: '${{ steps.generate.outputs.filename }}'
