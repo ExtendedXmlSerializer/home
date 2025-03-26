@@ -2,7 +2,7 @@ environment:
   BUILD_SOLUTION_PATH: '.\ExtendedXmlSerializer.sln'
   BUILD_DOCUMENTATION_PATH: '.\documentation\docfx.json'
   API_GITHUB_TOKEN:
-    secure: gw4s8lJBH6erxHXzmAXO3GiXQyTr+sU2y2ADADUP07FeUHyTSWypnnjjJVg02H7EYrkaLMGoIeo6UAWgftm62+BDmdCUPxG9H4tx/2fAbfjc+q6pF+X5qtz6FONRcgJk
+    secure: rfWPhYeHHl/ToVinvh16suzR4halfT0kJ8RKEVX4udo7f4t9m4TDmyIqqeqVLJJN
   API_APPVEYOR_TOKEN:
     secure: xQR4THytwto+UTuQtpj5N5RcD4pDHIJVnahrbQ7Xqjs=
   DEPLOY_KEY:
