@@ -1,5 +1,5 @@
-using System;
 using ExtendedXmlSerializer.Core.Sources;
+using System;
 
 namespace ExtendedXmlSerializer.ContentModel.Identification
 {
@@ -7,8 +7,7 @@ namespace ExtendedXmlSerializer.ContentModel.Identification
 	{
 		public IdentityStore() : base(i => new Names(i).Get) {}
 
-		public IIdentity Get(string name, string identifier) => Get(identifier)
-			.Invoke(name);
+		public IIdentity Get(string name, string identifier) => Get(identifier).Invoke(name);
 
 		sealed class Names : CacheBase<string, IIdentity>
 		{

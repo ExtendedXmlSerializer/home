@@ -11,7 +11,6 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 		readonly ITypeIdentities _aliased;
 		readonly ITypeCandidates _candidates;
 
-
 		// ReSharper disable once TooManyDependencies
 		[UsedImplicitly]
 		public Types(IPartitionedTypeSpecification specification, IAssemblyTypePartitions partitions,
@@ -25,6 +24,6 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 		}
 
 		protected override TypeInfo Create(IIdentity parameter)
-			=> _aliased.Get(parameter) ?? _candidates.Get(parameter).SingleOrDefault();
+			=> _aliased.Get(parameter) ?? _candidates.Get(parameter).FirstOrDefault();
 	}
 }
