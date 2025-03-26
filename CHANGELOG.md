@@ -1,3 +1,13 @@
+# [ExtendedXmlSerializer v3.9.4](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.9.4)
+> 03/26/2025 20:46:34 UTC
+##### ``v3.9.4``
+## What&#39;s Changed
+* [Automated] Generated CHANGELOG.md by @github-actions in https://github.com/ExtendedXmlSerializer/home/pull/639
+* Update deployment keys #648 by @Mike-E-angelo in https://github.com/ExtendedXmlSerializer/home/pull/649
+* Account for multiple generics of the same name in same namespace by @Mike-E-angelo in https://github.com/ExtendedXmlSerializer/home/pull/647
+
+
+**Full Changelog**: https://github.com/ExtendedXmlSerializer/home/compare/v3.8.0...v3.9.4
 # [ExtendedXmlSerializer v3.8.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.8.0)
 > 10/24/2024 07:40:55 UTC
 ##### ``v3.8.0``
@@ -244,12 +254,5 @@ https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.2
 - Allowed `null` Namespace for Framework Types #430 @oliver-chime 
 - Allowed `null`/Empty Namespaces for Custom/Non-system Assemblies #432 @Mike-E-angelo 
 - Removed Caching from Reference Resolution #437 @Mike-E-angelo 
-
-# [ExtendedXmlSerializer v3.2.5](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.5)
-> 08/18/2020 07:24:58 UTC
-##### ``v3.2.5``
-### &#128027; Bug Fixes &#128295; 
-- Accounted for rare state when namespace prefix is `null`. #424 @Mike-E-angelo 
-- Improved member resolution for parameterized content #428 @Mike-E-angelo 
 
 
