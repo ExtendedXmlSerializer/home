@@ -45,7 +45,7 @@ sealed class TypePartReflector : CacheBase<TypeParts, TypeInfo>, ITypePartReflec
 	static Type Locate(TypeInfo candidate, int count)
 	{
 		var original = candidate.FullName;
-		var name     = $"{original.Substring(0, original.IndexOf("`", StringComparison.Ordinal))}`{count}";
+		var name     = $"{original.Split('`')[0]}`{count}";
 		return candidate.Assembly.GetType(name, true);
 	}
 
