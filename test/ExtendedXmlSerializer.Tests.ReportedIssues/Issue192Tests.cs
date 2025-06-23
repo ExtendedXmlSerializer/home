@@ -29,7 +29,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			serializer.Cycle(second)
 			          .Should().BeEquivalentTo(second);
 
-			var group = new Group2 {Type = GroupType.Large};
+            var third = new SubjectWithMembers2 { Item = 123, Message = "Message", Time = DateTimeOffset.Now };
+            serializer.Cycle(third)
+                      .Should().BeEquivalentTo(third);
+
+            var group = new Group2 {Type = GroupType.Large};
 			serializer.Cycle(group)
 			          .Should().BeEquivalentTo(group);
 
@@ -78,7 +82,17 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			public DateTimeOffset Time { [UsedImplicitly] get; set; }
 		}
 
-		public class Group2
+        public class SubjectWithMembers2
+        {
+            [XmlText]
+            public string Message { [UsedImplicitly] get; set; }
+
+            public int Item { get; set; }
+
+            public DateTimeOffset Time { [UsedImplicitly] get; set; }
+        }
+
+        public class Group2
 		{
 			[XmlText(Type = typeof(GroupType))] public GroupType Type = GroupType.Small;
 		}
