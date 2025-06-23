@@ -153,7 +153,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 			IMemberSerializer Create(IMemberSerializer serializer, Type owner)
 			{
-				var item = CollectionItemTypeLocator.Default.Get(serializer.Profile.MemberType);
+				var item = serializer.Profile.MemberType == typeof(string)
+                    ? null  // strings should not be serialized as a collection of char
+                    : CollectionItemTypeLocator.Default.Get(serializer.Profile.MemberType);
 				var itemType = _member.Get(owner)
 				                      .Item1;
 				var member = (IMemberSerializer)new MemberSerializer(serializer, _converters.Get(itemType));
