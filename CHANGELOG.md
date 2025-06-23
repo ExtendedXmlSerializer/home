@@ -1,3 +1,14 @@
+# [ExtendedXmlSerializer v3.9.5](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.9.5)
+> 06/23/2025 09:40:28 UTC
+##### ``v3.9.5``
+## What&#39;s Changed
+* [Automated] Generated CHANGELOG.md by @github-actions in https://github.com/ExtendedXmlSerializer/home/pull/653
+* Fixed an issue where strings would be handled as collection of chars by @ms0815user in https://github.com/ExtendedXmlSerializer/home/pull/654
+
+## New Contributors
+* @ms0815user made their first contribution in https://github.com/ExtendedXmlSerializer/home/pull/654
+
+**Full Changelog**: https://github.com/ExtendedXmlSerializer/home/compare/v3.9.4...v3.9.5
 # [ExtendedXmlSerializer v3.9.4](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.9.4)
 > 03/26/2025 20:46:34 UTC
 ##### ``v3.9.4``
@@ -246,13 +257,5 @@ https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.2
 ### &#128027; Bug Fixes &#128295; 
 - Accounted for empty CDATA elements. #444 @Mike-E-angelo 
 - Accounted for successive CDATA blocks. #448 @Mike-E-angelo 
-
-# [ExtendedXmlSerializer v3.2.6](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.6)
-> 09/01/2020 08:58:59 UTC
-##### ``v3.2.6``
-### &#128027; Bug Fixes &#128295; 
-- Allowed `null` Namespace for Framework Types #430 @oliver-chime 
-- Allowed `null`/Empty Namespaces for Custom/Non-system Assemblies #432 @Mike-E-angelo 
-- Removed Caching from Reference Resolution #437 @Mike-E-angelo 
 
 
