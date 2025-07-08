@@ -1,3 +1,11 @@
+# [ExtendedXmlSerializer v3.9.6](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.9.6)
+> 07/08/2025 19:21:18 UTC
+##### ``v3.9.6``
+## What&#39;s Changed
+* Adjusted custom serializers to have specific type selector by @Mike-E-angelo in https://github.com/ExtendedXmlSerializer/home/pull/658
+
+
+**Full Changelog**: https://github.com/ExtendedXmlSerializer/home/compare/v3.9.5...v3.9.6
 # [ExtendedXmlSerializer v3.9.5](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.9.5)
 > 06/23/2025 09:40:28 UTC
 ##### ``v3.9.5``
@@ -250,12 +258,5 @@ https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.2
 ##### ``v3.3.0``
 ### ✨ New Features &#128640; 
 - Introduced type-based serialization interception. #452 @Mike-E-angelo 
-
-# [ExtendedXmlSerializer v3.2.7](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.2.7)
-> 09/15/2020 13:28:08 UTC
-##### ``v3.2.7``
-### &#128027; Bug Fixes &#128295; 
-- Accounted for empty CDATA elements. #444 @Mike-E-angelo 
-- Accounted for successive CDATA blocks. #448 @Mike-E-angelo 
 
 
