@@ -5,6 +5,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
 	sealed class MemberCustomSerializers : Metadata<MemberInfo, ContentModel.ISerializer>, ICustomMemberSerializers
 	{
-		public MemberCustomSerializers() : base(MemberComparer.Default) {}
+		public MemberCustomSerializers() : base(new MemberComparer(ExtensionModel.Defaults.SpecificTypeComparer)) {}
 	}
 }
