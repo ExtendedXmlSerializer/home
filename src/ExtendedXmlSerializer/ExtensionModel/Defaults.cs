@@ -12,5 +12,8 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			= new CompositeTypeComparer(ImplementedTypeComparer.Default,
 			                            TypeIdentityComparer.Default,
 			                            InheritedTypeComparer.Default);
+
+		public static ITypeComparer SpecificTypeComparer { get; } 
+			= new CompositeTypeComparer(TypeIdentityComparer.Default, InheritedTypeComparer.Default);
 	}
 }
