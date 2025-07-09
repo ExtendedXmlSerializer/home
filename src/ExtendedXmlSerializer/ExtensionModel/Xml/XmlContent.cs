@@ -15,9 +15,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		{
 			var attributes = _attributes;
 			var content    = _elements;
-			var result     = (attributes?.MoveNext() ?? false) || (content?.MoveNext() ?? false);
-			return result;
+			return content?.IsEmpty() ?? false ? (bool)content?.MoveNext() : Next(in attributes, in content);
 		}
+
+		static bool Next(in XmlAttributes? attributes, in XmlElements? content)
+			=> (attributes?.MoveNext() ?? false) || (content?.MoveNext() ?? false);
 
 		public object Current => null;
 	}
