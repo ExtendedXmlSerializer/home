@@ -1,3 +1,14 @@
+# [ExtendedXmlSerializer v3.10.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.10.0)
+> 01/26/2026 08:56:21 UTC
+##### ``v3.10.0``
+## What&#39;s Changed
+* Add HeapExtension by @warquys in https://github.com/ExtendedXmlSerializer/home/pull/663
+* Move next on empty elements by @Mike-E-angelo in https://github.com/ExtendedXmlSerializer/home/pull/661
+
+## New Contributors
+* @warquys made their first contribution in https://github.com/ExtendedXmlSerializer/home/pull/663
+
+**Full Changelog**: https://github.com/ExtendedXmlSerializer/home/compare/v3.9.6...v3.10.0
 # [ExtendedXmlSerializer v3.9.6](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.9.6)
 > 07/08/2025 19:21:18 UTC
 ##### ``v3.9.6``
@@ -252,11 +263,5 @@ https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.7.2
 - Use BenchmarkSwitcher #459 @WojciechNagorski 
 - Update nuget packages #457 @WojciechNagorski 
 - Update performance tests #460 @WojciechNagorski 
-
-# [ExtendedXmlSerializer v3.3.0](https://github.com/ExtendedXmlSerializer/home/releases/tag/v3.3.0)
-> 09/22/2020 06:05:26 UTC
-##### ``v3.3.0``
-### ✨ New Features &#128640; 
-- Introduced type-based serialization interception. #452 @Mike-E-angelo 
 
 
