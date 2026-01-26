@@ -41,11 +41,15 @@ jobs:
 
   load_and_push:
     runs-on: ubuntu-latest
-    needs: [generate_and_save]    
+    needs: [generate_and_save]
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
         with:
           ref: ${{ env.BRANCH_REFERENCE }}
+          fetch-depth: 0
       - name: Download the CHANGELOG
         uses: actions/download-artifact@v4.1.7
         with:
@@ -53,11 +57,9 @@ jobs:
           path: ./
       - name: Get base branch
         id: vars
-        run: |
-          base_ref=${{ env.BRANCH_REFERENCE }}
-          echo ::set-output name=base_branch::${base_ref#refs/*/}
+        run: echo "base_branch=master" >> "$GITHUB_OUTPUT"
       - name: Create Pull Request for CHANGELOG
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: ${{ env.DEPLOY_COMMIT_MESSAGE }}
