@@ -5,7 +5,9 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 	sealed class Enclosure : Enclosure<object>
 	{
 		public Enclosure(IWriter<object> start, IWriter<object> body) : base(start, body) {}
-	}
+
+		public Enclosure(IWriter<object> start, IWriter<object> body, IWriter<object> finish) : base(start, body, finish) { }
+    }
 
 	class Enclosure<T> : IWriter<T>
 	{

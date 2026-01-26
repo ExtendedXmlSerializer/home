@@ -3,6 +3,7 @@ using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using JetBrains.Annotations;
 using System;
 using System.Linq;
@@ -59,7 +60,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			public IFormatReader Get(System.Xml.XmlReader reader) => new DeferredReferencesReader(_factory.Get(reader));
 		}
 
-		sealed class DeferredReferencesReader : IFormatReader
+		sealed class DeferredReferencesReader : IFormatReader, IRegressableReader
 		{
 			readonly IDeferredCommands _commands;
 			readonly IFormatReader     _reader;
@@ -77,6 +78,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			public string Identifier => _reader.Identifier;
 
 			public string Name => _reader.Name;
+            bool IRegressableReader.IsRegressable => _reader is IRegressableReader regressable 
+												  && regressable.IsRegressable;
 
 			public IIdentity Get(string name, string identifier) => _reader.Get(name, identifier);
 
@@ -100,7 +103,24 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			public void Set() => _reader.Set();
 
 			public object Get() => _reader.Get();
-		}
+
+            bool IRegressableReader.SetPosition(ReaderPosition position)
+            {
+                if (_reader is not IRegressableReader regressable)
+					return false;
+
+                return regressable.SetPosition(position);
+			}
+
+            ReaderPosition IRegressableReader.GetPosition()
+            {
+				if (_reader is not IRegressableReader regressable)
+					throw new InvalidOperationException($"Unable to get the reader positon from the inner reader. " 
+						+ $"The inner reader do not implement {nameof(IRegressableReader)}.");
+
+                return regressable.GetPosition();
+            }
+        }
 
 		sealed class Handler : IMemberHandler
 		{

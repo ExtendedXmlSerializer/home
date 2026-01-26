@@ -139,16 +139,20 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				readonly IMemberAccessors       _accessors;
 				readonly IElementMemberContents _contents;
 				readonly IElementMember         _member;
+				readonly IEnclosures			_enclosures;
 
 				// ReSharper disable once TooManyDependencies
 				public MemberSerializers(IMemberSerializers members, IMemberAccessors accessors,
-				                         IElementMemberContents contents, IElementMember member)
+				                         IElementMemberContents contents, IElementMember member,
+										 IEnclosures enclosures)
 				{
-					_members   = members;
-					_accessors = accessors;
-					_contents  = contents;
-					_member    = member;
-				}
+					_members    = members;
+					_accessors  = accessors;
+					_contents   = contents;
+					_member     = member;
+                    _enclosures = enclosures;
+
+                }
 
 				public IMemberSerializer Get(IMember parameter)
 				{
@@ -163,7 +167,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 					var body   = _contents.Get(profile);
 					var access = _accessors.Get(profile);
 					var member = new MemberSerializer(profile, access, body,
-					                                  new Serializer(body, new Enclosure(start, body).Adapt()));
+					                                  new Serializer(body, _enclosures.Get(start, body).Adapt()));
 					var result = new ListContentSerializer(member, name);
 					return result;
 				}

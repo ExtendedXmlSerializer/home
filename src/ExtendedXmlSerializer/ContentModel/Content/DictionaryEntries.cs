@@ -1,10 +1,10 @@
-using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.ReflectionModel;
-using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.ReflectionModel;
+using JetBrains.Annotations;
 // ReSharper disable TooManyDependencies
 
 namespace ExtendedXmlSerializer.ContentModel.Content
@@ -25,15 +25,16 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 		readonly IMemberSerializers                                         _serializers;
 		readonly IWriter                                                    _element;
 		readonly IDictionaryPairTypesLocator                                _locator;
+		readonly IEnclosures                                                _enclosures;
 
 		[UsedImplicitly]
 		public DictionaryEntries(IInnerContentServices contents, Element element, IMembers members,
-		                         IMemberSerializers serializers)
-			: this(MemberSerializationBuilder.Default.Get, contents, serializers, members, element.Get(Type), Pairs) {}
+		                         IMemberSerializers serializers, IEnclosures enclosures)
+			: this(MemberSerializationBuilder.Default.Get, contents, serializers, members, element.Get(Type), Pairs, enclosures) {}
 
 		public DictionaryEntries(Func<IEnumerable<IMemberSerializer>, IMemberSerialization> builder,
-		                         IInnerContentServices contents, IMemberSerializers serializers, IMembers members,
-		                         IWriter element, IDictionaryPairTypesLocator locator)
+								 IInnerContentServices contents, IMemberSerializers serializers, IMembers members,
+								 IWriter element, IDictionaryPairTypesLocator locator, IEnclosures enclosures)
 		{
 			_builder     = builder;
 			_contents    = contents;
@@ -41,7 +42,8 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			_serializers = serializers;
 			_element     = element;
 			_locator     = locator;
-		}
+			_enclosures = enclosures;
+        }
 
 		IMemberSerializer Create(PropertyInfo metadata, TypeInfo classification)
 			=> _serializers.Get(_members.Get(new MemberDescriptor(metadata, classification)));
@@ -55,7 +57,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			var reader = _contents.Create(Type, new MemberInnerContentHandler(serialization, _contents, _contents));
 
 			var converter = new Serializer(reader, new MemberListWriter(serialization));
-			var result    = new Container<object>(_element, converter);
+			var result    = new Container<object>(_element, converter, _enclosures);
 			return result;
 		}
 	}

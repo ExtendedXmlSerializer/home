@@ -17,11 +17,12 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		readonly IIdentityStore           _identities;
 		readonly ITypes                   _types;
 		readonly IIdentifiers             _identifiers;
+		readonly IEnclosures			  _enclosures;
 
 		// ReSharper disable once TooManyDependencies
 		public MemberSerializers(IAttributeSpecifications runtime, IMemberAccessors accessors,
 		                         IMemberConverters converters, IMemberContents content, IIdentityStore identities,
-		                         ITypes types, IIdentifiers identifiers)
+		                         ITypes types, IIdentifiers identifiers, IEnclosures enclosures)
 		{
 			_runtime     = runtime;
 			_accessors   = accessors;
@@ -30,7 +31,8 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			_identities  = identities;
 			_types       = types;
 			_identifiers = identifiers;
-		}
+            _enclosures  = enclosures;
+        }
 
 		public IMemberSerializer Get(IMember parameter)
 		{
@@ -65,7 +67,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 				                : identity;
 			var start  = composite.Adapt();
 			var body   = _content.Get(profile);
-			var writer = new MemberWriter(access, new Enclosure(start, body));
+			var writer = new MemberWriter(access, _enclosures.Get(start, body));
 			var result = new MemberSerializer(profile, access, body, writer);
 			return result;
 		}

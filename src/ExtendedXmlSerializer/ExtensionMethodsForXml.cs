@@ -61,6 +61,25 @@ namespace ExtendedXmlSerializer
 			=> @this.Extend(RootInstanceExtension.Default)
 			        .Extend(OptimizedNamespaceExtension.Default);
 
+        /// <summary>
+        /// Moves the call stack into a heap.
+        /// Use this extension if you are experiencing Stack Overflow errors.
+        /// They occur when the depth of an object generally exceeds 500 instances.
+        /// This extension slows down serialization.
+        /// </summary>
+        /// <remarks>
+        /// This extension uses exception throwing during desarization to avoid handling a long jump and stack unwinding.
+        /// </remarks>
+        /// <param name="this">The configuration container to configure.</param>
+        /// <param name="prioritizeMemory">
+		/// The colection used internaly will be trimmed. 
+        /// Set to false if you are using serialization multiple times in a row. 
+		/// Then let the serializer be picked up by the GC once finished to free up memory.
+        /// </param>
+        /// <returns>The configured configuration container.</returns>
+        public static IConfigurationContainer UseHeap(this IConfigurationContainer @this, bool prioritizeMemory = true)
+			=> @this.Extend(new HeapExtension(prioritizeMemory));
+		
 		/// <summary>
 		/// Ensures that all text and strings encountered when emitting the document are valid Xml characters, replacing those
 		/// that are not with empty strings.
