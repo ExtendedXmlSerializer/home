@@ -1,0 +1,22 @@
+name: Enable Auto-Merge on Changelog PRs
+
+on:
+  pull_request:
+    types: [opened, labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  enable-automerge:
+    runs-on: ubuntu-latest
+    if: >
+      github.event.pull_request.user.login == 'github-actions[bot]' &&
+      contains(github.event.pull_request.labels.*.name, 'automerge')
+    steps:
+      - uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ github.event.pull_request.number }}
+          merge-method: merge  # Change to 'squash' or 'rebase' if you prefer that style
